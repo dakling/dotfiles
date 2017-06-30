@@ -1,8 +1,9 @@
 Collection of important configuration files
+---
 
 run
 
-git clone ...
+git clone https://github.com/dakling/dotfiles.git
 
 create symlinks:
 

@@ -1,0 +1,43 @@
+rename 2017-04-21
+find ranger
+find ra
+find ran
+rename _eulerAveraged.tex
+find mm1
+rename George_W._Bluman,_Alexei_F._Cheviakov,_Stephen_C._Anco_auth._Applications_of_Symmetry_Methods_to_Partial_Differential_Equation.pdf_
+rename George_W._Bluman,_Alexei_F._Cheviakov,_Stephen_C._Anco_auth._Applications_of_Symmetry_Methof.pdf
+search ghost
+search mutt
+rename mutt
+rename 2017-06-01
+rename _galileiAplha.tex
+rename _galileiAlpha.tex
+rename _galileiAlternativ.tex
+rename _galileiOneDirection.tex
+rename Bewerbungsfoto.jpg
+
+rename Bewerbungsfoto2017.JPG
+rename Bewerbungsfoto2015.JPG
+rename Bewerbungsfoto.JPG
+rename main.pdf
+rename statementOfPurpose.pdf
+open_with gthumb
+rename ArbeitszeugnisSLA.pdf
+rename _problemDet.tex_
+rename _problemDet.tex
+open_with nvim
+shell
+h mkdir
+help mkdir
+mkdir maple
+rename gammafield3dPotential.py
+rename Ufield3dPotential.py
+rename gammafield2dStag.py
+open_with 
+rename Ufield2dStag.py
+rename _differentApproach.tex
+mkdir 2017-06-30
+rename i3
+rename lxqt_2016-06-20
+rename lxqt_2016-06-30
+delete

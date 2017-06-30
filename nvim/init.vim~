@@ -1,0 +1,215 @@
+set runtimepath+=~/.config/nvim/plugins/repos/github.com/Shougo/dein.vim
+
+call dein#begin('~/.config/nvim/plugins/')
+
+call dein#add('~/.config/nvim/plugins/repos/github.com/Shougo/dein.vim/')
+call dein#add('Shougo/deoplete.nvim')
+
+" Added by Dario
+call dein#add('morhetz/gruvbox')
+call dein#add('vim-scripts/auctex.vim')
+call dein#add('jiangmiao/auto-pairs')
+call dein#add('jvirtanen/vim-octave')
+call dein#add('scrooloose/nerdcommenter')
+call dein#add('vim-airline/vim-airline')
+call dein#add('vim-airline/vim-airline-themes')
+call dein#add('scrooloose/syntastic')
+call dein#add('tomasr/molokai')
+call dein#add('gerw/vim-latex-suite')
+call dein#add('vim-scripts/gmsh.vim')
+call dein#add('dhruvasagar/vim-table-mode')
+call dein#add('jceb/vim-orgmode')
+call dein#add('jalvesaq/Nvim-R')
+call dein#add('xolox/vim-misc')
+call dein#add('xolox/vim-lua-ftplugin')
+call dein#add('maxbrunsfeld/vim-yankstack')
+call dein#add('nvie/vim-flake8')
+call dein#add('ctrlpvim/ctrlp.vim')
+call dein#add('tpope/vim-surround')
+call dein#add('airodactyl/neovim-ranger')
+
+
+call dein#end()
+
+
+" Maintainer:	Bram Moolenaar <Bram@vim.org>
+" Last change:	2016 Apr 05
+"
+" To use it, copy it to
+"     for Unix and OS/2:  ~/.vimrc
+"	      for Amiga:  s:.vimrc
+"  for MS-DOS and Win32:  $VIM\_vimrc
+"	    for OpenVMS:  sys$login:.vimrc
+autocmd!
+" When started as "evim", evim.vim will already have done these settings.
+if v:progname =~? "evim"
+  finish
+endif
+
+if has("vms")
+  set nobackup		" do not keep a backup file, use versions instead
+else
+  set backup		" keep a backup file (restore to previous version)
+  set undofile		" keep an undo file (undo changes after closing)
+endif
+set ruler		" show the cursor position all the time
+set showcmd		" display incomplete commands
+set incsearch		" do incremental searching
+
+" For Win32 GUI: remove 't' flag from 'guioptions': no tearoff menu entries
+" let &guioptions = substitute(&guioptions, "t", "", "g")
+
+" Don't use Ex mode, use Q for formatting
+map Q gq
+
+" CTRL-U in insert mode deletes a lot.  Use CTRL-G u to first break undo,
+" so that you can undo CTRL-U after inserting a line break.
+inoremap <C-U> <C-G>u<C-U>
+
+" Switch syntax highlighting on when the terminal has colors or when using the
+" GUI (which always has colors).
+if &t_Co > 2 || has("gui_running")
+  syntax on
+
+  " I like highlighting strings inside C comments.
+  let c_comment_strings=1
+endif
+
+" Only do this part when compiled with support for autocommands.
+if has("autocmd")
+
+  " Enable file type detection.
+  " Use the default filetype settings, so that mail gets 'tw' set to 72,
+  " 'cindent' is on in C files, etc.
+  " Also load indent files, to automatically do language-dependent indenting.
+
+  " Put these in an autocmd group, so that we can delete them easily.
+  augroup vimrcEx
+  au!
+
+  " For all text files set 'textwidth' to 78 characters.
+  autocmd FileType text setlocal textwidth=78
+
+  " When editing a file, always jump to the last known cursor position.
+  " Don't do it when the position is invalid or when inside an event handler
+  " (happens when dropping a file on gvim).
+  autocmd BufReadPost *
+    \ if line("'\"") >= 1 && line("'\"") <= line("$") |
+    \   exe "normal! g`\"" |
+    \ endif
+
+  augroup END
+
+else
+
+
+endif " has("autocmd")
+
+" Convenient command to see the difference between the current buffer and the
+" file it was loaded from, thus the changes you made.
+" Only define it when not defined already.
+if !exists(":DiffOrig")
+  command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
+		  \ | wincmd p | diffthis
+endif
+
+
+
+" Add optional packages.
+"
+" The matchit plugin makes the % command work better, but it is not backwards
+" compatible.
+"packadd matchit
+
+" Added by Dario
+"set shell=/bin/bash
+set textwidth=100
+set background=dark
+let g:gruvbox_contrast_dark="soft"
+colorscheme gruvbox
+set number
+filetype plugin on
+filetype indent on
+set ignorecase
+set smartcase
+set autochdir
+set clipboard+=unnamedplus
+" Latex settings
+au BufEnter *.tex set autowrite
+let g:Tex_Leader = "´"
+let g:Tex_DefaultTargetFormat = 'pdf'
+let g:Tex_MultipleCompileFormats = 'pdf'
+let g:Tex_CompileRule_pdf = 'pdflatex -interaction=nonstopmode $*'
+let g:Tex_GotoError = 0
+let g:Tex_ViewRule_pdf = 'qpdfview'
+let g:Tex_Env_figure ="\\begin{figure}\<CR>\\centering\<CR>\\includegraphics{}\<CR>\\caption{<++>}\<CR>\\label{fig:<++>}\<CR>\\end{figure}<++>"
+let g:Tex_PromptedEnvironments = 'figure,table,equation,equation*,$$,align'
+let g:Tex_HotKeyMappings = 'figure,table,equation,$$'
+au Filetype tex let b:AutoPairs = {'(':')','{':'}','[':']',"'":"'",'"':'"','<':'>'}
+" Enable spell checking in tex-documents
+au Filetype tex setlocal spell spelllang=en
+au Filetype tex setlocal textwidth=80
+" Ctrlp
+let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
+if executable('ag')
+  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+endif
+" Airline-Settings
+" Use 256 colours (Use this setting only if your terminal supports 256 colours)
+set t_Co=256
+let g:airline_powerline_fonts = 1
+let g:Powerline_symbols = 'fancy'
+"Change Colors in insert move
+"au InsertEnter * hi Normal ctermbg=234 guibg=#000000
+"au InsertLeave * hi Normal ctermbg=232 guibg=#151515
+autocmd InsertEnter * let g:gruvbox_contrast_dark="hard"|colorscheme gruvbox
+autocmd InsertLeave * let g:gruvbox_contrast_dark="soft"|colorscheme gruvbox
+set tabstop=4 shiftwidth=4 expandtab
+" Keystrokes
+let mapleader = "\<Space>"
+inoremap jk <ESC>
+nnoremap <leader> :w<CR>
+" Source/edit .vimrc file
+nnoremap <leader>sv :source $MYVIMRC<cr>
+nnoremap <leader>ev :split $MYVIMRC<cr>
+" Abrevation Example
+iabbrev tu TU Darmstadt
+vnoremap . :norm.<CR>
+" bind ctrl-u to uppercase entire word
+inoremap <c-u> <esc>viwU<esc>wi
+" bind ctrl-l to lowercase word
+inoremap <c-l> <esc>viwu<esc>wi
+" bind ctrl-b to uppercase first letter of a word
+inoremap <c-b> <esc>bvU<esc>wi
+" bind leader-b to insert linebreak
+nnoremap <leader>b i<return><esc>
+nnoremap <leader><leader> :
+" for openfoam
+" change bc to zerogradient
+nnoremap <leader>fzg di{i<tab>type<tab>zerogradient;<cr><tab><esc>
+" change bc to fixedvalue
+nnoremap <leader>ffv di{i<tab>type<tab>fixedvalue;<cr><tab><tab>value<tab>uniform <++>;<cr><tab><esc>
+" for gmsh
+augroup filetypedetect
+autocmd bufnewfile,bufread *.geo     setf gmsh
+augroup end 
+
+" yankstack (killring)
+nmap <leader>p <plug>yankstack_substitute_older_paste
+nmap <leader>p <plug>yankstack_substitute_newer_paste
+" For Python
+let python_highlight_all=1
+syntax on
+au BufNewFile,BufRead *.py set tabstop=4
+au BufNewFile,BufRead *.py set softtabstop=4
+au BufNewFile,BufRead *.py set shiftwidth=4
+au BufNewFile,BufRead *.py set textwidth=79
+au BufNewFile,BufRead *.py set expandtab
+au BufNewFile,BufRead *.py set fileformat=unix
+au BufNewFile,BufRead *.py let g:acp_enableAtStartup = 1
+" Autocomplete
+set dictionary+=/usr/share/dict/american-english
+"set dictionary+=/usr/share/dict/german
+set complete=.,w,k
+" Use deoplete.
+let g:deoplete#enable_at_startup = 1

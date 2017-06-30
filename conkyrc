@@ -37,10 +37,8 @@ ${goto 40}$color2${top_mem name 3}$alignr$color${top_mem mem_res 3}
 ${goto 40}$color2${top_mem name 4}$alignr$color${top_mem mem_res 4}
 # ${goto 40}$color2${top_mem name 5}$alignr$color${top_mem mem_res 5}
 #
-#${voffset 15}${goto 40}${color2}SDD: ${color}${fs_used /} ${color2}of ${color}${fs_size /} ${color2}used
-${voffset 15}${goto 40}${color}SSD${font Bitstream Vera Sans:bold:size=8}$alignr${fs_size /}$font
-#${goto 40}${voffset 5}$color2 Used$alignr$color${fs_used /}
-${goto 40}${voffset 5}$color2 Available$alignr$color${fs_free /}
+${voffset 10}${goto 40}${color}SSD${font Bitstream Vera Sans:bold:size=8}$alignr${fs_size /}$font
+${voffset 5}${goto 40}${color2}Available$alignr$color${fs_free /}
 ${voffset 15}$font$alignr${execi 10000 awk -F= '/TION/ {print $2}' /etc/lsb-release |sed 's/"//g'} \
 ${execi 10000 awk -F= '/EASE=/ {printf $2" "} /NAME/ {print $2}' /etc/lsb-release}
 ${voffset 10}${color2}${alignr}${execi 1200 whoami}@${nodename}

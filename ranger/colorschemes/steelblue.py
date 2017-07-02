@@ -16,6 +16,7 @@ class Default(ColorScheme):
 
         elif context.in_browser:
             if context.selected:
+                bg = 16
                 attr = reverse
             else:
                 attr = normal
@@ -32,7 +33,7 @@ class Default(ColorScheme):
                 fg = red
             if context.directory:
                 attr |= bold
-                fg = 147
+                fg = 14
             elif context.executable and not \
                     any((context.media, context.container,
                         context.fifo, context.socket)):

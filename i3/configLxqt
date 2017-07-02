@@ -30,9 +30,8 @@ font xft:Source Code Pro 11
 floating_modifier $mod
 
 # start a terminal
-set $MYTERMINAL konsole
+set $MYTERMINAL alacritty
 bindsym $mod+Return exec $MYTERMINAL
-bindsym $mod+Shift+Return exec $MYTERMINAL --drop
 
 # kill focused window
 bindsym $mod+c kill
@@ -49,7 +48,7 @@ bindsym $mod+z exec morc_menu
 
 ##exec --no-startup-id volumeicon
 #bindsym $mod+Ctrl+m exec i3 exec terminal -e 'alsamixer'
-exec --no-startup-id pulseaudio
+#exec --no-startup-id pulseaudio
 #exec --no-startup-id pa-applet 
 #bindsym $mod+Ctrl+m exec i3 exec pavucontrol
 
@@ -148,16 +147,26 @@ bindsym $mod+Ctrl+Left workspace prev
 # to display names or symbols instead of plain workspace numbers you can use
 # something like: set $ws1 1:mail
 #                 set $ws2 2:
-set $ws1 1
-set $ws2 2
-set $ws3 3
-set $ws4 4
-set $ws5 5
-set $ws6 6
-set $ws7 7
-set $ws8 8
-set $ws9 9
-set $ws10 10
+#set $ws1 1
+#set $ws2 2
+#set $ws3 3
+#set $ws4 4
+#set $ws5 5
+#set $ws6 6
+#set $ws7 7
+#set $ws8 8
+#set $ws9 9
+#set $ws10 10
+set $ws1 i
+set $ws2 ii
+set $ws3 iii
+set $ws4 iv
+set $ws5 v
+set $ws6 vi
+set $ws7 vii
+set $ws8 viii
+set $ws9 ix
+set $ws10 x
 
 # switch to workspace
 bindsym $mod+1 workspace $ws1
@@ -246,7 +255,7 @@ bindsym $mod+Ctrl+l exec i3exit lock
 
 # Set shut down, restart and locking features
 bindsym $mod+Shift+w exec lxqt-leave
-bindsym $mod+w mode "$mode_system"
+bindsym $mod+w exec notify-send "Leave";mode "$mode_system"
 set $mode_system show (m)enu, (l)ock, (e)xit, (b)suspend, (h)ibernate, (r)eboot, (s)hutdown
 mode "$mode_system" {
     bindsym m exec --no-startup-id lxqt-leave, mode "default"
@@ -262,7 +271,7 @@ mode "$mode_system" {
     bindsym Escape mode "default"
 }
 # Resize window (you can also use the mouse for that)
-bindsym $mod+r mode "Resize"
+bindsym $mod+r exec notify-send "Resize";mode "Resize"
 mode "Resize" {
         # These bindings trigger as soon as you enter the resize mode
         # Pressing left will shrink the window’s width.
@@ -315,25 +324,25 @@ exec --no-startup-id monitor_home
 
 
 #bar {
-	#status_command i3status
-	#position top
-	#bindsym button4 nop
-	#bindsym button5 nop
-    #font xft:Source Code Pro 11
-	#strip_workspace_numbers yes
+#    status_command i3status
+#    position bottom
+#    bindsym button4 nop
+#    bindsym button5 nop
+#    font xft:Source Code Pro 11
+#    strip_workspace_numbers yes
 
-	#colors {
-        ##background $transparent
-        #background $active_bg_color
-        #statusline $active_text_color
-        #separator  #454947
+#    colors {
+#        #background $transparent
+#        background $active_bg_color
+#        statusline $active_text_color
+#        separator  #454947
 
 ##                                  border  backgr. text
-        #focused_workspace  $active_border_color $active_bg_color $active_text_color
-        #active_workspace   $inactive_border_color $active_bg_color $active_text_color
-        #inactive_workspace $inactive_border_color $inactive_bg_color $inactive_text_color
-        #urgent_workspace   $active_border_color $active_bg_color $active_text_color
-    #}
+#        focused_workspace  $active_border_color $active_bg_color $active_text_color
+#        active_workspace   $inactive_border_color $active_bg_color $active_text_color
+#        inactive_workspace $inactive_border_color $inactive_bg_color $inactive_text_color
+#        urgent_workspace   $active_border_color $active_bg_color $active_text_color
+#    }
 #}
 ## hide/unhide i3status bar
 #bindsym $mod+m bar mode toggle
@@ -414,7 +423,7 @@ mode "$mode_gaps_outer" {
 
 #Custom modes
 #Program starter
-bindsym $mod+x mode "$mode_program_starter"
+bindsym $mod+x exec notify-send "Program Launcher"; mode "$mode_program_starter"
 
 set $mode_program_starter Quick Program Starter
 mode "$mode_program_starter" {
@@ -427,27 +436,27 @@ mode "$mode_program_starter" {
         bindsym Escape mode "default"
 }
 #File opener
-bindsym $mod+Shift+x mode "$mode_file_opener"
+bindsym $mod+Shift+x exec notify-send "File Launcher"; mode "$mode_file_opener"
 
 set $mode_file_opener Quick File Launcher
 mode "$mode_file_opener" {
-        #bindsym e      exec $MYTERMINAL -e "nvim $HOME/Dropbox/Helen/einkaufsliste/dario.txt"; mode default
-        bindsym e      exec $MYTERMINAL -e "python /home/dario/Dropbox/Helen/einkaufsliste/interactiveEnterDario.py"; mode default
-        bindsym c      exec $MYTERMINAL -e "nvim $HOME/.config/i3/configLxqt"; mode default
-        bindsym q      exec $MYTERMINAL -e "nvim /home/dario/.config/qutebrowser/qutebrowser.conf"; mode default
-        bindsym v      exec $MYTERMINAL -e "nvim $HOME/.config/nvim/init.vim"; mode default
+        #bindsym e      exec $MYTERMINAL -e nvim $HOME/Dropbox/Helen/einkaufsliste/dario.txt; mode default
+        bindsym e      exec $MYTERMINAL -e python /home/dario/Dropbox/Helen/einkaufsliste/interactiveEnterDario.py; mode default
+        bindsym c      exec $MYTERMINAL -e nvim $HOME/.config/i3/configLxqt; mode default
+        bindsym q      exec $MYTERMINAL -e nvim /home/dario/.config/qutebrowser/qutebrowser.conf; mode default
+        bindsym v      exec $MYTERMINAL -e nvim $HOME/.config/nvim/init.vim; mode default
         bindsym Return mode "default"
         bindsym Escape mode "default"
 }
 # Workspaces
-workspace 1 output LVDS1
-workspace 3 output LVDS1
-workspace 5 output LVDS1
-workspace 7 output LVDS1
-workspace 9 output LVDS1
-workspace 2 output VGA1
-workspace 4 output VGA1
-workspace 6 output VGA1
-workspace 8 output VGA1
-workspace 10 output VGA1
+workspace $ws1 output LVDS1
+workspace $ws3 output LVDS1
+workspace $ws5 output LVDS1
+workspace $ws7 output LVDS1
+workspace $ws9 output LVDS1
+workspace $ws2 output VGA1
+workspace $ws4 output VGA1
+workspace $ws6 output VGA1
+workspace $ws8 output VGA1
+workspace $ws10 output VGA1
 

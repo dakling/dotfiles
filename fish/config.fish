@@ -42,6 +42,5 @@ alias rr "ranger --choosedir=$HOME/.rangerdir; cd (cat $HOME/.rangerdir)"
 
 export EDITOR="nvim"
 export TERMCMD="xterm"
-export TERMINAL="terminology"
-export TERMINAL="terminology"
-export TERM="xterm-256color"
+#export TERMINAL="terminology"
+#export TERM="xterm-256color"

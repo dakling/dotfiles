@@ -255,7 +255,7 @@ bindsym $mod+Ctrl+l exec i3exit lock
 
 # Set shut down, restart and locking features
 bindsym $mod+Shift+w exec lxqt-leave
-bindsym $mod+w exec notify-send "Leave";mode "$mode_system"
+bindsym $mod+w mode "$mode_system"
 set $mode_system show (m)enu, (l)ock, (e)xit, (b)suspend, (h)ibernate, (r)eboot, (s)hutdown
 mode "$mode_system" {
     bindsym m exec --no-startup-id lxqt-leave, mode "default"
@@ -271,7 +271,7 @@ mode "$mode_system" {
     bindsym Escape mode "default"
 }
 # Resize window (you can also use the mouse for that)
-bindsym $mod+r exec notify-send "Resize";mode "Resize"
+bindsym $mod+r mode "Resize"
 mode "Resize" {
         # These bindings trigger as soon as you enter the resize mode
         # Pressing left will shrink the window’s width.
@@ -313,6 +313,11 @@ mode "Resize" {
 # exec i3 exec_always --no-startup-id sbxkb
 #exec --no-startup-id nohup /usr/lib/gnome-settings-daemon/gnome-settings-daemon > /dev/null &
 #exec --no-startup-id nohup gnome-session &
+exec xinput --map-to-output $(xinput list --id-only "Wacom ISDv4 E6 Finger") LVDS1
+exec xinput --map-to-output $(xinput list --id-only "Wacom ISDv4 E6 Pen Pen (0)") LVDS1
+exec nitrogen --head=0 ~/.config/backgrounds/current/ --random --set-auto 
+exec nitrogen --head=1 ~/.config/backgrounds/current/ --random --set-auto 
+exec killall conky
 exec --no-startup-id conky
 #exec --no-startup-id easystroke
 #exec --no-startup-id indicator-kdeconnect
@@ -320,7 +325,7 @@ exec --no-startup-id conky
 #exec --no-startup-id xautolock -time 5 -locker blurlock
 exec --no-startup-id setxkbmap -option ctrl:nocaps; sleep 1; xcape -e 'Control_L=Escape'  
 exec_always --no-startup-id fix_xcursor
-exec --no-startup-id monitor_home
+#exec --no-startup-id monitor_home
 
 
 #bar {
@@ -423,7 +428,7 @@ mode "$mode_gaps_outer" {
 
 #Custom modes
 #Program starter
-bindsym $mod+x exec notify-send "Program Launcher"; mode "$mode_program_starter"
+bindsym $mod+x mode "$mode_program_starter"
 
 set $mode_program_starter Quick Program Starter
 mode "$mode_program_starter" {
@@ -436,7 +441,7 @@ mode "$mode_program_starter" {
         bindsym Escape mode "default"
 }
 #File opener
-bindsym $mod+Shift+x exec notify-send "File Launcher"; mode "$mode_file_opener"
+bindsym $mod+Shift+x mode "$mode_file_opener"
 
 set $mode_file_opener Quick File Launcher
 mode "$mode_file_opener" {

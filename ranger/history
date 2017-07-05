@@ -40,5 +40,8 @@ mkdir 2017-06-30
 rename i3
 rename lxqt_2016-06-20
 rename lxqt_2016-06-30
-delete
 set colorscheme default
+rename 2017-07-07
+delete
+rename _splittinV.tex
+rename _basicEquations.tex

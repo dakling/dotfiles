@@ -1,0 +1,3 @@
+#! /bin/sh
+
+default-terminal -e "xfreerdp /v:terminal02 /u:klingenberg /f"

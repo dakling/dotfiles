@@ -25,7 +25,6 @@ HISTSIZE=1000
 SAVEHIST=500
 export EDITOR=/usr/bin/nvim
 export VISUAL=/usr/bin/nvim
-export TERMINAL=/bin/urxvt
 WORDCHARS=${WORDCHARS//\/[&.;]}                                 # Don't consider certain characters part of the word
 
 

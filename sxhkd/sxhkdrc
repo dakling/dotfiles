@@ -19,11 +19,11 @@ super + shift + r
 #
 
 #minimize
-super + -
-    whid hide
+#super + -
+    #whid hide
 
-super + shift + -
-    whid last
+#super + shift + -
+    #whid last
 # close and kill
 super + {_,shift + }c
 	bspc node -{c,k}
@@ -148,12 +148,14 @@ super + {Left,Down,Up,Right}
 super + ctrl + r
     killall plasmashell ; source ~/.config/bspwm/bspwmrc ; kstart plasmashell
 #start applications
+super + F1
+	nvim-qt
 super + F2
 	qutebrowser --backend webengine
-    		
 super + F3
 	default-terminal -e ranger
-
+super + F4
+	default-terminal -e mutt
 super + F5
 	default-terminal -e pacui
 #start programs
@@ -166,7 +168,7 @@ super + x ; e
 super + x ; s 
     systemsettings5
 super + x ; p 
-    pamac-install
+    pamac-manager
 #edit files
 super + shift + x ; s
     default-terminal -e nvim ~/.config/sxhkd/sxhkdrc
@@ -179,13 +181,13 @@ super + shift + x ; q
 super + shift + x ; e
     default-terminal -e python ~/Dropbox/Helen/einkaufsliste/interactiveEnterDario.py
 super + shift + x ; z
-    default-terminal -e python ~/.zshrc
+    default-terminal -e nvim ~/.zshrc
 # leave
 super + w ; s
     shutdown now
 super + w ; r
-    reboot
+    reboot now
 super + w ; l
-    qdbus org.freedesktop.ScreenSaver /ScreenSaver Lock
+    /usr/lib/kscreenlocker_greet --immediateLock --graceTime 5000
 super + w ; e
     qdbus org.kde.ksmserver /KSMServer logout 0 3 3

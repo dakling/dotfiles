@@ -1,3 +1,3 @@
 "Guifont DejaVu Sans Mono for Powerline:h12
-Guifont Source\ Code\ Pro\ for\ Powerline:size=11
-colorscheme gruvbox
+Guifont Source\ Code\ Pro\ for\ Powerline:h10
+"colorscheme iceberg

@@ -1,7 +1,7 @@
 #! /bin/sh
 
-gap=5
-PANEL_HEIGHT=29
+gap=2
+PANEL_HEIGHT=30
 export gap
 export PANEL_HEIGHT
 #This creates negative padding equal to window gap so that gaps are shown only between windows and not on desktop edges.
@@ -21,7 +21,6 @@ bspc config focus_follows_pointer true
 bspc config pointer_follows_focus true #Some keybindings automatically enable and disable this setting
 sxhkd &
 
-#bspc monitor -d I II III IV V VI VII VIII IX X
 workspaces_multimonitor &
 bspc config remove_disabled_monitor true
 bspc config remove_unplugged_monitors true
@@ -39,4 +38,8 @@ bspc config gapless_monocle      true
 #bspc rule -a Kupfer.py focus=on
 #bspc rule -a Screenkey manage=off
 bspc rule -a Zathura state=tiled 
-bspc rule -a plasmashell state=floating 
+bspc rule -a plasmashell state=floating manage=off
+#bspc rule -a dolphin manage=off
+
+#autostart
+fix_touchscreen &

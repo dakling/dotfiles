@@ -4,8 +4,12 @@
 
 # terminal emulator
 super + Return
-	konsole
+	default-terminal
 
+super + r
+    rofi -show combi
+super + shift + Return
+	open-terminal-here
 # make sxhkd reload its configuration files:
 super + shift + r
 	pkill -USR1 -x sxhkd
@@ -14,6 +18,12 @@ super + shift + r
 # bspwm hotkeys
 #
 
+#minimize
+super + -
+    whid hide
+
+super + shift + -
+    whid last
 # close and kill
 super + {_,shift + }c
 	bspc node -{c,k}
@@ -28,6 +38,8 @@ super + y
 
 # swap the current node and the biggest node
 super + g
+	bspc node -s biggest.local
+super + shift + g
 	bspc node -s biggest
 
 #
@@ -38,8 +50,8 @@ super + g
 super + {t,shift + t,s,f}
 	bspc node -t {tiled,pseudo_tiled,floating,fullscreen}
 
-# set the node flags
-super + ctrl + {x,y,z}
+# set the node flags !!! US layout assumed
+super + ctrl + {x,y,z} 
 	bspc node -g {locked,sticky,private}
 
 #
@@ -134,16 +146,16 @@ super + {Left,Down,Up,Right}
 
 # In case bspwmrc fails to execute/you wish have plugged in a new monitor
 super + ctrl + r
-    killall plasmashell ; bash ~/.config/bspwm/bspwmrc ; kstart plasmashell
+    killall plasmashell ; source ~/.config/bspwm/bspwmrc ; kstart plasmashell
 #start applications
 super + F2
 	qutebrowser --backend webengine
     		
 super + F3
-	konsole -e ranger
+	default-terminal -e ranger
 
 super + F5
-	konsole -e pacui
+	default-terminal -e pacui
 #start programs
 super + x ; i 
     firefox-nightly
@@ -153,17 +165,21 @@ super + x ; e
     kmail
 super + x ; s 
     systemsettings5
+super + x ; p 
+    pamac-install
 #edit files
 super + shift + x ; s
-    konsole -e nvim ~/.config/sxhkd/sxhkdrc
+    default-terminal -e nvim ~/.config/sxhkd/sxhkdrc
 super + shift + x ; b
-    konsole -e nvim ~/.config/bspwm/bspwmrc
+    default-terminal -e nvim ~/.config/bspwm/bspwmrc
 super + shift + x ; v
-    konsole -e nvim ~/.config/nvim/init.vim
+    default-terminal -e nvim ~/.config/nvim/init.vim
 super + shift + x ; q
-    konsole -e nvim ~/.config/qutebrowser/qutebrowser.conf
+    default-terminal -e nvim ~/.config/qutebrowser/qutebrowser.conf
 super + shift + x ; e
-    konsole -e python ~/Dropbox/Helen/einkaufsliste/interactiveEnterDario.py
+    default-terminal -e python ~/Dropbox/Helen/einkaufsliste/interactiveEnterDario.py
+super + shift + x ; z
+    default-terminal -e python ~/.zshrc
 # leave
 super + w ; s
     shutdown now
@@ -171,3 +187,5 @@ super + w ; r
     reboot
 super + w ; l
     qdbus org.freedesktop.ScreenSaver /ScreenSaver Lock
+super + w ; e
+    qdbus org.kde.ksmserver /KSMServer logout 0 3 3

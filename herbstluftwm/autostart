@@ -1,0 +1,303 @@
+#!/usr/bin/env bash
+
+# this is a simple config for herbstluftwm
+
+hc() {
+    herbstclient "$@"
+}
+
+hc emit_hook reload
+
+xsetroot -solid '#5A8E3A'
+
+#set default layout
+hc set default_frame_layout grid
+hc set focus_follows_mouse 1
+
+# remove all existing keybindings
+hc keyunbind --all
+# if you have a super key you will be much happier with Mod set to Mod4
+#Mod=Mod1    # Use alt as the main modifier
+Mod=Mod4   # Use the super key as the main modifier
+
+# Build the command to unbind the keys (for chain keybindings)
+
+#start applications
+keys_apps=( i d s p )
+unbind=(  )
+for k in "${keys_apps[@]}" Escape ; do
+    unbind+=( , keyunbind "$k" )
+done
+hc keybind $Mod-x chain \
+    '->' keybind "${keys_apps[0]}" chain "${unbind[@]}" , spawn firefox-nightly \
+    '->' keybind "${keys_apps[1]}"  chain "${unbind[@]}" , spawn dolphin \
+    '->' keybind "${keys_apps[2]}" chain "${unbind[@]}" , spawn systemsettings5 \
+    '->' keybind "${keys_apps[3]}" chain "${unbind[@]}" , spawn pamac-manager \
+    '->' keybind Escape       chain "${unbind[@]}"
+#open files
+keys_files=( c v z e )
+unbind=(  )
+for k in "${keys_files[@]}" Escape ; do
+    unbind+=( , keyunbind "$k" )
+done
+hc keybind $Mod-Shift-x chain \
+    '->' keybind "${keys_files[0]}" chain "${unbind[@]}" , spawn urxvt -e nvim ~/.config/herbstluftwm/autostart \
+    '->' keybind "${keys_files[1]}"  chain "${unbind[@]}" , spawn urxvt -e nvim ~/.config/nvim/init.vim \
+    '->' keybind "${keys_files[2]}" chain "${unbind[@]}" , spawn urxvt -e nvim ~/.zshrc \
+    '->' keybind "${keys_files[3]}" chain "${unbind[@]}" , spawn urxvt -e python ~/Dropbox/Helen/einkaufsliste/interactiveEnterDario.py \
+    '->' keybind Escape       chain "${unbind[@]}"
+#leave
+keys_session=( s r e l )
+unbind=(  )
+for k in "${keys_session[@]}" Escape ; do
+    unbind+=( , keyunbind "$k" )
+done
+hc keybind $Mod-w chain \
+    '->' keybind "${keys_session[0]}" chain "${unbind[@]}" , spawn shutdown now \
+    '->' keybind "${keys_session[1]}"  chain "${unbind[@]}" , spawn reboot now \
+    '->' keybind "${keys_session[2]}" chain "${unbind[@]}" , spawn qdbus org.kde.ksmserver /KSMServer logout 0 3 3 \
+    '->' keybind "${keys_session[3]}" chain "${unbind[@]}" , spawn /usr/lib/kscreenlocker_greet --immediateLock --graceTime 5000\
+    '->' keybind Escape       chain "${unbind[@]}"
+# normal keybindings
+
+#hc keybind $Mod-Shift-q quit
+hc keybind $Mod-Shift-r reload
+hc keybind $Mod-c close_and_remove
+hc keybind $Mod-Shift-c close
+# start programs
+hc keybind $Mod-r spawn rofi -show combi
+hc keybind $Mod-Return spawn default-terminal
+hc keybind $Mod-F2 spawn qutebrowser --backend webengine
+hc keybind $Mod-F3 spawn urxvt -e ranger
+hc keybind $Mod-F4 spawn urxvt -e mutt
+hc keybind $Mod-F5 spawn urxvt -e pacui
+
+# basic movement
+# focusing clients
+hc keybind $Mod-Left  focus left
+hc keybind $Mod-Down  focus down
+hc keybind $Mod-Up    focus up
+hc keybind $Mod-Right focus right
+hc keybind $Mod-h     focus left
+hc keybind $Mod-j     focus down
+hc keybind $Mod-k     focus up
+hc keybind $Mod-l     focus right
+
+# moving clients
+hc keybind $Mod-Shift-Left  shift left
+hc keybind $Mod-Shift-Down  shift down
+hc keybind $Mod-Shift-Up    shift up
+hc keybind $Mod-Shift-Right shift right
+hc keybind $Mod-Shift-h     shift left
+hc keybind $Mod-Shift-j     shift down
+hc keybind $Mod-Shift-k     shift up
+hc keybind $Mod-Shift-l     shift right
+
+# splitting frames
+# create an empty frame at the specified direction
+hc keybind $Mod-u       split   bottom  0.5
+hc keybind $Mod-o       split   right   0.5
+# let the current frame explode into subframes
+hc keybind $Mod-Control-space split explode
+
+# resizing frames
+resizestep=0.05
+hc keybind $Mod-Control-h       resize left +$resizestep
+hc keybind $Mod-Control-j       resize down +$resizestep
+hc keybind $Mod-Control-k       resize up +$resizestep
+hc keybind $Mod-Control-l       resize right +$resizestep
+hc keybind $Mod-Control-Left    resize left +$resizestep
+hc keybind $Mod-Control-Down    resize down +$resizestep
+hc keybind $Mod-Control-Up      resize up +$resizestep
+hc keybind $Mod-Control-Right   resize right +$resizestep
+
+# tags
+#hc set swap_monitors_to_get_tag 0
+tag_names=( {1..9} 10 )
+tag_keys=( {1..9} 0 )
+
+# This is the default tag section of the autostart, with a single change:
+# In the use_index keybinding, check the presence of the my_monitor attribute,
+# before focusing the desired tag.
+hc rename default "${tag_names[0]}" || true
+for i in ${!tag_names[@]} ; do
+    hc add "${tag_names[$i]}"
+    key="${tag_keys[$i]}"
+    if ! [ -z "$key" ] ; then
+        # first check if the tag is locked to some monitor.
+        # if so, first focus the monitor
+        hc keybind "$Mod-$key" \
+            chain , silent substitute M tags."$i".my_monitor \
+                        focus_monitor M \
+                  , use_index "$i"
+        hc keybind "$Mod-Shift-$key" move_index "$i"
+    fi
+done
+
+# Add a keybinding for locking the current tag to the monitor it is displayed
+# on. This is done by safing the current monitor index in the my_monitor
+# attribute of the focused tag. If the monitor has a (nonempty) name, use the
+# monitor name instead of its index.
+herbstclient keybind $Mod-t chain \
+    , new_attr string tags.focus.my_monitor \
+    , substitute M monitors.focus.index set_attr tags.focus.my_monitor M \
+    , try and \
+        . compare monitors.focus.name != "" \
+        . substitute M monitors.focus.name \
+                set_attr tags.focus.my_monitor M
+
+# Add a keybinding for removing the lock
+herbstclient keybind $Mod-Shift-t \
+    remove_attr tags.focus.my_monitor
+# Statically define which tag should be send to which monitor
+lock_tag_to_monitor() {
+    herbstclient chain \
+        , new_attr string tags.by-name."$1".my_monitor \
+        , set_attr tags.by-name."$1".my_monitor "$2"
+}
+lock_tag_to_monitor 6 0
+lock_tag_to_monitor 7 0
+lock_tag_to_monitor 8 0
+lock_tag_to_monitor 9 0
+lock_tag_to_monitor 10 0
+lock_tag_to_monitor 1 1
+lock_tag_to_monitor 2 1
+lock_tag_to_monitor 3 1
+lock_tag_to_monitor 4 1
+lock_tag_to_monitor 5 1
+
+# cycle through tags
+# add additional information in order to cycle only through a monitor's tags
+# and not through all tags
+define-tag-cycle() {
+    local n=$#
+    local tags=( "$@" )
+    for i in "${!tags[@]}" ; do
+        local t="${tags[$i]}"
+        hc chain , new_attr string tags.by-name."$t".my_previous_tag \
+                 , set_attr tags.by-name."$t".my_previous_tag "${tags[$(((i - 1 + n) % n))]}" \
+                 , new_attr string tags.by-name."$t".my_next_tag \
+                 , set_attr tags.by-name."$t".my_next_tag "${tags[$(((i + 1) % n))]}"
+    done
+}
+
+define-tag-cycle "${mon1_names[@]}"
+define-tag-cycle "${mon2_names[@]}"
+#define-tag-cycle "${fallback_names[@]}"
+
+# cycle through tags
+# check whether the current tag as a custom "next tag" configured
+# if yes, jump to that one, otherwise fall back to ordinary use_index +1
+hc keybind $Mod-period or , substitute NEXT tags.focus.my_next_tag use NEXT  \
+                          , use_index +1 --skip-visible
+hc keybind $Mod-comma  or , substitute PREV tags.focus.my_previous_tag use PREV  \
+                          , use_index +1 --skip-visible
+#source ~/.config/herbstluftwm/multiple_monitors.sh
+
+# layouting
+#hc keybind $Mod-r remove
+hc keybind $Mod-s floating toggle
+hc keybind $Mod-f fullscreen toggle
+hc keybind $Mod-t pseudotile toggle
+hc keybind $Mod-m cycle_layout +1 max grid
+# The following cycles through the available layouts within a frame, but skips
+# layouts, if the layout change wouldn't affect the actual window positions.
+# I.e. if there are two windows within a frame, the grid layout is skipped.
+hc keybind $Mod-space                                                           \
+            or , and . compare tags.focus.curframe_wcount = 2                   \
+                     . cycle_layout +1 vertical horizontal max vertical grid    \
+               , cycle_layout +1
+
+# mouse
+hc mouseunbind --all
+hc mousebind $Mod-Button1 move
+hc mousebind $Mod-Button2 zoom
+hc mousebind $Mod-Button3 resize
+
+# focus
+hc keybind $Mod-y   cycle_monitor
+hc keybind $Mod-Tab         cycle_all +1
+hc keybind $Mod-Shift-Tab   cycle_all -1
+hc keybind $Mod-Shift-c cycle
+hc keybind $Mod-i jumpto urgent
+
+# theme
+hc attr theme.tiling.reset 1
+hc attr theme.floating.reset 1
+hc set frame_border_active_color '#b8b8b8'
+hc set frame_border_normal_color '#383838'
+hc set frame_bg_normal_color '#565656'
+hc set frame_bg_active_color '#7cafc2'
+hc set frame_border_width 1
+hc set always_show_frame 1
+hc set frame_bg_transparent 1
+hc set frame_transparent_width 5
+hc set frame_gap 4
+
+hc attr theme.active.color '#00ADEE'
+hc attr theme.normal.color '#454545'
+hc attr theme.urgent.color orange
+hc attr theme.inner_width 1
+hc attr theme.inner_color black
+hc attr theme.border_width 3
+hc attr theme.floating.border_width 4
+hc attr theme.floating.outer_width 1
+hc attr theme.floating.outer_color black
+hc attr theme.active.inner_color '#3E4A00'
+hc attr theme.active.outer_color '#3E4A00'
+hc attr theme.background_color '#141414'
+
+hc set window_gap 1
+hc set frame_padding 0
+hc set smart_window_surroundings 0
+hc set smart_frame_surroundings 1
+hc set mouse_recenter_gap 1
+hc pad 0 30 0 0
+hc pad 1 30 0 0
+
+#some multiple monitor settings
+hc keybind $Mod-Shift-h or / shift left / \
+    chain , lock , shift_to_monitor -l , focus_monitor -l , unlock
+hc keybind $Mod-Shift-j or / shift down / \
+    chain , lock , shift_to_monitor -d , focus_monitor -d , unlock
+hc keybind $Mod-Shift-k or / shift up / \
+    chain , lock , shift_to_monitor -u , focus_monitor -u , unlock
+hc keybind $Mod-Shift-l or / shift right / \
+    chain , lock , shift_to_monitor -r , focus_monitor -r , unlock
+
+# rules
+hc unrule -F
+#hc rule class=XTerm tag=3 # move all xterms to tag 3
+hc rule focus=on # normally focus new clients
+#hc rule focus=off # normally do not focus new clients
+# give focus to most common terminals
+#hc rule class~'(.*[Rr]xvt.*|.*[Tt]erm|Konsole)' focus=on
+hc rule windowtype~'_NET_WM_WINDOW_TYPE_(DIALOG|UTILITY|SPLASH)' pseudotile=on
+hc rule windowtype='_NET_WM_WINDOW_TYPE_DIALOG' focus=on
+hc rule windowtype~'_NET_WM_WINDOW_TYPE_(NOTIFICATION|DOCK|DESKTOP)' manage=off
+hc rule windowtype~'_KDE_NET_WM_WINDOW_TYPE_OVERRIDE' pseudotile=on
+#hc rule windowtype~'_NET_WM_WINDOW_TYPE_NORMAL' pseudotile=on
+
+#hc padup 1 10
+
+# unlock, just to be sure
+hc unlock
+
+herbstclient set tree_style '╾│ ├└╼─┐'
+
+# do multi monitor setup here, e.g.:
+# hc set_monitors 1280x1024+0+0 1280x1024+1280+0
+# or simply:
+hc detect_monitors
+
+# find the panel
+#panel=~/.config/herbstluftwm/panel.sh
+#[ -x "$panel" ] || panel=/etc/xdg/herbstluftwm/panel.sh
+#for monitor in $(herbstclient list_monitors | cut -d: -f1) ; do
+    # start it on each monitor
+    #"$panel" $monitor &
+#done
+
+#autostart (if not possible to launch from plasma autostart)
+fix_touchscreen
+conky

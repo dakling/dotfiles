@@ -29,21 +29,25 @@ WORDCHARS=${WORDCHARS//\/[&.;]}                                 # Don't consider
 
 
 ## Keybindings section
-zle-keymap-select () {
-if [ $KEYMAP = vicmd ]; then
-    printf "\033[2 q"
-else
+case ${TERM} in
+    (rxvt*)
+    zle-keymap-select () {
+    if [ $KEYMAP = vicmd ]; then
+        printf "\033[2 q"
+    else
+        printf "\033[6 q"
+    fi
+    }
+    zle -N zle-keymap-select
+    zle-line-init () {
+    zle -K viins
     printf "\033[6 q"
-fi
-}
-zle -N zle-keymap-select
-zle-line-init () {
-zle -K viins
-printf "\033[6 q"
-}
-zle -N zle-line-init
-zle -N zle-keymap-select
-bindkey -v
+    }
+    zle -N zle-line-init
+    zle -N zle-keymap-select
+    bindkey -v
+    ;;
+esac
 # Remove delay when entering normal mode (vi)
 KEYTIMEOUT=5
 #bindkey '^[[7~' beginning-of-line                               # Home key
@@ -71,6 +75,7 @@ KEYTIMEOUT=5
 
 ## Alias section 
 alias ls="ls --color"
+alias hc="herbstclient"
 
 # Theming section  
 autoload -U compinit colors zcalc

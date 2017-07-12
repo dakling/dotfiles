@@ -13,6 +13,8 @@ super + shift + Return
 # make sxhkd reload its configuration files:
 super + shift + r
 	pkill -USR1 -x sxhkd
+super + alt + r
+	source ~/.config/bspwm/bspwmrc
 
 #
 # bspwm hotkeys

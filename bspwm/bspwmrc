@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/zsh
 
 gap=3
 PANEL_HEIGHT=30
@@ -19,7 +19,6 @@ bspc config border_width 1
 
 bspc config focus_follows_pointer true
 bspc config pointer_follows_focus true #Some keybindings automatically enable and disable this setting
-sxhkd -m 1 &
 
 workspaces_multimonitor &
 bspc config remove_disabled_monitors true
@@ -42,3 +41,4 @@ bspc rule -a plasmashell state=floating manage=off
 #autostart
 #conky &
 fix_touchscreen &
+sxhkd -m 1 &

@@ -33,7 +33,6 @@ mkdir maple
 rename gammafield3dPotential.py
 rename Ufield3dPotential.py
 rename gammafield2dStag.py
-open_with 
 rename Ufield2dStag.py
 rename _differentApproach.tex
 mkdir 2017-06-30
@@ -42,6 +41,7 @@ rename lxqt_2016-06-20
 rename lxqt_2016-06-30
 set colorscheme default
 rename 2017-07-07
-delete
 rename _splittinV.tex
 rename _basicEquations.tex
+open_with 
+delete

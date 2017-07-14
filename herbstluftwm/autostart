@@ -11,7 +11,8 @@ hc emit_hook reload
 xsetroot -solid '#5A8E3A'
 
 #set default layout
-hc set default_frame_layout grid
+hc set default_frame_layout 3
+hc set_layout grid
 hc set focus_follows_mouse 1
 
 # remove all existing keybindings
@@ -23,16 +24,18 @@ Mod=Mod4   # Use the super key as the main modifier
 # Build the command to unbind the keys (for chain keybindings)
 
 #start applications
-keys_apps=( i d s p )
+keys_apps=(     i             d         s                p          e )
+apps_list=( firefox-nightly dolphin systemsettings5 pamac-manager kmail )
 unbind=(  )
 for k in "${keys_apps[@]}" Escape ; do
     unbind+=( , keyunbind "$k" )
 done
 hc keybind $Mod-x chain \
-    '->' keybind "${keys_apps[0]}" chain "${unbind[@]}" , spawn firefox-nightly \
-    '->' keybind "${keys_apps[1]}"  chain "${unbind[@]}" , spawn dolphin \
-    '->' keybind "${keys_apps[2]}" chain "${unbind[@]}" , spawn systemsettings5 \
-    '->' keybind "${keys_apps[3]}" chain "${unbind[@]}" , spawn pamac-manager \
+    '->' keybind "${keys_apps[0]}" chain "${unbind[@]}" , spawn "${apps_list[0]}" \
+    '->' keybind "${keys_apps[1]}" chain "${unbind[@]}" , spawn "${apps_list[1]}" \
+    '->' keybind "${keys_apps[2]}" chain "${unbind[@]}" , spawn "${apps_list[2]}" \
+    '->' keybind "${keys_apps[3]}" chain "${unbind[@]}" , spawn "${apps_list[3]}" \
+    '->' keybind "${keys_apps[4]}" chain "${unbind[@]}" , spawn "${apps_list[4]}" \
     '->' keybind Escape       chain "${unbind[@]}"
 #open files
 keys_files=( c v z e )
@@ -65,8 +68,9 @@ hc keybind $Mod-Shift-r reload
 hc keybind $Mod-c close_and_remove
 hc keybind $Mod-Shift-c close
 # start programs
-hc keybind $Mod-r spawn rofi -show combi
+hc keybind $Mod-d spawn rofi -show combi
 hc keybind $Mod-Return spawn default-terminal
+hc keybind $Mod-Shift-Return spawn open-terminal-here
 hc keybind $Mod-F2 spawn qutebrowser --backend webengine
 hc keybind $Mod-F3 spawn urxvt -e ranger
 hc keybind $Mod-F4 spawn urxvt -e mutt
@@ -98,7 +102,7 @@ hc keybind $Mod-Shift-l     shift right
 hc keybind $Mod-u       split   bottom  0.5
 hc keybind $Mod-o       split   right   0.5
 # let the current frame explode into subframes
-hc keybind $Mod-Control-space split explode
+hc keybind $Mod-e split explode
 
 # resizing frames
 resizestep=0.05
@@ -130,7 +134,8 @@ for i in ${!tag_names[@]} ; do
             chain , silent substitute M tags."$i".my_monitor \
                         focus_monitor M \
                   , use_index "$i"
-        hc keybind "$Mod-Shift-$key" move_index "$i"
+        hc keybind "$Mod-Shift-$key" chain , move_index "$i" , silent substitute M tags."$i".my_monitor \
+                        focus_monitor M ,  use_index "$i"
     fi
 done
 
@@ -192,10 +197,19 @@ hc keybind $Mod-period or , substitute NEXT tags.focus.my_next_tag use NEXT  \
                           , use_index +1 --skip-visible
 hc keybind $Mod-comma  or , substitute PREV tags.focus.my_previous_tag use PREV  \
                           , use_index +1 --skip-visible
-#source ~/.config/herbstluftwm/multiple_monitors.sh
+
+#move windows between monitors
+hc keybind $Mod-Shift-h or / shift left / \
+    chain , lock , shift_to_monitor -l , focus_monitor -l , unlock
+hc keybind $Mod-Shift-j or / shift down / \
+    chain , lock , shift_to_monitor -d , focus_monitor -d , unlock
+hc keybind $Mod-Shift-k or / shift up / \
+    chain , lock , shift_to_monitor -u , focus_monitor -u , unlock
+hc keybind $Mod-Shift-l or / shift right / \
+    chain , lock , shift_to_monitor -r , focus_monitor -r , unlock
 
 # layouting
-#hc keybind $Mod-r remove
+hc keybind $Mod-r remove
 hc keybind $Mod-s floating toggle
 hc keybind $Mod-f fullscreen toggle
 hc keybind $Mod-t pseudotile toggle
@@ -255,15 +269,6 @@ hc set mouse_recenter_gap 1
 hc pad 0 30 0 0
 hc pad 1 30 0 0
 
-#some multiple monitor settings
-hc keybind $Mod-Shift-h or / shift left / \
-    chain , lock , shift_to_monitor -l , focus_monitor -l , unlock
-hc keybind $Mod-Shift-j or / shift down / \
-    chain , lock , shift_to_monitor -d , focus_monitor -d , unlock
-hc keybind $Mod-Shift-k or / shift up / \
-    chain , lock , shift_to_monitor -u , focus_monitor -u , unlock
-hc keybind $Mod-Shift-l or / shift right / \
-    chain , lock , shift_to_monitor -r , focus_monitor -r , unlock
 
 # rules
 hc unrule -F
@@ -275,10 +280,10 @@ hc rule focus=on # normally focus new clients
 hc rule windowtype~'_NET_WM_WINDOW_TYPE_(DIALOG|UTILITY|SPLASH)' pseudotile=on
 hc rule windowtype='_NET_WM_WINDOW_TYPE_DIALOG' focus=on
 hc rule windowtype~'_NET_WM_WINDOW_TYPE_(NOTIFICATION|DOCK|DESKTOP)' manage=off
-hc rule windowtype~'_KDE_NET_WM_WINDOW_TYPE_OVERRIDE' pseudotile=on
+#hc rule windowtype~'_KDE_NET_WM_WINDOW_TYPE_OVERRIDE' pseudotile=on
+hc rule windowtype~'_KDE_NET_WM_WINDOW_TYPE_OVERRIDE' floating=on
+#hc rule class~'plasmashell' manage=off
 #hc rule windowtype~'_NET_WM_WINDOW_TYPE_NORMAL' pseudotile=on
-
-#hc padup 1 10
 
 # unlock, just to be sure
 hc unlock
@@ -300,4 +305,3 @@ hc detect_monitors
 
 #autostart (if not possible to launch from plasma autostart)
 fix_touchscreen
-conky

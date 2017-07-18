@@ -11,8 +11,8 @@ hc emit_hook reload
 xsetroot -solid '#5A8E3A'
 
 #set default layout
-hc set default_frame_layout 3
-hc set_layout grid
+hc set default_frame_layout 1
+hc set_layout horizontal
 hc set focus_follows_mouse 1
 
 # remove all existing keybindings
@@ -24,18 +24,18 @@ Mod=Mod4   # Use the super key as the main modifier
 # Build the command to unbind the keys (for chain keybindings)
 
 #start applications
-keys_apps=(     i             d         s                p          e )
-apps_list=( firefox-nightly dolphin systemsettings5 pamac-manager kmail )
+keys_apps=(i d s p e w)
 unbind=(  )
 for k in "${keys_apps[@]}" Escape ; do
     unbind+=( , keyunbind "$k" )
 done
 hc keybind $Mod-x chain \
-    '->' keybind "${keys_apps[0]}" chain "${unbind[@]}" , spawn "${apps_list[0]}" \
-    '->' keybind "${keys_apps[1]}" chain "${unbind[@]}" , spawn "${apps_list[1]}" \
-    '->' keybind "${keys_apps[2]}" chain "${unbind[@]}" , spawn "${apps_list[2]}" \
-    '->' keybind "${keys_apps[3]}" chain "${unbind[@]}" , spawn "${apps_list[3]}" \
-    '->' keybind "${keys_apps[4]}" chain "${unbind[@]}" , spawn "${apps_list[4]}" \
+    '->' keybind "${keys_apps[0]}" chain "${unbind[@]}" , spawn firefox-nightly \
+    '->' keybind "${keys_apps[1]}" chain "${unbind[@]}" , spawn dolphin \
+    '->' keybind "${keys_apps[2]}" chain "${unbind[@]}" , spawn systemsettings5 \
+    '->' keybind "${keys_apps[3]}" chain "${unbind[@]}" , spawn pamac-manager \
+    '->' keybind "${keys_apps[4]}" chain "${unbind[@]}" , spawn thunderbird \
+    '->' keybind "${keys_apps[5]}" chain "${unbind[@]}" , spawn termite -e "w3m www.google.com" \
     '->' keybind Escape       chain "${unbind[@]}"
 #open files
 keys_files=( c v z e )
@@ -44,10 +44,10 @@ for k in "${keys_files[@]}" Escape ; do
     unbind+=( , keyunbind "$k" )
 done
 hc keybind $Mod-Shift-x chain \
-    '->' keybind "${keys_files[0]}" chain "${unbind[@]}" , spawn urxvt -e nvim ~/.config/herbstluftwm/autostart \
-    '->' keybind "${keys_files[1]}"  chain "${unbind[@]}" , spawn urxvt -e nvim ~/.config/nvim/init.vim \
-    '->' keybind "${keys_files[2]}" chain "${unbind[@]}" , spawn urxvt -e nvim ~/.zshrc \
-    '->' keybind "${keys_files[3]}" chain "${unbind[@]}" , spawn urxvt -e python ~/Dropbox/Helen/einkaufsliste/interactiveEnterDario.py \
+    '->' keybind "${keys_files[0]}" chain "${unbind[@]}" , spawn termite -e "nvim $HOME/.config/herbstluftwm/autostart" \
+    '->' keybind "${keys_files[1]}"  chain "${unbind[@]}" , spawn termite -e "nvim $HOME/.config/nvim/init.vim" \
+    '->' keybind "${keys_files[2]}" chain "${unbind[@]}" , spawn termite -e "nvim $HOME/.zshrc" \
+    '->' keybind "${keys_files[3]}" chain "${unbind[@]}" , spawn termite -e "python $HOME/Dropbox/Helen/einkaufsliste/interactiveEnterDario.py" \
     '->' keybind Escape       chain "${unbind[@]}"
 #leave
 keys_session=( s r e l )
@@ -72,9 +72,9 @@ hc keybind $Mod-d spawn rofi -show combi
 hc keybind $Mod-Return spawn default-terminal
 hc keybind $Mod-Shift-Return spawn open-terminal-here
 hc keybind $Mod-F2 spawn qutebrowser --backend webengine
-hc keybind $Mod-F3 spawn urxvt -e ranger
-hc keybind $Mod-F4 spawn urxvt -e mutt
-hc keybind $Mod-F5 spawn urxvt -e pacui
+hc keybind $Mod-F3 spawn termite -e ranger
+hc keybind $Mod-F4 spawn termite -e mutt
+hc keybind $Mod-F5 spawn termite -e pacui
 
 # basic movement
 # focusing clients
@@ -160,16 +160,16 @@ lock_tag_to_monitor() {
         , new_attr string tags.by-name."$1".my_monitor \
         , set_attr tags.by-name."$1".my_monitor "$2"
 }
-lock_tag_to_monitor 6 0
+lock_tag_to_monitor 1 0
+lock_tag_to_monitor 3 0
+lock_tag_to_monitor 5 0
 lock_tag_to_monitor 7 0
-lock_tag_to_monitor 8 0
 lock_tag_to_monitor 9 0
-lock_tag_to_monitor 10 0
-lock_tag_to_monitor 1 1
 lock_tag_to_monitor 2 1
-lock_tag_to_monitor 3 1
 lock_tag_to_monitor 4 1
-lock_tag_to_monitor 5 1
+lock_tag_to_monitor 6 1
+lock_tag_to_monitor 8 1
+lock_tag_to_monitor 10 1
 
 # cycle through tags
 # add additional information in order to cycle only through a monitor's tags
@@ -282,6 +282,7 @@ hc rule windowtype='_NET_WM_WINDOW_TYPE_DIALOG' focus=on
 hc rule windowtype~'_NET_WM_WINDOW_TYPE_(NOTIFICATION|DOCK|DESKTOP)' manage=off
 #hc rule windowtype~'_KDE_NET_WM_WINDOW_TYPE_OVERRIDE' pseudotile=on
 hc rule windowtype~'_KDE_NET_WM_WINDOW_TYPE_OVERRIDE' floating=on
+hc rule windowtype~'_KDE_NET_WM_WINDOW_TYPE_ON_SCREEN_DISPLAY' manage=off
 #hc rule class~'plasmashell' manage=off
 #hc rule windowtype~'_NET_WM_WINDOW_TYPE_NORMAL' pseudotile=on
 
@@ -305,3 +306,4 @@ hc detect_monitors
 
 #autostart (if not possible to launch from plasma autostart)
 fix_touchscreen
+~/.config/herbstmove/herbstmove/target/release/herbstmove

@@ -1,4 +1,3 @@
-rename 2017-04-21
 find ranger
 find ra
 find ran
@@ -42,6 +41,10 @@ rename lxqt_2016-06-30
 set colorscheme default
 rename 2017-07-07
 rename _splittinV.tex
-rename _basicEquations.tex
+rename 2017-07-14
 open_with 
+rename _basicEquations.tex
+rename _dnsCompare.tex
 delete
+mkdir ogs
+rename Downloadsq

@@ -29,10 +29,10 @@ class Default(ColorScheme):
                 else:
                     fg = magenta
             if context.container:
-                fg = 10
+                fg = 11
             if context.directory:
                 attr |= bold
-                fg = 8
+                fg = 4
             elif context.executable and not \
                     any((context.media, context.container,
                         context.fifo, context.socket)):

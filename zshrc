@@ -30,7 +30,7 @@ WORDCHARS=${WORDCHARS//\/[&.;]}                                 # Don't consider
 
 ## Keybindings section
 case ${TERM} in
-    (rxvt*)
+  *termite)
     zle-keymap-select () {
     if [ $KEYMAP = vicmd ]; then
         printf "\033[2 q"
@@ -45,9 +45,9 @@ case ${TERM} in
     }
     zle -N zle-line-init
     zle -N zle-keymap-select
-    bindkey -v
     ;;
 esac
+bindkey -v
 # Remove delay when entering normal mode (vi)
 KEYTIMEOUT=5
 #bindkey '^[[7~' beginning-of-line                               # Home key
@@ -191,17 +191,17 @@ case ${TERM} in
     ;;
   rxvt*)
     RPROMPT='$(git_prompt_string)'
-	## Base16 Shell color themes.
-	#possible themes: 3024, apathy, ashes, atelierdune, atelierforest, atelierhearth,
-	#atelierseaside, bespin, brewer, chalk, codeschool, colors, default, eighties, 
-	#embers, flat, google, grayscale, greenscreen, harmonic16, isotope, londontube,
-	#marrakesh, mocha, monokai, ocean, paraiso, pop (dark only), railscasts, shapesifter,
-	#solarized, summerfruit, tomorrow, twilight
-	theme="tomorrow"
-	#Possible variants: dark and light
-	shade="dark"
-	BASE16_SHELL="/usr/share/zsh/scripts/base16-shell/base16-$theme.$shade.sh"
-	[[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
+	### Base16 Shell color themes.
+	##possible themes: 3024, apathy, ashes, atelierdune, atelierforest, atelierhearth,
+	##atelierseaside, bespin, brewer, chalk, codeschool, colors, default, eighties, 
+	##embers, flat, google, grayscale, greenscreen, harmonic16, isotope, londontube,
+	##marrakesh, mocha, monokai, ocean, paraiso, pop (dark only), railscasts, shapesifter,
+	##solarized, summerfruit, tomorrow, twilight
+	#theme="tomorrow"
+	##Possible variants: dark and light
+	#shade="dark"
+	#BASE16_SHELL="/usr/share/zsh/scripts/base16-shell/base16-$theme.$shade.sh"
+	#[[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
     # Use autosuggestion
     source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
     ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
@@ -209,20 +209,20 @@ case ${TERM} in
     ;;  
   *)
     RPROMPT='$(git_prompt_string)'
-	## Base16 Shell color themes.
-	#possible themes: 3024, apathy, ashes, atelierdune, atelierforest, atelierhearth,
-	#atelierseaside, bespin, brewer, chalk, codeschool, colors, default, eighties, 
-	#embers, flat, google, grayscale, greenscreen, harmonic16, isotope, londontube,
-	#marrakesh, mocha, monokai, ocean, paraiso, pop (dark only), railscasts, shapesifter,
-	#solarized, summerfruit, tomorrow, twilight
-	theme="monokai"
-	#Possible variants: dark and light
-	shade="dark"
-	BASE16_SHELL="/usr/share/zsh/scripts/base16-shell/base16-$theme.$shade.sh"
-	[[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
-	# Use autosuggestion
-	source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-	ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
-  	ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
+	### Base16 Shell color themes.
+	##possible themes: 3024, apathy, ashes, atelierdune, atelierforest, atelierhearth,
+	##atelierseaside, bespin, brewer, chalk, codeschool, colors, default, eighties, 
+	##embers, flat, google, grayscale, greenscreen, harmonic16, isotope, londontube,
+	##marrakesh, mocha, monokai, ocean, paraiso, pop (dark only), railscasts, shapesifter,
+	##solarized, summerfruit, tomorrow, twilight
+	#theme="monokai"
+	##Possible variants: dark and light
+	#shade="dark"
+	#BASE16_SHELL="/usr/share/zsh/scripts/base16-shell/base16-$theme.$shade.sh"
+	#[[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
+    # Use autosuggestion
+    source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+    ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+      ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
     ;;
 esac

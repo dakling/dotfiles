@@ -1,0 +1,396 @@
+# Default config for sway
+#
+# Copy this to ~/.config/sway/config and edit it to your liking.
+#
+# Read `man 5 sway` for a complete reference.
+
+### Variables
+#
+# Logo key. Use Mod1 for Alt.
+set $mod Mod4
+# Home row direction keys, like vim
+set $left h
+set $down j
+set $up k
+set $right l
+# Your preferred terminal emulator
+set $term termite
+# Your preferred application launcher
+set $menu dmenu_recency
+
+### Output configuration
+#
+# Default wallpaper (more resolutions are available in /usr/share/sway/)
+#output * bg /usr/share/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+output * bg ~/.config/backgrounds/current/istanbul.jpg fill
+#
+# Example configuration:
+#
+#output VGA-1 scale 2
+#output VGA-1 resolution 3840x2160 position 0,0
+#output LVDS-1 resolution 1366x768 position 1920,0
+#
+# You can get the names of your outputs by running: swaymsg -t get_outputs
+
+### Input configuration
+#
+   input "2:7:SynPS/2_Synaptics_TouchPad" {
+       dwt enabled
+       tap enabled
+       natural_scroll enabled
+       middle_emulation enabled
+   }
+#
+   input "1386:230:Wacom_ISDv4_E6_Fi" {
+       dwt enabled
+       tap enabled
+       natural_scroll enabled
+       middle_emulation enabled
+   }
+   input "1386:230:Wacom_ISDv4_E6" {
+       dwt enabled
+       tap enabled
+       natural_scroll enabled
+       middle_emulation enabled
+   }
+# You can get the names of your inputs by running: swaymsg -t get_inputs
+# The escape symbol "\" has to be removed.
+# Read `man 5 sway-input` for more information about this section.
+
+### Key bindings
+#
+# Basics:
+#
+    # start a terminal
+    bindsym $mod+Return exec $term
+    bindsym $mod+Shift+Return exec open-terminal-here
+
+    # kill focused window
+    bindsym $mod+c kill
+
+    # start your launcher
+    bindsym $mod+d exec $menu
+
+    # Drag floating windows by holding down $mod and left mouse button.
+    # Resize them with right mouse button + $mod.
+    # Despite the name, also works for non-floating windows.
+    # Change normal to inverse to use left mouse button for resizing and right
+    # mouse button for dragging.
+    floating_modifier $mod normal
+
+    # reload the configuration file
+    bindsym $mod+Shift+r reload
+
+    # exit sway (logs you out of your wayland session)
+    bindsym $mod+Shift+e exit
+#
+# Moving around:
+#
+    # Move your focus around
+    bindsym $mod+$left focus left
+    bindsym $mod+$down focus down
+    bindsym $mod+$up focus up
+    bindsym $mod+$right focus right
+    # or use $mod+[up|down|left|right]
+    bindsym $mod+Left focus left
+    bindsym $mod+Down focus down
+    bindsym $mod+Up focus up
+    bindsym $mod+Right focus right
+    # _move_ the focused window with the same, but add Shift
+    bindsym $mod+Shift+$left move left
+    bindsym $mod+Shift+$down move down
+    bindsym $mod+Shift+$up move up
+    bindsym $mod+Shift+$right move right
+    # ditto, with arrow keys
+    bindsym $mod+Shift+Left move left
+    bindsym $mod+Shift+Down move down
+    bindsym $mod+Shift+Up move up
+    bindsym $mod+Shift+Right move right
+#Resize outside of the mode
+    bindsym $mod+Alt+$left resize shrink width 10 px or 10 ppt
+    bindsym $mod+Alt+$down resize grow height 10 px or 10 ppt
+    bindsym $mod+Alt+$up resize shrink height 10 px or 10 ppt
+    bindsym $mod+Alt+$right resize grow width 10 px or 10 ppt
+# Workspaces:
+#
+    # switch to workspace
+    bindsym $mod+1 workspace 1
+    bindsym $mod+2 workspace 2
+    bindsym $mod+3 workspace 3
+    bindsym $mod+4 workspace 4
+    bindsym $mod+5 workspace 5
+    bindsym $mod+6 workspace 6
+    bindsym $mod+7 workspace 7
+    bindsym $mod+8 workspace 8
+    bindsym $mod+9 workspace 9
+    bindsym $mod+0 workspace 10
+    # move focused container to workspace
+    bindsym $mod+Shift+1 move container to workspace 1; workspace 1
+    bindsym $mod+Shift+2 move container to workspace 2; workspace 2
+    bindsym $mod+Shift+3 move container to workspace 3; workspace 3
+    bindsym $mod+Shift+4 move container to workspace 4; workspace 4
+    bindsym $mod+Shift+5 move container to workspace 5; workspace 5
+    bindsym $mod+Shift+6 move container to workspace 6; workspace 6
+    bindsym $mod+Shift+7 move container to workspace 7; workspace 7
+    bindsym $mod+Shift+8 move container to workspace 8; workspace 8
+    bindsym $mod+Shift+9 move container to workspace 9; workspace 9
+    bindsym $mod+Shift+0 move container to workspace 10; workspace 10
+    # Note: workspaces can have any name you want, not just numbers.
+    # We just use 1-10 as the default.
+#
+# Layout stuff:
+#
+    # You can "split" the current object of your focus with
+    # $mod+b or $mod+v, for horizontal and vertical splits
+    # respectively.
+    bindsym $mod+b splith
+    bindsym $mod+v splitv
+
+    # Switch the current container between different layout styles
+    #bindsym $mod+s layout stacking
+    bindsym $mod+s layout tabbed
+    bindsym $mod+e layout toggle split
+
+    # Make the current focus fullscreen
+    bindsym $mod+f fullscreen
+
+    # Toggle the current focus between tiling and floating mode
+    bindsym $mod+Shift+space floating toggle
+
+    # Swap focus between the tiling area and the floating area
+    bindsym $mod+space focus mode_toggle
+
+    # move focus to the parent container
+    bindsym $mod+a focus parent
+#
+# Scratchpad:
+#
+    # Sway has a "scratchpad", which is a bag of holding for windows.
+    # You can send windows there and get them back later.
+
+    # Move the currently focused window to the scratchpad
+    bindsym $mod+minus move scratchpad
+
+    # Show the next scratchpad window or hide the focused scratchpad window.
+    # If there are multiple scratchpad windows, this command cycles through them.
+    bindsym $mod+Shift+minus scratchpad show
+#
+# Resizing containers:
+#
+mode "resize" {
+    # left will shrink the containers width
+    # right will grow the containers width
+    # up will shrink the containers height
+    # down will grow the containers height
+    bindsym $left resize shrink width 10 px or 10 ppt
+    bindsym $down resize grow height 10 px or 10 ppt
+    bindsym $up resize shrink height 10 px or 10 ppt
+    bindsym $right resize grow width 10 px or 10 ppt
+
+    # ditto, with arrow keys
+    bindsym Left resize shrink width 10 px or 10 ppt
+    bindsym Down resize grow height 10 px or 10 ppt
+    bindsym Up resize shrink height 10 px or 10 ppt
+    bindsym Right resize grow width 10 px or 10 ppt
+
+    # return to default mode
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+
+#
+# Status Bar:
+#
+# Read `man 5 sway-bar` for more information about this section.
+
+set $active_text_color #00ADEE
+set $active_bg_color #181818
+set $active_border_color #00ADEE
+set $inactive_text_color #c1c8d1
+set $inactive_bg_color #181818
+set $inactive_border_color #181818
+set $bg_color #383c4a 
+bar {
+    position top
+        status_command py3status
+        ## please set your primary output first. Example: 'xrandr --output eDP1 --primary'
+        tray_output primary
+        font xft:Source Code Pro 11
+        #strip_workspace_numbers yes
+        colors {
+            background $transparent
+                background $active_bg_color
+                statusline $active_text_color
+                separator  #454947
+
+#                                  border  backgr. text
+                focused_workspace  $active_border_color $active_bg_color $active_text_color
+                active_workspace   $inactive_border_color $active_bg_color $active_text_color
+                inactive_workspace $inactive_border_color $inactive_bg_color $inactive_text_color
+                urgent_workspace   $active_border_color $active_bg_color $active_text_color
+        }
+}
+# Start Applications
+bindsym $mod+F2 exec qutebrowser --backend webengine
+bindsym $mod+F3 exec $term -e ranger
+bindsym $mod+F4 exec $term -e mutt
+bindsym $mod+F5 exec $term -e 'pacui'
+bindsym $mod+F9 exec --no-startup-id /usr/local/bin/kb-light.py +
+bindsym $mod+F8 exec --no-startup-id /usr/local/bin/kb-light.py -
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume $(pacmd list-sinks |awk '/* index:/{print $3}') +5%
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume $(pacmd list-sinks |awk '/* index:/{print $3}') -5%
+bindsym XF86AudioMute exec pactl set-sink-mute $(pacmd list-sinks |awk '/* index:/{print $3}') toggle
+bindsym XF86MonBrightnessDown exec dsplight down 5
+bindsym XF86MonBrightnessUp exec dsplight up 5
+
+focus_follows_mouse yes
+mouse_warping output
+#border style
+default_border pixel 4
+new_float normal
+#Custom modes
+#Program starter
+mode "Quick_Program_Starter" {
+bindsym i      exec firefox; mode default
+bindsym e      exec thunderbird; mode default
+bindsym d      exec dolphin; mode default
+bindsym s      exec systemsettings5; mode default
+bindsym p      exec pamac-manager; mode default
+bindsym t      exec $term; mode default
+bindsym m      exec sayonara; mode default
+bindsym a      exec $term -e pulsemixer; mode default
+bindsym c      exec nmcli_dmenu; mode default
+bindsym Return mode "default"
+bindsym Escape mode "default"
+}
+bindsym $mod+x mode "Quick_Program_Starter"
+#File opener
+bindsym $mod+Shift+x mode "Quick_File_Opener"
+mode "Quick_File_Opener" {
+bindsym e      exec $term -e "python /home/dario/Dropbox/Helen/einkaufsliste/interactiveEnterDario.py"; mode default
+bindsym c      exec $term -e "nvim $HOME/.config/sway/config"; mode default
+bindsym v      exec $term -e "nvim $HOME/.config/nvim/init.vim"; mode default
+bindsym z      exec $term -e "nvim $HOME/.zshrc"; mode default
+bindsym Return mode "default"
+bindsym Escape mode "default"
+}
+set $mode_file_opener Quick File Launcher
+# Set shut down, restart and locking features
+bindsym $mod+w mode "Exit"
+mode "Exit" {
+bindsym e exit, mode "default"
+bindsym h exec --no-startup-id hibernate, mode "default"
+bindsym r exec --no-startup-id reboot, mode "default"
+bindsym s exec --no-startup-id shutdown now, mode "default"
+bindsym l exec --no-startup-id swaylock -i ~/.config/backgrounds/current/istanbul.jpg --scaling fill, mode "default"
+# exit system mode: "Enter" or "Escape"
+bindsym Return mode "default"
+bindsym Escape mode "default"
+}
+set $mode_normal Normal Mode
+# Set shut down, restart and locking features
+bindsym $mod+Escape mode "Normal"
+mode "Normal" {
+# start a terminal
+bindsym +Return exec $term
+bindsym +Shift+Return exec open-terminal-here
+# kill focused window
+bindsym +c kill
+# start your launcher
+bindsym +d exec $menu
+# Move your focus around
+bindsym $left focus left
+bindsym $down focus down
+bindsym $up focus up
+bindsym $right focus right
+# or use +[up|down|left|right]
+bindsym Left focus left
+bindsym Down focus down
+bindsym Up focus up
+bindsym Right focus right
+# _move_ the focused window with the same, but add Shift
+bindsym Shift+$left move left
+bindsym Shift+$down move down
+bindsym Shift+$up move up
+bindsym Shift+$right move right
+# ditto, with arrow keys
+bindsym Shift+Left move left
+bindsym Shift+Down move down
+bindsym Shift+Up move up
+bindsym Shift+Right move right
+# Workspaces:
+# switch to workspace
+bindsym 1 workspace 1
+bindsym 2 workspace 2
+bindsym 3 workspace 3
+bindsym 4 workspace 4
+bindsym 5 workspace 5
+bindsym 6 workspace 6
+    bindsym 7 workspace 7
+    bindsym 8 workspace 8
+    bindsym 9 workspace 9
+    bindsym 0 workspace 10
+    # move focused container to workspace
+    bindsym Shift+1 move container to workspace 1; workspace 1
+    bindsym Shift+2 move container to workspace 2; workspace 2
+    bindsym Shift+3 move container to workspace 3; workspace 3
+    bindsym Shift+4 move container to workspace 4; workspace 4
+    bindsym Shift+5 move container to workspace 5; workspace 5
+    bindsym Shift+6 move container to workspace 6; workspace 6
+    bindsym Shift+7 move container to workspace 7; workspace 7
+    bindsym Shift+8 move container to workspace 8; workspace 8
+    bindsym Shift+9 move container to workspace 9; workspace 9
+    bindsym Shift+0 move container to workspace 10; workspace 10
+    # Note: workspaces can have any name you want, not just numbers.
+    # We just use 1-10 as the default.
+    # Layout stuff:
+    bindsym b splith
+    bindsym v splitv
+    # Switch the current container between different layout styles
+    bindsym s layout tabbed
+    bindsym e layout toggle split
+    # Make the current focus fullscreen
+    bindsym f fullscreen
+    # Toggle the current focus between tiling and floating mode
+    bindsym Shift+space floating toggle
+    # Swap focus between the tiling area and the floating area
+    bindsym space focus mode_toggle
+    # move focus to the parent container
+    bindsym a focus parent
+    # Scratchpad:
+    # Move the currently focused window to the scratchpad
+    bindsym minus move scratchpad
+    # Show the next scratchpad window or hide the focused scratchpad window.
+    bindsym Shift+minus scratchpad show
+    #Launch applications
+    bindsym F2 exec qutebrowser --backend webengine
+    bindsym F3 exec $term -e ranger
+    bindsym F4 exec $term -e mutt
+    bindsym F5 exec $term -e 'pacui'
+    #modes
+    bindsym r mode "resize"
+    bindsym w mode "Exit"
+    bindsym x mode "Quick_Program_Starter"
+    bindsym Shift+x mode "Quick_File_Opener"
+    # exit normal mode: "i" or "Escape"
+    bindsym i mode "default"
+    bindsym Escape mode "default"
+}
+# Workspaces
+workspace 1 output LVDS-1
+workspace 3 output LVDS-1
+workspace 5 output LVDS-1
+workspace 7 output LVDS-1
+workspace 9 output LVDS-1
+workspace 2 output VGA-1
+workspace 4 output VGA-1
+workspace 6 output VGA-1
+workspace 8 output VGA-1
+workspace 10 output VGA-1
+
+#autostart
+exec dropbox
+exec /usr/lib/polkit-kde/polkit-kde-authentication-agent-1
+
+include /etc/sway/config.d/*

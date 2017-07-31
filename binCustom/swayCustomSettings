@@ -1,0 +1,5 @@
+export XKB_DEFAULT_LAYOUT=de
+export XKB_DEFAULT_VARIANT=nodeadkeys
+export XKB_DEFAULT_OPTIONS=caps:escape
+export SWAY_CURSOR_THEME=Breeze
+sway

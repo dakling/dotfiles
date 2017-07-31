@@ -30,7 +30,7 @@ for k in "${keys_apps[@]}" Escape ; do
     unbind+=( , keyunbind "$k" )
 done
 hc keybind $Mod-x chain \
-    '->' keybind "${keys_apps[0]}" chain "${unbind[@]}" , spawn firefox-nightly \
+    '->' keybind "${keys_apps[0]}" chain "${unbind[@]}" , spawn firefox\
     '->' keybind "${keys_apps[1]}" chain "${unbind[@]}" , spawn dolphin \
     '->' keybind "${keys_apps[2]}" chain "${unbind[@]}" , spawn systemsettings5 \
     '->' keybind "${keys_apps[3]}" chain "${unbind[@]}" , spawn pamac-manager \
@@ -66,7 +66,7 @@ hc keybind $Mod-w chain \
 #hc keybind $Mod-Shift-q quit
 hc keybind $Mod-Shift-r reload
 hc keybind $Mod-c close_and_remove
-hc keybind $Mod-Shift-c close
+hc keybind $Mod-Shift-c spawn xkill
 # start programs
 hc keybind $Mod-d spawn rofi -show combi
 hc keybind $Mod-Return spawn default-terminal
@@ -213,7 +213,7 @@ hc keybind $Mod-r remove
 hc keybind $Mod-s floating toggle
 hc keybind $Mod-f fullscreen toggle
 hc keybind $Mod-t pseudotile toggle
-hc keybind $Mod-m cycle_layout +1 max grid
+hc keybind $Mod-m cycle_layout +1 max horizontal
 # The following cycles through the available layouts within a frame, but skips
 # layouts, if the layout change wouldn't affect the actual window positions.
 # I.e. if there are two windows within a frame, the grid layout is skipped.
@@ -230,9 +230,9 @@ hc mousebind $Mod-Button3 resize
 
 # focus
 hc keybind $Mod-y   cycle_monitor
-hc keybind $Mod-Tab         cycle_all +1
-hc keybind $Mod-Shift-Tab   cycle_all -1
-hc keybind $Mod-Shift-c cycle
+hc keybind Alt-Tab         cycle_all +1
+hc keybind Alt-Shift-Tab   cycle_all -1
+hc keybind $Mod-Tab cycle
 hc keybind $Mod-i jumpto urgent
 
 # theme
@@ -284,6 +284,7 @@ hc rule windowtype~'_NET_WM_WINDOW_TYPE_(NOTIFICATION|DOCK|DESKTOP)' manage=off
 hc rule windowtype~'_KDE_NET_WM_WINDOW_TYPE_OVERRIDE' floating=on
 hc rule windowtype~'_KDE_NET_WM_WINDOW_TYPE_ON_SCREEN_DISPLAY' manage=off
 #hc rule class~'plasmashell' manage=off
+#hc rule class~'plasmashell' floating=on
 #hc rule windowtype~'_NET_WM_WINDOW_TYPE_NORMAL' pseudotile=on
 
 # unlock, just to be sure

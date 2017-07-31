@@ -1,7 +1,3 @@
-find ranger
-find ra
-find ran
-rename _eulerAveraged.tex
 find mm1
 rename George_W._Bluman,_Alexei_F._Cheviakov,_Stephen_C._Anco_auth._Applications_of_Symmetry_Methods_to_Partial_Differential_Equation.pdf_
 rename George_W._Bluman,_Alexei_F._Cheviakov,_Stephen_C._Anco_auth._Applications_of_Symmetry_Methof.pdf
@@ -24,7 +20,6 @@ open_with gthumb
 rename ArbeitszeugnisSLA.pdf
 rename _problemDet.tex_
 rename _problemDet.tex
-open_with nvim
 shell
 h mkdir
 help mkdir
@@ -45,6 +40,11 @@ rename 2017-07-14
 open_with 
 rename _basicEquations.tex
 rename _dnsCompare.tex
-delete
 mkdir ogs
 rename Downloadsq
+rename 2017-07-28
+rename _turbulenceCases.tex
+shell 
+open_with nvim
+delete
+open_with xournal

@@ -98,6 +98,8 @@ au Filetype tex setlocal spell spelllang=en
 au Filetype tex nnoremap <buffer> <leader>vh :sp header.tex<cr>
 "view main file
 au Filetype tex nnoremap <buffer> <leader>vm :sp ../main.tex<cr>
+"view bib file
+au Filetype tex nnoremap <buffer> <leader>vb :sp ../bibliography.bib<cr>
 " make link to main.tex
 au Filetype tex nnoremap <buffer> <leader>ml ggi%! TEX root = ../main.tex <esc> o <esc>
 

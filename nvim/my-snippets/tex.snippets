@@ -18,8 +18,8 @@ snippet ov "Overbar"
 \overbar{$1} $0
 endsnippet
 
-snippet $ "Math Mode"
-$$1$ $0
+snippet $ "Math Mode" i
+$$1$$0
 endsnippet
 
 snippet fro "partial derivative with overbar"
@@ -40,4 +40,12 @@ endsnippet
 
 snippet eg "eg" 
 e.g.\ 
+endsnippet
+
+snippet ref "Reference" i
+~\ref{$1} $0
+endsnippet
+
+snippet nom "Nomenclature Entry"
+\nomenclature[${1:R}]{$$2$}{$3}$0
 endsnippet

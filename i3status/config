@@ -9,7 +9,7 @@
 general {
         colors = true
         interval = 5
-        color_good = "#758483"
+        color_good = "#00ADEE"
         color_bad = "#929CA8"
         color_degraded = "#DC322F"
 }
@@ -41,6 +41,7 @@ load {
 disk "/" {
         # format = " hdd %avail "
         format = " ⛁ %avail "
+        #on_click 1 = " exec termite"
 }
 
 ethernet _first_ {
@@ -84,10 +85,11 @@ tztime local {
 }
 
 dropboxd_status {
-    format = " dropbox {status} "
-    status_on = "up to date"
+    format = "  {status} "
+    status_on = "✓"
     status_off = "isn't running"
     status_busy = "busy"
+    color_good = "#00ff00"
 }
 
 #volume_status {

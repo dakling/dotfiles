@@ -1,0 +1,89 @@
+set $mode_normal Normal Mode
+# Set shut down, restart and locking features
+bindsym $mod+Escape mode "Normal"
+mode "Normal" {
+# start a terminal
+bindsym +Return exec $term
+bindsym +Shift+Return exec open-terminal-here
+# kill focused window
+bindsym +c kill
+# start your launcher
+bindsym +d exec $menu
+# Move your focus around
+bindsym $left focus left
+bindsym $down focus down
+bindsym $up focus up
+bindsym $right focus right
+# or use +[up|down|left|right]
+bindsym Left focus left
+bindsym Down focus down
+bindsym Up focus up
+bindsym Right focus right
+# _move_ the focused window with the same, but add Shift
+bindsym Shift+$left move left
+bindsym Shift+$down move down
+bindsym Shift+$up move up
+bindsym Shift+$right move right
+# ditto, with arrow keys
+bindsym Shift+Left move left
+bindsym Shift+Down move down
+bindsym Shift+Up move up
+bindsym Shift+Right move right
+# Workspaces:
+# switch to workspace
+bindsym 1 workspace 1
+bindsym 2 workspace 2
+bindsym 3 workspace 3
+bindsym 4 workspace 4
+bindsym 5 workspace 5
+bindsym 6 workspace 6
+    bindsym 7 workspace 7
+    bindsym 8 workspace 8
+    bindsym 9 workspace 9
+    bindsym 0 workspace 10
+    # move focused container to workspace
+    bindsym Shift+1 move container to workspace 1; workspace 1
+    bindsym Shift+2 move container to workspace 2; workspace 2
+    bindsym Shift+3 move container to workspace 3; workspace 3
+    bindsym Shift+4 move container to workspace 4; workspace 4
+    bindsym Shift+5 move container to workspace 5; workspace 5
+    bindsym Shift+6 move container to workspace 6; workspace 6
+    bindsym Shift+7 move container to workspace 7; workspace 7
+    bindsym Shift+8 move container to workspace 8; workspace 8
+    bindsym Shift+9 move container to workspace 9; workspace 9
+    bindsym Shift+0 move container to workspace 10; workspace 10
+    # Note: workspaces can have any name you want, not just numbers.
+    # We just use 1-10 as the default.
+    # Layout stuff:
+    bindsym b splith
+    bindsym v splitv
+    # Switch the current container between different layout styles
+    bindsym s layout tabbed
+    bindsym e layout toggle split
+    # Make the current focus fullscreen
+    bindsym f fullscreen
+    # Toggle the current focus between tiling and floating mode
+    bindsym Shift+space floating toggle
+    # Swap focus between the tiling area and the floating area
+    bindsym space focus mode_toggle
+    # move focus to the parent container
+    bindsym a focus parent
+    # Scratchpad:
+    # Move the currently focused window to the scratchpad
+    bindsym minus move scratchpad
+    # Show the next scratchpad window or hide the focused scratchpad window.
+    bindsym Shift+minus scratchpad show
+    #Launch applications
+    bindsym F2 exec qutebrowser --backend webengine
+    bindsym F3 exec $term -e ranger
+    bindsym F4 exec $term -e mutt
+    bindsym F5 exec $term -e 'pacui'
+    #modes
+    bindsym r mode "resize"
+    bindsym w mode "Exit"
+    bindsym x mode "Quick_Program_Starter"
+    bindsym Shift+x mode "Quick_File_Opener"
+    # exit normal mode: "i" or "Escape"
+    bindsym i mode "default"
+    bindsym Escape mode "default"
+}

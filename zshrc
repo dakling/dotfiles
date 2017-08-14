@@ -25,6 +25,7 @@ HISTSIZE=1000
 SAVEHIST=500
 export EDITOR=/usr/bin/nvim
 export VISUAL=/usr/bin/nvim
+export QT_QPA_PLATFORMTHEME="qt5ct"
 WORDCHARS=${WORDCHARS//\/[&.;]}                                 # Don't consider certain characters part of the word
 
 
@@ -75,7 +76,6 @@ KEYTIMEOUT=5
 
 ## Alias section 
 alias ls="ls --color"
-alias hc="herbstclient"
 
 # Theming section  
 autoload -U compinit colors zcalc

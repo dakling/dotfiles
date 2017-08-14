@@ -5,20 +5,21 @@ Plug 'cocopon/iceberg.vim'
 Plug 'jiangmiao/auto-pairs'
 "Plug 'jvirtanen/vim-octave'
 Plug 'scrooloose/nerdcommenter'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+"Plug 'vim-airline/vim-airline'
+"Plug 'vim-airline/vim-airline-themes'
 Plug 'scrooloose/syntastic'
 Plug 'lervag/vimtex'
 "Plug 'vim-scripts/gmsh.vim'
 Plug 'dhruvasagar/vim-table-mode'
 Plug 'jceb/vim-orgmode'
 "Plug 'jalvesaq/Nvim-R'
-Plug 'nvie/vim-flake8'
+"Plug 'nvie/vim-flake8'
+Plug 'python-mode/python-mode'
 Plug 'tpope/vim-surround'
 Plug 'ajh17/VimCompletesMe'
 Plug 'bfredl/nvim-miniyank'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
+"Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+"Plug 'junegunn/fzf.vim'
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'justinmk/vim-sneak'
@@ -48,9 +49,33 @@ set background=dark
 "let g:gruvbox_contrast_dark="soft"
 "let g:gruvbox_contrast_light="hard"
 colorscheme iceberg
-" Airline-Settings
-"let g:airline_powerline_fonts = 1
-let g:Powerline_symbols = 'fancy'
+"customize statusline
+function! InsertStatuslineColor(mode)
+  if a:mode == 'i'
+    hi statusline guibg=cyan ctermfg=110 guifg=Black ctermbg=0
+  elseif a:mode == 'r'
+    hi statusline guibg=Purple ctermfg=140 guifg=Black ctermbg=0
+  else
+    hi statusline guibg=DarkBlue ctermfg=1 guifg=Black ctermbg=0
+  endif
+endfunction
+
+au InsertEnter * call InsertStatuslineColor(v:insertmode)
+au InsertLeave * hi statusline guibg=DarkGrey ctermfg=8 guifg=White ctermbg=110
+
+" default the statusline to grey when entering Vim
+hi statusline guibg=DarkGrey ctermfg=8 guifg=White ctermbg=110
+
+" Formats the statusline
+set statusline=%f                           " file name
+set statusline+=%y      "filetype
+set statusline+=%h      "help file flag
+set statusline+=%m      "modified flag
+set statusline+=%r      "read only flag
+set statusline+=%=        " Switch to the right side
+set statusline+=%l        " Current line
+set statusline+=/         " Separator
+set statusline+=%L        " Total lines
 " Keystrokes
 let maplocalleader = "-"
 let mapleader = "\<Space>"
@@ -77,6 +102,7 @@ augroup end
 let python_highlight_all=1
 au BufNewFile,BufRead *.py set fileformat=unix
 au BufNewFile,BufRead *.py let g:acp_enableAtStartup = 1
+let g:pymode_python = 'python3'
 " UltiSnips config
 let g:UltiSnipsExpandTrigger="xx"
 let g:UltiSnipsJumpForwardTrigger="xx"
@@ -148,11 +174,6 @@ inoremap <expr> <c-x><c-k> fzf#vim#complete#word({'left': '15%'})
 " Replace the default dictionary completion with fzf-based fuzzy completion
 inoremap <expr> <c-x><c-k> fzf#complete('cat /usr/share/dict/american-english')
 "inoremap <expr> <c-x><c-k> fzf#complete('cat /usr/share/dict/german')
-" neosnippet
-" Plugin key-mappings.
-"inoremap <C-k>     <Plug>(neosnippet_expand_or_jump)
-"snoremap <C-k>     <Plug>(neosnippet_expand_or_jump)
-"xnoremap <C-k>     <Plug>(neosnippet_expand_target)
 " vim-sneak
 let g:sneak#streak = 0
 nmap f <Plug>Sneak_f

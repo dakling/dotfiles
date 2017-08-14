@@ -1,8 +1,6 @@
-# Default config for sway
+# Default config for i3
 #
-# Copy this to ~/.config/sway/config and edit it to your liking.
-#
-# Read `man 5 sway` for a complete reference.
+# Copy this to ~/.config/i3/config and edit it to your liking.
 
 ### Variables
 #
@@ -16,7 +14,7 @@ set $right l
 # Your preferred terminal emulator
 set $term termite
 # Your preferred application launcher
-set $menu dmenu_recency
+#set $menu dmenu_extended_run
 
 ### Key bindings
 #
@@ -24,23 +22,27 @@ set $menu dmenu_recency
 #
     # start a terminal
     bindsym $mod+Return exec $term
-    bindsym $mod+Shift+Return exec open-terminal-here
+    #bindsym $mod+Shift+Return exec open-terminal-here
 
     # kill focused window
     bindsym $mod+c kill
 
     # start your launcher
-    bindsym $mod+d exec $menu
+    bindsym $mod+d exec --no-startup-id albert show
+    bindsym $mod+z exec --no-startup-id dmenu_extended_run
+    #bindsym $mod+shift+d exec albert show
+    #bindsym $mod+ctrl+d exec --no-startup-id xlunch
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
     # Despite the name, also works for non-floating windows.
     # Change normal to inverse to use left mouse button for resizing and right
     # mouse button for dragging.
-    floating_modifier $mod normal
+    #floating_modifier $mod normal
 
     # reload the configuration file
-    bindsym $mod+Shift+r reload
+    bindsym $mod+Shift+r restart
+    bindsym $mod+Shift+c reload
 
     # exit sway (logs you out of your wayland session)
     bindsym $mod+Shift+e exit
@@ -68,10 +70,10 @@ set $menu dmenu_recency
     bindsym $mod+Shift+Up move up
     bindsym $mod+Shift+Right move right
 #Resize outside of the mode
-    bindsym $mod+Alt+$left resize shrink width 10 px or 10 ppt
-    bindsym $mod+Alt+$down resize grow height 10 px or 10 ppt
-    bindsym $mod+Alt+$up resize shrink height 10 px or 10 ppt
-    bindsym $mod+Alt+$right resize grow width 10 px or 10 ppt
+    bindsym $mod+Ctrl+$left resize shrink width 10 px or 10 ppt
+    bindsym $mod+Ctrl+$down resize grow height 10 px or 10 ppt
+    bindsym $mod+Ctrl+$up resize shrink height 10 px or 10 ppt
+    bindsym $mod+Ctrl+$right resize grow width 10 px or 10 ppt
 # Workspaces:
 #
     # switch to workspace
@@ -196,7 +198,7 @@ bar {
 bindsym $mod+F2 exec qutebrowser --backend webengine
 bindsym $mod+F3 exec $term -e ranger
 bindsym $mod+F4 exec $term -e mutt
-bindsym $mod+F5 exec $term -e 'pacui'
+bindsym $mod+F5 exec $term -e pacui
 bindsym $mod+F9 exec --no-startup-id /usr/local/bin/kb-light.py +
 bindsym $mod+F8 exec --no-startup-id /usr/local/bin/kb-light.py -
 bindsym XF86AudioRaiseVolume exec changeVolume +5
@@ -208,15 +210,16 @@ bindsym XF86MonBrightnessUp exec dsplight up 5
 focus_follows_mouse yes
 mouse_warping output
 #border style
-default_border pixel 4
+#default_border pixel 4
+new_window pixel 4
 new_float normal
 #Custom modes
 #Program starter
 mode "Quick_Program_Starter" {
 bindsym i      exec firefox; mode default
 bindsym e      exec thunderbird; mode default
-bindsym d      exec dolphin; mode default
-bindsym s      exec systemsettings5; mode default
+bindsym d      exec pcmanfm; mode default
+bindsym s      exec lxappearance; mode default
 bindsym p      exec pamac-manager; mode default
 bindsym t      exec $term; mode default
 bindsym m      exec $term -e cmus; mode default
@@ -230,8 +233,9 @@ bindsym $mod+x mode "Quick_Program_Starter"
 bindsym $mod+Shift+x mode "Quick_File_Opener"
 mode "Quick_File_Opener" {
 bindsym e      exec $term -e "python /home/dario/Dropbox/Helen/einkaufsliste/interactiveEnterDario.py"; mode default
-bindsym c      exec $term -e "nvim $HOME/.config/sway/config"; mode default
+bindsym c      exec $term -e "nvim $HOME/.config/i3/config"; mode default
 bindsym v      exec $term -e "nvim $HOME/.config/nvim/init.vim"; mode default
+bindsym q      exec $term -e "nvim /home/dario/.config/qutebrowser/qutebrowser.conf"; mode default
 bindsym z      exec $term -e "nvim $HOME/.zshrc"; mode default
 bindsym Return mode "default"
 bindsym Escape mode "default"
@@ -240,14 +244,16 @@ set $mode_file_opener Quick File Launcher
 # Set shut down, restart and locking features
 bindsym $mod+w mode "Exit"
 mode "Exit" {
-bindsym e exit, mode "default"
-bindsym h exec --no-startup-id hibernate, mode "default"
-bindsym r exec --no-startup-id reboot, mode "default"
-bindsym s exec --no-startup-id shutdown now, mode "default"
-bindsym l exec --no-startup-id i3exit --lock, mode "default"
-# exit system mode: "Enter" or "Escape"
-bindsym Return mode "default"
-bindsym Escape mode "default"
+    bindsym l exec --no-startup-id i3exit lock, mode "default"
+    bindsym b exec --no-startup-id i3exit suspend, mode "default"
+    bindsym u exec --no-startup-id i3exit switch_user, mode "default"
+    bindsym e exec --no-startup-id i3exit logout, mode "default"
+    bindsym h exec --no-startup-id i3exit hibernate, mode "default"
+    bindsym r exec --no-startup-id i3exit reboot, mode "default"
+    bindsym s exec --no-startup-id i3exit shutdown, mode "default"
+    # exit system mode: "Enter" or "Escape"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
 }
 # Workspaces
 workspace 1 output LVDS1
@@ -262,5 +268,20 @@ workspace 8 output VGA1
 workspace 10 output VGA1
 
 #autostart
-exec dropbox
-exec /usr/lib/polkit-kde/polkit-kde-authentication-agent-1
+exec --no-startup-id /usr/lib/polkit-kde/polkit-kde-authentication-agent-1
+exec --no-startup-id sleep 1; compton -b
+exec --no-startup-id nm-applet
+exec --no-startup-id pamac-tray
+exec --no-startup-id pa-applet
+exec --no-startup-id clipit
+exec --no-startup-id dropbox
+exec --no-startup-id redshift-gtk;
+exec --no-startup-id conky
+exec --no-startup-id easystroke
+exec --no-startup-id indicator-kdeconnect
+exec --no-startup-id onboard
+#exec --no-startup-id xautolock -time 5 -locker blurlock
+exec --no-startup-id setxkbmap -option ctrl:nocaps; sleep 1; xcape -e 'Control_L=Escape'  
+exec_always --no-startup-id fix_xcursor
+exec --no-startup-id monitor_home
+exec --no-startup-id albert

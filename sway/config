@@ -15,8 +15,6 @@ set $up k
 set $right l
 # Your preferred terminal emulator
 set $term termite
-# Your preferred application launcher
-set $menu dmenu_recency
 
 ### Output configuration
 #
@@ -69,7 +67,7 @@ output * bg ~/.config/backgrounds/current/istanbul.jpg fill
     bindsym $mod+c kill
 
     # start your launcher
-    bindsym $mod+d exec $menu
+    bindsym $mod+d exec albert show
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
@@ -213,9 +211,9 @@ set $inactive_border_color #181818
 set $bg_color #383c4a 
 bar {
     position top
-        status_command py3status
+        #status_command swaybar.py
         ## please set your primary output first. Example: 'xrandr --output eDP1 --primary'
-        tray_output primary
+        tray_output all
         font xft:Source Code Pro 11
         #strip_workspace_numbers yes
         colors {
@@ -254,8 +252,8 @@ new_float normal
 mode "Quick_Program_Starter" {
 bindsym i      exec firefox; mode default
 bindsym e      exec thunderbird; mode default
-bindsym d      exec dolphin; mode default
-bindsym s      exec systemsettings5; mode default
+bindsym d      exec pcmanfm; mode default
+bindsym s      exec lxappearance; mode default
 bindsym p      exec pamac-manager; mode default
 bindsym t      exec $term; mode default
 bindsym m      exec $term -e cmus; mode default
@@ -302,6 +300,7 @@ workspace 10 output VGA-1
 
 #autostart
 exec dropbox
-exec /usr/lib/polkit-kde/polkit-kde-authentication-agent-1
+exec albert
+#exec /usr/lib/polkit-kde/polkit-kde-authentication-agent-1
 
 include /etc/sway/config.d/*

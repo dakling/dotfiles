@@ -214,7 +214,7 @@ bar {
         #status_command swaybar.py
         ## please set your primary output first. Example: 'xrandr --output eDP1 --primary'
         tray_output all
-        font xft:Source Code Pro 11
+        font xft:DejaVu Sans 10
         #strip_workspace_numbers yes
         colors {
             background $transparent

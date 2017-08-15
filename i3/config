@@ -1,7 +1,7 @@
 # Default config for i3
 #
 # Copy this to ~/.config/i3/config and edit it to your liking.
-
+font xft:DejaVu Sans 10
 ### Variables
 #
 # Logo key. Use Mod1 for Alt.
@@ -13,6 +13,7 @@ set $up k
 set $right l
 # Your preferred terminal emulator
 set $term termite
+set $editor nvim-termite
 # Your preferred application launcher
 #set $menu dmenu_extended_run
 
@@ -179,7 +180,6 @@ bar {
         status_command py3status
         ## please set your primary output first. Example: 'xrandr --output eDP1 --primary'
         tray_output primary
-        font xft:Source Code Pro 11
         #strip_workspace_numbers yes
         colors {
             background $transparent
@@ -233,10 +233,11 @@ bindsym $mod+x mode "Quick_Program_Starter"
 bindsym $mod+Shift+x mode "Quick_File_Opener"
 mode "Quick_File_Opener" {
 bindsym e      exec $term -e "python /home/dario/Dropbox/Helen/einkaufsliste/interactiveEnterDario.py"; mode default
-bindsym c      exec $term -e "nvim $HOME/.config/i3/config"; mode default
-bindsym v      exec $term -e "nvim $HOME/.config/nvim/init.vim"; mode default
-bindsym q      exec $term -e "nvim /home/dario/.config/qutebrowser/qutebrowser.conf"; mode default
-bindsym z      exec $term -e "nvim $HOME/.zshrc"; mode default
+bindsym c      exec $editor $HOME/.config/i3/config; mode default
+bindsym v      exec $editor $HOME/.config/nvim/init.vim; mode default
+bindsym q      exec $editor /home/dario/.config/qutebrowser/qutebrowser.conf; mode default
+bindsym t      exec $editor /home/dario/.config/termite/config; mode default
+bindsym z      exec $editor $HOME/.zshrc; mode default
 bindsym Return mode "default"
 bindsym Escape mode "default"
 }
@@ -272,7 +273,7 @@ exec --no-startup-id /usr/lib/polkit-kde/polkit-kde-authentication-agent-1
 exec --no-startup-id sleep 1; compton -b
 exec --no-startup-id nm-applet
 exec --no-startup-id pamac-tray
-exec --no-startup-id pa-applet
+#exec --no-startup-id pa-applet
 exec --no-startup-id clipit
 exec --no-startup-id dropbox
 exec --no-startup-id redshift-gtk;

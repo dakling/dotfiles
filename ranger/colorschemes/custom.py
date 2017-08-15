@@ -32,7 +32,7 @@ class Default(ColorScheme):
                 fg = 11
             if context.directory:
                 attr |= bold
-                fg = 4
+                fg = 110
             elif context.executable and not \
                     any((context.media, context.container,
                         context.fifo, context.socket)):

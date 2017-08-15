@@ -39,12 +39,12 @@ rename Downloadsq
 rename 2017-07-28
 rename _turbulenceCases.tex
 shell 
-open_with nvim
 open_with xournal
 rename _channelFlow.tex
 search .iso
 rename 2017-08-18
 find F
-delete
 rename _definingTheta.tex
 open_with quarry
+open_with nvim
+delete

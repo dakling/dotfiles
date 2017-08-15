@@ -1,3 +1,5 @@
 "Guifont DejaVu Sans Mono for Powerline:h12
-Guifont Source\ Code\ Pro\ for\ Powerline:h10
-"colorscheme iceberg
+GuiFont Inconsolata:h10
+GuiLinespace 5
+colorscheme iceberg
+set background=dark

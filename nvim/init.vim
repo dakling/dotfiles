@@ -3,6 +3,7 @@ call plug#begin('~/.config/nvim/plugged')
 "Plug 'morhetz/gruvbox'
 Plug 'cocopon/iceberg.vim'
 Plug 'jiangmiao/auto-pairs'
+Plug 'bkad/CamelCaseMotion'
 "Plug 'jvirtanen/vim-octave'
 "Plug 'scrooloose/nerdcommenter'
 Plug 'tpope/vim-commentary'
@@ -18,7 +19,8 @@ Plug 'jceb/vim-orgmode'
 Plug 'python-mode/python-mode'
 Plug 'tpope/vim-surround'
 Plug 'wellle/targets.vim'
-Plug 'ajh17/VimCompletesMe'
+" Plug 'ajh17/VimCompletesMe'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'bfredl/nvim-miniyank'
 "Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 "Plug 'junegunn/fzf.vim'
@@ -29,7 +31,7 @@ Plug 'easymotion/vim-easymotion'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-repeat'
-"Plug 'effi/vim-OpenFoam-syntax'
+Plug 'effi/vim-OpenFoam-syntax'
 call plug#end()
 "Configuration starts here
 "General Settings
@@ -76,7 +78,7 @@ set statusline+=%m      "modified flag
 set statusline+=%r      "read only flag
 set statusline+=%=        " Switch to the right side
 set statusline+=%c        " Current column
-set statusline+=,         " Separator
+set statusline+=;         " Separator
 set statusline+=%l        " Current line
 set statusline+=/         " Separator
 set statusline+=%L        " Total lines
@@ -84,20 +86,26 @@ set statusline+=%L        " Total lines
 let maplocalleader = "-"
 let mapleader = "\<Space>"
 "inoremap jk <ESC>
-nnoremap <leader>w :w<cr>
-nnoremap <leader>q :x<cr>
+nnoremap <leader>fs :w<cr>
 nnoremap <leader>sw :write !sudo tee %<cr>
+nnoremap <leader>w <C-w>
 nnoremap Y y$
 " Source/edit .vimrc file
 nnoremap <leader>sv :source $MYVIMRC<cr>
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 vnoremap . :norm.<CR>
 nnoremap <leader><leader> :
+" camelCase
+call camelcasemotion#CreateMotionMappings('ä')
 " for openfoam
 " change bc to zerogradient
 nnoremap <leader>fzg di{i<tab>type<tab>zerogradient;<cr><tab><esc>
 " change bc to fixedvalue
 nnoremap <leader>ffv di{i<tab>type<tab>fixedvalue;<cr><tab><tab>value<tab>uniform <++>;<cr><tab><esc>
+" for BoSSSPad
+augroup filetypedetect
+    autocmd bufnewfile,bufread *.bws set filetype=cs
+augroup end 
 " for gmsh
 augroup filetypedetect
 autocmd bufnewfile,bufread *.geo     setf gmsh
@@ -108,8 +116,8 @@ au BufNewFile,BufRead *.py set fileformat=unix
 au BufNewFile,BufRead *.py let g:acp_enableAtStartup = 1
 let g:pymode_python = 'python3'
 " UltiSnips config
-let g:UltiSnipsExpandTrigger="xx"
-let g:UltiSnipsJumpForwardTrigger="xx"
+let g:UltiSnipsExpandTrigger="<TAB>"
+let g:UltiSnipsJumpForwardTrigger="<TAB>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 let g:UltiSnipsUsePythonVersion = 3
 let g:UltiSnipsEditSplit = "vertical"
@@ -132,24 +140,34 @@ au Filetype tex nnoremap <buffer> <leader>vm :sp ../main.tex<cr>
 au Filetype tex nnoremap <buffer> <leader>vb :sp ../bibliography.bib<cr>
 " make link to main.tex
 au Filetype tex nnoremap <buffer> <leader>ml ggi%! TEX root = ../main.tex <esc> o <esc>
+" Use deoplete.
+let g:deoplete#enable_at_startup = 1
+" complete with tab
+inoremap <silent><expr> <TAB>
+\ pumvisible() ? "\<C-n>" :
+\ <SID>check_back_space() ? "\<TAB>" :
+\ deoplete#mappings#manual_complete()
+function! s:check_back_space() abort "{{{
+let col = col('.') - 1
+return !col || getline('.')[col - 1]  =~ '\s'
+endfunction"}}}
+" augroup VimCompletesMeTex
+"     autocmd!
+"     autocmd FileType tex let b:vcm_omni_pattern = 
+"         \ '\v\\%('
+"         \ . '\a*cite\a*%(\s*\[[^]]*\]){0,2}\s*\{[^}]*'
+"         \ . '|\a*ref%(\s*\{[^}]*|range\s*\{[^,}]*%(}\{)?)'
+"         \ . '|hyperref\s*\[[^]]*'
+"         \ . '|includegraphics\*?%(\s*\[[^]]*\]){0,2}\s*\{[^}]*'
+"         \ . '|%(include%(only)?|input)\s*\{[^}]*'
+"         \ . '|\a*(gls|Gls|GLS)(pl)?\a*%(\s*\[[^]]*\]){0,2}\s*\{[^}]*'
+"         \ . '|includepdf%(\s*\[[^]]*\])?\s*\{[^}]*'
+"         \ . '|includestandalone%(\s*\[[^]]*\])?\s*\{[^}]*'
+"         \ . '|usepackage%(\s*\[[^]]*\])?\s*\{[^}]*'
+"         \ . '|documentclass%(\s*\[[^]]*\])?\s*\{[^}]*'
+"         \ . ')'
 
-augroup VimCompletesMeTex
-    autocmd!
-    autocmd FileType tex let b:vcm_omni_pattern = 
-        \ '\v\\%('
-        \ . '\a*cite\a*%(\s*\[[^]]*\]){0,2}\s*\{[^}]*'
-        \ . '|\a*ref%(\s*\{[^}]*|range\s*\{[^,}]*%(}\{)?)'
-        \ . '|hyperref\s*\[[^]]*'
-        \ . '|includegraphics\*?%(\s*\[[^]]*\]){0,2}\s*\{[^}]*'
-        \ . '|%(include%(only)?|input)\s*\{[^}]*'
-        \ . '|\a*(gls|Gls|GLS)(pl)?\a*%(\s*\[[^]]*\]){0,2}\s*\{[^}]*'
-        \ . '|includepdf%(\s*\[[^]]*\])?\s*\{[^}]*'
-        \ . '|includestandalone%(\s*\[[^]]*\])?\s*\{[^}]*'
-        \ . '|usepackage%(\s*\[[^]]*\])?\s*\{[^}]*'
-        \ . '|documentclass%(\s*\[[^]]*\])?\s*\{[^}]*'
-        \ . ')'
-
-augroup END
+" augroup END
 
 " change cursor shape in insert mode
 " let $NVIM_TUI_ENABLE_CURSOR_SHAPE = 1
@@ -158,26 +176,13 @@ map p <Plug>(miniyank-autoput)
 map P <Plug>(miniyank-autoPut)
 map <leader>p <Plug>(miniyank-cycle)
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-"fzf
-nnoremap <leader>o :FZF<CR>
-nnoremap <leader>h :FZF ~<CR>
 "open frequently used directories
 nnoremap <leader>fh :e ~/
 nnoremap <leader>fd :e ~/Dokumente/
 nnoremap <leader>fc :e ~/.config/
-
-" Mapping selecting mappings
-nnoremap <leader><tab> <plug>(fzf-maps-n)
-xnoremap <leader><tab> <plug>(fzf-maps-x)
-onoremap <leader><tab> <plug>(fzf-maps-o)
 " Insert mode completion
-inoremap <c-x><c-k> <plug>(fzf-complete-word)
-inoremap <c-x><c-l> <plug>(fzf-complete-line)
-" Advanced customization using autoload functions
-inoremap <expr> <c-x><c-k> fzf#vim#complete#word({'left': '15%'})
-" Replace the default dictionary completion with fzf-based fuzzy completion
-inoremap <expr> <c-x><c-k> fzf#complete('cat /usr/share/dict/american-english')
-"inoremap <expr> <c-x><c-k> fzf#complete('cat /usr/share/dict/german')
+set complete+=k
+set dictionary+=/usr/share/dict/cracklib-small
 " vim-sneak
 let g:sneak#streak = 0
 nmap f <Plug>Sneak_f

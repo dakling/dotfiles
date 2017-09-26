@@ -1,0 +1,3 @@
+#!/bin/bash
+
+mono ~/BoSSS/src/L4-application/BoSSSpad/bin/Release/BoSSSpad.exe --batch $1

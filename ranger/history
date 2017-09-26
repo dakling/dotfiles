@@ -1,37 +1,9 @@
-rename 2017-06-01
-rename _galileiAplha.tex
-rename _galileiAlpha.tex
-rename _galileiAlternativ.tex
-rename _galileiOneDirection.tex
-rename Bewerbungsfoto.jpg
-
-rename Bewerbungsfoto2017.JPG
-rename Bewerbungsfoto2015.JPG
-rename Bewerbungsfoto.JPG
-rename main.pdf
-rename statementOfPurpose.pdf
-open_with gthumb
-rename ArbeitszeugnisSLA.pdf
-rename _problemDet.tex_
-rename _problemDet.tex
-shell
-h mkdir
-help mkdir
-mkdir maple
-rename gammafield3dPotential.py
-rename Ufield3dPotential.py
-rename gammafield2dStag.py
-rename Ufield2dStag.py
-rename _differentApproach.tex
-mkdir 2017-06-30
-rename i3
 rename lxqt_2016-06-20
 rename lxqt_2016-06-30
 set colorscheme default
 rename 2017-07-07
 rename _splittinV.tex
 rename 2017-07-14
-open_with 
 rename _basicEquations.tex
 rename _dnsCompare.tex
 mkdir ogs
@@ -39,12 +11,40 @@ rename Downloadsq
 rename 2017-07-28
 rename _turbulenceCases.tex
 shell 
-open_with xournal
 rename _channelFlow.tex
 search .iso
 rename 2017-08-18
 find F
 rename _definingTheta.tex
 open_with quarry
+rename 2017-03-24
+rename 2017-04-14
+search wine
+search hand
 open_with nvim
+deletegt
+find p
+open_with xournal
+rename Speziale - A modified restricted Euler equation for turbulent flows with mean velocity gradients.pdf
+search xinit
+rename .xinitrc
+mkdir plots
+rename turbJetModel.jpg
+find tms
+find tm
+rename free2dJetnu1
+rename 5
+find pa
+find lay
+deletey
+open_with 
+compress
+compress D
+compress 
+compress down.tar
+execute_command 
+extracthere
+extracthere 
+bulkrename 
 delete
+rename 0

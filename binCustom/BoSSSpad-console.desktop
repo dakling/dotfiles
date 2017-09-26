@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=BoSSSPad
+Comment=Console Interface to BoSSS
+Icon=
+Terminal=true
+Exec=bosss-console
+Categories=Utilities;
+MimeType=

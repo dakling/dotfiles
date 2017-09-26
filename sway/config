@@ -67,7 +67,8 @@ output * bg ~/.config/backgrounds/current/istanbul.jpg fill
     bindsym $mod+c kill
 
     # start your launcher
-    bindsym $mod+d exec albert show
+    bindsym $mod+d exec dmenu_recency
+    # bindsym $mod+d exec albert show
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
@@ -211,9 +212,9 @@ set $inactive_border_color #181818
 set $bg_color #383c4a 
 bar {
     position top
-        #status_command swaybar.py
+        status_command py3status
         ## please set your primary output first. Example: 'xrandr --output eDP1 --primary'
-        tray_output all
+        # tray_output all
         font xft:DejaVu Sans 10
         #strip_workspace_numbers yes
         colors {
@@ -300,7 +301,7 @@ workspace 10 output VGA-1
 
 #autostart
 exec dropbox
-exec albert
+# exec albert
 #exec /usr/lib/polkit-kde/polkit-kde-authentication-agent-1
 
 include /etc/sway/config.d/*

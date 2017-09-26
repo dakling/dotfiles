@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Monodevelop
+Comment=C# IDE
+Icon=
+Terminal=false
+Exec=monodevelop
+Categories=Utilities;TextEditor;
+MimeType=

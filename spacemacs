@@ -31,33 +31,42 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     python
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-     helm
-     auto-completion
+     ivy
+     (auto-completion :variables
+                      auto-completion-enable-snippets-in-popup t
+                      auto-completion-tab-key-behavior 'complete
+                      auto-completion-ret-key-behavior nil
+                      ;; spacemacs-default-company-backends '(company-files company-capf)
+                      auto-completion-enable-sort-by-usage t)
      better-defaults
      emacs-lisp
+     evil-snipe
      ;; git
      ;; markdown
      org
-     ;; (shell :variables
-     ;;        shell-default-height 30
-     ;;        shell-default-position 'bottom)
+     (shell :variables
+            shell-default-height 30
+            shell-default-position 'bottom)
      spell-checking
      ;; syntax-checking
-     ;; version-control
      latex
-     ranger
-     gnus
-     )
+     (ranger :variables ranger-override-dired t)
+     pdf-tools
+     ;; (mu4e :variables mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e")
+   )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(
+                                      eww-lnum
+                                      )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -120,8 +129,8 @@ values."
    ;; `recents' `bookmarks' `projects' `agenda' `todos'."
    ;; List sizes may be nil, in which case
    ;; `spacemacs-buffer-startup-lists-length' takes effect.
-   dotspacemacs-startup-lists '((recents . 5)
-                                (projects . 7))
+   dotspacemacs-startup-lists '((recents . 10)
+                                (bookmarks . 10))
    ;; True if the home buffer should respond to resize events.
    dotspacemacs-startup-buffer-responsive t
    ;; Default major mode of the scratch buffer (default `text-mode')
@@ -155,7 +164,7 @@ values."
    dotspacemacs-emacs-leader-key "M-m"
    ;; Major mode leader key is a shortcut key which is the equivalent of
    ;; pressing `<leader> m`. Set it to `nil` to disable it. (default ",")
-   dotspacemacs-major-mode-leader-key ","
+   dotspacemacs-major-mode-leader-key "-"
    ;; Major mode leader key accessible in `emacs state' and `insert state'.
    ;; (default "C-M-m")
    dotspacemacs-major-mode-emacs-leader-key "C-M-m"
@@ -282,7 +291,7 @@ values."
    dotspacemacs-highlight-delimiters 'all
    ;; If non nil, advise quit functions to keep server open when quitting.
    ;; (default nil)
-   dotspacemacs-persistent-server t
+   dotspacemacs-persistent-server nil
    ;; List of search tool executable names. Spacemacs uses the first installed
    ;; tool of the list. Supported tools are `ag', `pt', `ack' and `grep'.
    ;; (default '("ag" "pt" "ack" "grep"))
@@ -315,8 +324,62 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+  ;; (set-frame-parameter nil 'fullscreen 'fullboth)
+  (setq ivy-ignore-buffers '("\\` " "\\`\\*"))
   (add-hook 'doc-view-mode-hook 'auto-revert-mode)
-  (setq-default TeX-master "../main") ; Master file is always called main in the directory above
+  (setq-default TeX-master "../main.tex") ; Master file is always called main in the directory above
+  (spacemacs/set-leader-keys-for-major-mode 'latex-mode "o m" (lambda() (interactive)(find-file TeX-master)))
+  (spacemacs/set-leader-keys-for-major-mode 'latex-mode "o h" (lambda() (interactive)(find-file "header.tex")))
+  (spacemacs/set-leader-keys-for-major-mode 'pdf-view-mode "-" 'pdf-view-shrink)
+
+  ;; (add-hook 'pdf-view-mode (lambda ()(evil-define-key 'normal key-translation-map (kbd "l") (kbd "d"))))
+  ;; (add-hook 'pdf-view-mode ((lambda ()(global-unset-key "l"))))
+  ;; (add-hook 'pdf-view-mode ((lambda ()(define-key evil-normal-state-map "l" 'pdf-view-scroll-down-or-previous-page))))
+  (eval-after-load "eww"
+    '(progn (define-key eww-mode-map "f" 'eww-lnum-follow)
+            (define-key eww-mode-map "F" 'eww-lnum-universal)))
+;;; Set up some common mu4e variables
+;;   (setq mu4e-maildir "~/.mail"
+;;         mu4e-trash-folder "/Trash"
+;;         mu4e-refile-folder "/Archive"
+;;         mu4e-get-mail-command "mbsync -a"
+;;         mu4e-update-interval nil
+;;         mu4e-compose-signature-auto-include nil
+;;         mu4e-view-show-images t
+;;         mu4e-view-show-addresses t)
+;;   (setq mu4e-account-alist
+;;         '(("gmail"
+;;            ;; Under each account, set the account-specific variables you want.
+;;            (mu4e-sent-messages-behavior delete)
+;;            (mu4e-sent-folder "/gmail/Gmail/.Sent Mail")
+;;            (mu4e-drafts-folder "/gmail/Gmail/.Drafts")
+;;            (user-mail-address "dario.klingenberg@gmail.com")
+;;            (user-full-name "Dario Klingenberg"))
+;;           ("web"
+;;            (mu4e-sent-messages-behavior sent)
+;;            (mu4e-sent-folder "/web/Sent Items")
+;;            (mu4e-drafts-folder "/web/Drafts")
+;;            (user-mail-address "dario.klingenberg@web.de")
+;;            (user-full-name "dario"))))
+;;   (mu4e/mail-account-reset)
+
+;; ;;; Mail directory shortcuts
+;;   (setq mu4e-maildir-shortcuts
+;;         '(("/gmail/INBOX" . ?g)
+;;           ("/web/INBOX" . ?c)))
+
+;; ;;; Bookmarks
+;;   (setq mu4e-bookmarks
+;;         `(("flag:unread AND NOT flag:trashed" "Unread messages" ?u)
+;;           ("date:today..now" "Today's messages" ?t)
+;;           ("date:7d..now" "Last 7 days" ?w)
+;;           ("mime:image/*" "Messages with images" ?p)
+;;           (,(mapconcat 'identity
+;;                        (mapcar
+;;                         (lambda (maildir)
+;;                           (concat "maildir:" (car maildir)))
+;;                         mu4e-maildir-shortcuts) " OR ")
+;;            "All inboxes" ?i)))
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -326,6 +389,10 @@ you should place your code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(TeX-electric-math (quote ("\\(" . "")))
+ '(TeX-electric-sub-and-superscript t)
+ '(TeX-source-correlate-mode t)
+ '(TeX-source-correlate-start-server t t)
  '(TeX-view-program-selection
    (quote
     (((output-dvi has-no-display-manager)
@@ -333,7 +400,7 @@ you should place your code here."
      ((output-dvi style-pstricks)
       "dvips and gv")
      (output-dvi "xdvi")
-     (output-pdf "Zathura")
+     (output-pdf "PDF Tools")
      (output-html "xdg-open"))))
  '(ansi-color-names-vector
    ["#0a0814" "#f2241f" "#67b11d" "#b1951d" "#4f97d7" "#a31db1" "#28def0" "#b2b2b2"])
@@ -341,8 +408,10 @@ you should place your code here."
  '(inhibit-startup-screen nil)
  '(package-selected-packages
    (quote
-    (ample-zenburn-theme ranger unfill org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download mwim htmlize helm-company helm-c-yasnippet gnuplot fuzzy flyspell-correct-helm flyspell-correct company-statistics company-auctex company auto-yasnippet yasnippet auto-dictionary auctex-latexmk auctex ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async)))
- '(ranger-show-hidden nil))
+    (go gnugo xpm ascii-art-to-unicode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional cython-mode company-anaconda anaconda-mode pythonic eww-lnum mu4e-maildirs-extension mu4e-alert ht exwm xelb engine-mode wgrep smex ivy-hydra flyspell-correct-ivy counsel-projectile counsel swiper ivy xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help w3m pdf-tools tablist evil-snipe ample-zenburn-theme ranger unfill org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download mwim htmlize helm-company helm-c-yasnippet gnuplot fuzzy flyspell-correct-helm flyspell-correct company-statistics company-auctex company auto-yasnippet yasnippet auto-dictionary auctex-latexmk auctex ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async)))
+ '(preview-auto-cache-preamble nil)
+ '(ranger-show-hidden nil)
+ '(vc-follow-symlinks t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

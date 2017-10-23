@@ -67,8 +67,7 @@ output * bg ~/.config/backgrounds/current/istanbul.jpg fill
     bindsym $mod+c kill
 
     # start your launcher
-    bindsym $mod+d exec dmenu_recency
-    # bindsym $mod+d exec albert show
+    bindsym $mod+d exec kupfer
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
@@ -304,4 +303,6 @@ exec dropbox
 # exec albert
 #exec /usr/lib/polkit-kde/polkit-kde-authentication-agent-1
 
+for_window [title="CGoban: Main Window"] floating disable
+for_window [title="Kupfer"] floating disable
 include /etc/sway/config.d/*

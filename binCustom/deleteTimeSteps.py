@@ -17,6 +17,10 @@ dir_list=(next(os.walk('./'))[1])
 dir_list = np.array(dir_list)
 dir_list=np.sort(dir_list)
 
+# check if we actually are in an OpenFOAM directory
+if not "system" in dir_list or not "constant" in dir_list or not "system" in dir_list:
+    raise Exception("This is probably not an OpenFOAM directory!")
+
 #checks if arg is a number
 def is_number(s):
     try:
@@ -39,12 +43,22 @@ for i in range(0,dir_list.size):
     if is_number(dir_list[i]):
         time_list = np.append(time_list,(dir_list[i]))
 
-latestTime = time_list[-1]
+latestTime = (np.max(time_list.astype(float)))
 
-for j in range(0,time_list.size):
-    if time_list[j] != "0" and time_list[j] != latestTime:
-        shutil.rmtree(time_list[j])
+delete_list = np.array([])
+if keepLatestTime:
+    for j in range(0,time_list.size):
+        if float(time_list[j]) != float("0") and float(time_list[j]) != latestTime:
+            delete_list = np.append(delete_list,time_list[j])
+    print("identified " + str(latestTime) + " as latest Time")
+else:
+    for j in range(0,time_list.size):
+        if float(time_list[j]) != float("0"):
+            delete_list = np.append(delete_list,time_list[j])
+    print("deleting all nonzero timesteps including the latest time. Use option --keepLatestTime to prevent this")
 
-if not keepLatestTime:
-    if latestTime != "0":
-        shutil.rmtree(latestTime)
+if input("deleting time steps " + str(delete_list) + " , hit q to abort") == "q":
+    raise Exception("Deletion aborted by user, nothing was deleted")
+
+for k in range(0,delete_list.size):
+        shutil.rmtree(delete_list[k])

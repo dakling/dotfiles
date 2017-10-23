@@ -30,10 +30,8 @@ set $editor nvim-termite
     bindsym $mod+c kill
 
     # start your launcher
-    bindsym $mod+d exec --no-startup-id albert show
-    bindsym $mod+q exec dmenu_recency
-    #bindsym $mod+shift+d exec albert show
-    #bindsym $mod+ctrl+d exec --no-startup-id xlunch
+    bindsym $mod+d exec kupfer
+    # bindsym $mod+q exec dmenu_recency
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
@@ -111,6 +109,7 @@ set $follow exec xdotool mousemove --window $(xdotool getactivewindow) --polar 0
     # respectively.
     bindsym $mod+b splith
     bindsym $mod+v splitv
+    bindsym $mod+n splitv; layout tabbed
 
     # Switch the current container between different layout styles
     #bindsym $mod+s layout stacking
@@ -292,7 +291,6 @@ exec --no-startup-id indicator-kdeconnect
 exec --no-startup-id setxkbmap -option ctrl:nocaps; sleep 1; xcape -e 'Control_L=Escape'  
 exec_always --no-startup-id fix_xcursor
 exec --no-startup-id monitor_home
-exec --no-startup-id albert &
 
 # Window rules
 for_window [title="CGoban: Main Window"] floating disable

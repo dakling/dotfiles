@@ -3,8 +3,6 @@
 
 config_version: 1
 global:
-  content.user_stylesheets: ~/.config/solarized-everything-css/css/solarized-all-sites-dark.css
-  content.webgl: true
   editor.command:
   - nvim-termite
   - -f

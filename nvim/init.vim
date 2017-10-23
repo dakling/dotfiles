@@ -32,6 +32,7 @@ Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-repeat'
 Plug 'effi/vim-OpenFoam-syntax'
+Plug 'ervandew/supertab'
 call plug#end()
 "Configuration starts here
 "General Settings
@@ -115,6 +116,8 @@ let python_highlight_all=1
 au BufNewFile,BufRead *.py set fileformat=unix
 au BufNewFile,BufRead *.py let g:acp_enableAtStartup = 1
 let g:pymode_python = 'python3'
+let g:pymode_folding=0
+let g:pymode_rope=0
 " UltiSnips config
 let g:UltiSnipsExpandTrigger="<TAB>"
 let g:UltiSnipsJumpForwardTrigger="<TAB>"
@@ -140,17 +143,6 @@ au Filetype tex nnoremap <buffer> <leader>vm :sp ../main.tex<cr>
 au Filetype tex nnoremap <buffer> <leader>vb :sp ../bibliography.bib<cr>
 " make link to main.tex
 au Filetype tex nnoremap <buffer> <leader>ml ggi%! TEX root = ../main.tex <esc> o <esc>
-" Use deoplete.
-let g:deoplete#enable_at_startup = 1
-" complete with tab
-inoremap <silent><expr> <TAB>
-\ pumvisible() ? "\<C-n>" :
-\ <SID>check_back_space() ? "\<TAB>" :
-\ deoplete#mappings#manual_complete()
-function! s:check_back_space() abort "{{{
-let col = col('.') - 1
-return !col || getline('.')[col - 1]  =~ '\s'
-endfunction"}}}
 " augroup VimCompletesMeTex
 "     autocmd!
 "     autocmd FileType tex let b:vcm_omni_pattern = 
@@ -202,5 +194,19 @@ nmap ök <Plug>(easymotion-k)
 nmap öh <Plug>(easymotion-linebackward)
 " anki-vim
 autocmd BufRead *.anki_vim inoremap # ->
+" Use deoplete.
+let g:deoplete#enable_at_startup = 1
+call deoplete#custom#set('ultisnips', 'matchers', ['matcher_fuzzy'])
+" complete with tab
+inoremap <silent><expr> <TAB>
+\ pumvisible() ? "\<C-n>" :
+\ <SID>check_back_space() ? "\<TAB>" :
+\ deoplete#mappings#manual_complete()
+function! s:check_back_space() abort "{{{
+let col = col('.') - 1
+return !col || getline('.')[col - 1]  =~ '\s'
+endfunction"}}}
+" supertab
+let g:SuperTabDefaultCompletionType = "<c-n>"
 "set runtimepath
 set runtimepath+=,/var/lib/vim/addons,/usr/share/vim/vimfiles,/usr/share/vim/vim74,/usr/share/vim/vimfiles/after,/var/lib/vim/addons/after,~/.vim/after,~/.config/nvim

@@ -400,7 +400,7 @@ you should place your code here."
      ((output-dvi style-pstricks)
       "dvips and gv")
      (output-dvi "xdvi")
-     (output-pdf "PDF Tools")
+     (output-pdf "Zathura")
      (output-html "xdg-open"))))
  '(ansi-color-names-vector
    ["#0a0814" "#f2241f" "#67b11d" "#b1951d" "#4f97d7" "#a31db1" "#28def0" "#b2b2b2"])

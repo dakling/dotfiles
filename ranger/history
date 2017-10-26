@@ -1,5 +1,3 @@
-mkdir ogs
-rename Downloadsq
 rename 2017-07-28
 rename _turbulenceCases.tex
 shell 
@@ -48,3 +46,5 @@ delete
 rename _turbulenceModel2.tex
 open_with nvim
 find tms
+rename _liealgebra2.tex
+rename _constructingEquationsFromSymmetries3.tex

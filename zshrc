@@ -26,6 +26,10 @@ SAVEHIST=500
 export EDITOR=/usr/bin/nvim
 export VISUAL=/usr/bin/nvim
 export QT_QPA_PLATFORMTHEME="qt5ct"
+#wayland stuff
+# export QT_QPA_PLATFORM=wayland-egl
+# export GDK_BACKEND=wayland
+# export GTK_CSD=0
 source $HOME/OpenFOAM/OpenFOAM-5.0/etc/bashrc
 WORDCHARS=${WORDCHARS//\/[&.;]}                                 # Don't consider certain characters part of the word
 

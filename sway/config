@@ -24,9 +24,12 @@ output * bg ~/.config/backgrounds/current/istanbul.jpg fill
 #
 # Example configuration:
 #
-#output VGA-1 scale 2
-#output VGA-1 resolution 3840x2160 position 0,0
-#output LVDS-1 resolution 1366x768 position 1920,0
+#monitor at home
+output VGA-1 resolution 1920x1080 position 0,0
+output LVDS-1 resolution 1366x768 position 1920,0
+#monitor at fdy
+# output VGA-1 resolution 1680x1050 position 0,0
+# output LVDS-1 resolution 1366x768 position 1680,0
 #
 # You can get the names of your outputs by running: swaymsg -t get_outputs
 
@@ -211,9 +214,8 @@ set $inactive_border_color #181818
 set $bg_color #383c4a 
 bar {
     position top
-        status_command py3status
-        ## please set your primary output first. Example: 'xrandr --output eDP1 --primary'
-        # tray_output all
+        status_command i3status
+        tray_output all
         font xft:DejaVu Sans 10
         #strip_workspace_numbers yes
         colors {
@@ -300,9 +302,8 @@ workspace 10 output VGA-1
 
 #autostart
 exec dropbox
-# exec albert
-#exec /usr/lib/polkit-kde/polkit-kde-authentication-agent-1
+exec /usr/lib/polkit-kde-authentication-agent-1
 
 for_window [title="CGoban: Main Window"] floating disable
-for_window [title="Kupfer"] floating disable
+for_window [title="Kupfer"] floating enable
 include /etc/sway/config.d/*

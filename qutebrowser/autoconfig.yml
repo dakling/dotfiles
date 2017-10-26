@@ -3,6 +3,7 @@
 
 config_version: 1
 global:
+  backend: webengine
   content.user_stylesheets: ~/.config/solarized-everything-css/css/solarized-all-sites-dark.css
   content.webgl: true
   editor.command:
@@ -10,6 +11,7 @@ global:
   - -f
   - '{}'
   new_instance_open_target: window
+  qt.force_platform: xcb
   url.default_page: https://google.com/
   url.searchengines:
     DEFAULT: https://www.google.de/search?dcr=0&source=hp&q={}

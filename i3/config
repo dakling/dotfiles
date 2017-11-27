@@ -176,26 +176,26 @@ set $inactive_text_color #c1c8d1
 set $inactive_bg_color #181818
 set $inactive_border_color #181818
 set $bg_color #383c4a 
-bar {
-    position top
-        status_command i3status
-        # status_command py3status
-        ## please set your primary output first. Example: 'xrandr --output eDP1 --primary'
-        tray_output primary
-        #strip_workspace_numbers yes
-        colors {
-            background $transparent
-                background $active_bg_color
-                statusline $active_text_color
-                separator  #454947
+#bar {
+#    position top
+#        status_command i3status
+#        # status_command py3status
+#        ## please set your primary output first. Example: 'xrandr --output eDP1 --primary'
+#        tray_output primary
+#        #strip_workspace_numbers yes
+#        colors {
+#            background $transparent
+#                background $active_bg_color
+#                statusline $active_text_color
+#                separator  #454947
 
-#                                  border  backgr. text
-                focused_workspace  $active_border_color $active_bg_color $active_text_color
-                active_workspace   $inactive_border_color $active_bg_color $active_text_color
-                inactive_workspace $inactive_border_color $inactive_bg_color $inactive_text_color
-                urgent_workspace   $active_border_color $active_bg_color $active_text_color
-        }
-}
+##                                  border  backgr. text
+#                focused_workspace  $active_border_color $active_bg_color $active_text_color
+#                active_workspace   $inactive_border_color $active_bg_color $active_text_color
+#                inactive_workspace $inactive_border_color $inactive_bg_color $inactive_text_color
+#                urgent_workspace   $active_border_color $active_bg_color $active_text_color
+#        }
+#}
 # class                 border  backgr. text    indicator child_border
 client.focused          #4c7899 #285577 #ffffff #2e9ef4   $active_border_color
 client.focused_inactive #333333 #5f676a #ffffff #484e50   $inactive_border_color
@@ -206,7 +206,7 @@ client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
 client.background       $inactive_border_color
 # Start Applications
 bindsym $mod+F1 exec emacs ~
-bindsym $mod+F2 exec qutebrowser --backend webengine
+bindsym $mod+F2 exec firefox-nightly
 bindsym $mod+F3 exec rangerStandalone
 bindsym $mod+Shift+F3 exec rangerStandalone "`xcwd`"
 bindsym $mod+F4 exec $term -e mutt
@@ -218,7 +218,7 @@ bindsym XF86AudioLowerVolume exec changeVolume -5
 bindsym XF86AudioMute exec pactl set-sink-mute $(pacmd list-sinks |awk '/* index:/{print $3}') toggle
 bindsym XF86MonBrightnessDown exec dsplight down 5
 bindsym XF86MonBrightnessUp exec dsplight up 5
-bindsym print exec i3scrot -s
+# bindsym print exec i3scrot -s
 
 focus_follows_mouse yes
 mouse_warping output
@@ -228,7 +228,7 @@ new_float normal
 #Custom modes
 #Program starter
 mode "Quick_Program_Starter" {
-bindsym i      exec firefox; mode default
+bindsym i      exec firefox-nightly; mode default
 bindsym e      exec thunderbird; mode default
 bindsym g      exec emacs; mode default
 bindsym d      exec pcmanfm; mode default
@@ -238,6 +238,7 @@ bindsym t      exec $term; mode default
 bindsym m      exec $term -e cmus; mode default
 bindsym a      exec $term -e pulsemixer; mode default
 bindsym c      exec nmcli_dmenu; mode default
+bindsym b      exec i3scrot -s; mode default
 bindsym Return mode "default"
 bindsym Escape mode "default"
 }
@@ -297,6 +298,7 @@ exec --no-startup-id indicator-kdeconnect
 #exec --no-startup-id xautolock -time 5 -locker blurlock
 exec --no-startup-id setxkbmap -option ctrl:nocaps; sleep 1; xcape -e 'Control_L=Escape'  
 exec_always --no-startup-id fix_xcursor
+exec_always --no-startup-id launch_polybar.sh
 exec --no-startup-id monitor_home
 
 # Window rules

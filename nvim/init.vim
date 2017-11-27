@@ -86,11 +86,11 @@ set statusline+=%L        " Total lines
 " Keystrokes
 let maplocalleader = "-"
 let mapleader = "\<Space>"
+map Y y$
 "inoremap jk <ESC>
 nnoremap <leader>fs :w<cr>
 nnoremap <leader>sw :write !sudo tee %<cr>
 nnoremap <leader>w <C-w>
-nnoremap Y y$
 " Source/edit .vimrc file
 nnoremap <leader>sv :source $MYVIMRC<cr>
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
@@ -100,9 +100,9 @@ nnoremap <leader><leader> :
 call camelcasemotion#CreateMotionMappings('ä')
 " for openfoam
 " change bc to zerogradient
-nnoremap <leader>fzg di{i<tab>type<tab>zerogradient;<cr><tab><esc>
+" nnoremap <leader>fzg di{i<tab>type<tab>zerogradient;<cr><tab><esc>
 " change bc to fixedvalue
-nnoremap <leader>ffv di{i<tab>type<tab>fixedvalue;<cr><tab><tab>value<tab>uniform <++>;<cr><tab><esc>
+" nnoremap <leader>ffv di{i<tab>type<tab>fixedvalue;<cr><tab><tab>value<tab>uniform <++>;<cr><tab><esc>
 " for BoSSSPad
 augroup filetypedetect
     autocmd bufnewfile,bufread *.bws set filetype=cs
@@ -143,24 +143,6 @@ au Filetype tex nnoremap <buffer> <leader>vm :sp ../main.tex<cr>
 au Filetype tex nnoremap <buffer> <leader>vb :sp ../bibliography.bib<cr>
 " make link to main.tex
 au Filetype tex nnoremap <buffer> <leader>ml ggi%! TEX root = ../main.tex <esc> o <esc>
-" augroup VimCompletesMeTex
-"     autocmd!
-"     autocmd FileType tex let b:vcm_omni_pattern = 
-"         \ '\v\\%('
-"         \ . '\a*cite\a*%(\s*\[[^]]*\]){0,2}\s*\{[^}]*'
-"         \ . '|\a*ref%(\s*\{[^}]*|range\s*\{[^,}]*%(}\{)?)'
-"         \ . '|hyperref\s*\[[^]]*'
-"         \ . '|includegraphics\*?%(\s*\[[^]]*\]){0,2}\s*\{[^}]*'
-"         \ . '|%(include%(only)?|input)\s*\{[^}]*'
-"         \ . '|\a*(gls|Gls|GLS)(pl)?\a*%(\s*\[[^]]*\]){0,2}\s*\{[^}]*'
-"         \ . '|includepdf%(\s*\[[^]]*\])?\s*\{[^}]*'
-"         \ . '|includestandalone%(\s*\[[^]]*\])?\s*\{[^}]*'
-"         \ . '|usepackage%(\s*\[[^]]*\])?\s*\{[^}]*'
-"         \ . '|documentclass%(\s*\[[^]]*\])?\s*\{[^}]*'
-"         \ . ')'
-
-" augroup END
-
 " change cursor shape in insert mode
 " let $NVIM_TUI_ENABLE_CURSOR_SHAPE = 1
 " Killring shortcuts
@@ -181,17 +163,17 @@ nmap f <Plug>Sneak_f
 nmap F <Plug>Sneak_F
 " vim-easymotion
 " <Leader>f{char} to move to {char}
-map ö <Plug>(easymotion-prefix)
-map  öf <Plug>(easymotion-bd-f)
-nmap öf <Plug>(easymotion-overwin-f)
+map <leader> <Plug>(easymotion-prefix)
+" map  <leader>f <Plug>(easymotion-bd-f)
+" nmap <leader>f <Plug>(easymotion-overwin-f)
 " Move to word
-map  öw <Plug>(easymotion-bd-w)
-nmap öw <Plug>(easymotion-overwin-w)
+map  <leader>w <Plug>(easymotion-bd-w)
+nmap <leader>w <Plug>(easymotion-overwin-w)
 " Prevent repetitive use of hjkl
-nmap öl <Plug>(easymotion-lineforward)
-nmap öj <Plug>(easymotion-j)
-nmap ök <Plug>(easymotion-k)
-nmap öh <Plug>(easymotion-linebackward)
+nmap <leader>l <Plug>(easymotion-lineforward)
+nmap <leader>j <Plug>(easymotion-j)
+nmap <leader>k <Plug>(easymotion-k)
+nmap <leader>h <Plug>(easymotion-linebackward)
 " anki-vim
 autocmd BufRead *.anki_vim inoremap # ->
 " Use deoplete.

@@ -6,5 +6,4 @@ export GDK_BACKEND=wayland
 export CLUTTER_BACKEND=wayland
 export QT_QPA_PLATFORM=wayland-egl
 export QT_DISABLE_WINDOWDECORATION=1
-#exec ck-launch-session dbus-launch --sh-syntax --exit-with-session sway
 sway

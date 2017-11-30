@@ -44,7 +44,7 @@ compress
 compress einkaufsliste_2017-11-03.tar
 rename Collision_huygens.png
 open_with pinta
-delete
 rename turbJetModel.png
 find sg
 bulkrename
+delete

@@ -225,6 +225,8 @@ mouse_warping output
 #border style
 new_window pixel 2
 new_float normal
+gaps inner 2
+gaps outer 2
 #Custom modes
 #Program starter
 mode "Quick_Program_Starter" {
@@ -298,7 +300,7 @@ exec --no-startup-id indicator-kdeconnect
 #exec --no-startup-id xautolock -time 5 -locker blurlock
 exec --no-startup-id setxkbmap -option ctrl:nocaps; sleep 1; xcape -e 'Control_L=Escape'  
 exec_always --no-startup-id fix_xcursor
-exec_always --no-startup-id launch_polybar.sh
+exec --no-startup-id launch_polybar.sh
 exec --no-startup-id monitor_home
 
 # Window rules

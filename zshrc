@@ -30,11 +30,13 @@ export QT_QPA_PLATFORMTHEME="qt5ct"
 # export QT_QPA_PLATFORM=wayland-egl
 # export GDK_BACKEND=wayland
 # export GTK_CSD=0
-source $HOME/OpenFOAM/OpenFOAM-5.0/etc/bashrc
+# source $HOME/OpenFOAM/OpenFOAM-5.0/etc/bashrc
 WORDCHARS=${WORDCHARS//\/[&.;]}                                 # Don't consider certain characters part of the word
+# export RoslynTargetsPath=/usr/lib/mono/msbuild/15.0/bin/  
+# export BOSSS_INSTALL=/home/klingenberg/BoSSS-experimental
 
 
-## Keybindings section
+ ##Keybindings section
 case ${TERM} in
   *termite)
     zle-keymap-select () {

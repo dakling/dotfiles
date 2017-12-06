@@ -7,5 +7,5 @@ git clone https://github.com/dakling/dotfiles.git
 
 create symlinks:
 
-ln -s .gitConfig/{fish, bspwm, sxhkb, qutebrowser, ranger, nvim} .config
-ln -s .gitConfig/conkyrc .conkyrc
+ln -s ~/.gitConfig/{ranger, nvim, i3, polybar, sway} ~/.config/
+ln -s ~/.gitConfig/zshrc ~/.zshrc

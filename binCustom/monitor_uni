@@ -7,3 +7,5 @@ nitrogen --head=0 ~/.config/backgrounds/current/ --random --set-auto
 nitrogen --head=1 ~/.config/backgrounds/current/ --random --set-auto 
 killall conky
 conky --quiet &
+killall polybar
+launch_polybar.sh

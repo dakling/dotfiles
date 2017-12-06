@@ -6,3 +6,5 @@ xinput --map-to-output $(xinput list --id-only "Wacom ISDv4 E6 Pen Pen (0)") LVD
 nitrogen --head=0 ~/.config/backgrounds/current/ --random --set-auto 
 killall conky
 conky --quiet &
+killall polybar
+launch_polybar.sh

@@ -1,5 +1,3 @@
-rename 2017-04-14
-search wine
 search hand
 deletegt
 find p
@@ -39,7 +37,6 @@ rename _liealgebra2.tex
 rename _constructingEquationsFromSymmetries3.tex
 rename thesis_draft_2017-10-27.pdf
 mkdir presentation
-
 compress
 compress einkaufsliste_2017-11-03.tar
 rename Collision_huygens.png
@@ -48,3 +45,6 @@ rename turbJetModel.png
 find sg
 bulkrename
 delete
+
+rename _summaryOld.tex
+rename _summary.tex

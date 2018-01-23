@@ -23,6 +23,7 @@ zstyle ':completion:*' cache-path ~/.zsh/cache
 HISTFILE=~/.zhistory
 HISTSIZE=1000
 SAVEHIST=500
+setopt histignorespace
 export EDITOR=/usr/bin/nvim
 export VISUAL=/usr/bin/nvim
 export QT_QPA_PLATFORMTHEME="qt5ct"
@@ -34,6 +35,7 @@ export QT_QPA_PLATFORMTHEME="qt5ct"
 WORDCHARS=${WORDCHARS//\/[&.;]}                                 # Don't consider certain characters part of the word
 # export RoslynTargetsPath=/usr/lib/mono/msbuild/15.0/bin/  
 # export BOSSS_INSTALL=/home/klingenberg/BoSSS-experimental
+# BoSSS
 
 
  ##Keybindings section

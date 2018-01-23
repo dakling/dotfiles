@@ -140,18 +140,18 @@ values."
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(
                          monokai
-                         ;; spacemacs-dark
+                         spacemacs-dark
                          ;; spacemacs-light
                          )
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Inconsolata"
-                               :size 13
+   dotspacemacs-default-font '("Source Code Pro"
+                               :size 11
                                :weight normal
                                :width normal
-                               :powerline-scale 1.3)
+                               :powerline-scale 1.1)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
@@ -164,7 +164,7 @@ values."
    dotspacemacs-emacs-leader-key "M-m"
    ;; Major mode leader key is a shortcut key which is the equivalent of
    ;; pressing `<leader> m`. Set it to `nil` to disable it. (default ",")
-   dotspacemacs-major-mode-leader-key "-"
+   dotspacemacs-major-mode-leader-key "#"
    ;; Major mode leader key accessible in `emacs state' and `insert state'.
    ;; (default "C-M-m")
    dotspacemacs-major-mode-emacs-leader-key "C-M-m"
@@ -331,7 +331,7 @@ you should place your code here."
   (spacemacs/set-leader-keys-for-major-mode 'latex-mode "o m" (lambda() (interactive)(find-file TeX-master)))
   (spacemacs/set-leader-keys-for-major-mode 'latex-mode "o h" (lambda() (interactive)(find-file "header.tex")))
   (spacemacs/set-leader-keys-for-major-mode 'pdf-view-mode "-" 'pdf-view-shrink)
-
+  (setq powerline-default-separator 'bar)
   ;; (add-hook 'pdf-view-mode (lambda ()(evil-define-key 'normal key-translation-map (kbd "l") (kbd "d"))))
   ;; (add-hook 'pdf-view-mode ((lambda ()(global-unset-key "l"))))
   ;; (add-hook 'pdf-view-mode ((lambda ()(define-key evil-normal-state-map "l" 'pdf-view-scroll-down-or-previous-page))))
@@ -404,6 +404,7 @@ you should place your code here."
      (output-html "xdg-open"))))
  '(ansi-color-names-vector
    ["#0a0814" "#f2241f" "#67b11d" "#b1951d" "#4f97d7" "#a31db1" "#28def0" "#b2b2b2"])
+ '(electric-pair-mode t)
  '(find-directory-functions (quote (cvs-dired-noselect dired-noselect)))
  '(inhibit-startup-screen nil)
  '(package-selected-packages

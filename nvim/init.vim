@@ -268,4 +268,3 @@ let g:SuperTabDefaultCompletionType = "<c-n>"
 " let g:SuperTabClosePreviewOnPopupClose = 1
 "set runtimepath
 set runtimepath+=,/var/lib/vim/addons,/usr/share/vim/vimfiles,/usr/share/vim/vim74,/usr/share/vim/vimfiles/after,/var/lib/vim/addons/after,~/.vim/after,~/.config/nvim
-

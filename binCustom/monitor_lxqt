@@ -1,8 +1,0 @@
-#!/bin/bash
-
-xinput --map-to-output $(xinput list --id-only "Wacom ISDv4 E6 Finger") LVDS1
-xinput --map-to-output $(xinput list --id-only "Wacom ISDv4 E6 Pen Pen (0)") LVDS1
-nitrogen --head=0 ~/.config/backgrounds/current/ --random --set-auto 
-nitrogen --head=1 ~/.config/backgrounds/current/ --random --set-auto 
-killall conky
-conky --quiet &

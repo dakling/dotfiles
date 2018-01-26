@@ -30,10 +30,15 @@ Plug 'tpope/vim-repeat'
 " Plug 'effi/vim-OpenFoam-syntax'
 Plug 'ervandew/supertab'
 Plug 'OmniSharp/omnisharp-vim'
+Plug 'fsharp/vim-fsharp', {
+      \ 'for': 'fsharp',
+      \ 'do':  'make fsautocomplete',
+      \}
 Plug 'tpope/vim-dispatch'
 Plug 'radenling/vim-dispatch-neovim'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tpope/vim-fugitive'
+
 call plug#end()
 "Configuration starts here
 "General Settings

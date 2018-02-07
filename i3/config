@@ -30,7 +30,7 @@ set $editor eovim
     bindsym $mod+c kill
 
     # start your launcher
-    bindsym $mod+d exec dmenu_extended_run
+    bindsym $mod+d exec albert show
     # bindsym $mod+q exec dmenu_recency
 
     # Drag floating windows by holding down $mod and left mouse button.
@@ -293,7 +293,7 @@ exec --no-startup-id pamac-tray
 #exec --no-startup-id pa-applet
 exec --no-startup-id clipit
 exec --no-startup-id dropbox
-# exec --no-startup-id albert
+exec --no-startup-id albert
 exec --no-startup-id easystroke
 exec --no-startup-id indicator-kdeconnect
 # exec --no-startup-id onboard

@@ -70,10 +70,9 @@ function! InsertStatuslineColor(mode)
 endfunction
 
 au InsertEnter * call InsertStatuslineColor(v:insertmode)
-au InsertLeave * hi statusline guibg=LightSkyBlue3 ctermfg=8 guifg=Grey19 ctermbg=110
-
+au InsertLeave * hi statusline guibg=LightSkyBlue3 ctermfg=0 guifg=Grey19 ctermbg=110
 " default the statusline to grey when entering Vim
-hi statusline guibg=LightSkyBlue3 ctermfg=8 guifg=Grey19 ctermbg=110
+hi statusline guibg=LightSkyBlue3 ctermfg=0 guifg=Grey19 ctermbg=110
 
 " Formats the statusline
 set statusline=%f                           " file name

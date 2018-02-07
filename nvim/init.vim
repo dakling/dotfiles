@@ -199,8 +199,8 @@ let g:pymode_python = 'python3'
 let g:pymode_folding=0
 let g:pymode_rope=0
 " UltiSnips config
-let g:UltiSnipsExpandTrigger="<TAB>"
-let g:UltiSnipsJumpForwardTrigger="<TAB>"
+let g:UltiSnipsExpandTrigger="xx"
+let g:UltiSnipsJumpForwardTrigger="xx"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 let g:UltiSnipsUsePythonVersion = 3
 let g:UltiSnipsEditSplit = "vertical"
@@ -258,7 +258,7 @@ nmap F <Plug>Sneak_F
 autocmd BufRead *.anki_vim inoremap # ->
 " Use deoplete.
 let g:deoplete#enable_at_startup = 1
-call deoplete#custom#set('ultisnips', 'matchers', ['matcher_fuzzy'])
+" call deoplete#custom#set('ulitsnips', 'matchers', ['matcher_fuzzy'])
 " complete with tab
 inoremap <silent><expr> <TAB>
 \ pumvisible() ? "\<C-n>" :

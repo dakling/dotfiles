@@ -176,26 +176,27 @@ set $inactive_text_color #c1c8d1
 set $inactive_bg_color #181818
 set $inactive_border_color #181818
 set $bg_color #383c4a 
-#bar {
-#    position top
-#        status_command i3status
-#        # status_command py3status
-#        ## please set your primary output first. Example: 'xrandr --output eDP1 --primary'
-#        tray_output primary
-#        #strip_workspace_numbers yes
-#        colors {
-#            background $transparent
-#                background $active_bg_color
-#                statusline $active_text_color
-#                separator  #454947
+bar {
+    position top
+        status_command i3status
+        tray_output primary
+        # mode invisible
+        # status_command py3status
+        ## please set your primary output first. Example: 'xrandr --output eDP1 --primary'
+        #strip_workspace_numbers yes
+        colors {
+            background $transparent
+                background $active_bg_color
+                statusline $active_text_color
+                separator  #454947
 
-##                                  border  backgr. text
-#                focused_workspace  $active_border_color $active_bg_color $active_text_color
-#                active_workspace   $inactive_border_color $active_bg_color $active_text_color
-#                inactive_workspace $inactive_border_color $inactive_bg_color $inactive_text_color
-#                urgent_workspace   $active_border_color $active_bg_color $active_text_color
-#        }
-#}
+#                                  border  backgr. text
+                focused_workspace  $active_border_color $active_bg_color $active_text_color
+                active_workspace   $inactive_border_color $active_bg_color $active_text_color
+                inactive_workspace $inactive_border_color $inactive_bg_color $inactive_text_color
+                urgent_workspace   $active_border_color $active_bg_color $active_text_color
+        }
+}
 # class                 border  backgr. text    indicator child_border
 client.focused          #4c7899 #285577 #ffffff #2e9ef4   $active_border_color
 client.focused_inactive #333333 #5f676a #ffffff #484e50   $inactive_border_color
@@ -249,7 +250,7 @@ bindsym $mod+x mode "Quick_Program_Starter"
 bindsym $mod+Shift+x mode "Quick_File_Opener"
 mode "Quick_File_Opener" {
 bindsym e      exec $term -e "python /home/dario/Dropbox/Helen/einkaufsliste/interactiveEnterDario.py"; mode default
-bindsym c      exec $editor "\$HOME/.config/sway/config"; mode default
+bindsym c      exec $editor "\$HOME/.config/i3/config"; mode default
 bindsym v      exec $editor "\$HOME/.config/nvim/init.vim"; mode default
 bindsym s      exec $editor "\$HOME/.spacemacs"; mode default
 bindsym t      exec $editor "/home/dario/.config/termite/config"; mode default
@@ -299,8 +300,9 @@ exec --no-startup-id indicator-kdeconnect
 #exec --no-startup-id xautolock -time 5 -locker blurlock
 exec --no-startup-id setxkbmap -option ctrl:nocaps; sleep 1; xcape -e 'Control_L=Escape'  
 exec_always --no-startup-id fix_xcursor
-exec --no-startup-id launch_polybar.sh
+# exec --no-startup-id launch_polybar.sh
 exec --no-startup-id monitor_home
 
 # Window rules
 for_window [title="CGoban: Main Window"] floating disable
+for_window [title="Firefox Nightly"] focus child, layout tabbed, focus

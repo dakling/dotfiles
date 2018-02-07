@@ -1,7 +1,0 @@
-let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =5
-let g:netrw_dirhist_1='/home/dario/Dokumente/Masterthesis/besprechungen/2017-08-18/parts'
-let g:netrw_dirhist_2='/home/dario/Dokumente'
-let g:netrw_dirhist_3='/home/dario/.config/NyaoVim (Case Conflict)'
-let g:netrw_dirhist_4='/home/dario/.config'
-let g:netrw_dirhist_5='/home/dario/.config/nyaovim'

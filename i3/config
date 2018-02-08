@@ -194,15 +194,15 @@ bar {
                 focused_workspace  $active_border_color $active_bg_color $active_text_color
                 active_workspace   $inactive_border_color $active_bg_color $active_text_color
                 inactive_workspace $inactive_border_color $inactive_bg_color $inactive_text_color
-                urgent_workspace   $active_border_color $active_bg_color #940000
+                urgent_workspace   $active_border_color $inactive_text_color $active_text_color
         }
 }
 # class                 border  backgr. text    indicator child_border
 client.focused          $active_border_color $active_bg_color $active_border_color $active_border_color $active_border_color
-client.focused_inactive $inactive_border_color $active_bg_color $active_text_color $active_text_color   $inactive_border_color
-client.unfocused        $inactive_border_color $inactive_bg_color $inactive_text_color #292d2e   #222222
-client.urgent           #2f343a #900000 #940000 #900000   #900000
-client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
+client.focused_inactive $inactive_text_color $active_bg_color $active_text_color $active_text_color   $inactive_border_color
+client.unfocused        $inactive_text_color $inactive_bg_color $inactive_text_color #292d2e   #222222
+client.urgent           #940000 #900000 #940000 #900000 #900000
+client.placeholder      #000000 #0c0c0c #ffffff #000000 #0c0c0c
 
 client.background       $inactive_border_color
 # Start Applications

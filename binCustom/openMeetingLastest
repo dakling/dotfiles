@@ -1,0 +1,48 @@
+#!/usr/bin/python3
+
+import os
+import webbrowser
+import sys
+
+def folderToInt(folder):
+    return(int(folder.replace("-", "")))
+
+def getMostRecentFolder(baseDir):
+
+    dateDirs = os.listdir(baseDir)
+
+    mostRecentDirIndex = 0
+    mostRecentDirInt = folderToInt(dateDirs[mostRecentDirIndex])
+
+    for date in range(0,len(dateDirs)):
+        if folderToInt(dateDirs[date]) > mostRecentDirInt:
+            mostRecentDirInt = folderToInt(dateDirs[date])
+            mostRecentDirIndex = date
+
+    return dateDirs[mostRecentDirIndex]
+
+def openFolder(folderPath):
+    webbrowser.open(folderPath)
+
+def openLatex(folderPath):
+    os.system("nvim-termite " + (folderPath + "/main.tex"))
+
+def openPdf(folderPath):
+    os.system("qpdfview " + (folderPath + "/main.pdf"))
+
+#main function
+homeDir = os.path.expanduser("~")
+baseDir = os.path.dirname(homeDir + "/Documents/turbulenceMeeting/")
+
+latestDir = baseDir + "/" + getMostRecentFolder(baseDir)
+
+if len(sys.argv) > 1:
+    if sys.argv[1] == "--tex":
+        openLatex(latestDir)
+    elif sys.argv[1] == "--pdf":
+        openPdf(latestDir)
+    else:
+        print("error: option not recognized")
+else:
+    openFolder(latestDir)
+

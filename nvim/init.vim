@@ -104,6 +104,9 @@ nnoremap <leader><leader> :
 nmap <leader>t :NERDTreeToggle<cr>
 " camelCase
 call camelcasemotion#CreateMotionMappings('ä')
+" i3 config
+autocmd bufnewfile,bufread *.i3c set filetype=conf
+autocmd bufwrite,vimleave *.i3c execute '! i3-genconfig'
 " for openfoam
 " change bc to zerogradient
 " nnoremap <leader>fzg di{i<tab>type<tab>zerogradient;<cr><tab><esc>

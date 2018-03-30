@@ -38,6 +38,7 @@ Plug 'tpope/vim-dispatch'
 Plug 'radenling/vim-dispatch-neovim'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tpope/vim-fugitive'
+Plug 'l04m33/vlime'
 
 call plug#end()
 "Configuration starts here
@@ -70,10 +71,9 @@ function! InsertStatuslineColor(mode)
 endfunction
 
 au InsertEnter * call InsertStatuslineColor(v:insertmode)
-au InsertLeave * hi statusline guibg=LightSkyBlue3 ctermfg=8 guifg=Grey19 ctermbg=110
-
+au InsertLeave * hi statusline guibg=LightSkyBlue3 ctermfg=0 guifg=Grey19 ctermbg=110
 " default the statusline to grey when entering Vim
-hi statusline guibg=LightSkyBlue3 ctermfg=8 guifg=Grey19 ctermbg=110
+hi statusline guibg=LightSkyBlue3 ctermfg=0 guifg=Grey19 ctermbg=110
 
 " Formats the statusline
 set statusline=%f                           " file name
@@ -199,8 +199,8 @@ let g:pymode_python = 'python3'
 let g:pymode_folding=0
 let g:pymode_rope=0
 " UltiSnips config
-let g:UltiSnipsExpandTrigger="<TAB>"
-let g:UltiSnipsJumpForwardTrigger="<TAB>"
+let g:UltiSnipsExpandTrigger="xx"
+let g:UltiSnipsJumpForwardTrigger="xx"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 let g:UltiSnipsUsePythonVersion = 3
 let g:UltiSnipsEditSplit = "vertical"
@@ -258,7 +258,7 @@ nmap F <Plug>Sneak_F
 autocmd BufRead *.anki_vim inoremap # ->
 " Use deoplete.
 let g:deoplete#enable_at_startup = 1
-call deoplete#custom#set('ultisnips', 'matchers', ['matcher_fuzzy'])
+" call deoplete#custom#set('ulitsnips', 'matchers', ['matcher_fuzzy'])
 " complete with tab
 inoremap <silent><expr> <TAB>
 \ pumvisible() ? "\<C-n>" :

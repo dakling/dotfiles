@@ -305,3 +305,4 @@ exec --no-startup-id dropbox
 
 # Window rules
 # for_window [title="CGoban: Main Window"] floating disable
+for_window [title="Firefox Nightly"] focus child, layout tabbed, focus

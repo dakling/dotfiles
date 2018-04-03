@@ -1,9 +1,0 @@
-export XKB_DEFAULT_LAYOUT=de
-export XKB_DEFAULT_VARIANT=nodeadkeys
-export XKB_DEFAULT_OPTIONS=caps:escape
-# export SWAY_CURSOR_THEME=Pulse-Glass
-#export GDK_BACKEND=wayland
-#export CLUTTER_BACKEND=wayland
-#export QT_QPA_PLATFORM=wayland-egl
-#export QT_DISABLE_WINDOWDECORATION=1
-sway

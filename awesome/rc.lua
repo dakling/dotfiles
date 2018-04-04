@@ -687,5 +687,6 @@ awful.spawn("easystroke enable")
 awful.spawn("indicator-kdeconnect")
 awful.spawn("orage")
 awful.spawn("xfsettingsd")
-
+awful.spawn("setxkbmap -option ctrl:nocaps")  
+awful.spawn ("xcape -e 'Control_L=Escape'"Standard)
 -- }}}

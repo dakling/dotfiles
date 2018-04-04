@@ -10,6 +10,9 @@ local beautiful = require("beautiful")
 local naughty = require("naughty")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
+
+--additional libraries
+-- local posix = require("posix")
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
@@ -42,7 +45,7 @@ end
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
 -- beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
-beautiful.init("/home/dario/.config/awesome/zenburn/theme.lua")
+beautiful.init(os.getenv("HOME") .. "/.config/awesome/zenburn/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "termite"
@@ -180,15 +183,15 @@ end
 screen.connect_signal("property::geometry", set_wallpaper)
 
 -- xmonad-style workspaces
-awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9"},1,awful.layout.layouts[1])
-sharedtaglist = screen[1].tags
+-- awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9"},1,awful.layout.layouts[1])
+-- sharedtaglist = screen[1].tags
 
 awful.screen.connect_for_each_screen(function(s)
     -- Wallpaper
     set_wallpaper(s)
 
     -- Each screen has its own tag table.
-    -- awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+    awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
@@ -218,14 +221,14 @@ awful.screen.connect_for_each_screen(function(s)
             s.mytaglist,
             s.mypromptbox,
         },
-        -- s.mytasklist, -- Middle widget
-        -- { -- Right widgets
-        --     layout = wibox.layout.fixed.horizontal,
-        --     mykeyboardlayout,
-        --     wibox.widget.systray(),
-        --     mytextclock,
-        --     s.mylayoutbox,
-        -- },
+        s.mytasklist, -- Middle widget
+        { -- Right widgets
+            layout = wibox.layout.fixed.horizontal,
+            -- mykeyboardlayout,
+            wibox.widget.systray(),
+            mytextclock,
+            s.mylayoutbox,
+        },
     }
 end)
 -- }}}
@@ -261,7 +264,7 @@ globalkeys = gears.table.join(
         end,
         {description = "focus previous by index", group = "client"}
     ),
-    awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
+    awful.key({ modkey,   "Shift" }, "p", function () mymainmenu:show() end,
               {description = "show main menu", group = "awesome"}),
 
     -- Layout manipulation
@@ -291,11 +294,32 @@ globalkeys = gears.table.join(
               {description = "reload awesome", group = "awesome"}),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit,
               {description = "quit awesome", group = "awesome"}),
+    awful.key({ modkey,           }, "F2", function () awful.spawn("firefox") end,
+              {description = "open firefox", group = "launcher"}),
+    awful.key({ modkey,           }, "F3", function () awful.spawn("rangerStandalone") end,
+              {description = "open ranger", group = "launcher"}),
+    awful.key({ modkey,           }, "F4", function () awful.spawn("thunderbird") end,
+              {description = "open thunderbird", group = "launcher"}),
+    awful.key({ modkey,           }, "F5", function () awful.spawn(terminal .. " -e pacui") end,
+              {description = "open pacui", group = "launcher"}),
+    awful.key({ modkey,           }, "d", function () awful.spawn("albert show") end,
+              {description = "open albert launcher", group = "launcher"}),
+    --modes like i3
+    awful.key({ modkey,           }, "w", function () modeFunction(exitmodekeys) end,
+              {description = "exit", group = "launcher"}),
+    awful.key({ modkey,           }, "x", function () modeFunction(programmodekeys) end,
+              {description = "program launcher", group = "launcher"}),
+    awful.key({ modkey,  "Shift"  }, "x", function () modeFunction(filemodekeys) end,
+              {description = "file launcher", group = "launcher"}),
 
     awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)          end,
               {description = "increase master width factor", group = "layout"}),
     awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05)          end,
               {description = "decrease master width factor", group = "layout"}),
+    -- awful.key({ modkey,  "Control" }, "j",     function () awful.tag.incmwfact( 0.05)          end,
+    --           {description = "increase master width factor", group = "layout"}),
+    -- awful.key({ modkey,  "Control" }, "k",     function () awful.tag.incmwfact(-0.05)          end,
+              -- {description = "decrease master width factor", group = "layout"}),
     awful.key({ modkey, "Shift"   }, "h",     function () awful.tag.incnmaster( 1, nil, true) end,
               {description = "increase the number of master clients", group = "layout"}),
     awful.key({ modkey, "Shift"   }, "l",     function () awful.tag.incnmaster(-1, nil, true) end,
@@ -324,7 +348,7 @@ globalkeys = gears.table.join(
     awful.key({ modkey },            "r",     function () awful.screen.focused().mypromptbox:run() end,
               {description = "run prompt", group = "launcher"}),
 
-    awful.key({ modkey }, "x",
+    awful.key({ modkey, "Shift" }, "r",
               function ()
                   awful.prompt.run {
                     prompt       = "Run Lua code: ",
@@ -339,6 +363,43 @@ globalkeys = gears.table.join(
               {description = "show the menubar", group = "launcher"})
 )
 
+--i3-like modes
+modeFunction = function (modekeys)
+    root.keys(modekeys)
+end
+backToNormalMode = function ()
+    root.keys(globalkeys)
+end
+
+exitmodekeys = gears.table.join(
+    awful.key({ }, "s",   function()   awful.spawn("shutdown now") backToNormalMode() end,
+              {description="shutdown", group="awesome"}),
+    awful.key({ }, "r",   function()   awful.spawn("reboot now") backToNormalMode() end,
+              {description="reboot", group="awesome"}),
+    awful.key({ }, "e",   function()   awesome.quit() backToNormalMode() end,
+              {description="quit awesome", group="awesome"}),
+    awful.key({ }, "l",   function()   awful.spawn("i3exit lock") backToNormalMode() end,
+              {description="lock screen", group="awesome"}),
+    awful.key({ }, "Escape",   function()   backToNormalMode() end,
+              {description="back to normal mode", group="awesome"})
+              )
+programmodekeys = gears.table.join(
+    awful.key({ }, "d",   function()   awful.spawn("pcmanfm") backToNormalMode() end,
+              {description="launch file manager", group="awesome"}),
+    awful.key({ }, "p",   function()   awful.spawn("pamac-manager") backToNormalMode() end,
+              {description="launch pamac manager", group="awesome"}),
+    awful.key({ }, "Escape",   function()   backToNormalMode() end,
+              {description="back to normal mode", group="awesome"})
+              )
+filemodekeys = gears.table.join(
+    awful.key({ }, "c",   function()   awful.spawn("nvim-termite " .. os.getenv("HOME") .. "/.config/awesome/rc.lua") backToNormalMode() end,
+              {description="open config file", group="awesome"}),
+    awful.key({ }, "v",   function()   awful.spawn("nvim-termite " .. os.getenv("HOME") .. "/.config/nvim/init.vim") backToNormalMode() end,
+              {description="open config file", group="awesome"}),
+    awful.key({ }, "Escape",   function()   backToNormalMode() end,
+              {description="back to normal mode", group="awesome"})
+              )
+
 clientkeys = gears.table.join(
     awful.key({ modkey,           }, "f",
         function (c)
@@ -350,7 +411,7 @@ clientkeys = gears.table.join(
               {description = "close", group = "client"}),
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ,
               {description = "toggle floating", group = "client"}),
-    awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end,
+    awful.key({ modkey, "Shift" }, "Return", function (c) c:swap(awful.client.getmaster()) end,
               {description = "move to master", group = "client"}),
     awful.key({ modkey, "Shift"   }, "o",      function (c) c:move_to_screen()               end,
               {description = "move to screen", group = "client"}),
@@ -387,62 +448,15 @@ clientkeys = gears.table.join(
 -- Be careful: we use keycodes to make it work on any keyboard layout.
 -- This should map on the top row of your keyboard, usually 1 to 9.
 -- xmonad style workspaces
-for i = 1, 9 do
-    globalkeys = awful.util.table.join(globalkeys,
-        -- View tag only.
-        awful.key({ modkey }, "#" .. i + 9,
-                  function ()
-                        local screen = awful.screen.focused()
-                        local tag = sharedtaglist[i]
-                        if tag then
-                           awful.tag.setscreen(screen, tag)
-                           tag:view_only()
-                        end
-                  end,
-                  {description = "view tag #"..i, group = "tag"}),
-        -- Toggle tag display.
-        awful.key({ modkey, "Control" }, "#" .. i + 9,
-                  function ()
-                      -- local screen = awful.screen.focused()
-                      local tag = sharedtaglist[i]
-                      if tag then
-                         awful.tag.viewtoggle(tag)
-                      end
-                  end,
-                  {description = "toggle tag #" .. i, group = "tag"}),
-        -- Move client to tag.
-        awful.key({ modkey, "Shift" }, "#" .. i + 9,
-                  function ()
-                      if client.focus then
-                          local tag = sharedtaglist[i] --client.focus.screen.tags[i]
-                          if tag then
-                              client.focus:move_to_tag(tag)
-                          end
-                     end
-                  end,
-                  {description = "move focused client to tag #"..i, group = "tag"}),
-        -- Toggle tag on focused client.
-        awful.key({ modkey, "Control", "Shift" }, "#" .. i + 9,
-                  function ()
-                      if client.focus then
-                          local tag = sharedtaglist[i] --client.focus.screen.tags[i]
-                          if tag then
-                              client.focus:toggle_tag(tag)
-                          end
-                      end
-                  end,
-                  {description = "toggle focused client on tag #" .. i, group = "tag"})
-    )
-end
--- awesome style workspaces
 -- for i = 1, 9 do
---     globalkeys = gears.table.join(globalkeys,
+--     globalkeys = awful.util.table.join(globalkeys,
 --         -- View tag only.
 --         awful.key({ modkey }, "#" .. i + 9,
 --                   function ()
 --                         local screen = awful.screen.focused()
---                         local tag = screen.tags[i]
+--                         local tag = sharedtaglist[i]
 --                         if tag then
+--                            awful.tag.setscreen(screen, tag)
 --                            tag:view_only()
 --                         end
 --                   end,
@@ -450,8 +464,8 @@ end
 --         -- Toggle tag display.
 --         awful.key({ modkey, "Control" }, "#" .. i + 9,
 --                   function ()
---                       local screen = awful.screen.focused()
---                       local tag = screen.tags[i]
+--                       -- local screen = awful.screen.focused()
+--                       local tag = sharedtaglist[i]
 --                       if tag then
 --                          awful.tag.viewtoggle(tag)
 --                       end
@@ -461,7 +475,7 @@ end
 --         awful.key({ modkey, "Shift" }, "#" .. i + 9,
 --                   function ()
 --                       if client.focus then
---                           local tag = client.focus.screen.tags[i]
+--                           local tag = sharedtaglist[i] --client.focus.screen.tags[i]
 --                           if tag then
 --                               client.focus:move_to_tag(tag)
 --                           end
@@ -472,7 +486,7 @@ end
 --         awful.key({ modkey, "Control", "Shift" }, "#" .. i + 9,
 --                   function ()
 --                       if client.focus then
---                           local tag = client.focus.screen.tags[i]
+--                           local tag = sharedtaglist[i] --client.focus.screen.tags[i]
 --                           if tag then
 --                               client.focus:toggle_tag(tag)
 --                           end
@@ -481,6 +495,54 @@ end
 --                   {description = "toggle focused client on tag #" .. i, group = "tag"})
 --     )
 -- end
+-- awesome style workspaces
+for i = 1, 9 do
+    globalkeys = gears.table.join(globalkeys,
+        -- View tag only.
+        awful.key({ modkey }, "#" .. i + 9,
+                  function ()
+                        local screen = awful.screen.focused()
+                        local tag = screen.tags[i]
+                        if tag then
+                           tag:view_only()
+                        end
+                  end,
+                  {description = "view tag #"..i, group = "tag"}),
+        -- Toggle tag display.
+        awful.key({ modkey, "Control" }, "#" .. i + 9,
+                  function ()
+                      local screen = awful.screen.focused()
+                      local tag = screen.tags[i]
+                      if tag then
+                         awful.tag.viewtoggle(tag)
+                      end
+                  end,
+                  {description = "toggle tag #" .. i, group = "tag"}),
+        -- Move client to tag.
+        awful.key({ modkey, "Shift" }, "#" .. i + 9,
+                  function ()
+                      if client.focus then
+                          local tag = client.focus.screen.tags[i]
+                          if tag then
+                              client.focus:move_to_tag(tag)
+                              tag:view_only()
+                          end
+                     end
+                  end,
+                  {description = "move focused client to tag #"..i, group = "tag"}),
+        -- Toggle tag on focused client.
+        awful.key({ modkey, "Control", "Shift" }, "#" .. i + 9,
+                  function ()
+                      if client.focus then
+                          local tag = client.focus.screen.tags[i]
+                          if tag then
+                              client.focus:toggle_tag(tag)
+                          end
+                      end
+                  end,
+                  {description = "toggle focused client on tag #" .. i, group = "tag"})
+    )
+end
 
 clientbuttons = gears.table.join(
     awful.button({ }, 1, function (c) client.focus = c; c:raise() end),
@@ -611,4 +673,19 @@ end)
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
+-- autostart
+-- no check if awesome is reloaded - most programs can handle this themselves!
+awful.spawn("/usr/lib/polkit-kde-authentication-agent-1")
+awful.spawn("sleep 1; compton -b")
+awful.spawn("nm-applet")
+awful.spawn("pamac-tray")
+awful.spawn("pa-applet")
+awful.spawn("clipit")
+awful.spawn("dropbox")
+awful.spawn("albert")
+awful.spawn("easystroke enable")
+awful.spawn("indicator-kdeconnect")
+awful.spawn("orage")
+awful.spawn("xfsettingsd")
+
 -- }}}

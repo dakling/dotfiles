@@ -12,7 +12,7 @@ theme.wallpaper = themes_path .. "zenburn/zenburn-background.png"
 -- }}}
 
 -- {{{ Styles
-theme.font      = "sans 8"
+theme.font      = "DejaVu Sans 8"
 
 -- {{{ Colors
 theme.fg_normal  = "#DCDCCC"
@@ -28,7 +28,7 @@ theme.bg_systray = theme.bg_normal
 theme.useless_gap   = dpi(0)
 theme.border_width  = dpi(2)
 theme.border_normal = "#3F3F3F"
-theme.border_focus  = "#6F6F6F"
+theme.border_focus  = "#F0DFAF"
 theme.border_marked = "#CC9393"
 -- }}}
 

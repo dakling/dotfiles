@@ -2,7 +2,7 @@
 
 # starts a program if it is not already running
 if [[ -z $(pgrep $1) ]]; then
-    $1
+    $1 $2 $3
 else
     echo "already running"
 fi

@@ -123,6 +123,16 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 -- {{{ Wibar
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
+mycalendar = awful.widget.calendar_popup.month("tr")
+-- my_year_calendar = awful.widget.calendar_popup.year()
+mycalendar:attach(mytextclock, "tr", true)
+-- my_year_calendar:attach(mytextclock, "tr")
+-- mytextclock:buttons (awful.util.table.join(
+--                     awful.button({  }, 1, function() mycalendar:toggle() end),
+--                     awful.button({  }, 3, function() my_year_calendar:toggle() end)
+--                     ) 
+-- )
+-- Create a calendar widget
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -227,6 +237,7 @@ awful.screen.connect_for_each_screen(function(s)
             -- mykeyboardlayout,
             wibox.widget.systray(),
             mytextclock,
+            -- mycalendar,
             s.mylayoutbox,
         },
     }

@@ -681,7 +681,7 @@ autostartWithoutCheck = function(programName)
     awful.spawn(programName)
 end
 autostartWithoutCheck("/usr/lib/polkit-kde-authentication-agent-1")
-autostartWithoutCheck("sleep 1; compton -b")
+autostartWithoutCheck("compton -b")
 autostartWithoutCheck("setxkbmap -option ctrl:nocaps")  
 autostartWithoutCheck("xcape -e 'Control_L=Escape'")
 autostartWithCheck("signal-desktop --start-in-tray")

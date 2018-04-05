@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# starts a program if it is not already running
+if [[ -z $(pgrep $1) ]]; then
+    $1
+fi

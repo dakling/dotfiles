@@ -50,7 +50,7 @@ beautiful.init(os.getenv("HOME") .. "/.config/awesome/zenburn/theme.lua")
 -- This is used later as the default terminal and editor to run.
 terminal = "termite"
 editor = os.getenv("EDITOR") or "nvim"
-editor_cmd = terminal .. " -e " .. editor
+editor_cmd = "nvim-termite "
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
@@ -397,16 +397,24 @@ exitmodekeys = gears.table.join(
 programmodekeys = gears.table.join(
     awful.key({ }, "d",   function()   awful.spawn("pcmanfm") backToNormalMode() end,
               {description="launch file manager", group="awesome"}),
+    awful.key({ }, "e",   function()   awful.spawn("thunderbird") backToNormalMode() end,
+              {description="launch mail reader", group="awesome"}),
+    awful.key({ }, "t",   function()   awful.spawn(terminal) backToNormalMode() end,
+              {description="launch pamac manager", group="awesome"}),
     awful.key({ }, "p",   function()   awful.spawn("pamac-manager") backToNormalMode() end,
               {description="launch pamac manager", group="awesome"}),
     awful.key({ }, "Escape",   function()   backToNormalMode() end,
               {description="back to normal mode", group="awesome"})
               )
 filemodekeys = gears.table.join(
-    awful.key({ }, "c",   function()   awful.spawn("nvim-termite " .. os.getenv("HOME") .. "/.config/awesome/rc.lua") backToNormalMode() end,
+    awful.key({ }, "c",   function()   awful.spawn(editor_cmd .. awesome.conffile) backToNormalMode() end,
               {description="open config file", group="awesome"}),
-    awful.key({ }, "v",   function()   awful.spawn("nvim-termite " .. os.getenv("HOME") .. "/.config/nvim/init.vim") backToNormalMode() end,
+    awful.key({ }, "v",   function()   awful.spawn(editor_cmd .. os.getenv("HOME") .. "/.config/nvim/init.vim") backToNormalMode() end,
               {description="open config file", group="awesome"}),
+    awful.key({ }, "z",   function()   awful.spawn(editor_cmd .. os.getenv("HOME") .. "/.zshrc") backToNormalMode() end,
+              {description="open zshrc", group="awesome"}),
+    awful.key({ }, "e",   function()   awful.spawn("python ~/Dropbox/Helen/einkaufsliste/interactiveEnterDario.py") backToNormalMode() end,
+              {description="open zshrc", group="awesome"}),
     awful.key({ }, "Escape",   function()   backToNormalMode() end,
               {description="back to normal mode", group="awesome"})
               )
@@ -691,6 +699,7 @@ end
 autostartWithoutCheck = function(programName)
     awful.spawn(programName)
 end
+autostartWithoutCheck("monitor_home")
 autostartWithoutCheck("/usr/lib/polkit-kde-authentication-agent-1")
 autostartWithoutCheck("compton -b")
 autostartWithoutCheck("setxkbmap -option ctrl:nocaps")  

@@ -301,6 +301,8 @@ globalkeys = gears.table.join(
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
               {description = "open a terminal", group = "launcher"}),
+    awful.key({ modkey, "Control" }, "Return", function () awful.spawn("open-terminal-here") end,
+              {description = "open a terminal", group = "launcher"}),
     awful.key({ modkey, "Control" }, "r", awesome.restart,
               {description = "reload awesome", group = "awesome"}),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit,
@@ -315,6 +317,12 @@ globalkeys = gears.table.join(
               {description = "open pacui", group = "launcher"}),
     awful.key({ modkey,           }, "d", function () awful.spawn("albert show") end,
               {description = "open albert launcher", group = "launcher"}),
+    awful.key({          }, "XF86AudioRaiseVolume", function () awful.spawn("changeVolume +5") end,
+              {description = "increase volume", group = "launcher"}),
+    awful.key({          }, "XF86AudioLowerVolume", function () awful.spawn("changeVolume -5") end,
+              {description = "decrease volume", group = "launcher"}),
+    awful.key({          }, "XF86AudioMute", function () awful.spawn("pactl set-sink-mute $(pacmd list-sinks |awk '/* index:/{print $3}') toggle") end,
+              {description = "mute volume", group = "launcher"}),
     --modes like i3
     awful.key({ modkey,           }, "w", function () modeFunction(exitmodekeys) end,
               {description = "exit", group = "launcher"}),
@@ -385,7 +393,7 @@ end
 exitmodekeys = gears.table.join(
     awful.key({ }, "s",   function()   awful.spawn("shutdown now") backToNormalMode() end,
               {description="shutdown", group="awesome"}),
-    awful.key({ }, "r",   function()   awful.spawn("reboot now") backToNormalMode() end,
+    awful.key({ }, "r",   function()   awful.spawn("reboot") backToNormalMode() end,
               {description="reboot", group="awesome"}),
     awful.key({ }, "e",   function()   awesome.quit() backToNormalMode() end,
               {description="quit awesome", group="awesome"}),

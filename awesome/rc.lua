@@ -321,7 +321,7 @@ globalkeys = gears.table.join(
               {description = "increase volume", group = "launcher"}),
     awful.key({          }, "XF86AudioLowerVolume", function () awful.spawn("changeVolume -5") end,
               {description = "decrease volume", group = "launcher"}),
-    awful.key({          }, "XF86AudioMute", function () awful.spawn("pactl set-sink-mute $(pacmd list-sinks |awk '/* index:/{print $3}') toggle") end,
+    awful.key({          }, "XF86AudioMute", function () awful.spawn("pactl set-sink-mute $(pacmd list-sinks |awk '* index:{print $3}') toggle") end,
               {description = "mute volume", group = "launcher"}),
     --modes like i3
     awful.key({ modkey,           }, "w", function () modeFunction(exitmodekeys) end,
@@ -352,7 +352,7 @@ globalkeys = gears.table.join(
     awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(-1)                end,
               {description = "select previous", group = "layout"}),
 
-    awful.key({ modkey, "Control" }, "n",
+    awful.key({ modkey, "Shift" }, "n",
               function ()
                   local c = awful.client.restore()
                   -- Focus restored client
@@ -711,7 +711,8 @@ autostartWithoutCheck("monitor_home")
 autostartWithoutCheck("/usr/lib/polkit-kde-authentication-agent-1")
 autostartWithoutCheck("compton -b")
 autostartWithoutCheck("setxkbmap -option ctrl:nocaps")  
-autostartWithoutCheck("xcape -e 'Control_L=Escape'")
+autostartWithoutCheck("xcape -e \'Control_L=Escape\'")
+autostartWithoutCheck("xfce4-power-manager")
 autostartWithCheck("signal-desktop --start-in-tray")
 autostartWithCheck("nm-applet")
 autostartWithCheck("pamac-tray")

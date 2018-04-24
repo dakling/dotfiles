@@ -1,9 +1,0 @@
-#!/bin/bash
-
-xrandr --output VGA1 --auto --left-of HDMI1 --primary --output VGA1 --auto
-# xinput --map-to-output $(xinput list --id-only "Wacom ISDv4 E6 Finger") LVDS1
-# xinput --map-to-output $(xinput list --id-only "Wacom ISDv4 E6 Pen Pen (0)") LVDS1
-# nitrogen --head=0 ~/.config/backgrounds/current/ --random --set-zoom-fill
-# nitrogen --head=1 ~/.config/backgrounds/current/ --random --set-zoom-fill
-# # killall polybar
-# launch_polybar.sh

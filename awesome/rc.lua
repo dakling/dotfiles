@@ -691,6 +691,7 @@ end
 autostartWithoutCheck = function(programName)
     awful.spawn(programName)
 end
+autostartWithoutCheck("monitor_home")
 autostartWithoutCheck("/usr/lib/polkit-kde-authentication-agent-1")
 autostartWithoutCheck("compton -b")
 autostartWithoutCheck("setxkbmap -option ctrl:nocaps")  

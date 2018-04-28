@@ -321,7 +321,7 @@ globalkeys = gears.table.join(
               {description = "increase volume", group = "launcher"}),
     awful.key({          }, "XF86AudioLowerVolume", function () awful.spawn("changeVolume -5") end,
               {description = "decrease volume", group = "launcher"}),
-    awful.key({          }, "XF86AudioMute", function () awful.spawn("pactl set-sink-mute $(pacmd list-sinks |awk '* index:{print $3}') toggle") end,
+    awful.key({          }, "XF86AudioMute", function () awful.spawn(os.getenv("HOME") .. "/.gitConfig/binCustom/muteToggle") end,
               {description = "mute volume", group = "launcher"}),
     --modes like i3
     awful.key({ modkey,           }, "w", function () modeFunction(exitmodekeys) end,
@@ -421,8 +421,8 @@ filemodekeys = gears.table.join(
               {description="open config file", group="awesome"}),
     awful.key({ }, "z",   function()   awful.spawn(editor_cmd .. os.getenv("HOME") .. "/.zshrc") backToNormalMode() end,
               {description="open zshrc", group="awesome"}),
-    awful.key({ }, "e",   function()   awful.spawn("python ~/Dropbox/Helen/einkaufsliste/interactiveEnterDario.py") backToNormalMode() end,
-              {description="open zshrc", group="awesome"}),
+    awful.key({ }, "e",   function()   awful.spawn(terminal .. " -e " .. os.getenv("HOME") .. "/Dropbox/Helen/einkaufsliste/interactiveEnterDario.py") backToNormalMode() end,
+              {description="enter shopping items to list", group="awesome"}),
     awful.key({ }, "Escape",   function()   backToNormalMode() end,
               {description="back to normal mode", group="awesome"})
               )
@@ -707,21 +707,21 @@ end
 autostartWithoutCheck = function(programName)
     awful.spawn(programName)
 end
-autostartWithoutCheck("monitor_home")
-autostartWithoutCheck("/usr/lib/polkit-kde-authentication-agent-1")
-autostartWithoutCheck("compton -b")
-autostartWithoutCheck("setxkbmap -option ctrl:nocaps")  
-autostartWithoutCheck("xcape -e \'Control_L=Escape\'")
-autostartWithoutCheck("xfce4-power-manager")
-autostartWithCheck("signal-desktop --start-in-tray")
-autostartWithCheck("nm-applet")
-autostartWithCheck("pamac-tray")
-autostartWithCheck("pa-applet")
-autostartWithCheck("clipit")
-autostartWithCheck("dropbox")
-autostartWithCheck("albert")
-autostartWithCheck("easystroke enable")
-autostartWithCheck("indicator-kdeconnect")
-autostartWithCheck("orage")
-autostartWithCheck("xfsettingsd")
+-- autostartWithoutCheck("/usr/lib/polkit-kde-authentication-agent-1")
+-- autostartWithoutCheck("compton -b")
+-- autostartWithoutCheck("setxkbmap -option ctrl:nocaps")  
+-- autostartWithoutCheck("xcape -e \'Control_L=Escape\'")
+-- autostartWithoutCheck("xfce4-power-manager")
+-- autostartWithCheck("signal-desktop --start-in-tray")
+-- autostartWithCheck("nm-applet")
+-- autostartWithCheck("pamac-tray")
+-- autostartWithCheck("pa-applet")
+-- autostartWithCheck("clipit")
+-- autostartWithCheck("dropbox")
+-- autostartWithCheck("albert")
+-- autostartWithCheck("easystroke enable")
+-- autostartWithCheck("indicator-kdeconnect")
+-- autostartWithCheck("orage")
+-- autostartWithCheck("xfsettingsd")
+-- autostartWithoutCheck("monitor_home")
 -- }}}

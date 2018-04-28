@@ -330,6 +330,8 @@ globalkeys = gears.table.join(
               {description = "program launcher", group = "launcher"}),
     awful.key({ modkey,  "Shift"  }, "x", function () modeFunction(filemodekeys) end,
               {description = "file launcher", group = "launcher"}),
+    awful.key({ modkey,    }, "y", function () modeFunction(mousemodekeys) end,
+              {description = "mouse mode launcher", group = "launcher"}),
 
     awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)          end,
               {description = "increase master width factor", group = "layout"}),
@@ -427,6 +429,48 @@ filemodekeys = gears.table.join(
               {description="back to normal mode", group="awesome"})
               )
 
+shortMouseDistance = "5"
+middleMouseDistance = "50"
+longMouseDistance = "200"
+mousemodekeys = gears.table.join(
+    awful.key({ }, "h",   function()   awful.spawn("xdotool mousemove_relative -- -" .. middleMouseDistance ..  " 0") end,
+              {description="normal move left", group="awesome"}),
+    awful.key({ }, "l",   function()   awful.spawn("xdotool mousemove_relative -- " .. middleMouseDistance ..  " 0") end,
+              {description="normal move right", group="awesome"}),
+    awful.key({ }, "j",   function()   awful.spawn("xdotool mousemove_relative -- 0 " .. middleMouseDistance) end,
+              {description="normal move down", group="awesome"}),
+    awful.key({ }, "k",   function()   awful.spawn("xdotool mousemove_relative -- 0 -" .. middleMouseDistance) end,
+              {description="normal move up", group="awesome"}),
+    awful.key({ "Shift" }, "h",   function()   awful.spawn("xdotool mousemove_relative -- -" .. longMouseDistance ..  " 0") end,
+              {description="normal move left", group="awesome"}),
+    awful.key({ "Shift" }, "l",   function()   awful.spawn("xdotool mousemove_relative -- " .. longMouseDistance ..  " 0") end,
+              {description="normal move right", group="awesome"}),
+    awful.key({ "Shift" }, "j",   function()   awful.spawn("xdotool mousemove_relative -- 0 " .. longMouseDistance) end,
+              {description="normal move down", group="awesome"}),
+    awful.key({ "Shift" }, "k",   function()   awful.spawn("xdotool mousemove_relative -- 0 -" .. longMouseDistance) end,
+              {description="normal move up", group="awesome"}),
+    awful.key({ "Control" }, "h",   function()   awful.spawn("xdotool mousemove_relative -- -" .. shortMouseDistance ..  " 0") end,
+              {description="normal move left", group="awesome"}),
+    awful.key({ "Control" }, "l",   function()   awful.spawn("xdotool mousemove_relative -- " .. shortMouseDistance ..  " 0") end,
+              {description="normal move right", group="awesome"}),
+    awful.key({ "Control" }, "j",   function()   awful.spawn("xdotool mousemove_relative -- 0 " .. shortMouseDistance) end,
+              {description="normal move down", group="awesome"}),
+    awful.key({ "Control" }, "k",   function()   awful.spawn("xdotool mousemove_relative -- 0 -" .. shortMouseDistance) end,
+              {description="normal move up", group="awesome"}),
+    -- clicking
+    awful.key({  }, "a",   function()   awful.spawn("xdotool click 1") end,
+              {description="click left", group="awesome"}),
+    awful.key({  }, "d",   function()   awful.spawn("xdotool click 3") end,
+              {description="click middle", group="awesome"}),
+    awful.key({  }, "s",   function()   awful.spawn("xdotool click 2") end,
+              {description="click right", group="awesome"}),
+    awful.key({  }, "f",   function()   awful.spawn("xdotool mousedown 1") end,
+              {description="click right", group="awesome"}),
+    awful.key({  }, "g",   function()   awful.spawn("xdotool mouseup 1") end,
+              {description="click right", group="awesome"}),
+    awful.key({ }, "Escape",   function()   backToNormalMode() end,
+              {description="back to normal mode", group="awesome"})
+              )
 clientkeys = gears.table.join(
     awful.key({ modkey,           }, "f",
         function (c)

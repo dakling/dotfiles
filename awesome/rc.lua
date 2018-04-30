@@ -199,11 +199,15 @@ screen.connect_signal("property::geometry", set_wallpaper)
 -- awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9"},1,awful.layout.layouts[1])
 -- sharedtaglist = screen[1].tags
 local tags = sharedtags({
-    { name = "1", layout = awful.layout.layouts[2] },
-    { name = "2", layout = awful.layout.layouts[10] },
+    { name = "1", layout = awful.layout.layouts[1] },
+    { name = "2", screen=2, layout = awful.layout.layouts[1] },
     { name = "3", layout = awful.layout.layouts[1] },
-    { name = "4", layout = awful.layout.layouts[2] },
-    { name = "5", screen = 2, layout = awful.layout.layouts[2] },
+    { name = "4", layout = awful.layout.layouts[1] },
+    { name = "5", layout = awful.layout.layouts[1] },
+    { name = "6", layout = awful.layout.layouts[1] },
+    { name = "7", layout = awful.layout.layouts[1] },
+    { name = "8", layout = awful.layout.layouts[1] },
+    { name = "9", layout = awful.layout.layouts[1] },
     { layout = awful.layout.layouts[2] },
     { screen = 2, layout = awful.layout.layouts[2] }
 })

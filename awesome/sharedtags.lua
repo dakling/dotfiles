@@ -121,6 +121,11 @@ function sharedtags.movetag(tag, screen)
 
     -- If the specified tag is allocated to another screen, we need to move it.
     if oldscreen ~= screen then
+        -- greedyview xmonad-style
+        if tag.selected then
+            local newsel = screen.selected_tag
+            newsel.screen = oldscreen
+        end
         local oldsel = oldscreen.selected_tag
         tag.screen = screen
 

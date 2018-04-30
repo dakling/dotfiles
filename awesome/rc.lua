@@ -11,8 +11,9 @@ local naughty = require("naughty")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 local revelation = require("revelation")
-local eminent = require("eminent")
-local sharedtags = require("sharedtags")
+-- local eminent = require("eminent")
+local sharedtags = require("sharedtags-greedyview")
+local modes = require("modes")
 --additional libraries
 -- local posix = require("posix")
 -- Enable hotkeys help widget for VIM and other apps
@@ -207,9 +208,9 @@ local tags = sharedtags({
     { name = "6", layout = awful.layout.layouts[1] },
     { name = "7", layout = awful.layout.layouts[1] },
     { name = "8", layout = awful.layout.layouts[1] },
-    { name = "9", layout = awful.layout.layouts[1] },
-    { layout = awful.layout.layouts[2] },
-    { screen = 2, layout = awful.layout.layouts[2] }
+    { name = "9", layout = awful.layout.layouts[1] }
+    -- { layout = awful.layout.layouts[2] },
+    -- { screen = 2, layout = awful.layout.layouts[2] }
 })
 
 awful.screen.connect_for_each_screen(function(s)
@@ -404,13 +405,6 @@ globalkeys = gears.table.join(
 )
 
 --i3-like modes
-modeFunction = function (modekeys)
-  root.keys(modekeys)
-end
-backToNormalMode = function ()
-  root.keys(globalkeys)
-end
-
 exitmodekeys = gears.table.join(
   awful.key({ }, "s",   function()   awful.spawn("shutdown now") backToNormalMode() end,
             {description="shutdown", group="awesome"}),

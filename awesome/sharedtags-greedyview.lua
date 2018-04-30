@@ -12,12 +12,12 @@ local capi = {
 
 local sharedtags = {
     _VERSION = "sharedtags v1.0.0 for v4.0",
-    _DESCRIPTION = "Share tags for awesome window manager v4.0",
-    _URL = "https://github.com/Drauthius/awesome-sharedtags",
+    _DESCRIPTION = "Share tags for awesome window manager v4.0 with greedyview",
+    _URL = "https://github.com/awesome-www/recipes",
     _LICENSE = [[
         MIT LICENSE
 
-        Copyright (c) 2017 Albert Diserholt
+        Copyright (c) 2018 Albert Diserholt
 
         Permission is hereby granted, free of charge, to any person obtaining a
         copy of this software and associated documentation files (the "Software"),
@@ -123,13 +123,12 @@ function sharedtags.movetag(tag, screen)
     if oldscreen ~= screen then
         -- greedyview xmonad-style
         if tag.selected then
-            local newsel = screen.selected_tag
-            newsel.screen = oldscreen
+            screen.selected_tag.screen = oldscreen
+            oldscreen.selected_tag:view_only()
         end
-        local oldsel = oldscreen.selected_tag
         tag.screen = screen
 
-        if oldsel == tag then
+        if oldscreen.selected_tag == tag then
             -- The tag has been moved away. In most cases the tag history
             -- function will find the best match, but if we really want we can
             -- try to find a fallback tag as well.
@@ -139,10 +138,6 @@ function sharedtags.movetag(tag, screen)
                     newtag:view_only()
                 end
             end
-        --else
-            -- NOTE: A bug in awesome 4.0 is causing all tags to be deselected
-            -- here. A shame, but I haven't found a nice way to work around it
-            -- except by fixing the bug (history seems to be in a weird state).
         end
 
         -- Also sort the tag in the taglist, by reapplying the index. This is just a nicety.
@@ -190,6 +185,6 @@ function sharedtags.viewtoggle(tag, screen)
     end
 end
 
-return setmetatable(sharedtags, { __call = function(...) return sharedtags.new(select(2, ...)) end })
+return setmetatable(sharedtags, { __call = function(self, args) return sharedtags.new(args) end })
 
 -- vim: filetype=lua:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:textwidth=80

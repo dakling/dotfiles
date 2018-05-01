@@ -209,8 +209,6 @@ local tags = sharedtags({
     { name = "7", layout = awful.layout.layouts[1] },
     { name = "8", layout = awful.layout.layouts[1] },
     { name = "9", layout = awful.layout.layouts[1] }
-    -- { layout = awful.layout.layouts[2] },
-    -- { screen = 2, layout = awful.layout.layouts[2] }
 })
 
 awful.screen.connect_for_each_screen(function(s)
@@ -303,8 +301,10 @@ globalkeys = gears.table.join(
             {description = "swap with previous client by index", group = "client"}),
   awful.key({ modkey }, "o", function () awful.screen.focus_relative( 1) end,
             {description = "focus the next screen", group = "screen"}),
-  -- awful.key({ modkey, "Control" }, "k", function () awful.screen.focus_relative(-1) end,
-  --           {description = "focus the previous screen", group = "screen"}),
+  awful.key({ modkey, "Control" }, "j", function () awful.screen.focus_bydirection("down") end,
+            {description = "focus the previous screen", group = "screen"}),
+  awful.key({ modkey, "Control" }, "k", function () awful.screen.focus_bydirection("up") end,
+            {description = "focus the previous screen", group = "screen"}),
   awful.key({ modkey,           }, "u", awful.client.urgent.jumpto,
             {description = "jump to urgent client", group = "client"}),
   awful.key({ modkey,           }, "Tab",

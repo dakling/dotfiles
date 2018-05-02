@@ -657,8 +657,10 @@ for i = 1, 9 do
                   function ()
                       if client.focus then
                           local tag = tags[i]
+                          local screen = awful.screen.focused()
                           if tag then
                               client.focus:move_to_tag(tag)
+                              sharedtags.viewonly(tag, screen)
                           end
                      end
                   end,

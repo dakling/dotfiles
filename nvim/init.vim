@@ -103,10 +103,7 @@ nnoremap <leader><leader> :
 "nerdtree
 nmap <leader>t :NERDTreeToggle<cr>
 " camelCase
-call camelcasemotion#CreateMotionMappings('ä')
-" i3 config
-autocmd bufnewfile,bufread *.i3c set filetype=conf
-autocmd bufwrite,vimleave *.i3c execute '! i3-genconfig'
+call camelcasemotion#CreateMotionMappings('#')
 " for openfoam
 " change bc to zerogradient
 " nnoremap <leader>fzg di{i<tab>type<tab>zerogradient;<cr><tab><esc>
@@ -117,14 +114,8 @@ augroup filetypedetect
     autocmd bufnewfile,bufread *.bws set filetype=cs
 augroup end 
 " csharp
-" Choose the OmniSharp-Roslyn server - this is the default
-let g:OmniSharp_server_type = 'roslyn'
-
-" Set the path to the roslyn server
-let g:OmniSharp_server_path = '/home/klingenberg/omnisharp-roslyn'
-
-" This is the default value, setting it isn't actually necessary
-let g:OmniSharp_host = "http://localhost:2000"
+" " Set the path to the roslyn server
+let g:OmniSharp_server_path = '/home/klingenberg/Documents/programming/c#/omnisharp-roslyn/omnisharp/OmniSharp.exe'
 
 " Set the type lookup function to use the preview window instead of echoing it
 "let g:OmniSharp_typeLookupInPreview = 1
@@ -136,6 +127,7 @@ let g:OmniSharp_timeout = 1
 " one (so the preview documentation is accessible). Remove 'preview' if you
 " don't want to see any documentation whatsoever.
 set completeopt=longest,menuone,preview
+
 " Fetch full documentation during omnicomplete requests.
 " There is a performance penalty with this (especially on Mono).
 " By default, only Type/Method signatures are fetched. Full documentation can
@@ -153,7 +145,7 @@ augroup omnisharp_commands
     autocmd!
 
     " Synchronous build (blocks Vim)
-    autocmd FileType cs nnoremap <buffer> <F5> :wa!<CR>:OmniSharpBuild<CR>
+    "autocmd FileType cs nnoremap <buffer> <F5> :wa!<CR>:OmniSharpBuild<CR>
     " Builds can also run asynchronously with vim-dispatch installed
     autocmd FileType cs nnoremap <buffer> <Leader>b :wa!<CR>:OmniSharpBuildAsync<CR>
     " Automatic syntax check on events (TextChanged requires Vim 7.4)
@@ -168,7 +160,6 @@ augroup omnisharp_commands
     " The following commands are contextual, based on the cursor position.
     autocmd FileType cs nnoremap <buffer> gd :OmniSharpGotoDefinition<CR>
     autocmd FileType cs nnoremap <buffer> <Leader>fi :OmniSharpFindImplementations<CR>
-    autocmd FileType cs nnoremap <buffer> <Leader>ft :OmniSharpFindType<CR>
     autocmd FileType cs nnoremap <buffer> <Leader>fs :OmniSharpFindSymbol<CR>
     autocmd FileType cs nnoremap <buffer> <Leader>fu :OmniSharpFindUsages<CR>
 
@@ -186,7 +177,7 @@ augroup omnisharp_commands
     autocmd FileType cs nnoremap <buffer> <C-j> :OmniSharpNavigateDown<CR>
 augroup END
 
-" Contextual code actions (requires fzf, CtrlP or unite.vim)
+" Contextual code actions (uses fzf, CtrlP or unite.vim when available)
 " nnoremap <Leader><Space> :OmniSharpGetCodeActions<CR>
 " Run code actions with text selected in visual mode to extract method
 xnoremap <Leader><Space> :call OmniSharp#GetCodeActions('visual')<CR>
@@ -210,8 +201,8 @@ nnoremap <Leader>sp :OmniSharpStopServer<CR>
 " Add syntax highlighting for types and interfaces
 nnoremap <Leader>th :OmniSharpHighlightTypes<CR>
 
-" Enable snippet completion, requires completeopt-=preview
-let g:OmniSharp_want_snippet=1
+" Enable snippet completion
+" let g:OmniSharp_want_snippet=1
 " for gmsh
 augroup filetypedetect
 autocmd bufnewfile,bufread *.geo     setf gmsh
@@ -234,9 +225,11 @@ let g:UltiSnipsSnippetsDir = $HOME."/.config/nvim/my-snippets"
 let g:UltiSnipsSnippetDirectories = ['UltiSnips', $HOME.'/.config/nvim/my-snippets']
 let g:UltiSnipsEnableSnipMate = 0
 " Latex
+let g:vimtex_compiler_progname = 'nvr'
 let g:vimtex_view_automatic=1
 let g:vimtex_imaps_leader="#"
-let g:vimtex_view_method='zathura'
+let g:vimtex_view_method='general'
+let g:vimtex_view_general_viewer='zathura'
 let g:vimtex_complete_close_braces = 1
 let g:tex_flavor = 'latex'
 au Filetype tex setlocal spell spelllang=en
@@ -246,7 +239,7 @@ au Filetype tex nnoremap <buffer> <leader>vh :sp header.tex<cr>
 "view main file
 au Filetype tex nnoremap <buffer> <leader>vm :sp ../main.tex<cr>
 "view bib file
-au Filetype tex nnoremap <buffer> <leader>vb :sp ../bibliography.bib<cr>
+au Filetype tex nnoremap <buffer> <leader>vb :sp bibliography.bib<cr>
 " make link to main.tex
 au Filetype tex nnoremap <buffer> <leader>ml ggi%! TEX root = ../main.tex <esc> o <esc>
 " change cursor shape in insert mode

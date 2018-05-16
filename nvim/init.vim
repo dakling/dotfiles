@@ -9,6 +9,7 @@ Plug 'scrooloose/syntastic'
 Plug 'scrooloose/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'lervag/vimtex'
+Plug 'ludovicchabant/vim-gutentags'
 "Plug 'vim-scripts/gmsh.vim'
 Plug 'dhruvasagar/vim-table-mode'
 Plug 'jceb/vim-orgmode'
@@ -228,8 +229,7 @@ let g:UltiSnipsEnableSnipMate = 0
 let g:vimtex_compiler_progname = 'nvr'
 let g:vimtex_view_automatic=1
 let g:vimtex_imaps_leader="#"
-let g:vimtex_view_method='general'
-let g:vimtex_view_general_viewer='zathura'
+let g:vimtex_view_method='zathura'
 let g:vimtex_complete_close_braces = 1
 let g:tex_flavor = 'latex'
 au Filetype tex setlocal spell spelllang=en

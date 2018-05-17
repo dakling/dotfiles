@@ -16,7 +16,7 @@ Plug 'jceb/vim-orgmode'
 "Plug 'jalvesaq/Nvim-R'
 "Plug 'nvie/vim-flake8'
 Plug 'python-mode/python-mode'
-Plug 'JuliaEditorSupport/julia-vim'
+" Plug 'JuliaEditorSupport/julia-vim'
 Plug 'tpope/vim-surround'
 Plug 'wellle/targets.vim'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -31,16 +31,15 @@ Plug 'tpope/vim-repeat'
 " Plug 'effi/vim-OpenFoam-syntax'
 Plug 'ervandew/supertab'
 Plug 'OmniSharp/omnisharp-vim'
-Plug 'fsharp/vim-fsharp', {
-      \ 'for': 'fsharp',
-      \ 'do':  'make fsautocomplete',
-      \}
-Plug 'tpope/vim-dispatch'
-Plug 'radenling/vim-dispatch-neovim'
+" Plug 'fsharp/vim-fsharp', {
+"       \ 'for': 'fsharp',
+"       \ 'do':  'make fsautocomplete',
+"       \}
+" Plug 'tpope/vim-dispatch'
+" Plug 'radenling/vim-dispatch-neovim'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'l04m33/vlime'
-
 call plug#end()
 "Configuration starts here
 "General Settings
@@ -116,13 +115,17 @@ augroup filetypedetect
 augroup end 
 " csharp
 " " Set the path to the roslyn server
-let g:OmniSharp_server_path = '/home/klingenberg/Documents/programming/c#/omnisharp-roslyn/omnisharp/OmniSharp.exe'
+" legacy server
+let g:OmniSharp_server_path = '/home/klingenberg/Documents/programming/c#/omnisharp-roslyn/omnisharp-server/OmniSharp/bin/Debug/OmniSharp.exe'
+" new server
+" let g:OmniSharp_server_path = '/home/klingenberg/Documents/programming/c#/omnisharp-roslyn/roslyn/omnisharp/OmniSharp.exe'
+" let g:OmniSharp_server_path = '/opt/omnisharp-roslyn/OmniSharp.exe'
 
 " Set the type lookup function to use the preview window instead of echoing it
-"let g:OmniSharp_typeLookupInPreview = 1
+let g:OmniSharp_typeLookupInPreview = 1
 
 " Timeout in seconds to wait for a response from the server
-let g:OmniSharp_timeout = 1
+let g:OmniSharp_timeout = 100
 
 " Don't autoselect first omnicomplete option, show options even if there is only
 " one (so the preview documentation is accessible). Remove 'preview' if you
@@ -139,14 +142,20 @@ set completeopt=longest,menuone,preview
 " You might also want to look at the echodoc plugin.
 set previewheight=5
 
-" Get code issues and syntax errors
+" let g:OmniSharp_server_type = 'roslyn'
+" use legacy server
+let g:OmniSharp_server_type = 'v1'
+" use legacy server and get code issues and syntax errors
 let g:syntastic_cs_checkers = ['code_checker']
+
+" let g:OmniSharp_selector_ui = ''       " Use vim - command line, quickfix etc.
+
+let g:OmniSharp_server_use_mono = 1
 
 augroup omnisharp_commands
     autocmd!
-
     " Synchronous build (blocks Vim)
-    "autocmd FileType cs nnoremap <buffer> <F5> :wa!<CR>:OmniSharpBuild<CR>
+    autocmd FileType cs nnoremap <buffer> <F5> :wa!<CR>:OmniSharpBuild<CR>
     " Builds can also run asynchronously with vim-dispatch installed
     autocmd FileType cs nnoremap <buffer> <Leader>b :wa!<CR>:OmniSharpBuildAsync<CR>
     " Automatic syntax check on events (TextChanged requires Vim 7.4)
@@ -161,7 +170,7 @@ augroup omnisharp_commands
     " The following commands are contextual, based on the cursor position.
     autocmd FileType cs nnoremap <buffer> gd :OmniSharpGotoDefinition<CR>
     autocmd FileType cs nnoremap <buffer> <Leader>fi :OmniSharpFindImplementations<CR>
-    autocmd FileType cs nnoremap <buffer> <Leader>fs :OmniSharpFindSymbol<CR>
+    autocmd FileType cs nnoremap <buffer> <Leader>fb :OmniSharpFindSymbol<CR>
     autocmd FileType cs nnoremap <buffer> <Leader>fu :OmniSharpFindUsages<CR>
 
     " Finds members in the current buffer
@@ -179,7 +188,7 @@ augroup omnisharp_commands
 augroup END
 
 " Contextual code actions (uses fzf, CtrlP or unite.vim when available)
-" nnoremap <Leader><Space> :OmniSharpGetCodeActions<CR>
+nnoremap <Leader>gca :OmniSharpGetCodeActions<CR>
 " Run code actions with text selected in visual mode to extract method
 xnoremap <Leader><Space> :call OmniSharp#GetCodeActions('visual')<CR>
 

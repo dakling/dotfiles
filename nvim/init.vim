@@ -5,7 +5,7 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'bkad/CamelCaseMotion'
 "Plug 'jvirtanen/vim-octave'
 Plug 'tpope/vim-commentary'
-Plug 'scrooloose/syntastic'
+Plug 'vim-syntastic/syntastic'
 Plug 'scrooloose/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'lervag/vimtex'
@@ -83,6 +83,9 @@ set statusline+=%h      "help file flag
 set statusline+=%m      "modified flag
 set statusline+=%r      "read only flag
 set statusline+=%=        " Switch to the right side
+" set statusline+=%#warningmsg# " syntastic
+" set statusline+=%{SyntasticStatuslineFlag()}
+" set statusline+=%*
 set statusline+=%c        " Current column
 set statusline+=;         " Separator
 set statusline+=%l        " Current line
@@ -284,6 +287,10 @@ au Filetype tex nnoremap <buffer> <leader>vh :sp header.tex<cr>
 au Filetype tex nnoremap <buffer> <leader>vm :sp ../main.tex<cr>
 "view bib file
 au Filetype tex nnoremap <buffer> <leader>vb :sp bibliography.bib<cr>
+"view local config
+au Filetype tex nnoremap <buffer> <leader>vl :sp definLocal.tex<cr>
+"view global config
+au Filetype tex nnoremap <buffer> <leader>vg :sp $LatexGlobalConfig<cr>
 " make link to main.tex
 au Filetype tex nnoremap <buffer> <leader>ml ggi%! TEX root = ../main.tex <esc> o <esc>
 " change cursor shape in insert mode
@@ -334,5 +341,16 @@ endfunction"}}}
 " supertab
 let g:SuperTabDefaultCompletionType = "<c-n>"
 " let g:SuperTabClosePreviewOnPopupClose = 1
+" syntastic
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_quiet_messages = { "regex": [
+        \ '\mpossible unwanted space at "{"',
+        \ ] }
+let g:syntastic_ignore_files = [
+        \ '\mdefinLocal.tex',
+        \ ]
 "set runtimepath
 set runtimepath+=,/var/lib/vim/addons,/usr/share/vim/vimfiles,/usr/share/vim/vim74,/usr/share/vim/vimfiles/after,/var/lib/vim/addons/after,~/.vim/after,~/.config/nvim

@@ -49,7 +49,7 @@ Plug 'vimwiki/vimwiki', { 'branch': 'dev' }
 Plug 'rhysd/vim-grammarous'
 " Plug 'reedes/vim-wordy'
 Plug 'ron89/thesaurus_query.vim'
-Plug 'dbmrq/vim-ditto'
+" Plug 'dbmrq/vim-ditto'
 call plug#end()
 "Configuration starts here
 "General Settings
@@ -365,20 +365,20 @@ let g:syntastic_ignore_files = [
 let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
 " Use autocmds to check your text automatically and keep the highlighting
 " up to date (easier):
-au FileType markdown,text,tex DittoOn  " Turn on Ditto's autocmds
-nmap <leader>di <Plug>ToggleDitto      " Turn Ditto on and off
+" au FileType markdown,text,tex DittoOn  " Turn on Ditto's autocmds
+" nmap <leader>di <Plug>ToggleDitto      " Turn Ditto on and off
 
 " If you don't want the autocmds, you can also use an operator to check
 " specific parts of your text:
 " vmap <leader>d <Plug>Ditto	       " Call Ditto on visual selection
 " nmap <leader>d <Plug>Ditto	       " Call Ditto on operator movement
 
-nmap =d <Plug>DittoNext                " Jump to the next word
-nmap -d <Plug>DittoPrev                " Jump to the previous word
-nmap +d <Plug>DittoGood                " Ignore the word under the cursor
-nmap _d <Plug>DittoBad                 " Stop ignoring the word under the cursor
-nmap ]d <Plug>DittoMore                " Show the next matches
-nmap [d <Plug>DittoLess                " Show the previous matches
+" nmap =d <Plug>DittoNext                " Jump to the next word
+" nmap -d <Plug>DittoPrev                " Jump to the previous word
+" nmap +d <Plug>DittoGood                " Ignore the word under the cursor
+" nmap _d <Plug>DittoBad                 " Stop ignoring the word under the cursor
+" nmap ]d <Plug>DittoMore                " Show the next matches
+" nmap [d <Plug>DittoLess                " Show the previous matches
 " vim-grammarous
 nnoremap <leader>v <Plug>(grammarous-open-info-window)
 "set runtimepath

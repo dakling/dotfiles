@@ -109,8 +109,14 @@ myawesomemenu = {
   { "quit", function() awesome.quit() end}
 }
 
-mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                   { "open terminal", terminal }
+mymainmenu = awful.menu({ items = { --{ "awesome", myawesomemenu, beautiful.awesome_icon },
+                                   { "menu","albert show" },
+                                   { "terminal", terminal },
+                                   -- { "screen keyboard", awful.spawn("onboard") },
+                                   { "firefox", "firefox" },
+                                   { "mail", "thunderbird" },
+                                   { "restart", awesome.restart },
+                                   { "quit", function() awesome.quit() end}
                                  }
                        })
 
@@ -236,7 +242,7 @@ awful.screen.connect_for_each_screen(function(s)
   s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
 
   -- Create the wibox
-  s.mywibox = awful.wibar({ position = "top", screen = s })
+  s.mywibox = awful.wibar({ position = "top", screen = s, height = 24 })
 
   -- Add widgets to the wibox
   s.mywibox:setup {
@@ -436,7 +442,7 @@ filemodekeys = gears.table.join(
             {description="open config file", group="awesome"}),
   awful.key({ }, "z",   function()   awful.spawn(editor_cmd .. os.getenv("HOME") .. "/.zshrc") backToNormalMode() end,
             {description="open zshrc", group="awesome"}),
-  awful.key({ }, "e",   function()   awful.spawn("python ~/Dropbox/Helen/einkaufsliste/interactiveEnterDario.py") backToNormalMode() end,
+  awful.key({ }, "e",   function()   awful.spawn(terminal .. " -e " .. os.getenv("HOME") .. "/Dropbox/Helen/einkaufsliste/interactiveEnterDario.py") backToNormalMode() end,
             {description="open zshrc", group="awesome"}),
   awful.key({ }, "Escape",   function()   backToNormalMode() end,
             {description="back to normal mode", group="awesome"})
@@ -719,6 +725,7 @@ awful.rules.rules = {
         "Wpa_gui",
         "pinentry",
         "veromix",
+        "onboard",
         "xtightvncviewer"},
 
       name = {
@@ -816,12 +823,14 @@ end
 autostartWithoutCheck = function(programName)
   awful.spawn(programName)
 end
-autostartWithoutCheck("/usr/lib/polkit-kde-authentication-agent-1")
+autostartWithoutCheck("xrandr --output eDP1 --primary --below HDMI2 --output HDMI2 --auto")
+autostartWithoutCheck("/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1")
 autostartWithoutCheck("compton -b")
--- autostartWithoutCheck("setxkbmap -option ctrl:nocaps")  
--- autostartWithoutCheck("xcape -e \'Control_L=Escape\'")
+autostartWithoutCheck("setxkbmap -option ctrl:nocaps")  
+autostartWithoutCheck("xcape -e \'Control_L=Escape\'")
 autostartWithCheck("/usr/share/HESSENBOX_DA/HESSENBOX_DA-Client.sh")
-autostartWithoutCheck("xfce4-power-manager")
+-- autostartWithoutCheck("xfce4-power-manager")
+autostartWithoutCheck("conky")
 autostartWithCheck("signal-desktop --start-in-tray")
 autostartWithCheck("nm-applet")
 autostartWithCheck("pamac-tray")
@@ -829,9 +838,8 @@ autostartWithCheck("pa-applet")
 autostartWithCheck("clipit")
 autostartWithCheck("dropbox")
 autostartWithCheck("albert")
+autostartWithCheck("onboard")
+autostartWithCheck("fix_touchscreen")
 autostartWithCheck("easystroke enable")
-autostartWithCheck("indicator-kdeconnect")
-autostartWithCheck("orage")
-autostartWithCheck("xfsettingsd")
-autostartWithoutCheck("monitor_home")
+-- autostartWithCheck("indicator-kdeconnect")
 -- }}}

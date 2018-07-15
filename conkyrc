@@ -7,7 +7,7 @@ conky.config = {
 	double_buffer = true,
 	font = 'Bitstream Vera Sans:size=8',
 	gap_x = 25,
-	gap_y = 13,
+	gap_y = 70,
 	minimum_width = 200,
 	no_buffers = true,
 	own_window = true,
@@ -23,7 +23,7 @@ $color${voffset -30}$color${font Bitstream Vera Sans:size=18}${time %b}$font\
 ${voffset -3} $color${font Bitstream Vera Sans:size=20}${time %Y}$font$color2$hr
 #
 ${voffset 20}${goto 40}${color}CPU${font Bitstream Vera Sans:bold:size=8}$alignr$cpu%
-$alignr${execi 30 sensors | grep 'Core 0' | cut -c17-20 }°C${color}${font}
+$alignr${execi 10 sensors | grep 'Core 0' | cut -c17-20 }°C${color}${font}
 ${voffset 5}${goto 40}$font$color2${top name 1}$alignr$color${top cpu 1}%
 ${goto 40}$color2${top name 2}$alignr$color${top cpu 2}%
 ${goto 40}$color2${top name 3}$alignr$color${top cpu 3}%

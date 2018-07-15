@@ -8,7 +8,21 @@ import XMonad.Hooks.EwmhDesktops
 import System.IO
 import qualified Data.Map        as M
  
-main = xmonad =<< xmobar defaultConfig
+main = xmonad =<< statusBar myBar myPP toggleStrutsKey myConfig
+
+-- Command to launch the bar.
+myBar = "xmobar"
+
+-- Custom PP, configure it as you like. It determines what is being written to the bar.
+myPP = xmobarPP { ppCurrent = xmobarColor "#00adee" "" . wrap "<" ">" 
+                , ppTitle = xmobarColor "#00adee" "" 
+                }
+
+-- Key binding to toggle the gap for the bar.
+toggleStrutsKey XConfig {XMonad.modMask = modMask} = (modMask, xK_b)
+
+-- Main configuration, override the defaults to your liking.
+myConfig = defaultConfig
    {
     layoutHook = avoidStruts  $  layoutHook defaultConfig
     , manageHook = manageDocks <+> manageHook defaultConfig
@@ -32,6 +46,9 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
     [
         ((modm, xK_c), kill)
         , ((modm, xK_F2), (spawn $ "firefox"))
+        , ((modm, xK_F3), (spawn $ "rangerStandalone"))
+        , ((modm, xK_F4), (spawn $ "thunderbird"))
+        , ((modm, xK_F5), (spawn $ "pamac-manager"))
         , ((modm, xK_d), (spawn $ "albert show"))
     ]
 --autostart

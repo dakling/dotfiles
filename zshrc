@@ -32,7 +32,7 @@ export QT_QPA_PLATFORMTHEME="qt5ct"
 # export GDK_BACKEND=wayland
 # export GTK_CSD=0
 # source $HOME/OpenFOAM/OpenFOAM-5.0/etc/bashrc
-export LatexGlobalConfig=/home/klingenberg/Documents/programming/latex/definGlobal.tex
+export LatexGlobalConfig=/home/klingenberg/Documents/programming/latex_macros/definGlobal.tex
 WORDCHARS=${WORDCHARS//\/[&.;]}                                 # Don't consider certain characters part of the word
 # export RoslynTargetsPath=/usr/lib/mono/msbuild/15.0/bin/  
 # export BOSSS_INSTALL=/home/klingenberg/BoSSS-experimental

@@ -5,6 +5,8 @@ import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.EZConfig(additionalKeys)
 import XMonad.Hooks.EwmhDesktops
 import XMonad.Actions.Submap
+import Graphics.X11.ExtraTypes.XF86
+-- import qualified XMonad.StackSet as W
 -- import XMonad.Config.Xfce
 import System.IO
 import qualified Data.Map        as M
@@ -46,6 +48,8 @@ myKeys x = M.union (M.fromList (newKeys x)) (keys defaultConfig x)
 newKeys conf@(XConfig {XMonad.modMask = modm}) = 
     [
         ((modm, xK_c), kill)
+        -- , ((modm .|. shiftMask, xK_Return), (windows W.swapMaster)) -- %! Swap the focused window and the master window
+        , ((modm, xK_F1), (spawn $ "termite")) 
         , ((modm, xK_F2), (spawn $ "firefox"))
         , ((modm, xK_F3), (spawn $ "rangerStandalone"))
         , ((modm, xK_F4), (spawn $ "thunderbird"))
@@ -57,10 +61,14 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
             ,((0,xK_p), (spawn $ "pamac-manager"))
             ,((0,xK_e), (spawn $ "thunderbird"))
             ])
-        , ((modm, xK_f), submap . M.fromList $
+        , ((modm .|. shiftMask, xK_x), submap . M.fromList $
             [((0,xK_c), (spawn $ "nvim-termite ~/.xmonad/xmonad.hs"))
-          ,((0,xK_v), (spawn $ "nvim-termite ~/.config/nvim/init.vim"))
+            ,((0,xK_v), (spawn $ "nvim-termite ~/.nvim/init.vim"))
+            ,((0,xK_z), (spawn $ "nvim-termite ~/.zshrc"))
           ])
+        , ((0, xF86XK_AudioLowerVolume   ), (spawn "amixer set Master 2-"))
+        , ((0, xF86XK_AudioRaiseVolume   ), (spawn "amixer set Master 2+"))
+        , ((0, xF86XK_AudioMute          ), (spawn "amixer set Master toggle"))
       ]
 --autostart
 myStartupHook = do

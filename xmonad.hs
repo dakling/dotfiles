@@ -4,6 +4,7 @@ import XMonad.Hooks.ManageDocks
 import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.EZConfig(additionalKeys)
 import XMonad.Hooks.EwmhDesktops
+import XMonad.Actions.Submap
 -- import XMonad.Config.Xfce
 import System.IO
 import qualified Data.Map        as M
@@ -48,9 +49,19 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
         , ((modm, xK_F2), (spawn $ "firefox"))
         , ((modm, xK_F3), (spawn $ "rangerStandalone"))
         , ((modm, xK_F4), (spawn $ "thunderbird"))
-        , ((modm, xK_F5), (spawn $ "pamac-manager"))
+        , ((modm, xK_F5), (spawn $ "termite -e pacui"))
         , ((modm, xK_d), (spawn $ "albert show"))
-    ]
+        , ((modm, xK_x), submap . M.fromList $
+            [((0,xK_i), (spawn $ "firefox"))
+            ,((0,xK_d), (spawn $ "pcmanfm"))
+            ,((0,xK_p), (spawn $ "pamac-manager"))
+            ,((0,xK_e), (spawn $ "thunderbird"))
+            ])
+        , ((modm, xK_f), submap . M.fromList $
+            [((0,xK_c), (spawn $ "nvim-termite ~/.xmonad/xmonad.hs"))
+          ,((0,xK_v), (spawn $ "nvim-termite ~/.config/nvim/init.vim"))
+          ])
+      ]
 --autostart
 myStartupHook = do
     xmproc <- spawnPipe "xsetroot -cursor_name left_ptr"

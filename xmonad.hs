@@ -6,15 +6,22 @@ import XMonad.Util.EZConfig(additionalKeys)
 import XMonad.Hooks.EwmhDesktops
 import XMonad.Actions.Submap
 import Graphics.X11.ExtraTypes.XF86
+import Network.HostName
 -- import qualified XMonad.StackSet as W
 -- import XMonad.Config.Xfce
 import System.IO
 import qualified Data.Map        as M
  
-main = xmonad =<< statusBar myBar myPP toggleStrutsKey myConfig
+main = do 
+    hostname <- getHostName
+    xmonad =<< statusBar (myBar hostname) myPP toggleStrutsKey myConfig
 
+-- check on which pc we are running
+atWork hostname = hostname == "klingenberg-pc"
 -- Command to launch the bar.
-myBar = "xmobar"
+myBar hostname
+    | atWork hostname == True = "xmobar -x 1" 
+    | otherwise = "xmobar"
 
 -- Custom PP, configure it as you like. It determines what is being written to the bar.
 myPP = xmobarPP { ppCurrent = xmobarColor "#00adee" "" . wrap "<" ">" 

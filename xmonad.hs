@@ -73,6 +73,11 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
             ,((0,xK_v), (spawn $ "nvim-termite ~/.nvim/init.vim"))
             ,((0,xK_z), (spawn $ "nvim-termite ~/.zshrc"))
           ])
+        , ((modm, xK_r), submap . M.fromList $
+            [((0,xK_s), (spawn $ "shutdown now"))
+            ,((0,xK_r), (spawn $ "reboot"))
+            ,((0,xK_l), (spawn $ "i3exit lock"))
+            ])
         , ((0, xF86XK_AudioLowerVolume   ), (spawn "amixer set Master 2-"))
         , ((0, xF86XK_AudioRaiseVolume   ), (spawn "amixer set Master 2+"))
         , ((0, xF86XK_AudioMute          ), (spawn "amixer set Master toggle"))

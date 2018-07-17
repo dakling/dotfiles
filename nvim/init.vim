@@ -1,8 +1,9 @@
 " Manage Plugins using vim-plug
 call plug#begin('~/.config/nvim/plugged')
 Plug 'cocopon/iceberg.vim'
-Plug 'jiangmiao/auto-pairs'
-Plug 'bkad/CamelCaseMotion'
+" Plug 'jiangmiao/auto-pairs'
+Plug 'Raimondi/delimitMate'
+Plug 'bkad/CamelCaseMotion' 
 "Plug 'jvirtanen/vim-octave'
 Plug 'tpope/vim-commentary'
 Plug 'vim-syntastic/syntastic'
@@ -65,6 +66,7 @@ set clipboard+=unnamedplus
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
+set shiftround
 set expandtab
 let g:netrw_keepdir=0
 set background=dark
@@ -113,6 +115,8 @@ nnoremap <leader>sv :source $MYVIMRC<cr>
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 vnoremap . :norm.<CR>
 nnoremap <leader><leader> :
+" auto pairs
+let g:AutoPairsFlyMode = 1
 "nerdtree
 nmap <leader>t :NERDTreeToggle<cr>
 " camelCase

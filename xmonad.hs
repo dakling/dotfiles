@@ -55,7 +55,7 @@ myKeys x = M.union (M.fromList (newKeys x)) (keys defaultConfig x)
 newKeys conf@(XConfig {XMonad.modMask = modm}) = 
     [
         ((modm, xK_c), kill)
-        -- , ((modm .|. shiftMask, xK_Return), (windows W.swapMaster)) -- %! Swap the focused window and the master window
+        , ((modm .|. shiftMask, xK_Return), (spawn $ "open-terminal-here")) -- %! Swap the focused window and the master window
         , ((modm, xK_F1), (spawn $ "termite")) 
         , ((modm, xK_F2), (spawn $ "firefox"))
         , ((modm, xK_F3), (spawn $ "rangerStandalone"))
@@ -69,9 +69,9 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
             ,((0,xK_e), (spawn $ "thunderbird"))
             ])
         , ((modm .|. shiftMask, xK_x), submap . M.fromList $
-            [((0,xK_c), (spawn $ "nvim-termite ~/.xmonad/xmonad.hs"))
-            ,((0,xK_v), (spawn $ "nvim-termite ~/.nvim/init.vim"))
-            ,((0,xK_z), (spawn $ "nvim-termite ~/.zshrc"))
+            [((0,xK_c), (spawn $ "nvim-termite ~/.dotfiles/dotfiles/xmonad.hs"))
+            ,((0,xK_v), (spawn $ "nvim-termite ~/.dotfiles/dotfiles/init.vim"))
+            ,((0,xK_z), (spawn $ "nvim-termite ~/.dotfiles/dotfiles/zshrc"))
           ])
         , ((modm, xK_r), submap . M.fromList $
             [((0,xK_s), (spawn $ "shutdown now"))

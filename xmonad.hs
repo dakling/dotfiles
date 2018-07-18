@@ -55,7 +55,7 @@ myKeys x = M.union (M.fromList (newKeys x)) (keys defaultConfig x)
 newKeys conf@(XConfig {XMonad.modMask = modm}) = 
     [
         ((modm, xK_c), kill)
-        , ((modm .|. shiftMask, xK_Return), (spawn $ "open-terminal-here")) -- %! Swap the focused window and the master window
+        , ((modm .|. shiftMask, xK_Return), (spawn $ "open-terminal-here")) 
         , ((modm, xK_F1), (spawn $ "termite")) 
         , ((modm, xK_F2), (spawn $ "firefox"))
         , ((modm, xK_F3), (spawn $ "rangerStandalone"))

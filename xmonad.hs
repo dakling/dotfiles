@@ -3,6 +3,8 @@ import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.EZConfig(additionalKeys)
+import XMonad.Util.SpawnOnce
+import XMonad.Layout.NoBorders
 import XMonad.Hooks.EwmhDesktops
 import XMonad.Actions.Submap
 import Graphics.X11.ExtraTypes.XF86
@@ -34,7 +36,7 @@ toggleStrutsKey XConfig {XMonad.modMask = modMask} = (modMask, xK_b)
 -- Main configuration, override the defaults to your liking.
 myConfig = defaultConfig
    {
-    layoutHook = avoidStruts  $  layoutHook defaultConfig
+    layoutHook = smartBorders  $  layoutHook defaultConfig
     , manageHook = manageDocks <+> manageHook defaultConfig
     , modMask = mod4Mask
     , keys = myKeys
@@ -84,24 +86,24 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
       ]
 --autostart
 myStartupHook = do
-    xmproc <- spawnPipe "xsetroot -cursor_name left_ptr"
-    xmproc <- spawnPipe "monitor_home"
-    xmproc <- spawnPipe "albert"
-    xmproc <- spawnPipe "stalonetray"
-    xmproc <- spawnPipe "nitrogen --head=0 --random ~/.config/backgrounds --set-scaled"
-    xmproc <- spawnPipe "nitrogen --head=1 --random ~/.config/backgrounds --set-scaled"
-    xmproc <- spawnPipe "nm-applet"
-    xmproc <- spawnPipe "pa-applet"
-    xmproc <- spawnPipe "fix_touchscreen"
-    xmproc <- spawnPipe "easystroke enable"
-    xmproc <- spawnPipe "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
-    xmproc <- spawnPipe "compton -b"
-    xmproc <- spawnPipe "setxkbmap -option ctrl:nocaps"  
-    xmproc <- spawnPipe "xcape -e 'Control_L=Escape'"
-    xmproc <- spawnPipe "/usr/share/HESSENBOX_DA/HESSENBOX_DA-Client.sh"
-    xmproc <- spawnPipe "signal-desktop --start-in-tray"
-    xmproc <- spawnPipe "pamac-tray"
-    xmproc <- spawnPipe "clipit"
-    xmproc <- spawnPipe "dropbox"
-    xmproc <- spawnPipe "onboard"
+    spawnOnce "xsetroot -cursor_name left_ptr"
+    spawnOnce "monitor_home"
+    spawnOnce "albert"
+    spawnOnce "stalonetray"
+    spawnOnce "nitrogen --head=0 --random ~/.config/backgrounds --set-scaled"
+    spawnOnce "nitrogen --head=1 --random ~/.config/backgrounds --set-scaled"
+    spawnOnce "nm-applet"
+    spawnOnce "pa-applet"
+    spawnOnce "fix_touchscreen"
+    spawnOnce "easystroke enable"
+    spawnOnce "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
+    spawnOnce "compton -b"
+    spawnOnce "setxkbmap -option ctrl:nocaps"  
+    spawnOnce "xcape -e 'Control_L=Escape'"
+    spawnOnce "/usr/share/HESSENBOX_DA/HESSENBOX_DA-Client.sh"
+    spawnOnce "signal-desktop --start-in-tray"
+    spawnOnce "pamac-tray"
+    spawnOnce "clipit"
+    spawnOnce "dropbox"
+    spawnOnce "onboard"
     return ()

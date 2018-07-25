@@ -268,6 +268,10 @@ augroup END
 augroup filetypedetect
 autocmd bufnewfile,bufread *.geo     setf gmsh
 augroup end 
+" Haskell
+augroup filetypedetect
+    autocmd bufnewfile,bufread *.hs nnoremap <Leader>r :! runhaskell % <CR>
+augroup end 
 " For Python 
 let python_highlight_all=1
 au BufNewFile,BufRead *.py set fileformat=unix

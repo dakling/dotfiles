@@ -72,7 +72,7 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
             ])
         , ((modm .|. shiftMask, xK_x), submap . M.fromList $
             [((0,xK_c), (spawn $ "nvim-termite ~/.dotfiles/dotfiles/xmonad.hs"))
-            ,((0,xK_v), (spawn $ "nvim-termite ~/.dotfiles/dotfiles/init.vim"))
+            ,((0,xK_v), (spawn $ "nvim-termite ~/.dotfiles/dotfiles/nvim/init.vim"))
             ,((0,xK_z), (spawn $ "nvim-termite ~/.dotfiles/dotfiles/zshrc"))
           ])
         , ((modm, xK_r), submap . M.fromList $

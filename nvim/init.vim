@@ -17,9 +17,12 @@ Plug 'jceb/vim-orgmode'
 "Plug 'jalvesaq/Nvim-R'
 "Plug 'nvie/vim-flake8'
 Plug 'python-mode/python-mode'
+Plug 'neovimhaskell/haskell-vim'
+Plug 'alx741/vim-hindent'
+Plug 'w0rp/ale'
 " Plug 'ndmitchell/ghcid', { 'rtp': 'plugins/nvim' }
 Plug 'parsonsmatt/intero-neovim'
-Plug 'eagletmt/neco-ghc'
+" Plug 'eagletmt/neco-ghc'
 Plug 'JuliaEditorSupport/julia-vim'
 Plug 'tpope/vim-surround'
 Plug 'wellle/targets.vim'
@@ -272,61 +275,74 @@ augroup filetypedetect
 autocmd bufnewfile,bufread *.geo     setf gmsh
 augroup end 
 " Haskell
+" ----- neovimhaskell/haskell-vim -----
+" Align 'then' two spaces after 'if'
+let g:haskell_indent_if = 2
+" Indent 'where' block two spaces under previous body
+let g:haskell_indent_before_where = 2
+" Allow a second case indent style (see haskell-vim README)
+let g:haskell_indent_case_alternative = 1
+" Only next under 'let' if there's an equals sign
+let g:haskell_indent_let_no_in = 0
+" ----- hindent & stylish-haskell -----
+" Indenting on save is too aggressive for me
+let g:hindent_on_save = 0
+" Helper function, called below with mappings
+function! HaskellFormat(which) abort
+  if a:which ==# 'hindent' || a:which ==# 'both'
+    :Hindent
+  endif
+  if a:which ==# 'stylish' || a:which ==# 'both'
+    silent! exe 'undojoin'
+    silent! exe 'keepjumps %!stylish-haskell'
+  endif
+endfunction
+" Key bindings
+augroup haskellStylish
+  au!
+  " Just hindent
+  au FileType haskell nnoremap <localleader>hi :Hindent<CR>
+  " Just stylish-haskell
+  au FileType haskell nnoremap <localleader>hs :call HaskellFormat('stylish')<CR>
+  " First hindent, then stylish-haskell
+  au FileType haskell nnoremap <localleader>hf :call HaskellFormat('both')<CR>
+augroup END
+" ----- w0rp/ale -----
+" let g:ale_linters.haskell = ['hlint']
+" ----- parsonsmatt/intero-neovim -----
+" Prefer starting Intero manually (faster startup times)
+" let g:intero_start_immediately = 0
+" " Use ALE (works even when not using Intero)
+let g:intero_use_neomake = 0
 augroup interoMaps
   au!
-  " Maps for intero. Restrict to Haskell buffers so the bindings don't collide.
+  au FileType haskell nnoremap <silent> <localleader>io :InteroOpen<CR>
+  au FileType haskell nnoremap <silent> <localleader>iov :InteroOpen<CR><C-W>H
+  au FileType haskell nnoremap <silent> <localleader>ih :InteroHide<CR>
+  au FileType haskell nnoremap <silent> <localleader>is :InteroStart<CR>
+  au FileType haskell nnoremap <silent> <localleader>ik :InteroKill<CR>
 
-  " Background process and window management
-  au FileType haskell nnoremap <silent> <leader>is :InteroStart<CR>
-  au FileType haskell nnoremap <silent> <leader>ik :InteroKill<CR>
+  au FileType haskell nnoremap <silent> <localleader>wr :w \| :InteroReload<CR>
+  au FileType haskell nnoremap <silent> <localleader>il :InteroLoadCurrentModule<CR>
+  au FileType haskell nnoremap <silent> <localleader>if :InteroLoadCurrentFile<CR>
 
-  " Open intero/GHCi split horizontally
-  au FileType haskell nnoremap <silent> <leader>io :InteroOpen<CR>
-  " Open intero/GHCi split vertically
-  au FileType haskell nnoremap <silent> <leader>iov :InteroOpen<CR><C-W>H
-  au FileType haskell nnoremap <silent> <leader>ih :InteroHide<CR>
+  au FileType haskell map <localleader>t <Plug>InteroGenericType
+  au FileType haskell map <localleader>T <Plug>InteroType
+  au FileType haskell nnoremap <silent> <localleader>it :InteroTypeInsert<CR>
 
-  " Reloading (pick one)
-  " Automatically reload on save
-  au BufWritePost *.hs InteroReload
-  " Manually save and reload
-  au FileType haskell nnoremap <silent> <leader>wr :w \| :InteroReload<CR>
-
-  " Load individual modules
-  au FileType haskell nnoremap <silent> <leader>il :InteroLoadCurrentModule<CR>
-  au FileType haskell nnoremap <silent> <leader>if :InteroLoadCurrentFile<CR>
-
-  " Type-related information
-  " Heads up! These next two differ from the rest.
-  au FileType haskell map <silent> <leader>t <Plug>InteroGenericType
-  au FileType haskell map <silent> <leader>T <Plug>InteroType
-  au FileType haskell nnoremap <silent> <leader>it :InteroTypeInsert<CR>
-
-  " Navigation
-  au FileType haskell nnoremap <silent> <leader>jd :InteroGoToDef<CR>
-
-  " Managing targets
-  " Prompts you to enter targets (no silent):
-  au FileType haskell nnoremap <leader>ist :InteroSetTargets<SPACE>
+  au FileType haskell nnoremap <silent> <localleader>jd :InteroGoToDef<CR>
+  au FileType haskell nnoremap <silent> <localleader>iu :InteroUses<CR>
+  au FileType haskell nnoremap <localleader>ist :InteroSetTargets<SPACE>
+  au FileType haskell nnoremap <localleader>b :InteroEval main<CR>
+  au FileType haskell nnoremap <localleader>ie :InteroEval 
 augroup END
-
-" Intero starts automatically. Set this if you'd like to prevent that.
-let g:intero_start_immediately = 0
-
-" Enable type information on hover (when holding cursor at point for ~1 second).
-let g:intero_type_on_hover = 1
-
-" Change the intero window size; default is 10.
-let g:intero_window_size = 15
-
-" Sets the intero window to split vertically; default is horizontal
-let g:intero_vertical_split = 1
-
-" OPTIONAL: Make the update time shorter, so the type info will trigger faster.
-set updatetime=1000
-" augroup filetypedetect
-"     autocmd bufnewfile,bufread *.hs nnoremap <Leader>r :! runhaskell % <CR>
-" augroup end 
+augroup filetypedetect
+    autocmd bufnewfile,bufread *.hs nnoremap <Leader>r :! runhaskell % <CR>
+augroup end 
+" autocompletion
+" let g:haskellmode_completion_ghc = 0
+autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
+let g:ycm_semantic_triggers = {'haskell' : ['.']}
 " For Python 
 let python_highlight_all=1
 au BufNewFile,BufRead *.py set fileformat=unix

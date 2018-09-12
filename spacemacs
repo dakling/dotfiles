@@ -275,7 +275,7 @@ values."
    ;;                       text-mode
    ;;   :size-limit-kb 1000)
    ;; (default nil)
-   dotspacemacs-line-numbers nil
+   dotspacemacs-line-numbers t
    ;; Code folding method. Possible values are `evil' and `origami'.
    ;; (default 'evil)
    dotspacemacs-folding-method 'evil
@@ -393,7 +393,7 @@ you should place your code here."
  '(TeX-electric-math (quote ("\\(" . "")))
  '(TeX-electric-sub-and-superscript t)
  '(TeX-source-correlate-mode t)
- '(TeX-source-correlate-start-server t t)
+ '(TeX-source-correlate-start-server t)
  '(TeX-view-program-selection
    (quote
     (((output-dvi has-no-display-manager)
@@ -410,7 +410,7 @@ you should place your code here."
  '(inhibit-startup-screen nil)
  '(package-selected-packages
    (quote
-    (intero flycheck hlint-refactor hindent haskell-snippets company-ghci company-ghc ghc haskell-mode company-cabal cmm-mode go gnugo xpm ascii-art-to-unicode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional cython-mode company-anaconda anaconda-mode pythonic eww-lnum mu4e-maildirs-extension mu4e-alert ht exwm xelb engine-mode wgrep smex ivy-hydra flyspell-correct-ivy counsel-projectile counsel swiper ivy xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help w3m pdf-tools tablist evil-snipe ample-zenburn-theme ranger unfill org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download mwim htmlize helm-company helm-c-yasnippet gnuplot fuzzy flyspell-correct-helm flyspell-correct company-statistics company-auctex company auto-yasnippet yasnippet auto-dictionary auctex-latexmk auctex ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async)))
+    (org-mime intero flycheck hlint-refactor hindent haskell-snippets company-ghci company-ghc ghc haskell-mode company-cabal cmm-mode go gnugo xpm ascii-art-to-unicode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional cython-mode company-anaconda anaconda-mode pythonic eww-lnum mu4e-maildirs-extension mu4e-alert ht exwm xelb engine-mode wgrep smex ivy-hydra flyspell-correct-ivy counsel-projectile counsel swiper ivy xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help w3m pdf-tools tablist evil-snipe ample-zenburn-theme ranger unfill org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download mwim htmlize helm-company helm-c-yasnippet gnuplot fuzzy flyspell-correct-helm flyspell-correct company-statistics company-auctex company auto-yasnippet yasnippet auto-dictionary auctex-latexmk auctex ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async)))
  '(preview-auto-cache-preamble nil)
  '(ranger-show-hidden nil)
  '(vc-follow-symlinks t))

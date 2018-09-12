@@ -19,7 +19,7 @@ Plug 'jceb/vim-orgmode'
 Plug 'python-mode/python-mode'
 Plug 'neovimhaskell/haskell-vim'
 Plug 'alx741/vim-hindent'
-Plug 'w0rp/ale'
+" Plug 'w0rp/ale'
 " Plug 'ndmitchell/ghcid', { 'rtp': 'plugins/nvim' }
 Plug 'parsonsmatt/intero-neovim'
 " Plug 'eagletmt/neco-ghc'
@@ -309,6 +309,7 @@ augroup haskellStylish
 augroup END
 " ----- w0rp/ale -----
 " let g:ale_linters.haskell = ['hlint']
+let b:ale_fixers = {'haskell': ['hlint']}
 " ----- parsonsmatt/intero-neovim -----
 " Prefer starting Intero manually (faster startup times)
 " let g:intero_start_immediately = 0

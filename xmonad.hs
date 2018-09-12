@@ -61,7 +61,7 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
         , ((modm, xK_F1), (spawn $ "termite")) 
         , ((modm, xK_F2), (spawn $ "firefox"))
         , ((modm, xK_F3), (spawn $ "rangerStandalone"))
-        , ((modm, xK_F4), (spawn $ "thunderbird"))
+        , ((modm, xK_F4), (spawn $ "thunderbird-nightly"))
         , ((modm, xK_F5), (spawn $ "termite -e pacui"))
         , ((modm, xK_d), (spawn $ "albert show"))
         -- , ((modm,xK_Left),  (spawn $ "xdotool mousemove_relative -- -1 0"))

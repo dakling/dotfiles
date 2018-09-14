@@ -1,0 +1,11 @@
+open test
+q
+set hint-keys "asdfglkjhö"
+set hint-keys "asdfglkjh"
+set hint-keys asdfglkjh
+set hint-keys=asdfglkjh
+set hint-keys=asdfglkjhö
+save
+w
+q
+q

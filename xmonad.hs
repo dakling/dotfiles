@@ -93,7 +93,7 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
 myStartupHook = do
     spawnOnce "xsetroot -cursor_name left_ptr"
     spawnOnce "monitor_home"
-    spawnOnce "albert"
+    -- spawnOnce "albert"
     spawnOnce "stalonetray"
     spawnOnce "nitrogen --head=0 --random ~/.config/backgrounds --set-scaled"
     spawnOnce "nitrogen --head=1 --random ~/.config/backgrounds --set-scaled"

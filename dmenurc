@@ -21,4 +21,4 @@ DMENU_SF="#F9FAF9"
 TERMINAL_CMD="termite -e"
 
 ## export our variables
-DMENU_OPTIONS="-i -l 20 -fn $DMENU_FN -nb $DMENU_NB -nf $DMENU_NF -sf $DMENU_SF -sb $DMENU_SB"
+DMENU_OPTIONS=" -f -i -l 20 -fn $DMENU_FN -nb $DMENU_NB -nf $DMENU_NF -sf $DMENU_SF -sb $DMENU_SB"

@@ -4,7 +4,7 @@ set home-page=about:blank
 # Path to the default download directory. If no download directory is set,
 # download will be written into current directory. The following pattern will
 # be expanded if the download is started '~/', '~user', '$VAR' and '${VAR}'.
-set download-path=~/tmp/
+set download-path=~/Downloads/
 
 # Command with placeholder '%s' called if form field is opened with $EDITOR to
 # spawn the editor-like `x-terminal-emulator -e vim %s'. To use Gvim as the
@@ -69,7 +69,8 @@ nmap = zz
 
 nnoremap h <C-o>
 nnoremap l <C-i>
-set hint-keys=fjdsaklögh
+nnoremap q :quit<CR>
+set hint-keys=fjdsaklghtzvbn
 
 # GUI color settings
 # Color scheme: Base16 Eighties (https://github.com/chriskempson/base16)

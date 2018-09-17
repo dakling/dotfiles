@@ -63,8 +63,12 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
         , ((modm, xK_F3), (spawn $ "rangerStandalone"))
         , ((modm, xK_F4), (spawn $ "thunderbird"))
         , ((modm, xK_F5), (spawn $ "termite -e pacui"))
-        , ((modm, xK_d), (spawn $ "albert show"))
         , ((modm, xK_o), (spawn $ "onboard"))
+        , ((modm, xK_d), (spawn $ "dmenu_extended_run"))
+        -- , ((modm,xK_Left),  (spawn $ "xdotool mousemove_relative -- -1 0"))
+        -- , ((modm,xK_Right), (spawn $ "xdotool mousemove_relative -- 1 0"))
+        -- , ((modm,xK_Up),    (spawn $ "xdotool mousemove_relative -- 0 -1"))
+        -- , ((modm,xK_Down),  (spawn $ "xdotool mousemove_relative -- 0 1"))
         , ((modm, xK_x), submap . M.fromList $
             [((0,xK_i), (spawn $ "epiphany"))
             ,((0,xK_d), (spawn $ "pcmanfm"))
@@ -92,7 +96,7 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
 myStartupHook = do
     spawnOnce "xsetroot -cursor_name left_ptr"
     spawnOnce "monitor_home"
-    spawnOnce "albert"
+    -- spawnOnce "albert"
     spawnOnce "stalonetray"
     spawnOnce "nitrogen --head=0 --random ~/.config/backgrounds --set-scaled"
     spawnOnce "nitrogen --head=1 --random ~/.config/backgrounds --set-scaled"

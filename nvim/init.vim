@@ -17,7 +17,13 @@ Plug 'jceb/vim-orgmode'
 "Plug 'jalvesaq/Nvim-R'
 "Plug 'nvie/vim-flake8'
 Plug 'python-mode/python-mode'
-" Plug 'JuliaEditorSupport/julia-vim'
+Plug 'neovimhaskell/haskell-vim'
+Plug 'alx741/vim-hindent'
+" Plug 'w0rp/ale'
+" Plug 'ndmitchell/ghcid', { 'rtp': 'plugins/nvim' }
+Plug 'parsonsmatt/intero-neovim'
+" Plug 'eagletmt/neco-ghc'
+Plug 'JuliaEditorSupport/julia-vim'
 Plug 'tpope/vim-surround'
 Plug 'wellle/targets.vim'
 " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -269,9 +275,75 @@ augroup filetypedetect
 autocmd bufnewfile,bufread *.geo     setf gmsh
 augroup end 
 " Haskell
+" ----- neovimhaskell/haskell-vim -----
+" Align 'then' two spaces after 'if'
+let g:haskell_indent_if = 2
+" Indent 'where' block two spaces under previous body
+let g:haskell_indent_before_where = 2
+" Allow a second case indent style (see haskell-vim README)
+let g:haskell_indent_case_alternative = 1
+" Only next under 'let' if there's an equals sign
+let g:haskell_indent_let_no_in = 0
+" ----- hindent & stylish-haskell -----
+" Indenting on save is too aggressive for me
+let g:hindent_on_save = 0
+" Helper function, called below with mappings
+function! HaskellFormat(which) abort
+  if a:which ==# 'hindent' || a:which ==# 'both'
+    :Hindent
+  endif
+  if a:which ==# 'stylish' || a:which ==# 'both'
+    silent! exe 'undojoin'
+    silent! exe 'keepjumps %!stylish-haskell'
+  endif
+endfunction
+" Key bindings
+augroup haskellStylish
+  au!
+  " Just hindent
+  au FileType haskell nnoremap <localleader>hi :Hindent<CR>
+  " Just stylish-haskell
+  au FileType haskell nnoremap <localleader>hs :call HaskellFormat('stylish')<CR>
+  " First hindent, then stylish-haskell
+  au FileType haskell nnoremap <localleader>hf :call HaskellFormat('both')<CR>
+augroup END
+" ----- w0rp/ale -----
+" let g:ale_linters.haskell = ['hlint']
+let b:ale_fixers = {'haskell': ['hlint']}
+" ----- parsonsmatt/intero-neovim -----
+" Prefer starting Intero manually (faster startup times)
+" let g:intero_start_immediately = 0
+" " Use ALE (works even when not using Intero)
+let g:intero_use_neomake = 0
+augroup interoMaps
+  au!
+  au FileType haskell nnoremap <silent> <localleader>io :InteroOpen<CR>
+  au FileType haskell nnoremap <silent> <localleader>iov :InteroOpen<CR><C-W>H
+  au FileType haskell nnoremap <silent> <localleader>ih :InteroHide<CR>
+  au FileType haskell nnoremap <silent> <localleader>is :InteroStart<CR>
+  au FileType haskell nnoremap <silent> <localleader>ik :InteroKill<CR>
+
+  au FileType haskell nnoremap <silent> <localleader>wr :w \| :InteroReload<CR>
+  au FileType haskell nnoremap <silent> <localleader>il :InteroLoadCurrentModule<CR>
+  au FileType haskell nnoremap <silent> <localleader>if :InteroLoadCurrentFile<CR>
+
+  au FileType haskell map <localleader>t <Plug>InteroGenericType
+  au FileType haskell map <localleader>T <Plug>InteroType
+  au FileType haskell nnoremap <silent> <localleader>it :InteroTypeInsert<CR>
+
+  au FileType haskell nnoremap <silent> <localleader>jd :InteroGoToDef<CR>
+  au FileType haskell nnoremap <silent> <localleader>iu :InteroUses<CR>
+  au FileType haskell nnoremap <localleader>ist :InteroSetTargets<SPACE>
+  au FileType haskell nnoremap <localleader>b :InteroEval main<CR>
+  au FileType haskell nnoremap <localleader>ie :InteroEval 
+augroup END
 augroup filetypedetect
     autocmd bufnewfile,bufread *.hs nnoremap <Leader>r :! runhaskell % <CR>
 augroup end 
+" autocompletion
+" let g:haskellmode_completion_ghc = 0
+autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
+let g:ycm_semantic_triggers = {'haskell' : ['.']}
 " For Python 
 let python_highlight_all=1
 au BufNewFile,BufRead *.py set fileformat=unix

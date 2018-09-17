@@ -64,8 +64,9 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
         , ((modm, xK_F4), (spawn $ "thunderbird"))
         , ((modm, xK_F5), (spawn $ "termite -e pacui"))
         , ((modm, xK_d), (spawn $ "albert show"))
+        , ((modm, xK_o), (spawn $ "onboard"))
         , ((modm, xK_x), submap . M.fromList $
-            [((0,xK_i), (spawn $ "firefox"))
+            [((0,xK_i), (spawn $ "epiphany"))
             ,((0,xK_d), (spawn $ "pcmanfm"))
             ,((0,xK_p), (spawn $ "pamac-manager"))
             ,((0,xK_e), (spawn $ "thunderbird"))
@@ -80,9 +81,12 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
             ,((0,xK_r), (spawn $ "reboot"))
             ,((0,xK_l), (spawn $ "i3exit lock"))
             ])
-        , ((0, xF86XK_AudioLowerVolume   ), (spawn "amixer set Master 2-"))
-        , ((0, xF86XK_AudioRaiseVolume   ), (spawn "amixer set Master 2+"))
-        , ((0, xF86XK_AudioMute          ), (spawn "amixer set Master toggle"))
+        -- , ((0, xF86XK_AudioLowerVolume   ), (spawn "amixer set Master 2-"))
+        -- , ((0, xF86XK_AudioRaiseVolume   ), (spawn "amixer set Master 2+"))
+        -- , ((0, xF86XK_AudioMute          ), (spawn "amixer set Master toggle"))
+        , ((0, xK_Page_Down              ), (spawn "xdotool click 5"))
+        , ((0, xK_Page_Up                ), (spawn "xdotool click 4"))
+        , ((0, xK_Menu                   ), (spawn "xdotool click 2"))
       ]
 --autostart
 myStartupHook = do

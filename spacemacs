@@ -38,12 +38,15 @@ values."
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      ivy
-     (auto-completion :variables
+     (auto-completion
+      (haskell :variables haskell-completion-backend 'intero)
+      (:variables
                       auto-completion-enable-snippets-in-popup t
                       auto-completion-tab-key-behavior 'complete
                       auto-completion-ret-key-behavior nil
                       ;; spacemacs-default-company-backends '(company-files company-capf)
-                      auto-completion-enable-sort-by-usage t)
+                      auto-completion-enable-sort-by-usage t
+                      ))
      better-defaults
      emacs-lisp
      evil-snipe

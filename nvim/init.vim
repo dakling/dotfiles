@@ -115,7 +115,7 @@ map Y y$
 "inoremap jk <ESC>
 nnoremap <leader>fs :w<cr>
 nnoremap <leader>sw :write !sudo tee %<cr>
-nnoremap <leader>e <C-w>
+nnoremap <leader>w <C-w>
 " Source/edit .vimrc file
 nnoremap <leader>sv :source $MYVIMRC<cr>
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
@@ -337,9 +337,9 @@ augroup interoMaps
   au FileType haskell nnoremap <localleader>b :InteroEval main<CR>
   au FileType haskell nnoremap <localleader>ie :InteroEval 
 augroup END
-augroup filetypedetect
-    autocmd bufnewfile,bufread *.hs nnoremap <Leader>r :! runhaskell % <CR>
-augroup end 
+" augroup filetypedetect
+"     autocmd bufnewfile,bufread *.hs nnoremap <Leader>r :! runhaskell % <CR>
+" augroup end 
 " autocompletion
 " let g:haskellmode_completion_ghc = 0
 autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
@@ -442,6 +442,7 @@ let g:syntastic_ignore_files = [
         \ '\mdefinLocal.tex',
         \ ]
 " vimwiki/vimwiki
+let g:vimwiki_map_prefix='<Leader>e'
 let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
 " Use autocmds to check your text automatically and keep the highlighting
 " up to date (easier):

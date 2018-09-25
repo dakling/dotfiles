@@ -1,3 +1,0 @@
-#!/usr/bin/bash
-
-xdg-open $(fzf -e -q $1)

@@ -6,7 +6,7 @@ Plug 'Raimondi/delimitMate'
 Plug 'bkad/CamelCaseMotion' 
 "Plug 'jvirtanen/vim-octave'
 Plug 'tpope/vim-commentary'
-Plug 'vim-syntastic/syntastic'
+" Plug 'vim-syntastic/syntastic'
 Plug 'scrooloose/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'lervag/vimtex'
@@ -19,7 +19,7 @@ Plug 'jceb/vim-orgmode'
 Plug 'python-mode/python-mode'
 Plug 'neovimhaskell/haskell-vim'
 Plug 'alx741/vim-hindent'
-" Plug 'w0rp/ale'
+Plug 'w0rp/ale'
 " Plug 'ndmitchell/ghcid', { 'rtp': 'plugins/nvim' }
 Plug 'parsonsmatt/intero-neovim'
 " Plug 'eagletmt/neco-ghc'
@@ -115,7 +115,7 @@ map Y y$
 "inoremap jk <ESC>
 nnoremap <leader>fs :w<cr>
 nnoremap <leader>sw :write !sudo tee %<cr>
-nnoremap <leader>e <C-w>
+nnoremap <leader>w <C-w>
 " Source/edit .vimrc file
 nnoremap <leader>sv :source $MYVIMRC<cr>
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
@@ -337,9 +337,9 @@ augroup interoMaps
   au FileType haskell nnoremap <localleader>b :InteroEval main<CR>
   au FileType haskell nnoremap <localleader>ie :InteroEval 
 augroup END
-augroup filetypedetect
-    autocmd bufnewfile,bufread *.hs nnoremap <Leader>r :! runhaskell % <CR>
-augroup end 
+" augroup filetypedetect
+"     autocmd bufnewfile,bufread *.hs nnoremap <Leader>r :! runhaskell % <CR>
+" augroup end 
 " autocompletion
 " let g:haskellmode_completion_ghc = 0
 autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
@@ -431,17 +431,22 @@ endfunction"}}}
 let g:SuperTabDefaultCompletionType = "<c-n>"
 " let g:SuperTabClosePreviewOnPopupClose = 1
 " syntastic
-let g:syntastic_always_populate_loc_list = 1
+" let g:syntastic_always_populate_loc_list = 1
 " let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_quiet_messages = { "regex": [
-        \ '\mpossible unwanted space at "{"',
-        \ ] }
-let g:syntastic_ignore_files = [
-        \ '\mdefinLocal.tex',
-        \ ]
+" let g:syntastic_check_on_open = 1
+" let g:syntastic_check_on_wq = 0
+" let g:syntastic_quiet_messages = { "regex": [
+        " \ '\mpossible unwanted space at "{"',
+        " \ ] }
+" let g:syntastic_ignore_files = [
+        " \ '\mdefinLocal.tex',
+        " \ ]
+" ale
+nmap <silent> <leader>ap <Plug>(ale_previous_wrap)
+nmap <silent> <leader>an <Plug>(ale_next_wrap)
 " vimwiki/vimwiki
+let g:vimwiki_map_prefix='<leader>e'
+"
 let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
 " Use autocmds to check your text automatically and keep the highlighting
 " up to date (easier):

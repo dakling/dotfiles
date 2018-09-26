@@ -24,6 +24,8 @@
 #mkdir -p ~/.config/awesome
 ##mkdir -p ~/.config/qutebrowser
 # mkdir -p ~/.config/sway
+# mkdir -p ~/.config/surfraw
+# mkdir -p ~/.config/wyeb.
 #mkdir -p ~/.xmonad
 # mkdir -p ~/.config/vimb
 # mkdir -p ~/.config/wyeb.
@@ -37,6 +39,8 @@ mkdir -p ~/.config/dmenu-extended/
 # ln -sf $(pwd)/ranger/* ~/.config/ranger/
 ##ln -sf $(pwd)/qutebrowser/* ~/.config/qutebrowser/
 # ln -sf $(pwd)/sway/config ~/.config/sway/
+# ln -sf $(pwd)/surfraw ~/.config/surfraw/conf
+# ln -sf $(pwd)/wyeb./* ~/.config/wyeb./
 # ln -sf $(pwd)/xmonad.hs ~/.xmonad/
 # ln -sf $(pwd)/xmobarrc ~/.xmobarrc
 # ln -sf $(pwd)/stalonetrayrc ~/.stalonetrayrc

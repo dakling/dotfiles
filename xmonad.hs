@@ -7,6 +7,7 @@ import XMonad.Util.SpawnOnce
 import XMonad.Layout.NoBorders
 import XMonad.Hooks.EwmhDesktops
 import XMonad.Actions.Submap
+-- import XMonad.Layout.Minimize
 import Graphics.X11.ExtraTypes.XF86
 import Network.HostName
 -- import qualified XMonad.StackSet as W
@@ -37,6 +38,7 @@ toggleStrutsKey XConfig {XMonad.modMask = modMask} = (modMask, xK_b)
 myConfig = defaultConfig
    {
     layoutHook = smartBorders  $  layoutHook defaultConfig
+    -- layoutHook = minimize (Tall 1 (3/100) (1/2))  ||| Full 
     , manageHook = manageDocks <+> manageHook defaultConfig
     , modMask = mod4Mask
     , keys = myKeys
@@ -64,6 +66,8 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
         , ((modm, xK_F4), (spawn $ "thunderbird"))
         , ((modm, xK_F5), (spawn $ "termite -e pacui"))
         , ((modm, xK_o), (spawn $ "onboard"))
+        -- , ((modm,               xK_m     ), withFocused minimizeWindow)
+        -- , ((modm .|. shiftMask, xK_m     ), sendMessage RestoreNextMinimizedWin)
         , ((modm, xK_d), (spawn $ "dmenu_extended_run"))
         -- , ((modm,xK_Left),  (spawn $ "xdotool mousemove_relative -- -1 0"))
         -- , ((modm,xK_Right), (spawn $ "xdotool mousemove_relative -- 1 0"))
@@ -85,9 +89,9 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
             ,((0,xK_r), (spawn $ "reboot"))
             ,((0,xK_l), (spawn $ "i3exit lock"))
             ])
-        -- , ((0, xF86XK_AudioLowerVolume   ), (spawn "amixer set Master 2-"))
-        -- , ((0, xF86XK_AudioRaiseVolume   ), (spawn "amixer set Master 2+"))
-        -- , ((0, xF86XK_AudioMute          ), (spawn "amixer set Master toggle"))
+        , ((0, xF86XK_AudioLowerVolume   ), (spawn "amixer set Master 2-"))
+        , ((0, xF86XK_AudioRaiseVolume   ), (spawn "amixer set Master 2+"))
+        , ((0, xF86XK_AudioMute          ), (spawn "amixer set Master toggle"))
         , ((0, xK_Page_Down              ), (spawn "xdotool click 5"))
         , ((0, xK_Page_Up                ), (spawn "xdotool click 4"))
         , ((0, xK_Menu                   ), (spawn "xdotool click 2"))

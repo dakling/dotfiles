@@ -1,0 +1,92 @@
+# Based on http://pts.szit.bme.hu/bibtex-cheat-sheet.txt
+# Most optional fields are not included.
+snippet art
+	@Article{ ${1:id},
+		author = {${2:authors separated by "and"}},
+		title = {${3:title}},
+		journal = {${4:journal}},
+		year = ${5:year},
+	}
+snippet boo
+	@Book{ ${1:id},
+		${2:author/editor} = {${3:$2s separated by "and"}},
+		title = {${4:title}},
+		publisher = {${5:publisher}},
+		year = ${6:year},
+	}
+snippet booklet
+	@Booklet{ ${1:id},
+		title = {${2:title}},
+		author = {${3:authors separated by "and"}},
+	}
+snippet con
+	@Conference{ ${1:id},
+		author = {${2:authors separated by "and"}},
+		title = {${3:title}},
+		booktitle = {${4:book title}},
+		year = ${5:year},
+	}
+snippet inb
+	@InBook{ ${1:id},
+		${2:author/editor} = {${3:$2s separated by "and"}},
+		title = {${4:title}},
+		${5:chapter/pages} = {${6:$5}},
+		publisher = {${7:publisher}},
+		year = ${8:year},
+	}
+snippet inc
+	@InCollection{ ${1:id},
+		author = {${2:authors separated by "and"}},
+		title = {${3:title}},
+		booktitle = {${4:book title}},
+		year = ${5:year},
+	}
+snippet inp
+	@InProceedings{ ${1:id},
+		author = {${2:authors separated by "and"}},
+		title = {${3:title}},
+		booktitle = {${4:book title}},
+		year = ${5:year},
+	}
+snippet man
+	@Manual{ ${1:id},
+		title = {${2:title}},
+		author = {${3:authors separated by "and"}},
+	}
+snippet mas
+	@MastersThesis{ ${1:id},
+		author = {${2:authors separated by "and"}},
+		title = {${3:title}},
+		school = {${4:school}},
+		year = ${5:year},
+	}
+snippet mis
+	@Misc{ ${1:id},
+		author = {${2:authors separated by "and"}},
+		title = {${3:title}},
+	}
+snippet phd
+	@PhDThesis{ ${1:id},
+		author = {${2:authors separated by "and"}},
+		title = {${3:title}},
+		school = {${4:school}},
+		year = ${5:year},
+	}
+snippet pro
+	@Proceedings{ ${1:id},
+		title = {${2:title}},
+		year = {${3:year}},
+	}
+snippet tec
+	@TechReport{ ${1:id},
+		author = {${2:authors separated by "and"}},
+		title = {${3:title}},
+		institution = {${4:institution}},
+		year = ${5:year},
+	}
+snippet unp
+	@Unpublished{ ${1:id},
+		author = {${2:authors separated by "and"}},
+		title = {${3:title}},
+		note = {${4:note}},
+	}

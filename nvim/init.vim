@@ -121,6 +121,7 @@ nnoremap <leader>sv :source $MYVIMRC<cr>
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 vnoremap . :norm.<CR>
 nnoremap <leader><leader> :
+nnoremap <leader>o :!xdg-open 
 " auto pairs
 let g:AutoPairsFlyMode = 1
 "nerdtree

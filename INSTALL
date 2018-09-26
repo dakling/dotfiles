@@ -4,14 +4,18 @@
 #sudo ln -sf $(pwd)/binCustom/fdy_connect /usr/bin/
 #sudo ln -sf $(pwd)/binCustom/fix_touchscreen /usr/bin/
 #sudo ln -sf $(pwd)/binCustom/monitor_home /usr/bin/
-sudo ln -sf $(pwd)/binCustom/nvim-termite /usr/bin/
-sudo ln -sf $(pwd)/binCustom/rangerStandalone /usr/bin/
+# sudo ln -sf $(pwd)/binCustom/nvim-termite /usr/bin/
+# sudo ln -sf $(pwd)/binCustom/rangerStandalone /usr/bin/
 #sudo ln -sf $(pwd)/binCustom/startIfNotRunning /usr/bin/
+# sudo ln -sf $(pwd)/binCustom/open-terminal-here /usr/bin/
+# sudo ln -sf $(pwd)/binCustom/op /usr/bin/
+# sudo ln -sf $(pwd)/binCustom/opp /usr/bin/
 ##sudo ln -sf $(pwd)/binCustom/swayCustomSettings /usr/bin/
+# sudo ln -sf $(pwd)/binCustom/finder /usr/bin/finder
 
 
-sudo ln -sf $(pwd)/binCustom/nvim-termite.desktop /usr/share/applications/
-sudo ln -sf $(pwd)/binCustom/rangerStandalone /usr/share/applications/
+# sudo ln -sf $(pwd)/binCustom/nvim-termite.desktop /usr/share/applications/
+# sudo ln -sf $(pwd)/binCustom/rangerStandalone /usr/share/applications/
 
 ##mkdir -p ~/.config/i3/
 ##mkdir -p ~/.config/i3status
@@ -21,16 +25,24 @@ sudo ln -sf $(pwd)/binCustom/rangerStandalone /usr/share/applications/
 ##mkdir -p ~/.config/qutebrowser
 # mkdir -p ~/.config/sway
 #mkdir -p ~/.xmonad
+# mkdir -p ~/.config/vimb
+# mkdir -p ~/.config/wyeb.
+mkdir -p ~/.config/dmenu-extended/
 
 ##ln -sf $(pwd)/i3/config ~/.config/i3/
 ##ln -sf $(pwd)/i3status/config ~/.config/i3status/
-ln -sf $(pwd)/nvim/init.vim ~/.config/nvim/init.vim
+# ln -sf $(pwd)/nvim/init.vim ~/.config/nvim/init.vim
+# ln -sf $(pwd)/spacemacs ~/.spacemacs
 #ln -sf $(pwd)/awesome/* ~/.config/awesome
-ln -sf $(pwd)/ranger/* ~/.config/ranger/
+# ln -sf $(pwd)/ranger/* ~/.config/ranger/
 ##ln -sf $(pwd)/qutebrowser/* ~/.config/qutebrowser/
 # ln -sf $(pwd)/sway/config ~/.config/sway/
-ln -sf $(pwd)/xmonad.hs ~/.xmonad/
-ln -sf $(pwd)/xmobarrc ~/.xmobarrc
-ln -sf $(pwd)/stalonetrayrc ~/.stalonetrayrc
-ln -sf $(pwd)/zshrc ~/.zshrc
+# ln -sf $(pwd)/xmonad.hs ~/.xmonad/
+# ln -sf $(pwd)/xmobarrc ~/.xmobarrc
+# ln -sf $(pwd)/stalonetrayrc ~/.stalonetrayrc
+# ln -sf $(pwd)/zshrc ~/.zshrc
 # ln -sf $(pwd)/conkyrc ~/.conkyrc
+# ln -sf $(pwd)/dmenurc ~/.dmenurc
+# ln -sf $(pwd)/vimb/* ~/.config/vimb/
+# ln -sf $(pwd)/wyeb./* ~/.config/wyeb./
+ln -sf $(pwd)/dmenu-extended/dmenuExtended_preferences.txt ~/.config/dmenu-extended/config/dmenuExtended_preferences.txt

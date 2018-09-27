@@ -2,8 +2,10 @@
 call plug#begin('~/.config/nvim/plugged')
 " Plug 'cocopon/iceberg.vim'
 " Plug 'joshdick/onedark.vim'
-Plug 'morhetz/gruvbox'
+" Plug 'morhetz/gruvbox'
 Plug 'itchyny/lightline.vim'
+Plug 'ryanoasis/vim-devicons'
+Plug 'mhartington/oceanic-next'
 " Plug 'jiangmiao/auto-pairs'
 Plug 'Raimondi/delimitMate'
 Plug 'bkad/CamelCaseMotion' 
@@ -78,13 +80,18 @@ set shiftwidth=4
 set shiftround
 set expandtab
 let g:netrw_keepdir=0
-set background=dark
-colorscheme gruvbox
+" set background=dark
+if (has("termguicolors"))
+ set termguicolors
+endif
+let g:oceanic_next_terminal_bold = 1
+let g:oceanic_next_terminal_italic = 1
+colorscheme OceanicNext
 " let g:onedark_terminal_italics=1
 "customize statusline
 set noshowmode
 let g:lightline= {
-            \'colorscheme': 'gruvbox',
+            \'colorscheme': 'oceanicnext',
             \ 'active': {
             \   'left': [ [ 'mode', 'paste' ],
             \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
@@ -404,7 +411,7 @@ au Filetype tex nnoremap <buffer> <leader>ml ggi%! TEX root = ../main.tex <esc> 
 map p <Plug>(miniyank-autoput)
 map P <Plug>(miniyank-autoPut)
 map <leader>p <Plug>(miniyank-cycle)
-let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+" let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 "open frequently used directories
 nnoremap <leader>fh :e ~/
 nnoremap <leader>fd :e ~/Dokumente/

@@ -27,9 +27,12 @@ myBar hostname
     | otherwise = "xmobar"
 
 -- Custom PP, configure it as you like. It determines what is being written to the bar.
-myPP = xmobarPP { ppCurrent = xmobarColor "#00adee" "" . wrap "<" ">" 
-                , ppTitle = xmobarColor "#00adee" "" 
+myPP = xmobarPP { ppCurrent = xmobarColor "#fbf1c7" "" . wrap "<" ">" 
+                , ppTitle = xmobarColor "#fbf1c7" "" 
                 }
+-- myPP = xmobarPP { ppCurrent = xmobarColor "#00adee" "" . wrap "<" ">" 
+--                 , ppTitle = xmobarColor "#00adee" "" 
+--                 }
 
 -- Key binding to toggle the gap for the bar.
 toggleStrutsKey XConfig {XMonad.modMask = modMask} = (modMask, xK_b)
@@ -48,7 +51,7 @@ myConfig = defaultConfig
     --theming
     , borderWidth = 2
     , normalBorderColor  = "#333333"
-    , focusedBorderColor = "#00adee"
+    , focusedBorderColor = "#fbf1c7"
     , startupHook = myStartupHook
     , handleEventHook = fullscreenEventHook -- allow fullscreen
     }

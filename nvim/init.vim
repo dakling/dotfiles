@@ -1,6 +1,9 @@
 " Manage Plugins using vim-plug
 call plug#begin('~/.config/nvim/plugged')
-Plug 'cocopon/iceberg.vim'
+" Plug 'cocopon/iceberg.vim'
+" Plug 'joshdick/onedark.vim'
+Plug 'morhetz/gruvbox'
+Plug 'itchyny/lightline.vim'
 " Plug 'jiangmiao/auto-pairs'
 Plug 'Raimondi/delimitMate'
 Plug 'bkad/CamelCaseMotion' 
@@ -76,38 +79,50 @@ set shiftround
 set expandtab
 let g:netrw_keepdir=0
 set background=dark
-colorscheme iceberg
+colorscheme gruvbox
+" let g:onedark_terminal_italics=1
 "customize statusline
-function! InsertStatuslineColor(mode)
-  if a:mode == 'i'
-    hi statusline guibg=Black ctermfg=110 guifg=LightSkyBlue3 ctermbg=0
-  elseif a:mode == 'r'
-    hi statusline guibg=Black ctermfg=140 guifg=Purple ctermbg=0
-  else
-    hi statusline guibg=Black ctermfg=1 guifg=DarkBlue ctermbg=0
-  endif
-endfunction
+set noshowmode
+let g:lightline= {
+            \'colorscheme': 'gruvbox',
+            \ 'active': {
+            \   'left': [ [ 'mode', 'paste' ],
+            \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+            \ },
+            \ 'component_function': {
+            \   'gitbranch': 'fugitive#head'
+            \ },
+            \}
+" function! InsertStatuslineColor(mode)
+"   if a:mode == 'i'
+"     hi statusline guibg=Black ctermfg=110 guifg=LightSkyBlue3 ctermbg=0
+"   elseif a:mode == 'r'
+"     hi statusline guibg=Black ctermfg=140 guifg=Purple ctermbg=0
+"   else
+"     hi statusline guibg=Black ctermfg=1 guifg=DarkBlue ctermbg=0
+"   endif
+" endfunction
 
-au InsertEnter * call InsertStatuslineColor(v:insertmode)
-au InsertLeave * hi statusline guibg=LightSkyBlue3 ctermfg=0 guifg=Grey19 ctermbg=110
-" default the statusline to grey when entering Vim
-hi statusline guibg=LightSkyBlue3 ctermfg=0 guifg=Grey19 ctermbg=110
+" au InsertEnter * call InsertStatuslineColor(v:insertmode)
+" au InsertLeave * hi statusline guibg=LightSkyBlue3 ctermfg=0 guifg=Grey19 ctermbg=110
+" " default the statusline to grey when entering Vim
+" hi statusline guibg=LightSkyBlue3 ctermfg=0 guifg=Grey19 ctermbg=110
 
-" Formats the statusline
-set statusline=%f                           " file name
-set statusline+=%y      "filetype
-set statusline+=%h      "help file flag
-set statusline+=%m      "modified flag
-set statusline+=%r      "read only flag
-set statusline+=%=        " Switch to the right side
-" set statusline+=%#warningmsg# " syntastic
-" set statusline+=%{SyntasticStatuslineFlag()}
-" set statusline+=%*
-set statusline+=%c        " Current column
-set statusline+=;         " Separator
-set statusline+=%l        " Current line
-set statusline+=/         " Separator
-set statusline+=%L        " Total lines
+" " Formats the statusline
+" set statusline=%f                           " file name
+" set statusline+=%y      "filetype
+" set statusline+=%h      "help file flag
+" set statusline+=%m      "modified flag
+" set statusline+=%r      "read only flag
+" set statusline+=%=        " Switch to the right side
+" " set statusline+=%#warningmsg# " syntastic
+" " set statusline+=%{SyntasticStatuslineFlag()}
+" " set statusline+=%*
+" set statusline+=%c        " Current column
+" set statusline+=;         " Separator
+" set statusline+=%l        " Current line
+" set statusline+=/         " Separator
+" set statusline+=%L        " Total lines
 " Keystrokes
 let maplocalleader = "-"
 let mapleader = "\<Space>"

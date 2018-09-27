@@ -89,3 +89,24 @@ endsnippet
 snippet bmy "bold math y" i
 \mathbf{y}$0
 endsnippet
+
+snippet col "columns for beamer" 
+\begin{columns}
+\column{$1\textwidth}
+	$3
+\column{$2\textwidth}
+	$4
+\end{columns}
+$0
+endsnippet
+
+snippet fig "figure environment (includegraphics)"
+	\\begin{figure}
+	\\begin{center}
+		\\includegraphics[scale=${1}]{Figures/${2}}
+	\\end{center}%
+	\\caption{${3}}%
+	\\label{fig:${4}}%
+	\\end{figure}
+	${0}
+endsnippet

@@ -3,7 +3,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages (quote (evil-leader elisp-slime-nav evil))))
+ '(package-selected-packages (quote (magit evil-leader elisp-slime-nav evil))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -81,3 +81,30 @@
 (evil-define-key 'normal dired-mode-map "N" 'evil-search-previous)
 (evil-define-key 'normal dired-mode-map "q" 'kill-this-buffer)
 (put 'dired-find-alternate-file 'disabled nil)
+
+(use-package magit
+  :ensure magit
+  :config
+  (progn
+    (evil-set-initial-state 'magit-mode 'normal)
+    (evil-set-initial-state 'magit-status-mode 'normal)
+    (evil-set-initial-state 'magit-diff-mode 'normal)
+    (evil-set-initial-state 'magit-log-mode 'normal)
+    (evil-define-key 'normal magit-mode-map
+        "j" 'magit-goto-next-section
+        "k" 'magit-goto-previous-section)
+    (evil-define-key 'normal magit-log-mode-map
+        "j" 'magit-goto-next-section
+        "k" 'magit-goto-previous-section)
+    (evil-define-key 'normal magit-diff-mode-map
+        "j" 'magit-goto-next-section
+        "k" 'magit-goto-previous-section)))
+(setq inhibit-splash-screen t
+      inhibit-startup-echo-area-message t
+      inhibit-startup-message t)
+
+(visual-line-mode 1)
+(tool-bar-mode -1)
+
+(load-theme 'wombat t)
+

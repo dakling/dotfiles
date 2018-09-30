@@ -25,6 +25,10 @@
     (package-install 'use-package))
 (require 'use-package)
 
+(use-package auctex
+  :ensure auctex
+  )
+
 (use-package elisp-slime-nav)
 (require 'elisp-slime-nav)
 (defun my-lisp-hook ()
@@ -47,13 +51,16 @@
       (global-evil-leader-mode)
       :config
       (progn
-        (evil-leader/set-leader ",")
+        (evil-leader/set-leader "<SPC>")
         ;; bindings from earlier
-        )
+        (evil-leader/set-key
+	  "e" 'find-file
+	  "fs" 'save-buffer
+	)
+      )
+	
       )
 
-(evil-leader/set-leader " ")
-(evil-leader/set-key "fs" 'save-buffer)
 (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
 (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
 (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)

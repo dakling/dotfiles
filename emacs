@@ -25,9 +25,6 @@
     (package-install 'use-package))
 (require 'use-package)
 
-(use-package auctex
-  :ensure auctex
-  )
 
 (use-package elisp-slime-nav)
 (require 'elisp-slime-nav)
@@ -61,12 +58,10 @@
 	
       )
 
-(define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
-(define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
-(define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
-(define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
-
-(define-key evil-normal-state-map (kbd "C-s") 'save-buffer)
+;;(define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
+;;(define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
+;;(define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
+;;(define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
 
 (require 'dired-x)
 (defun my-dired-up-directory ()
@@ -109,6 +104,13 @@
 (setq inhibit-splash-screen t
       inhibit-startup-echo-area-message t
       inhibit-startup-message t)
+
+(use-package auctex
+  :defer t
+  :ensure t
+  :config (progn
+	    (evil-leader/set-key
+	      "ll" 'TeX-command-master)))
 
 (visual-line-mode 1)
 (tool-bar-mode -1)

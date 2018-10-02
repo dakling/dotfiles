@@ -29,7 +29,9 @@
 #mkdir -p ~/.xmonad
 # mkdir -p ~/.config/vimb
 # mkdir -p ~/.config/wyeb.
-mkdir -p ~/.config/dmenu-extended/
+# mkdir -p ~/.config/dmenu-extended/
+# mkdir -p ~/.config/termite/
+mkdir -p ~/.mutt
 
 ##ln -sf $(pwd)/i3/config ~/.config/i3/
 ##ln -sf $(pwd)/i3status/config ~/.config/i3status/
@@ -49,4 +51,8 @@ mkdir -p ~/.config/dmenu-extended/
 # ln -sf $(pwd)/dmenurc ~/.dmenurc
 # ln -sf $(pwd)/vimb/* ~/.config/vimb/
 # ln -sf $(pwd)/wyeb./* ~/.config/wyeb./
-ln -sf $(pwd)/dmenu-extended/dmenuExtended_preferences.txt ~/.config/dmenu-extended/config/dmenuExtended_preferences.txt
+# ln -sf $(pwd)/dmenu-extended/dmenuExtended_preferences.txt ~/.config/dmenu-extended/config/dmenuExtended_preferences.txt
+# ln -sf $(pwd)/termite ~/.config/termite/config
+ln -sf $(pwd)/mutt/account* ~/.mutt/
+ln -sf $(pwd)/mutt/muttrc ~/.muttrc
+sudo ln -sf $(pwd)/mutt/muttAll /usr/bin/muttAll

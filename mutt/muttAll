@@ -1,0 +1,6 @@
+#!/bin/sh
+
+termite -e "mutt -F ~/.mutt/account.gmail"&
+termite -e "mutt -F ~/.mutt/account.web"&
+termite -e "mutt -F ~/.mutt/account.fdy"&
+termite -e "mutt -F ~/.mutt/account.gsc"&

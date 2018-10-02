@@ -14,3 +14,5 @@ set certificate_file = "~/.mutt/certificates"
 set smtp_url = 'smtp://dario.klingenberg@smtp.web.de:587/'
 set move = no
 set imap_keepalive = 900
+set mailcap_path 	= ~/.mutt/mailcap
+auto_view text/html

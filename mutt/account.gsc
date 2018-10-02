@@ -14,3 +14,5 @@ set certificate_file = "~/.mutt/certificates"
 set smtp_url = 'smtp://klingenberg@smtp.gsc.ce.tu-darmstadt.de:465/'
 set move = no
 set imap_keepalive = 900
+set mailcap_path 	= ~/.mutt/mailcap
+auto_view text/html

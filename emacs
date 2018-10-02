@@ -3,7 +3,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages (quote (evil-leader elisp-slime-nav evil))))
+ '(package-selected-packages (quote (magit evil-leader elisp-slime-nav evil))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -24,6 +24,7 @@
     (package-refresh-contents)
     (package-install 'use-package))
 (require 'use-package)
+
 
 (use-package elisp-slime-nav)
 (require 'elisp-slime-nav)
@@ -47,19 +48,20 @@
       (global-evil-leader-mode)
       :config
       (progn
-        (evil-leader/set-leader ",")
+        (evil-leader/set-leader "<SPC>")
         ;; bindings from earlier
-        )
+        (evil-leader/set-key
+	  "e" 'find-file
+	  "fs" 'save-buffer
+	)
+      )
+	
       )
 
-(evil-leader/set-leader " ")
-(evil-leader/set-key "fs" 'save-buffer)
-(define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
-(define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
-(define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
-(define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
-
-(define-key evil-normal-state-map (kbd "C-s") 'save-buffer)
+;;(define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
+;;(define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
+;;(define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
+;;(define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
 
 (require 'dired-x)
 (defun my-dired-up-directory ()
@@ -81,3 +83,37 @@
 (evil-define-key 'normal dired-mode-map "N" 'evil-search-previous)
 (evil-define-key 'normal dired-mode-map "q" 'kill-this-buffer)
 (put 'dired-find-alternate-file 'disabled nil)
+
+(use-package magit
+  :ensure magit
+  :config
+  (progn
+    (evil-set-initial-state 'magit-mode 'normal)
+    (evil-set-initial-state 'magit-status-mode 'normal)
+    (evil-set-initial-state 'magit-diff-mode 'normal)
+    (evil-set-initial-state 'magit-log-mode 'normal)
+    (evil-define-key 'normal magit-mode-map
+        "j" 'magit-goto-next-section
+        "k" 'magit-goto-previous-section)
+    (evil-define-key 'normal magit-log-mode-map
+        "j" 'magit-goto-next-section
+        "k" 'magit-goto-previous-section)
+    (evil-define-key 'normal magit-diff-mode-map
+        "j" 'magit-goto-next-section
+        "k" 'magit-goto-previous-section)))
+(setq inhibit-splash-screen t
+      inhibit-startup-echo-area-message t
+      inhibit-startup-message t)
+
+(use-package auctex
+  :defer t
+  :ensure t
+  :config (progn
+	    (evil-leader/set-key
+	      "ll" 'TeX-command-master)))
+
+(visual-line-mode 1)
+(tool-bar-mode -1)
+
+(load-theme 'wombat t)
+

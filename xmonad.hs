@@ -109,7 +109,7 @@ myStartupHook = do
     spawnOnce "nitrogen --head=1 --random ~/.config/backgrounds --set-scaled"
     spawnOnce "nm-applet"
     spawnOnce "pa-applet"
-    spawnOnce "blueman-applet"
+    -- spawnOnce "blueman-applet"
     spawnOnce "fix_touchscreen"
     spawnOnce "easystroke enable"
     spawnOnce "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"

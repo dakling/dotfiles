@@ -142,6 +142,7 @@ nnoremap <leader>w <C-w>
 nnoremap <leader>sv :source $MYVIMRC<cr>
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 vnoremap . :norm.<CR>
+nnoremap <leader>n :nohlsearch<cr>
 nnoremap <leader><leader> :
 nnoremap <leader>o :!xdg-open 
 " auto pairs
@@ -150,6 +151,12 @@ let g:AutoPairsFlyMode = 1
 nmap <leader>t :NERDTreeToggle<cr>
 " camelCase
 call camelcasemotion#CreateMotionMappings('#')
+"mutt
+augroup filetypedetect
+  " Mail
+  autocmd BufRead /tmp/mutt-* set tw=72
+  autocmd BufRead,BufNewFile *mutt-*              setfiletype mail
+augroup END
 " for openfoam
 " change bc to zerogradient
 " nnoremap <leader>fzg di{i<tab>type<tab>zerogradient;<cr><tab><esc>

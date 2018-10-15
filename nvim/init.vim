@@ -43,7 +43,7 @@ Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-repeat'
 " Plug 'effi/vim-OpenFoam-syntax'
 Plug 'ervandew/supertab'
-" Plug 'OmniSharp/omnisharp-vim'
+Plug 'OmniSharp/omnisharp-vim'
 " Plug 'fsharp/vim-fsharp', {
 "       \ 'for': 'fsharp',
 "       \ 'do':  'make fsautocomplete',
@@ -122,7 +122,6 @@ let g:lightline= {
 " set statusline+=%m      "modified flag
 " set statusline+=%r      "read only flag
 " set statusline+=%=        " Switch to the right side
-" " set statusline+=%#warningmsg# " syntastic
 " " set statusline+=%{SyntasticStatuslineFlag()}
 " " set statusline+=%*
 " set statusline+=%c        " Current column
@@ -163,42 +162,41 @@ augroup END
 " change bc to fixedvalue
 " nnoremap <leader>ffv di{i<tab>type<tab>fixedvalue;<cr><tab><tab>value<tab>uniform <++>;<cr><tab><esc>
 " for BoSSSPad
-augroup filetypedetect
-    autocmd bufnewfile,bufread *.bws set filetype=cs
-augroup end 
-" csharp using YouCompleteMe + OmniSharp
-augroup omnisharp_commands
-    autocmd!
-    " Synchronous build (blocks Vim)
-    " autocmd FileType cs nnoremap <buffer> <F5> :wa!<CR>:OmniSharpBuild<CR>
-    " Builds can also run asynchronously with vim-dispatch installed
-    " autocmd FileType cs nnoremap <buffer> <Leader>b :wa!<CR>:OmniSharpBuildAsync<CR>
-    " Automatic syntax check on events (TextChanged requires Vim 7.4)
-    autocmd BufEnter,TextChanged,InsertLeave *.cs SyntasticCheck
+" augroup filetypedetect
+"     autocmd bufnewfile,bufread *.bws set filetype=cs
+" augroup end 
+" " csharp using YouCompleteMe + OmniSharp
+" augroup omnisharp_commands
+"     autocmd!
+"     " Synchronous build (blocks Vim)
+"     " autocmd FileType cs nnoremap <buffer> <F5> :wa!<CR>:OmniSharpBuild<CR>
+"     " Builds can also run asynchronously with vim-dispatch installed
+"     " autocmd FileType cs nnoremap <buffer> <Leader>b :wa!<CR>:OmniSharpBuildAsync<CR>
+"     " Automatic syntax check on events (TextChanged requires Vim 7.4)
 
-    " Automatically add new cs files to the nearest project on save
-    " autocmd BufWritePost *.cs call OmniSharp#AddToProject()
+"     " Automatically add new cs files to the nearest project on save
+"     " autocmd BufWritePost *.cs call OmniSharp#AddToProject()
 
-    " Show type information automatically when the cursor stops moving
-    " autocmd CursorHold *.cs call OmniSharp#TypeLookupWithoutDocumentation()
+"     " Show type information automatically when the cursor stops moving
+"     " autocmd CursorHold *.cs call OmniSharp#TypeLookupWithoutDocumentation()
 
-    " The following commands are contextual, based on the cursor position.
-    autocmd FileType cs nnoremap <buffer> gd :YcmCompleter GoToDeclaration<CR>
-    autocmd FileType cs nnoremap <buffer> <Leader>gd :YcmCompleter GoToDefinition<CR>
-    autocmd FileType cs nnoremap <buffer> <Leader>gi :YcmCompleter GoToImplementation<CR>
-    autocmd FileType cs nnoremap <buffer> <Leader>gt :YcmCompleter GetType<CR>
-    autocmd FileType cs nnoremap <buffer> <Leader>gc :YcmCompleter GetDoc<CR>
-    " Cursor can be anywhere on the line containing an issue
-    autocmd FileType cs nnoremap <buffer> <Leader>x :YcmCompleter FixIt<CR>
-    autocmd FileType cs nnoremap <buffer> <Leader>r :YcmCompleter RefactorRename 
-    " autocmd FileType cs nnoremap <buffer> <Leader>fx :OmniSharpFixUsings<CR>
-    " autocmd FileType cs nnoremap <buffer> <Leader>tt :OmniSharpTypeLookup<CR>
-    " autocmd FileType cs nnoremap <buffer> <Leader>dc :OmniSharpDocumentation<CR>
+"     " The following commands are contextual, based on the cursor position.
+"     autocmd FileType cs nnoremap <buffer> gd :YcmCompleter GoToDeclaration<CR>
+"     autocmd FileType cs nnoremap <buffer> <Leader>gd :YcmCompleter GoToDefinition<CR>
+"     autocmd FileType cs nnoremap <buffer> <Leader>gi :YcmCompleter GoToImplementation<CR>
+"     autocmd FileType cs nnoremap <buffer> <Leader>gt :YcmCompleter GetType<CR>
+"     autocmd FileType cs nnoremap <buffer> <Leader>gc :YcmCompleter GetDoc<CR>
+"     " Cursor can be anywhere on the line containing an issue
+"     autocmd FileType cs nnoremap <buffer> <Leader>x :YcmCompleter FixIt<CR>
+"     autocmd FileType cs nnoremap <buffer> <Leader>r :YcmCompleter RefactorRename 
+"     " autocmd FileType cs nnoremap <buffer> <Leader>fx :OmniSharpFixUsings<CR>
+"     " autocmd FileType cs nnoremap <buffer> <Leader>tt :OmniSharpTypeLookup<CR>
+"     " autocmd FileType cs nnoremap <buffer> <Leader>dc :OmniSharpDocumentation<CR>
 
-    " Navigate up and down by method/property/field
-    " autocmd FileType cs nnoremap <buffer> <C-k> :OmniSharpNavigateUp<CR>
-    " autocmd FileType cs nnoremap <buffer> <C-j> :OmniSharpNavigateDown<CR>
-augroup END
+"     " Navigate up and down by method/property/field
+"     " autocmd FileType cs nnoremap <buffer> <C-k> :OmniSharpNavigateUp<CR>
+"     " autocmd FileType cs nnoremap <buffer> <C-j> :OmniSharpNavigateDown<CR>
+" augroup END
 
 " csharp
 "" " Set the path to the roslyn server

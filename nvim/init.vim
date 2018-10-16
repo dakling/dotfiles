@@ -336,8 +336,16 @@ augroup haskellStylish
   au FileType haskell nnoremap <localleader>hf :call HaskellFormat('both')<CR>
 augroup END
 " ----- w0rp/ale -----
-" let g:ale_linters.haskell = ['hlint']
-let b:ale_fixers = {'haskell': ['hlint']}
+let g:ale_sign_error = '>>'
+let g:ale_sign_warning = '--'
+nmap <silent> <leader>ap <Plug>(ale_previous_wrap)
+nmap <silent> <leader>an <Plug>(ale_next_wrap)
+let g:ale_linters = {
+            \'tex': ['chktex', 'proselint', 'redpen', 'write-good', 'vale']
+            \}
+let g:ale_fixers = {
+            \ 'haskell': ['hlint']
+            \}
 " ----- parsonsmatt/intero-neovim -----
 " Prefer starting Intero manually (faster startup times)
 let g:intero_start_immediately = 0
@@ -469,9 +477,6 @@ let g:SuperTabDefaultCompletionType = "<c-n>"
 " let g:syntastic_ignore_files = [
         " \ '\mdefinLocal.tex',
         " \ ]
-" ale
-nmap <silent> <leader>ap <Plug>(ale_previous_wrap)
-nmap <silent> <leader>an <Plug>(ale_next_wrap)
 " vimwiki/vimwiki
 let g:vimwiki_map_prefix='<leader>e'
 "

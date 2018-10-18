@@ -16,6 +16,9 @@ set smtp_pass=$my_pass
 set move = no
 set imap_keepalive = 900
 set mailcap_path 	= ~/.mutt/mailcap
-set signature="~/.mutt/sig.fdy"
+set signature="~/.dotfiles/dotfiles/mutt/sig.fdy"
 auto_view text/html
 set timeout=30
+set query_command= "abook --mutt-query '%s'"
+macro index,pager  a "<pipe-message>abook --add-email-quiet<return>" "Add this sender to Abook"
+bind editor        <Tab> complete-query

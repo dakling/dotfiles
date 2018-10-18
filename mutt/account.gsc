@@ -11,8 +11,11 @@ set postponed="imaps://mail.gsc.ce.tu-darmstadt.de/[gsc]/Drafts"
 set header_cache = "~/.mutt/cache/headers"
 set message_cachedir = "~/.mutt/cache/bodies"
 set certificate_file = "~/.mutt/certificates"
-set smtp_url = 'smtp://klingenberg@smtp.gsc.ce.tu-darmstadt.de:465/'
+set smtp_url = 'smtps://klingenberg@smtp.gsc.ce.tu-darmstadt.de:465/'
+set smtp_pass=$my_pass
 set move = no
 set imap_keepalive = 900
 set mailcap_path 	= ~/.mutt/mailcap
+set signature="~/.mutt/sig.gsc"
 auto_view text/html
+set timeout=30

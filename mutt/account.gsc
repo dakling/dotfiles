@@ -22,3 +22,6 @@ set timeout=30
 set query_command= "abook --mutt-query '%s'"
 macro index,pager  a "<pipe-message>abook --add-email-quiet<return>" "Add this sender to Abook"
 bind editor        <Tab> complete-query
+set pager=nvimpager
+auto_view text/calendar
+macro index ",c" "<pipe-message>~/.mutt/parse_remind.pl<enter>"

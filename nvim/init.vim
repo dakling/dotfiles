@@ -55,8 +55,8 @@ Plug 'tpope/vim-fugitive'
 Plug 'l04m33/vlime'
 Plug 'tommcdo/vim-exchange'
 " Plug 'vimoutliner/vimoutliner'
-Plug 'mattn/calendar-vim'
-" Plug 'itchyny/calendar.vim' google sync but no vimwiki compatibily
+" Plug 'mattn/calendar-vim'
+Plug 'itchyny/calendar.vim' "google sync but no vimwiki compatibily
 Plug 'vimwiki/vimwiki', { 'branch': 'dev' }
 Plug 'rhysd/vim-grammarous'
 " Plug 'reedes/vim-wordy'
@@ -499,5 +499,8 @@ let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}
 " nmap [d <Plug>DittoLess                " Show the previous matches
 " vim-grammarous
 nnoremap <leader>v <Plug>(grammarous-open-info-window)
+"vim-calendar
+let g:calendar_google_calendar = 1
+let g:calendar_google_task = 1
 "set runtimepath
 set runtimepath+=,/var/lib/vim/addons,/usr/share/vim/vimfiles,/usr/share/vim/vim74,/usr/share/vim/vimfiles/after,/var/lib/vim/addons/after,~/.vim/after,~/.config/nvim

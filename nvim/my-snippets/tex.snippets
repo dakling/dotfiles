@@ -1,7 +1,8 @@
 snippet ali
-\\begin{align}
+\\begin{align*}
 	$1
-\\end{align}
+	\donumber \label{eq:$2}
+\\end{align*}
 $0
 endsnippet
 
@@ -60,11 +61,11 @@ snippet um "mean U" i
 endsnippet
 
 snippet um2 "second moments inst" i
-\um[$2]{$1}$0
+\um{$1}{$2}$0
 endsnippet
 
 snippet umt "two-point" i
-\umt[$2]{$1}$0
+\umt[$1]{$2}$0
 endsnippet
 
 snippet uf "fluctuating U" i
@@ -72,11 +73,11 @@ snippet uf "fluctuating U" i
 endsnippet
 
 snippet uf2 "Reynolds stress tensor" i
-\uf[2]{$1}$0
+\uf{$1}{$2}$0
 endsnippet
 
 snippet uft "two-point" i
-\uft[$2]{$1}$0
+\uft{$2}{$2}$0
 endsnippet
 
 snippet bm "bold math" i
@@ -124,4 +125,8 @@ snippet blo "block"
 	$2
 \end{block}
 $0
+endsnippet
+
+snippet pd "partial diff"
+\pd{$1}{$2}$0
 endsnippet

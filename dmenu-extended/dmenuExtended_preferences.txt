@@ -3,7 +3,7 @@
     "alias_display_format": "{name}",
     "exclude_items": [],
     "filebrowser": "xdg-open",
-    "fileopener": "xdg-open",
+    "fileopener": "rangerStandalone",
     "filter_binaries": false,
     "follow_symlinks": true,
     "frequently_used": 10,

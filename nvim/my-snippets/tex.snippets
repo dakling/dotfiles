@@ -56,6 +56,10 @@ snippet ~ "tilde" i
 \tilde{$1}$0
 endsnippet
 
+snippet ua "model U" i
+\ua{$1}$0
+endsnippet
+
 snippet um "mean U" i
 \um{$1}$0
 endsnippet
@@ -128,5 +132,9 @@ $0
 endsnippet
 
 snippet pd "partial diff"
-\pd{$1}{$2}$0
+\pd{$1}{x_$2}$0
+endsnippet
+
+snippet pd2 "partial diff"
+\pdSecond{$1}{x_$2}{x_$3}$0
 endsnippet

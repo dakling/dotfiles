@@ -19,7 +19,7 @@ secondary = #e60053
 alert = #bd2c40
 
 [bar/example]
-monitor = ${env:MONITOR:}
+; monitor = ${env:MONITOR:}
 width = 100%
 height = 27
 ;offset-x = 1%
@@ -46,7 +46,7 @@ font-0 = dejavu:pixelsize=10;1
 font-1 = fontawesome:fontformat=truetype:size=8:antialias=false;0
 font-2 = DejaVu:pixelsize=10;1
 
-modules-left = i3
+modules-left = 
 modules-center = date 
 modules-right =memory cpu wlan eth xbacklight volume
 
@@ -99,8 +99,6 @@ cursor-scroll = ns-resize
 ; label-unmounted = %mountpoint% not mounted
 ; label-unmounted-foreground = ${colors.foreground-alt}
 
-[module/i3]
-type = internal/i3
 format = <label-state> <label-mode>
 index-sort = true
 wrapping-scroll = false

@@ -452,17 +452,17 @@ nmap F <Plug>Sneak_F
 " anki-vim
 autocmd BufRead *.anki_vim inoremap # ->
 " Use deoplete.
-let g:deoplete#enable_at_startup = 1
+" let g:deoplete#enable_at_startup = 1
 " call deoplete#custom#set('ulitsnips', 'matchers', ['matcher_fuzzy'])
 " complete with tab
-inoremap <silent><expr> <TAB>
-\ pumvisible() ? "\<C-n>" :
-\ <SID>check_back_space() ? "\<TAB>" :
-\ deoplete#mappings#manual_complete()
-function! s:check_back_space() abort "{{{
-let col = col('.') - 1
-return !col || getline('.')[col - 1]  =~ '\s'
-endfunction"}}}
+" inoremap <silent><expr> <TAB>
+" \ pumvisible() ? "\<C-n>" :
+" \ <SID>check_back_space() ? "\<TAB>" :
+" \ deoplete#mappings#manual_complete()
+" function! s:check_back_space() abort "{{{
+" let col = col('.') - 1
+" return !col || getline('.')[col - 1]  =~ '\s'
+" endfunction"}}}
 " supertab
 let g:SuperTabDefaultCompletionType = "<c-n>"
 " let g:SuperTabClosePreviewOnPopupClose = 1

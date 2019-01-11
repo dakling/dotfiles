@@ -18,6 +18,9 @@ import qualified Data.Map        as M
 main = do 
     hostname <- getHostName
     xmonad =<< statusBar (myBar hostname) myPP toggleStrutsKey myConfig
+-- main = do
+    -- hostname <- getHostName
+    -- xmonad =<< dzen myConfig
 
 -- check on which pc we are running
 atWork hostname = hostname == "klingenberg-pc"
@@ -92,9 +95,9 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
             ,((0,xK_r), (spawn $ "reboot"))
             ,((0,xK_l), (spawn $ "i3exit lock"))
             ])
-        , ((0, xF86XK_AudioLowerVolume   ), (spawn "amixer set Master 2-"))
-        , ((0, xF86XK_AudioRaiseVolume   ), (spawn "amixer set Master 2+"))
-        , ((0, xF86XK_AudioMute          ), (spawn "amixer set Master toggle"))
+        , ((0, xF86XK_AudioLowerVolume   ), (spawn "pactl set-sink-volume @DEFAULT_SINK@ -5%"))
+        , ((0, xF86XK_AudioRaiseVolume   ), (spawn "pactl set-sink-volume @DEFAULT_SINK@ +5%"))
+        , ((0, xF86XK_AudioMute          ), (spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle"))
         , ((0, xK_Page_Down              ), (spawn "xdotool click 5"))
         , ((0, xK_Page_Up                ), (spawn "xdotool click 4"))
         , ((0, xK_Menu                   ), (spawn "xdotool click 2"))
@@ -108,7 +111,7 @@ myStartupHook = do
     spawnOnce "nitrogen --head=0 --random ~/.config/backgrounds --set-scaled"
     spawnOnce "nitrogen --head=1 --random ~/.config/backgrounds --set-scaled"
     spawnOnce "nm-applet"
-    spawnOnce "pa-applet"
+    spawnOnce "pnmixer"
     -- spawnOnce "blueman-applet"
     spawnOnce "fix_touchscreen"
     spawnOnce "easystroke enable"
@@ -116,10 +119,11 @@ myStartupHook = do
     spawnOnce "compton -b"
     spawnOnce "setxkbmap -option ctrl:nocaps"  
     spawnOnce "xcape -e 'Control_L=Escape'"
-    spawnOnce "/usr/share/HESSENBOX_DA/HESSENBOX_DA-Client.sh"
+    spawnOnce "/usr/share/HESSENBOX_DA/HESSENBOX_DA-Client.sh start"
     spawnOnce "signal-desktop --start-in-tray"
     spawnOnce "pamac-tray"
     spawnOnce "clipit"
     spawnOnce "dropbox"
     spawnOnce "onboard"
+    spawnOnce "touchegg"
     return ()

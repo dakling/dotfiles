@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=rangerStandalone
-Comment=Launches the ranger file manager in a new terminal
-Icon=system-file-manager
-Terminal=false
-Exec=rangerStandalone
-Categories=System;FileTools;FileManager
-MimeType=inode/directory;

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+remind -a ~/.config/remind/reminders.rem | cut -b 1-2

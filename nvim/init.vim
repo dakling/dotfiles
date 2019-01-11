@@ -62,6 +62,8 @@ Plug 'rhysd/vim-grammarous'
 " Plug 'reedes/vim-wordy'
 Plug 'ron89/thesaurus_query.vim'
 " Plug 'dbmrq/vim-ditto'
+Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown'
 call plug#end()
 "Configuration starts here
 "General Settings
@@ -298,6 +300,8 @@ augroup END
 
 "" Enable snippet completion
 "" let g:OmniSharp_want_snippet=1
+" julia
+au FileType julia nnoremap <leader>r :!julia % <CR>
 " for gmsh
 augroup filetypedetect
 autocmd bufnewfile,bufread *.geo     setf gmsh
@@ -403,6 +407,7 @@ let g:vimtex_view_automatic=1
 let g:vimtex_imaps_leader="#"
 let g:vimtex_view_method='zathura'
 let g:vimtex_complete_close_braces = 1
+let g:vimtex_quickfix_mode=0
 let g:tex_flavor = 'latex'
 au Filetype tex setlocal spell spelllang=en
 "au Filetype tex setlocal textwidth=80

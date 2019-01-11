@@ -126,4 +126,5 @@ myStartupHook = do
     spawnOnce "dropbox"
     spawnOnce "onboard"
     spawnOnce "touchegg"
+    spawnOnce "remind -z5 '-knotify-send %s' ~/.config/remind/reminders.rem"
     return ()

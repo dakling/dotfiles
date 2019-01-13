@@ -14,6 +14,7 @@ termite
 mutt
 remind
 onboard
+rofi
 ) 
 
 for package in ${packageList[@]}; do

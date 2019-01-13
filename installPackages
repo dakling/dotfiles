@@ -1,0 +1,21 @@
+#!/bin/bash
+
+packageList=(
+neovim 
+xmonad 
+xmonad-contrib
+xmonad-utils 
+haskell-hostname
+xmobar 
+stalonetray 
+ranger 
+surfraw 
+termite 
+mutt
+remind
+onboard
+) 
+
+for package in ${packageList[@]}; do
+	sudo pacman -S --noconfirm $package
+done

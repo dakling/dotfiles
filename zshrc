@@ -238,3 +238,10 @@ case ${TERM} in
       ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=7'
     ;;
 esac
+
+function mountLehre {
+ sudo mount //dc1/misc/fdy-lectures.git ~/git/mnt/fdy-lectures.git -t cifs -o username=klingenberg,noexec,uid=klingenberg
+}
+function mountKlausuren {
+ sudo mount //dc1/lehre/TM1/Klausuren.git ~/git/mnt/Klausuren.git -t cifs -o username=klingenberg,noexec,uid=klingenberg
+}

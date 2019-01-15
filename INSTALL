@@ -6,8 +6,8 @@ sudo ln -sf $(pwd)/binCustom/desktopFiles/* /usr/share/applications/
 
 ##mkdir -p ~/.config/i3/
 ##mkdir -p ~/.config/i3status
-curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+# curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+#     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 mkdir -p ~/.config/nvim
 mkdir -p ~/.config/ranger
 #mkdir -p ~/.config/awesome
@@ -19,6 +19,7 @@ mkdir -p ~/.xmonad
 # mkdir -p ~/.config/vimb
 # mkdir -p ~/.config/dmenu-extended/
 mkdir -p ~/.config/termite/
+mkdir -p ~/.config/rofi/
 mkdir -p ~/.mutt
 
 ##ln -sf $(pwd)/i3/config ~/.config/i3/
@@ -41,6 +42,7 @@ ln -sf $(pwd)/zshrc ~/.zshrc
 ln -sf $(pwd)/wyeb./* ~/.config/wyeb./
 # ln -sf $(pwd)/dmenu-extended/dmenuExtended_preferences.txt ~/.config/dmenu-extended/config/dmenuExtended_preferences.txt
 ln -sf $(pwd)/termite ~/.config/termite/config
+ln -sf $(pwd)/rofi ~/.config/rofi/config.rasi
 ln -sf $(pwd)/mutt/account* ~/.mutt/
 ln -sf $(pwd)/mutt/muttrc ~/.muttrc
 sudo ln -sf $(pwd)/mutt/muttAll /usr/bin/muttAll

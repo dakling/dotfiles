@@ -74,7 +74,8 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
         , ((modm, xK_o), (spawn $ "onboard"))
         -- , ((modm,               xK_m     ), withFocused minimizeWindow)
         -- , ((modm .|. shiftMask, xK_m     ), sendMessage RestoreNextMinimizedWin)
-        , ((modm, xK_d), (spawn $ "dmenu_extended_run"))
+        -- , ((modm, xK_d), (spawn $ "rofi -show drun -modi drun"))
+        , ((modm, xK_d), (spawn $ "albert show"))
         -- , ((modm,xK_Left),  (spawn $ "xdotool mousemove_relative -- -1 0"))
         -- , ((modm,xK_Right), (spawn $ "xdotool mousemove_relative -- 1 0"))
         -- , ((modm,xK_Up),    (spawn $ "xdotool mousemove_relative -- 0 -1"))
@@ -106,7 +107,7 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
 myStartupHook = do
     spawnOnce "xsetroot -cursor_name left_ptr"
     spawnOnce "monitor_home"
-    -- spawnOnce "albert"
+    spawnOnce "albert"
     spawnOnce "stalonetray"
     spawnOnce "nitrogen --head=0 --random ~/.config/backgrounds --set-scaled"
     spawnOnce "nitrogen --head=1 --random ~/.config/backgrounds --set-scaled"

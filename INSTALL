@@ -21,6 +21,8 @@ mkdir -p ~/.xmonad
 mkdir -p ~/.config/termite/
 mkdir -p ~/.config/rofi/
 mkdir -p ~/.mutt
+# mkdir -p ~/.config/termite/
+# mkdir -p ~/.mutt
 
 ##ln -sf $(pwd)/i3/config ~/.config/i3/
 ##ln -sf $(pwd)/i3status/config ~/.config/i3status/
@@ -46,3 +48,7 @@ ln -sf $(pwd)/rofi ~/.config/rofi/config.rasi
 ln -sf $(pwd)/mutt/account* ~/.mutt/
 ln -sf $(pwd)/mutt/muttrc ~/.muttrc
 sudo ln -sf $(pwd)/mutt/muttAll /usr/bin/muttAll
+# ln -sf $(pwd)/termite ~/.config/termite/config
+# ln -sf $(pwd)/mutt/account* ~/.mutt/
+# ln -sf $(pwd)/mutt/muttrc ~/.muttrc
+# sudo ln -sf $(pwd)/mutt/muttAll /usr/bin/muttAll

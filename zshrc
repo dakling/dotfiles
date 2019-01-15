@@ -26,13 +26,22 @@ SAVEHIST=500
 setopt histignorespace
 export EDITOR=/usr/bin/nvim
 export VISUAL=/usr/bin/nvim
+export PAGER=/usr/bin/nvimpager
 export QT_QPA_PLATFORMTHEME="qt5ct"
 #wayland stuff
 # export QT_QPA_PLATFORM=wayland-egl
 # export GDK_BACKEND=wayland
 # export GTK_CSD=0
 # source $HOME/OpenFOAM/OpenFOAM-5.0/etc/bashrc
-export LatexGlobalConfig=/home/klingenberg/Documents/programming/latex_macros/definGlobal.tex
+source $HOME/OpenFOAM/OpenFOAM-dev/etc/bashrc
+export LatexGlobalConfig=/home/klingenberg/Documents/programming/latex/definGlobal.tex
+export BOSSS_INSTALL=/home/klingenberg/BoSSS-experimental
+export LatexGlobalConfig=/home/klingenberg/Documents/programming/latex/definGlobal.tex
+export TERMINAL=termite
+export PATH="$PATH:/home/klingenberg/.stack/"
+export PATH="$PATH:/home/klingenberg/.local/bin/"
+export PATH="$PATH:/home/klingenberg/.cabal/bin/"
+MAIL=$HOME/mail/inbox && export MAIL
 WORDCHARS=${WORDCHARS//\/[&.;]}                                 # Don't consider certain characters part of the word
 # export RoslynTargetsPath=/usr/lib/mono/msbuild/15.0/bin/  
 # export BOSSS_INSTALL=/home/klingenberg/BoSSS-experimental
@@ -52,7 +61,7 @@ case ${TERM} in
     zle -N zle-keymap-select
     zle-line-init () {
     zle -K viins
-    printf "\033[6 q"
+   printf "\033[6 q"
     }
     zle -N zle-line-init
     zle -N zle-keymap-select
@@ -88,6 +97,8 @@ KEYTIMEOUT=5
 alias ls="ls --color"
 alias ...="cd ../.."
 alias ....="cd ../../.."
+# alias op='xdg-open $(fzf -e)'
+# alias opf="xdg-open $(fzf)"
 
 # Theming section  
 autoload -U compinit colors zcalc
@@ -245,3 +256,11 @@ function mountLehre {
 function mountKlausuren {
  sudo mount //dc1/lehre/TM1/Klausuren.git ~/git/mnt/Klausuren.git -t cifs -o username=klingenberg,noexec,uid=klingenberg
 }
+function applyOften {
+    for file in "${@:2:$#}";
+    do 
+        eval "$1" $file;
+    done
+}
+
+. /usr/share/z/z.sh

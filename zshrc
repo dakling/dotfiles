@@ -32,8 +32,7 @@ export QT_QPA_PLATFORMTHEME="qt5ct"
 # export QT_QPA_PLATFORM=wayland-egl
 # export GDK_BACKEND=wayland
 # export GTK_CSD=0
-# source $HOME/OpenFOAM/OpenFOAM-5.0/etc/bashrc
-source $HOME/OpenFOAM/OpenFOAM-dev/etc/bashrc
+# source $HOME/OpenFOAM/OpenFOAM-dev/etc/bashrc
 export LatexGlobalConfig=/home/klingenberg/Documents/programming/latex/definGlobal.tex
 export BOSSS_INSTALL=/home/klingenberg/BoSSS-experimental
 export LatexGlobalConfig=/home/klingenberg/Documents/programming/latex/definGlobal.tex
@@ -97,8 +96,6 @@ KEYTIMEOUT=5
 alias ls="ls --color"
 alias ...="cd ../.."
 alias ....="cd ../../.."
-# alias op='xdg-open $(fzf -e)'
-# alias opf="xdg-open $(fzf)"
 
 # Theming section  
 autoload -U compinit colors zcalc
@@ -250,12 +247,21 @@ case ${TERM} in
     ;;
 esac
 
-function mountLehre {
- sudo mount //dc1/misc/fdy-lectures.git ~/git/mnt/fdy-lectures.git -t cifs -o username=klingenberg,noexec,uid=klingenberg
+function qmount {
+    if [ $1 = 'lehre' ] 
+    then
+        sudo mount //dc1/misc/fdy-lectures.git ~/git/mnt/fdy-lectures.git -t cifs -o username=klingenberg,noexec,uid=klingenberg
+    elif [ $1 = 'klausuren' ]
+    then
+        sudo mount //dc1/lehre/TM1/Klausuren.git ~/git/mnt/Klausuren.git -t cifs -o username=klingenberg,noexec,uid=klingenberg
+    elif [ $1 = 'scratch' ]
+    then
+        sudo mount //dc1/scratch/ ~/scratch -t cifs -o username=klingenberg,noexec,uid=klingenberg
+    else
+    echo "$1 not known"
+    fi
 }
-function mountKlausuren {
- sudo mount //dc1/lehre/TM1/Klausuren.git ~/git/mnt/Klausuren.git -t cifs -o username=klingenberg,noexec,uid=klingenberg
-}
+
 function applyOften {
     for file in "${@:2:$#}";
     do 
@@ -263,4 +269,6 @@ function applyOften {
     done
 }
 
-. /usr/share/z/z.sh
+source /usr/share/fzf/completion.zsh && source /usr/share/fzf/key-bindings.zsh
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,node_modules}/*" 2> /dev/null'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"

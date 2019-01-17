@@ -6,8 +6,8 @@
  */
 
 configuration {
-	modi: 							"combi,:rofind";
-	//combi-modi: 					"window,drun,\/:rofind,run";
+	modi: 							"combi";
+	/* combi-modi: 					"window,drun,file:rofind,run"; */
 	combi-modi: 					"window,drun,run";
 	me-select-entry:				"MouseSecondary";
 	me-accept-entry:				"MousePrimary";
@@ -22,6 +22,7 @@ configuration {
     display-window:                 "";
     display-combi:                  "Go to";
     show-icons: true;
+    threads: 8;
 }
 
 
@@ -195,4 +196,3 @@ configuration {
     background-color: @backlight;
     border-color: @foreground;
 }
-

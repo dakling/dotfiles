@@ -74,7 +74,12 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
         , ((modm, xK_o), (spawn $ "onboard"))
         -- , ((modm,               xK_m     ), withFocused minimizeWindow)
         -- , ((modm .|. shiftMask, xK_m     ), sendMessage RestoreNextMinimizedWin)
-        , ((modm, xK_d), (spawn $ "rofi -show drun -modi drun"))
+        , ((modm, xK_d), (spawn $ "rofi -show combi -no-click-to-exit"))
+        , ((modm .|. shiftMask, xK_d), submap . M.fromList $
+            [
+             ((0,xK_d), (spawn $ "rofi -show file/:rofind -no-click-to-exit"))
+            ,((0,xK_f), (spawn $ "rofi -show top -no-click-to-exit"))
+            ]
         -- , ((modm, xK_d), (spawn $ "albert show"))
         -- , ((modm,xK_Left),  (spawn $ "xdotool mousemove_relative -- -1 0"))
         -- , ((modm,xK_Right), (spawn $ "xdotool mousemove_relative -- 1 0"))
@@ -115,6 +120,7 @@ myStartupHook = do
     -- spawnOnce "blueman-applet"
     spawnOnce "fix_touchscreen"
     -- spawnOnce "albert"
+    -- spawnOnce "rofi -show combi -no-click-to-exit -key-run F12"
     spawnOnce "easystroke enable"
     spawnOnce "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
     spawnOnce "compton -b"

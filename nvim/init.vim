@@ -301,7 +301,7 @@ augroup END
 "" Enable snippet completion
 "" let g:OmniSharp_want_snippet=1
 " julia
-au FileType julia nnoremap <leader>r :!julia % & <CR>
+au FileType julia nnoremap <leader>r :!julia % <CR>
 " for gmsh
 augroup filetypedetect
 autocmd bufnewfile,bufread *.geo     setf gmsh

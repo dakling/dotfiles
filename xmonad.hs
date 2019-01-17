@@ -114,6 +114,7 @@ myStartupHook = do
     spawnOnce "pnmixer"
     -- spawnOnce "blueman-applet"
     spawnOnce "fix_touchscreen"
+    -- spawnOnce "albert"
     spawnOnce "easystroke enable"
     spawnOnce "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
     spawnOnce "compton -b"

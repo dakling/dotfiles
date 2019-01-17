@@ -79,7 +79,7 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
             [
              ((0,xK_d), (spawn $ "rofi -show file/:rofind -no-click-to-exit"))
             ,((0,xK_f), (spawn $ "rofi -show top -no-click-to-exit"))
-            ]
+            ])
         -- , ((modm, xK_d), (spawn $ "albert show"))
         -- , ((modm,xK_Left),  (spawn $ "xdotool mousemove_relative -- -1 0"))
         -- , ((modm,xK_Right), (spawn $ "xdotool mousemove_relative -- 1 0"))

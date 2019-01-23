@@ -33,9 +33,9 @@ export QT_QPA_PLATFORMTHEME="qt5ct"
 # export GDK_BACKEND=wayland
 # export GTK_CSD=0
 # source $HOME/OpenFOAM/OpenFOAM-dev/etc/bashrc
-export LatexGlobalConfig=/home/klingenberg/Documents/programming/latex/definGlobal.tex
 export BOSSS_INSTALL=/home/klingenberg/BoSSS-experimental
 export LatexGlobalConfig=/home/klingenberg/Documents/programming/latex/definGlobal.tex
+export BIBLIOGRAPHY=/home/klingenberg/Documents/programming/latex/bibliography.bib
 export TERMINAL=termite
 export PATH="$PATH:/home/klingenberg/.stack/"
 export PATH="$PATH:/home/klingenberg/.local/bin/"
@@ -248,7 +248,7 @@ case ${TERM} in
 esac
 
 function qmount {
-    if [ $1 = 'lehre' ] 
+    if [ $1 = 'lectures' ] 
     then
         sudo mount //dc1/misc/fdy-lectures.git ~/git/mnt/fdy-lectures.git -t cifs -o username=klingenberg,noexec,uid=klingenberg
     elif [ $1 = 'klausuren' ]
@@ -257,6 +257,9 @@ function qmount {
     elif [ $1 = 'scratch' ]
     then
         sudo mount //dc1/scratch/ ~/scratch -t cifs -o username=klingenberg,noexec,uid=klingenberg
+    elif [ $1 = 'lehre' ]
+    then
+        sudo mount //dc1/lehre/ ~/lehre -t cifs -o username=klingenberg,noexec,uid=klingenberg
     else
     echo "$1 not known"
     fi

@@ -2,7 +2,7 @@
 
 # sudo ln -sf $(pwd)/binCustom/* /usr/bin/
 
-sudo ln -sf $(pwd)/desktopFiles/* /usr/share/applications/
+# sudo ln -sf $(pwd)/desktopFiles/* /usr/share/applications/
 
 ##mkdir -p ~/.config/i3/
 ##mkdir -p ~/.config/i3status
@@ -20,6 +20,7 @@ sudo ln -sf $(pwd)/desktopFiles/* /usr/share/applications/
 ## mkdir -p ~/.config/dmenu-extended/
 #mkdir -p ~/.config/termite/
 #mkdir -p ~/.config/rofi/
+mkdir -p ~/.config/lf/
 #mkdir -p ~/.mutt
 ## mkdir -p ~/.config/termite/
 ## mkdir -p ~/.mutt
@@ -45,6 +46,7 @@ sudo ln -sf $(pwd)/desktopFiles/* /usr/share/applications/
 ## ln -sf $(pwd)/dmenu-extended/dmenuExtended_preferences.txt ~/.config/dmenu-extended/config/dmenuExtended_preferences.txt
 #ln -sf $(pwd)/termite ~/.config/termite/config
 #ln -sf $(pwd)/rofi ~/.config/rofi/config.rasi
+ln -sf $(pwd)/lfrc ~/.config/lf/lfrc
 #ln -sf $(pwd)/mutt/account* ~/.mutt/
 #ln -sf $(pwd)/mutt/muttrc ~/.muttrc
 #sudo ln -sf $(pwd)/mutt/muttAll /usr/bin/muttAll

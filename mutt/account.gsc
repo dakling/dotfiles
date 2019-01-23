@@ -1,3 +1,4 @@
+set editor=nvim
 source "gpg -dq /home/klingenberg/.mutt/password.gsc.gpg |"
 set ssl_starttls=yes
 set ssl_force_tls=yes

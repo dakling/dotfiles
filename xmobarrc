@@ -8,9 +8,17 @@ Config { font = "xft:DejaVu Sans-11"
                     , Run Date "%a %b %_d %H:%M" "date" 10
                     --, Run Com "remToNumber" [] "notifications" 60
                     , Run StdinReader
+                    -- cpu core temperature monitor
+                        , Run CoreTemp       [ "--template" , "Temp: <core0>°C|<core1>°C"
+                                             , "--Low"      , "70"        -- units: °C
+                                             , "--High"     , "80"        -- units: °C
+                                             , "--low"      , "darkgreen"
+                                             , "--normal"   , "darkorange"
+                                             , "--high"     , "darkred"
+                                             ] 50
                     ]
        , sepChar = "%"
        , alignSep = "}{"
        --, template = "%StdinReader% }{  <action=`remToNotify`>%notifications% notification(s) </action>| %cpu% | %memory% * %swap% <fc=#fbf1c7>%date%</fc>       "  
-       , template = "%StdinReader% }{ %cpu% | %memory% * %swap% <fc=#fbf1c7>%date%</fc>       "  
+       , template = "%StdinReader% }{ %cpu% | %coretemp% | %memory% * %swap% <fc=#fbf1c7>%date%</fc>       "  
        }

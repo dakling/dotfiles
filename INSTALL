@@ -11,7 +11,7 @@
 #mkdir -p ~/.config/nvim
 #mkdir -p ~/.config/ranger
 ##mkdir -p ~/.config/awesome
-###mkdir -p ~/.config/qutebrowser
+mkdir -p ~/.config/qutebrowser
 ## mkdir -p ~/.config/sway
 #mkdir -p ~/.config/surfraw
 #mkdir -p ~/.config/wyeb.
@@ -20,7 +20,7 @@
 ## mkdir -p ~/.config/dmenu-extended/
 #mkdir -p ~/.config/termite/
 #mkdir -p ~/.config/rofi/
-mkdir -p ~/.config/lf/
+# mkdir -p ~/.config/lf/
 #mkdir -p ~/.mutt
 ## mkdir -p ~/.config/termite/
 ## mkdir -p ~/.mutt
@@ -31,7 +31,7 @@ mkdir -p ~/.config/lf/
 ## ln -sf $(pwd)/spacemacs ~/.spacemacs
 ##ln -sf $(pwd)/awesome/* ~/.config/awesome
 #ln -sf $(pwd)/ranger/* ~/.config/ranger/
-###ln -sf $(pwd)/qutebrowser/* ~/.config/qutebrowser/
+ln -sf $(pwd)/qutebrowser/* ~/.config/qutebrowser/
 ## ln -sf $(pwd)/sway/config ~/.config/sway/
 #ln -sf $(pwd)/surfraw ~/.config/surfraw/conf
 #ln -sf $(pwd)/wyeb./* ~/.config/wyeb./
@@ -46,7 +46,7 @@ mkdir -p ~/.config/lf/
 ## ln -sf $(pwd)/dmenu-extended/dmenuExtended_preferences.txt ~/.config/dmenu-extended/config/dmenuExtended_preferences.txt
 #ln -sf $(pwd)/termite ~/.config/termite/config
 #ln -sf $(pwd)/rofi ~/.config/rofi/config.rasi
-ln -sf $(pwd)/lfrc ~/.config/lf/lfrc
+# ln -sf $(pwd)/lfrc ~/.config/lf/lfrc
 #ln -sf $(pwd)/mutt/account* ~/.mutt/
 #ln -sf $(pwd)/mutt/muttrc ~/.muttrc
 #sudo ln -sf $(pwd)/mutt/muttAll /usr/bin/muttAll

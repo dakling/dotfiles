@@ -67,7 +67,7 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
         ((modm, xK_c), kill)
         , ((modm .|. shiftMask, xK_Return), (spawn $ "open-terminal-here")) 
         , ((modm, xK_F1), (spawn $ "termite")) 
-        , ((modm, xK_F2), (spawn $ "firefox"))
+        , ((modm, xK_F2), (spawn $ "qutebrowser"))
         , ((modm, xK_F3), (spawn $ "rangerStandalone"))
         , ((modm, xK_F4), (spawn $ "thunderbird"))
         , ((modm, xK_F5), (spawn $ "termite -e pacui"))
@@ -95,6 +95,7 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
             [((0,xK_c), (spawn $ "nvim-termite ~/.dotfiles/dotfiles/xmonad.hs"))
             ,((0,xK_v), (spawn $ "nvim-termite ~/.dotfiles/dotfiles/nvim/init.vim"))
             ,((0,xK_z), (spawn $ "nvim-termite ~/.dotfiles/dotfiles/zshrc"))
+            ,((0,xK_q), (spawn $ "nvim-termite ~/.dotfiles/dotfiles/qutebrowser/config.py"))
           ])
         , ((modm, xK_r), submap . M.fromList $
             [((0,xK_s), (spawn $ "shutdown now"))

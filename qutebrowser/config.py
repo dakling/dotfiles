@@ -1231,7 +1231,7 @@ c.tabs.tabs_are_windows = True
 # config.bind('<Ctrl-N>', 'open -w')
 # config.bind('<Ctrl-PgDown>', 'tab-next')
 # config.bind('<Ctrl-PgUp>', 'tab-prev')
-config.bind('q', 'quit')
+config.bind('q', 'close')
 # config.bind('<Ctrl-Return>', 'follow-selected -t')
 # config.bind('<Ctrl-Shift-N>', 'open -p')
 # config.bind('<Ctrl-Shift-T>', 'undo')
@@ -1733,7 +1733,7 @@ c.colors.tabs.selected.even.bg = base05
 # c.colors.webpage.bg = base00
 
 # custom stylesheets
-c.content.user_stylesheets = [
-    '../qutebrowser_dark_solarized/solarized-dark.css',
-    '../qutebrowser_dark_solarized/custom_solarized.css'
-]
+# c.content.user_stylesheets = [
+#     '../qutebrowser_dark_solarized/solarized-dark.css',
+#     '../qutebrowser_dark_solarized/custom_solarized.css'
+# ]

@@ -51,6 +51,7 @@ Plug 'OmniSharp/omnisharp-vim'
 " Plug 'tpope/vim-dispatch'
 " Plug 'radenling/vim-dispatch-neovim'
 Plug 'ctrlpvim/ctrlp.vim'
+" Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'l04m33/vlime'
 Plug 'tommcdo/vim-exchange'
@@ -300,6 +301,10 @@ augroup END
 
 "" Enable snippet completion
 "" let g:OmniSharp_want_snippet=1
+" ctrlP 
+let g:ctrlp_map = '<leader>p'
+let g:ctrlp_cmd = 'CtrlP'
+let g:ctrlp_user_command = 'fd --full-path --hidden -t f' 
 " julia
 au FileType julia nnoremap <leader>r :!julia % <CR>
 " for gmsh

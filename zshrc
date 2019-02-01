@@ -254,6 +254,12 @@ function qmount {
     elif [ $1 = 'klausuren' ]
     then
         sudo mount //dc1/lehre/TM1/Klausuren.git ~/git/mnt/Klausuren.git -t cifs -o username=klingenberg,noexec,uid=klingenberg
+    elif [ $1 = 'misc' ]
+    then
+        sudo mount //dc1/misc ~/misc -t cifs -o username=klingenberg,noexec,uid=klingenberg
+    elif [ $1 = 'publications' ]
+    then
+        sudo mount //dc1/misc/fdy-publications.git ~/git/mnt/fdy-publications.git -t cifs -o username=klingenberg,noexec,uid=klingenberg
     elif [ $1 = 'scratch' ]
     then
         sudo mount //dc1/scratch/ ~/scratch -t cifs -o username=klingenberg,noexec,uid=klingenberg

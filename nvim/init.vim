@@ -51,8 +51,10 @@ Plug 'OmniSharp/omnisharp-vim'
 " Plug 'tpope/vim-dispatch'
 " Plug 'radenling/vim-dispatch-neovim'
 Plug 'ctrlpvim/ctrlp.vim'
+" Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-fugitive'
-Plug 'l04m33/vlime'
+" Plug 'l04m33/vlime', { 'rtp': 'vim/' }
+Plug 'kovisoft/slimv'
 Plug 'tommcdo/vim-exchange'
 " Plug 'vimoutliner/vimoutliner'
 " Plug 'mattn/calendar-vim'
@@ -300,6 +302,10 @@ augroup END
 
 "" Enable snippet completion
 "" let g:OmniSharp_want_snippet=1
+" ctrlP 
+let g:ctrlp_map = '<leader>p'
+let g:ctrlp_cmd = 'CtrlP'
+let g:ctrlp_user_command = 'fd --full-path --hidden -t f' 
 " julia
 au FileType julia nnoremap <leader>r :!julia % <CR>
 " for gmsh
@@ -384,6 +390,10 @@ augroup END
 " let g:haskellmode_completion_ghc = 0
 autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
 let g:ycm_semantic_triggers = {'haskell' : ['.']}
+" lisp
+let g:slimv_swank_cmd = '! xterm -e sbcl --load /home/klingenberg/.config/nvim/plugged/slimv/slime/start-swank.lisp &'
+
+let g:lisp_rainbow=1
 " For Python 
 let python_highlight_all=1
 au BufNewFile,BufRead *.py set fileformat=unix

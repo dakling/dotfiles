@@ -74,7 +74,7 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
         , ((modm, xK_o), (spawn $ "onboard"))
         -- , ((modm,               xK_m     ), withFocused minimizeWindow)
         -- , ((modm .|. shiftMask, xK_m     ), sendMessage RestoreNextMinimizedWin)
-        , ((modm, xK_d), (spawn $ "rofi -show combi -no-click-to-exit"))
+        , ((modm, xK_d), (spawn $ "rofi -show drun -no-click-to-exit"))
         , ((modm .|. shiftMask, xK_d), submap . M.fromList $
             [
              ((0,xK_d), (spawn $ "rofi -show file/:rofind -no-click-to-exit"))

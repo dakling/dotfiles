@@ -16,6 +16,7 @@ filetype indent on
 set ignorecase
 set wildignorecase
 set smartcase
+set autochdir
 set clipboard+=unnamedplus
 set tabstop=4
 set softtabstop=4
@@ -50,7 +51,6 @@ let mapleader = "\<Space>"
 map Y y$
 "inoremap jk <ESC>
 nnoremap <leader>fs :w<cr>
-nnoremap <leader>sw :write !sudo tee %<cr>
 nnoremap <leader>w <C-w>
 nnoremap <leader><leader> :
 " auto pairs
@@ -71,13 +71,13 @@ let cmdline_app['sh']     = '/usr/bin/zsh'
 let cmdline_vsplit      = 0      " Split the window vertically
 let cmdline_esc_term    = 1      " Remap <Esc> to :stopinsert in Neovim's terminal
 let cmdline_in_buffer   = 1      " Start the interpreter in a Neovim's terminal
-let cmdline_term_height = 15     " Initial height of interpreter window or pane
+let cmdline_term_height = 30     " Initial height of interpreter window or pane
 let cmdline_term_width  = 80     " Initial width of interpreter window or pane
 let cmdline_tmp_dir     = '/tmp' " Temporary directory to save files
 let cmdline_outhl       = 1      " Syntax highlight the output
 let cmdline_auto_scroll = 1      " Keep the cursor at the end of terminal (nvim)
-autocmd BufEnter ~/.nvimshell.sh normal -s
-autocmd BufEnter ~/.nvimshell.sh silent ! ls /usr/bin > ~/.binlist
+autocmd BufEnter ~/.nvimshell/nvimshell.sh normal -s
+autocmd BufEnter ~/.nvimshell/nvimshell.sh silent ! ls /usr/bin > ~/.binlist
 " disable warning
 augroup SwapClobber 
 au! 

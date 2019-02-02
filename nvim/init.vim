@@ -180,6 +180,7 @@ let cmdline_term_width  = 80     " Initial width of interpreter window or pane
 let cmdline_tmp_dir     = '/tmp' " Temporary directory to save files
 let cmdline_outhl       = 1      " Syntax highlight the output
 let cmdline_auto_scroll = 1      " Keep the cursor at the end of terminal (nvim)
+autocmd BufEnter ~/.nvimshell.sh normal -s
 " for openfoam
 " change bc to zerogradient
 " nnoremap <leader>fzg di{i<tab>type<tab>zerogradient;<cr><tab><esc>

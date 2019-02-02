@@ -66,7 +66,7 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
     [
         ((modm, xK_c), kill)
         , ((modm .|. shiftMask, xK_Return), (spawn $ "open-terminal-here")) 
-        , ((modm, xK_F1), (spawn $ "termite")) 
+        , ((modm, xK_F1), (spawn $ "nterm")) 
         , ((modm, xK_F2), (spawn $ "qutebrowser"))
         , ((modm, xK_F3), (spawn $ "rangerStandalone"))
         , ((modm, xK_F4), (spawn $ "thunderbird"))

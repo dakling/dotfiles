@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # sudo ln -sf $(pwd)/binCustom/* /usr/bin/
+# sudo ln -sf $(pwd)/binCustom/* /usr/bin/
 
 # sudo ln -sf $(pwd)/desktopFiles/* /usr/share/applications/
 
@@ -11,7 +12,7 @@
 #mkdir -p ~/.config/nvim
 #mkdir -p ~/.config/ranger
 ##mkdir -p ~/.config/awesome
-mkdir -p ~/.config/qutebrowser
+# mkdir -p ~/.config/qutebrowser
 ## mkdir -p ~/.config/sway
 #mkdir -p ~/.config/surfraw
 #mkdir -p ~/.config/wyeb.
@@ -24,6 +25,7 @@ mkdir -p ~/.config/qutebrowser
 #mkdir -p ~/.mutt
 ## mkdir -p ~/.config/termite/
 ## mkdir -p ~/.mutt
+mkdir -p ~/.nvimshell
 
 ###ln -sf $(pwd)/i3/config ~/.config/i3/
 ###ln -sf $(pwd)/i3status/config ~/.config/i3status/
@@ -31,7 +33,7 @@ mkdir -p ~/.config/qutebrowser
 ## ln -sf $(pwd)/spacemacs ~/.spacemacs
 ##ln -sf $(pwd)/awesome/* ~/.config/awesome
 #ln -sf $(pwd)/ranger/* ~/.config/ranger/
-ln -sf $(pwd)/qutebrowser/* ~/.config/qutebrowser/
+# ln -sf $(pwd)/qutebrowser/* ~/.config/qutebrowser/
 ## ln -sf $(pwd)/sway/config ~/.config/sway/
 #ln -sf $(pwd)/surfraw ~/.config/surfraw/conf
 #ln -sf $(pwd)/wyeb./* ~/.config/wyeb./
@@ -53,4 +55,5 @@ ln -sf $(pwd)/qutebrowser/* ~/.config/qutebrowser/
 ## ln -sf $(pwd)/termite ~/.config/termite/config
 ## ln -sf $(pwd)/mutt/account* ~/.mutt/
 ## ln -sf $(pwd)/mutt/muttrc ~/.muttrc
+ln -sf $(pwd)/nvimshell/* ~/.nvimshell/
 ## sudo ln -sf $(pwd)/mutt/muttAll /usr/bin/muttAll

@@ -1,0 +1,3 @@
+#/bin/sh
+
+termite -e "nvim -u $HOME/.nvimshell/nvimshellrc.vim $HOME/.nvimshell/nvimshell.sh"

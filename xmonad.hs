@@ -66,7 +66,7 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
     [
         ((modm, xK_c), kill)
         , ((modm .|. shiftMask, xK_Return), (spawn $ "open-terminal-here")) 
-        , ((modm, xK_F1), (spawn $ "nterm")) 
+        , ((modm, xK_F1), (spawn $ "emacsclient -nc -s instance1")) 
         , ((modm, xK_F2), (spawn $ "qutebrowser"))
         , ((modm, xK_F3), (spawn $ "rangerStandalone"))
         , ((modm, xK_F4), (spawn $ "thunderbird"))
@@ -92,10 +92,10 @@ newKeys conf@(XConfig {XMonad.modMask = modm}) =
             ,((0,xK_e), (spawn $ "thunderbird"))
             ])
         , ((modm .|. shiftMask, xK_x), submap . M.fromList $
-            [((0,xK_c), (spawn $ "nvim-termite ~/.dotfiles/dotfiles/xmonad.hs"))
-            ,((0,xK_v), (spawn $ "nvim-termite ~/.dotfiles/dotfiles/nvim/init.vim"))
-            ,((0,xK_z), (spawn $ "nvim-termite ~/.dotfiles/dotfiles/zshrc"))
-            ,((0,xK_q), (spawn $ "nvim-termite ~/.dotfiles/dotfiles/qutebrowser/config.py"))
+            [((0,xK_c), (spawn $ "emacsclient -nc -s instance1 ~/.dotfiles/dotfiles/xmonad.hs"))
+            ,((0,xK_v), (spawn $ "emacsclient -nc -s instance1 ~/.dotfiles/dotfiles/nvim/init.vim"))
+            ,((0,xK_z), (spawn $ "emacsclient -nc -s instance1 ~/.dotfiles/dotfiles/zshrc"))
+            ,((0,xK_q), (spawn $ "emacsclient -nc -s instance1 ~/.dotfiles/dotfiles/qutebrowser/config.py"))
           ])
         , ((modm, xK_r), submap . M.fromList $
             [((0,xK_s), (spawn $ "shutdown now"))
@@ -134,5 +134,6 @@ myStartupHook = do
     spawnOnce "dropbox"
     spawnOnce "onboard"
     spawnOnce "touchegg"
+    spawnOnce "emacs --daemon=instance1"
     spawnOnce "remind -z5 '-knotify-send %s' ~/.config/remind/reminders.rem"
     return ()

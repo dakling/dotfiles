@@ -25,12 +25,12 @@
 #mkdir -p ~/.mutt
 ## mkdir -p ~/.config/termite/
 ## mkdir -p ~/.mutt
-mkdir -p ~/.nvimshell
+# mkdir -p ~/.nvimshell
 
 ###ln -sf $(pwd)/i3/config ~/.config/i3/
 ###ln -sf $(pwd)/i3status/config ~/.config/i3status/
 #ln -sf $(pwd)/nvim/init.vim ~/.config/nvim/init.vim
-## ln -sf $(pwd)/spacemacs ~/.spacemacs
+ln -sf $(pwd)/spacemacs ~/.spacemacs
 ##ln -sf $(pwd)/awesome/* ~/.config/awesome
 #ln -sf $(pwd)/ranger/* ~/.config/ranger/
 # ln -sf $(pwd)/qutebrowser/* ~/.config/qutebrowser/
@@ -55,5 +55,5 @@ mkdir -p ~/.nvimshell
 ## ln -sf $(pwd)/termite ~/.config/termite/config
 ## ln -sf $(pwd)/mutt/account* ~/.mutt/
 ## ln -sf $(pwd)/mutt/muttrc ~/.muttrc
-ln -sf $(pwd)/nvimshell/* ~/.nvimshell/
+# ln -sf $(pwd)/nvimshell/* ~/.nvimshell/
 ## sudo ln -sf $(pwd)/mutt/muttAll /usr/bin/muttAll

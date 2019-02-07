@@ -60,7 +60,7 @@ values."
      ;; syntax-checking
      latex
      (ranger :variables ranger-override-dired t)
-     ;; pdf-tools
+     pdf-tools
      haskell
      common-lisp
      ;; julia ;only in development branch of spacemacs right now
@@ -286,7 +286,14 @@ values."
    ;;                       text-mode
    ;;   :size-limit-kb 1000)
    ;; (default nil)
-   dotspacemacs-line-numbers t
+   dotspacemacs-line-numbers '(:relative nil
+                                :disabled-for-modes dired-mode
+                                                    doc-view-mode
+                                                    markdown-mode
+                                                    org-mode
+                                                    pdf-view-mode
+                                                    text-mode
+                                :size-limit-kb 1000)
    ;; Code folding method. Possible values are `evil' and `origami'.
    ;; (default 'evil)
    dotspacemacs-folding-method 'evil
@@ -378,7 +385,8 @@ you should place your code here."
         ([s-f1] . (lambda ()
 		                  eshell))
         ))
-  (push ?\s-\  exwm-input-prefix-keys)
+  ;; (push ?\s-\  exwm-input-prefix-keys)
+  (push ?\M-m  exwm-input-prefix-keys)
   (exwm-enable)
   ;; for tiling wms set true
   (setq pop-up-frames nil)
@@ -396,6 +404,10 @@ you should place your code here."
   (eval-after-load "eww"
     '(progn (define-key eww-mode-map "f" 'eww-lnum-follow)
             (define-key eww-mode-map "F" 'eww-lnum-universal)))
+  (add-hook 'after-save-hook
+            (lambda ()
+                     (when (string= major-mode 'latex-mode)
+                       (latex/build))))
 ;;; Set up some common mu4e variables
 ;;   (setq mu4e-maildir "~/.mail"
 ;;         mu4e-trash-folder "/Trash"
@@ -450,7 +462,7 @@ you should place your code here."
  '(TeX-electric-math (quote ("\\(" . "")))
  '(TeX-electric-sub-and-superscript t)
  '(TeX-source-correlate-mode t)
- '(TeX-source-correlate-start-server t t)
+ '(TeX-source-correlate-start-server t)
  '(TeX-view-program-selection
    (quote
     (((output-dvi has-no-display-manager)
@@ -458,7 +470,7 @@ you should place your code here."
      ((output-dvi style-pstricks)
       "dvips and gv")
      (output-dvi "xdvi")
-     (output-pdf "Zathura")
+     (output-pdf "PDF Tools")
      (output-html "xdg-open"))))
  '(ansi-color-names-vector
    ["#0a0814" "#f2241f" "#67b11d" "#b1951d" "#4f97d7" "#a31db1" "#28def0" "#b2b2b2"])

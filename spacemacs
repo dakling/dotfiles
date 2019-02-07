@@ -163,7 +163,7 @@ values."
                                :width normal
                                :powerline-scale 1.1)
    ;; The leader key
-   ;;dotspacemacs-leader-key "s-SPC"
+   ;; dotspacemacs-leader-key "s-SPC"
    dotspacemacs-leader-key "SPC"
    ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
    ;; (default "SPC")
@@ -337,6 +337,7 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
   ;; exwm
+  (display-time-mode)
   (server-start)
   (setq mouse-autoselect-window t
         focus-follows-mouse t)
@@ -372,10 +373,10 @@ you should place your code here."
 		                 (interactive)
 		                 (start-process "" nil "/usr/bin/slock")))
         ([s-f2] . (lambda ()
-		    (interactive)
-		    (start-process "" nil "qutebrowser")))
+                    (interactive)
+                    (start-process "" nil "qutebrowser")))
         ([s-f1] . (lambda ()
-		                  (eshell)))
+		                  eshell))
         ))
   (push ?\s-\  exwm-input-prefix-keys)
   (exwm-enable)

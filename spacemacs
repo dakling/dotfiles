@@ -163,8 +163,8 @@ values."
                                :width normal
                                :powerline-scale 1.1)
    ;; The leader key
-   dotspacemacs-leader-key "s-SPC"
-   ;; dotspacemacs-leader-key "SPC"
+   ;;dotspacemacs-leader-key "s-SPC"
+   dotspacemacs-leader-key "SPC"
    ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
    ;; (default "SPC")
    dotspacemacs-emacs-command-key "SPC"
@@ -366,12 +366,17 @@ you should place your code here."
  ;; Bind "s-&" to launch applications ('M-&' also works if the output
         ;; buffer does not bother you).
         ([?\s-d] . (lambda (command)
-		     (interactive (list (read-shell-command "$ ")))
-		     (start-process-shell-command command nil command)))
-        ;; Bind "s-<f2>" to "slock", a simple X display locker.
-        ([s-r, l] . (lambda ()
+		                 (interactive (list (read-shell-command "$ ")))
+		                 (start-process-shell-command command nil command)))
+        ([s-f12] . (lambda ()
+		                 (interactive)
+		                 (start-process "" nil "/usr/bin/slock")))
+        ([s-f2] . (lambda ()
 		    (interactive)
-		    (start-process "" nil "/usr/bin/slock")))))
+		    (start-process "" nil "qutebrowser")))
+        ([s-f1] . (lambda ()
+		                  (eshell)))
+        ))
   (push ?\s-\  exwm-input-prefix-keys)
   (exwm-enable)
   ;; for tiling wms set true

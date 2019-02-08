@@ -54,8 +54,10 @@ values."
      ;; markdown
      org
      (shell :variables
-            shell-default-height 60
-            shell-default-position 'bottom)
+            shell-default-shell 'eshell
+            shell-default-position 'full
+            shell-enable-smart-eshell t
+             )
      spell-checking
      ;; syntax-checking
      latex
@@ -65,7 +67,7 @@ values."
      common-lisp
      ;; julia ;only in development branch of spacemacs right now
      csharp
-     ;; (mu4e :variables mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e")
+     (mu4e :variables mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e")
    )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -140,7 +142,8 @@ values."
    ;; List sizes may be nil, in which case
    ;; `spacemacs-buffer-startup-lists-length' takes effect.
    dotspacemacs-startup-lists '((recents . 10)
-                                (bookmarks . 10))
+                                (bookmarks . 10)
+                                (todos . 10))
    ;; True if the home buffer should respond to resize events.
    dotspacemacs-startup-buffer-responsive t
    ;; Default major mode of the scratch buffer (default `text-mode')
@@ -351,9 +354,20 @@ you should place your code here."
   (require 'exwm)
   (require 'exwm-config)
   (setq exwm-workspace-number 10)
+  (setq exwm-workspace-show-all-buffers t)
+  (setq exwm-layout-show-all-buffers t)
   (require 'exwm-randr)
   (setq exwm-randr-workspace-output-plist
-        '(0 "VGA-1" 1 "HDMI-1"))
+        '(0 "HDMI-1"
+            2 "HDMI-1"
+            4 "HDMI-1"
+            6 "HDMI-1"
+            8 "HDMI-1"
+            1 "VGA-1"
+            3 "VGA-1"
+            5 "VGA-1"
+            7 "VGA-1"
+            9 "VGA-1"))
   (add-hook 'exwm-randr-screen-change-hook
             (lambda ()
               (start-process-shell-command
@@ -391,6 +405,7 @@ you should place your code here."
   ;; for tiling wms set true
   (setq pop-up-frames nil)
   ;; (set-frame-parameter nil 'fullscreen 'fullboth)
+  (setq eshell-cmpl-ignore-case t)
   (setq ivy-ignore-buffers '("\\` " "\\`\\*"))
   (add-hook 'doc-view-mode-hook 'auto-revert-mode)
   ;; (setq-default TeX-master "../main.tex") ; Master file is always called main in the directory above
@@ -409,29 +424,29 @@ you should place your code here."
                      (when (string= major-mode 'latex-mode)
                        (latex/build))))
 ;;; Set up some common mu4e variables
-;;   (setq mu4e-maildir "~/.mail"
-;;         mu4e-trash-folder "/Trash"
-;;         mu4e-refile-folder "/Archive"
-;;         mu4e-get-mail-command "mbsync -a"
-;;         mu4e-update-interval nil
-;;         mu4e-compose-signature-auto-include nil
-;;         mu4e-view-show-images t
-;;         mu4e-view-show-addresses t)
-;;   (setq mu4e-account-alist
-;;         '(("gmail"
-;;            ;; Under each account, set the account-specific variables you want.
-;;            (mu4e-sent-messages-behavior delete)
-;;            (mu4e-sent-folder "/gmail/Gmail/.Sent Mail")
-;;            (mu4e-drafts-folder "/gmail/Gmail/.Drafts")
-;;            (user-mail-address "dario.klingenberg@gmail.com")
-;;            (user-full-name "Dario Klingenberg"))
-;;           ("web"
-;;            (mu4e-sent-messages-behavior sent)
-;;            (mu4e-sent-folder "/web/Sent Items")
-;;            (mu4e-drafts-folder "/web/Drafts")
-;;            (user-mail-address "dario.klingenberg@web.de")
-;;            (user-full-name "dario"))))
-;;   (mu4e/mail-account-reset)
+  (setq mu4e-maildir "~/.mail"
+        mu4e-trash-folder "/Trash"
+        mu4e-refile-folder "/Archive"
+        mu4e-get-mail-command "mbsync -a"
+        mu4e-update-interval nil
+        mu4e-compose-signature-auto-include nil
+        mu4e-view-show-images t
+        mu4e-view-show-addresses t)
+  (setq mu4e-account-alist
+        '(("gmail"
+           ;; Under each account, set the account-specific variables you want.
+           (mu4e-sent-messages-behavior delete)
+           (mu4e-sent-folder "/gmail/Gmail/.Sent Mail")
+           (mu4e-drafts-folder "/gmail/Gmail/.Drafts")
+           (user-mail-address "dario.klingenberg@gmail.com")
+           (user-full-name "Dario Klingenberg"))
+          ("web"
+           (mu4e-sent-messages-behavior sent)
+           (mu4e-sent-folder "/web/Sent Items")
+           (mu4e-drafts-folder "/web/Drafts")
+           (user-mail-address "dario.klingenberg@web.de")
+           (user-full-name "dario"))))
+  (mu4e/mail-account-reset)
 
 ;; ;;; Mail directory shortcuts
 ;;   (setq mu4e-maildir-shortcuts

@@ -38,15 +38,13 @@ values."
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      helm
-     (auto-completion
+     (auto-completion :variables
+        auto-completion-enable-snippets-in-popup t
+        auto-completion-tab-key-behavior 'complete
+        auto-completion-ret-key-behavior nil
+        ;; spacemacs-default-company-backends '(company-files company-capf)
+        auto-completion-enable-sort-by-usage t)
       (haskell :variables haskell-completion-backend 'intero)
-      (:variables
-                      auto-completion-enable-snippets-in-popup t
-                      auto-completion-tab-key-behavior 'complete
-                      auto-completion-ret-key-behavior nil
-                      ;; spacemacs-default-company-backends '(company-files company-capf)
-                      auto-completion-enable-sort-by-usage t
-                      ))
      better-defaults
      emacs-lisp
      evil-snipe
@@ -56,13 +54,13 @@ values."
      (shell :variables
             shell-default-shell 'eshell
             shell-default-position 'full
-            shell-enable-smart-eshell t
-             )
+            shell-enable-smart-eshell t)
      spell-checking
      ;; syntax-checking
      latex
      (ranger :variables ranger-override-dired t)
-     pdf-tools
+     (pdf-tools
+      :variables pdf-view-continuous nil
      haskell
      common-lisp
      ;; julia ;only in development branch of spacemacs right now
@@ -175,7 +173,7 @@ values."
    dotspacemacs-ex-command-key ":"
    ;; The leader key accessible in `emacs state' and `insert state'
    ;; (default "M-m")
-   dotspacemacs-emacs-leader-key "M-m"
+   dotspacemacs-emacs-leader-key "s-y"
    ;; Major mode leader key is a shortcut key which is the equivalent of
    ;; pressing `<leader> m`. Set it to `nil` to disable it. (default ",")
    dotspacemacs-major-mode-leader-key "#"

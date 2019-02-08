@@ -59,8 +59,7 @@ values."
      ;; syntax-checking
      latex
      (ranger :variables ranger-override-dired t)
-     (pdf-tools
-      :variables pdf-view-continuous nil
+     (pdf-tools :variables pdf-view-continuous nil)
      haskell
      common-lisp
      ;; julia ;only in development branch of spacemacs right now

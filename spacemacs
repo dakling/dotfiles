@@ -347,62 +347,62 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
   ;; exwm
-  (display-time-mode)
-  (server-start)
-  (setq mouse-autoselect-window t
-        focus-follows-mouse t)
-  (require 'exwm)
-  (require 'exwm-config)
-  (setq exwm-workspace-number 10)
-  (setq exwm-workspace-show-all-buffers t)
-  (setq exwm-layout-show-all-buffers t)
-  (require 'exwm-randr)
-  (set 'monitor1 "eDP1")
-  (set 'monitor2 "HDMI2")
-  (setq exwm-randr-workspace-output-plist
-          '(0 monitor1
-            2 monitor1
-            4 monitor1
-            6 monitor1
-            8 monitor1
-            1 monitor2
-            3 monitor2
-            5 monitor2
-            7 monitor2
-            9 monitor2))
-  (add-hook 'exwm-randr-screen-change-hook
-            (lambda ()
-              (start-process-shell-command
-               "xrandr" nil "xrandr --ouput HDMI2 --output eDP1 --auto")))
-  (exwm-randr-enable)
-  (require 'exwm-systemtray)
-  (exwm-systemtray-enable)
-  (evil-set-initial-state 'exwm-mode 'emacs)
-  (setq exwm-input-global-keys
-      `(([?\s-r] . exwm-reset)
-        ([?\s-w] . exwm-workspace-switch)
-        ,@(mapcar (lambda (i)
-                    `(,(kbd (format "s-%d" i)) .
-                      (lambda ()
-                        (interactive)
-                        (exwm-workspace-switch-create ,i))))
-                  (number-sequence 0 9))
- ;; Bind "s-&" to launch applications ('M-&' also works if the output
-        ;; buffer does not bother you).
-        ([?\s-d] . (lambda (command)
-		                 (interactive (list (read-shell-command "$ ")))
-		                 (start-process-shell-command command nil command)))
-        ([s-f12] . (lambda ()
-		                 (interactive)
-		                 (start-process "" nil "/usr/bin/slock")))
-        ([s-f2] . (lambda ()
-                    (interactive)
-                    (start-process "" nil "qutebrowser")))
-        ([s-f1] . (lambda ()
-		                  eshell))
-        ))
-  ;; (push ?\s-\  exwm-input-prefix-keys)
-  (push ?\M-m  exwm-input-prefix-keys)
+ ;;  (display-time-mode)
+ ;;  (server-start)
+ ;;  (setq mouse-autoselect-window t
+ ;;        focus-follows-mouse t)
+ ;;  (require 'exwm)
+ ;;  (require 'exwm-config)
+ ;;  (setq exwm-workspace-number 10)
+ ;;  (setq exwm-workspace-show-all-buffers t)
+ ;;  (setq exwm-layout-show-all-buffers t)
+ ;;  (require 'exwm-randr)
+ ;;  (set 'monitor1 "eDP1")
+ ;;  (set 'monitor2 "HDMI2")
+ ;;  (setq exwm-randr-workspace-output-plist
+ ;;          '(0 monitor1
+ ;;            2 monitor1
+ ;;            4 monitor1
+ ;;            6 monitor1
+ ;;            8 monitor1
+ ;;            1 monitor2
+ ;;            3 monitor2
+ ;;            5 monitor2
+ ;;            7 monitor2
+ ;;            9 monitor2))
+ ;;  (add-hook 'exwm-randr-screen-change-hook
+ ;;            (lambda ()
+ ;;              (start-process-shell-command
+ ;;               "xrandr" nil "xrandr --ouput HDMI2 --output eDP1 --auto")))
+ ;;  (exwm-randr-enable)
+ ;;  (require 'exwm-systemtray)
+ ;;  (exwm-systemtray-enable)
+ ;;  (evil-set-initial-state 'exwm-mode 'emacs)
+ ;;  (setq exwm-input-global-keys
+ ;;      `(([?\s-r] . exwm-reset)
+ ;;        ([?\s-w] . exwm-workspace-switch)
+ ;;        ,@(mapcar (lambda (i)
+ ;;                    `(,(kbd (format "s-%d" i)) .
+ ;;                      (lambda ()
+ ;;                        (interactive)
+ ;;                        (exwm-workspace-switch-create ,i))))
+ ;;                  (number-sequence 0 9))
+ ;; ;; Bind "s-&" to launch applications ('M-&' also works if the output
+ ;;        ;; buffer does not bother you).
+ ;;        ([?\s-d] . (lambda (command)
+ ;;  	                 (interactive (list (read-shell-command "$ ")))
+ ;;  	                 (start-process-shell-command command nil command)))
+ ;;        ([s-f12] . (lambda ()
+ ;;  	                 (interactive)
+ ;;  	                 (start-process "" nil "/usr/bin/slock")))
+ ;;        ([s-f2] . (lambda ()
+ ;;                    (interactive)
+ ;;                    (start-process "" nil "qutebrowser")))
+ ;;        ([s-f1] . (lambda ()
+ ;;  	                  eshell))
+ ;;        ))
+ ;;  ;; (push ?\s-\  exwm-input-prefix-keys)
+ ;;  (push ?\M-m  exwm-input-prefix-keys)
   (exwm-enable)
   ;; for tiling wms set true
   (setq pop-up-frames nil)

@@ -65,6 +65,7 @@ values."
      scheme
      ;; racket
      ;; julia ;only in development branch of spacemacs right now
+     nixos
      csharp
      (mu4e :variables mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e")
    )
@@ -74,7 +75,7 @@ values."
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(
                                       eww-lnum
-                                      exwm
+                                      ;; exwm
                                       md4rd
                                       )
    ;; A list of packages that cannot be updated.
@@ -347,63 +348,63 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
   ;; exwm
-  (display-time-mode)
-  (server-start)
-  (setq mouse-autoselect-window t
-        focus-follows-mouse t)
-  (require 'exwm)
-  (require 'exwm-config)
-  (setq exwm-workspace-number 10)
-  (setq exwm-workspace-show-all-buffers t)
-  (setq exwm-layout-show-all-buffers t)
-  (require 'exwm-randr)
-  (set 'monitor1 "eDP1")
-  (set 'monitor2 "HDMI2")
-  (setq exwm-randr-workspace-output-plist
-          '(0 monitor1
-            2 monitor1
-            4 monitor1
-            6 monitor1
-            8 monitor1
-            1 monitor2
-            3 monitor2
-            5 monitor2
-            7 monitor2
-            9 monitor2))
-  (add-hook 'exwm-randr-screen-change-hook
-            (lambda ()
-              (start-process-shell-command
-               "xrandr" nil "xrandr --ouput HDMI2 --output eDP1 --auto")))
-  (exwm-randr-enable)
-  (require 'exwm-systemtray)
-  (exwm-systemtray-enable)
-  (evil-set-initial-state 'exwm-mode 'emacs)
-  (setq exwm-input-global-keys
-      `(([?\s-r] . exwm-reset)
-        ([?\s-w] . exwm-workspace-switch)
-        ,@(mapcar (lambda (i)
-                    `(,(kbd (format "s-%d" i)) .
-                      (lambda ()
-                        (interactive)
-                        (exwm-workspace-switch-create ,i))))
-                  (number-sequence 0 9))
- ;; Bind "s-&" to launch applications ('M-&' also works if the output
-        ;; buffer does not bother you).
-        ([?\s-d] . (lambda (command)
-		                 (interactive (list (read-shell-command "$ ")))
-		                 (start-process-shell-command command nil command)))
-        ([s-f12] . (lambda ()
-		                 (interactive)
-		                 (start-process "" nil "/usr/bin/slock")))
-        ([s-f2] . (lambda ()
-                    (interactive)
-                    (start-process "" nil "qutebrowser")))
-        ([s-f1] . (lambda ()
-		                  eshell))
-        ))
-  ;; (push ?\s-\  exwm-input-prefix-keys)
-  (push ?\M-m  exwm-input-prefix-keys)
-  (exwm-enable)
+ ;;  (display-time-mode)
+ ;;  (server-start)
+ ;;  (setq mouse-autoselect-window t
+ ;;        focus-follows-mouse t)
+ ;;  (require 'exwm)
+ ;;  (require 'exwm-config)
+ ;;  (setq exwm-workspace-number 10)
+ ;;  (setq exwm-workspace-show-all-buffers t)
+ ;;  (setq exwm-layout-show-all-buffers t)
+ ;;  (require 'exwm-randr)
+ ;;  (set 'monitor1 "eDP1")
+ ;;  (set 'monitor2 "HDMI2")
+ ;;  (setq exwm-randr-workspace-output-plist
+ ;;          '(0 monitor1
+ ;;            2 monitor1
+ ;;            4 monitor1
+ ;;            6 monitor1
+ ;;            8 monitor1
+ ;;            1 monitor2
+ ;;            3 monitor2
+ ;;            5 monitor2
+ ;;            7 monitor2
+ ;;            9 monitor2))
+ ;;  (add-hook 'exwm-randr-screen-change-hook
+ ;;            (lambda ()
+ ;;              (start-process-shell-command
+ ;;               "xrandr" nil "xrandr --ouput HDMI2 --output eDP1 --auto")))
+ ;;  (exwm-randr-enable)
+ ;;  (require 'exwm-systemtray)
+ ;;  (exwm-systemtray-enable)
+ ;;  (evil-set-initial-state 'exwm-mode 'emacs)
+ ;;  (setq exwm-input-global-keys
+ ;;      `(([?\s-r] . exwm-reset)
+ ;;        ([?\s-w] . exwm-workspace-switch)
+ ;;        ,@(mapcar (lambda (i)
+ ;;                    `(,(kbd (format "s-%d" i)) .
+ ;;                      (lambda ()
+ ;;                        (interactive)
+ ;;                        (exwm-workspace-switch-create ,i))))
+ ;;                  (number-sequence 0 9))
+ ;; ;; Bind "s-&" to launch applications ('M-&' also works if the output
+ ;;        ;; buffer does not bother you).
+ ;;        ([?\s-d] . (lambda (command)
+ ;;  	                 (interactive (list (read-shell-command "$ ")))
+ ;;  	                 (start-process-shell-command command nil command)))
+ ;;        ([s-f12] . (lambda ()
+ ;;  	                 (interactive)
+ ;;  	                 (start-process "" nil "/usr/bin/slock")))
+ ;;        ([s-f2] . (lambda ()
+ ;;                    (interactive)
+ ;;                    (start-process "" nil "qutebrowser")))
+ ;;        ([s-f1] . (lambda ()
+ ;;  	                  eshell))
+ ;;        ))
+ ;;  ;; (push ?\s-\  exwm-input-prefix-keys)
+ ;;  (push ?\M-m  exwm-input-prefix-keys)
+ ;;  (exwm-enable)
   ;; for tiling wms set true
   (setq pop-up-frames nil)
   ;; (set-frame-parameter nil 'fullscreen 'fullboth)
@@ -496,7 +497,7 @@ you should place your code here."
  '(inhibit-startup-screen nil)
  '(package-selected-packages
    (quote
-    (geiser exwm-x switch-window mmm-mode markdown-toc markdown-mode gh-md slime-company slime helm-hoogle helm-gitignore common-lisp-snippets omnisharp shut-up csharp-mode smeargle orgit magit-gitflow gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit magit-popup git-commit ghub treepy graphql with-editor org-mime intero flycheck hlint-refactor hindent haskell-snippets company-ghci company-ghc ghc haskell-mode company-cabal cmm-mode go gnugo xpm ascii-art-to-unicode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional cython-mode company-anaconda anaconda-mode pythonic eww-lnum mu4e-maildirs-extension mu4e-alert ht exwm xelb engine-mode wgrep smex ivy-hydra flyspell-correct-ivy counsel-projectile counsel swiper ivy xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help w3m pdf-tools tablist evil-snipe ample-zenburn-theme ranger unfill org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download mwim htmlize helm-company helm-c-yasnippet gnuplot fuzzy flyspell-correct-helm flyspell-correct company-statistics company-auctex company auto-yasnippet yasnippet auto-dictionary auctex-latexmk auctex ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async)))
+    (nix-mode helm-nixos-options company-nixos-options nixos-options geiser exwm-x switch-window mmm-mode markdown-toc markdown-mode gh-md slime-company slime helm-hoogle helm-gitignore common-lisp-snippets omnisharp shut-up csharp-mode smeargle orgit magit-gitflow gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit magit-popup git-commit ghub treepy graphql with-editor org-mime intero flycheck hlint-refactor hindent haskell-snippets company-ghci company-ghc ghc haskell-mode company-cabal cmm-mode go gnugo xpm ascii-art-to-unicode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional cython-mode company-anaconda anaconda-mode pythonic eww-lnum mu4e-maildirs-extension mu4e-alert ht exwm xelb engine-mode wgrep smex ivy-hydra flyspell-correct-ivy counsel-projectile counsel swiper ivy xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help w3m pdf-tools tablist evil-snipe ample-zenburn-theme ranger unfill org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download mwim htmlize helm-company helm-c-yasnippet gnuplot fuzzy flyspell-correct-helm flyspell-correct company-statistics company-auctex company auto-yasnippet yasnippet auto-dictionary auctex-latexmk auctex ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async)))
  '(preview-auto-cache-preamble nil)
  '(ranger-show-hidden nil)
  '(vc-follow-symlinks t))

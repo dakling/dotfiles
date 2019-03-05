@@ -4,13 +4,14 @@
 
 (in-package :stumpwm)
 
-(load-module "stumptray")
+;; (load-module "stumptray")
 
-(load-module "clipboard-history")
+;; (load-module "clipboard-history")
 
-(define-key *root-map* (kbd "C-y") "show-clipboard-history")
+;; (define-key *root-map* (kbd "C-y") "show-clipboard-history")
 ;; start the polling timer process
-(clipboard-history:start-clipboard-manager)
+;; (clipboard-history:start-clipboard-manager)
+
 ;; change the prefix key to something else
 (set-prefix-key (kbd "s-q"))
 

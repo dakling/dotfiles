@@ -17,10 +17,18 @@
 ;; Browse somewhere
 (define-key *root-map* (kbd "d") "colon1 exec ")
 (define-key *root-map* (kbd "t") "exec termite")
+(define-key *root-map* (kbd "e") "exec emacsclient -nc -s instance1")
+(define-key *root-map* (kbd "s-e") "exec emacs")
 ;; Ssh somewhere
 ;; (define-key *root-map* (kbd "C-s") "colon1 exec termite -e ssh ")
 ;; Lock screen
 (define-key *root-map* (kbd "C-l") "exec xlock")
+
+;; xmonad habits
+(define-key *top-map* (kbd "s-l") "move-focus right")
+(define-key *top-map* (kbd "s-h") "move-focus left")
+(define-key *top-map* (kbd "s-k") "move-focus up")
+(define-key *top-map* (kbd "s-j") "move-focus down")
 
 ;; Web jump (works for Google and Imdb)
 (defmacro make-web-jump (name prefix)
@@ -28,8 +36,7 @@
     (substitute #\+ #\Space search)
     (run-shell-command (concatenate 'string ,prefix search))))
 
-(make-web-jump "duckduckgo" "qutebrowser http://www.duckduckgo.com/search?q=")
-
+(make-web-jump "duckduckgo" "qutebrowser https://duckduckgo.com/?q=")
 ;; C-t M-s is a terrble binding, but you get the idea.
 (define-key *root-map* (kbd "b") "duckduckgo")
 
@@ -81,5 +88,6 @@
 (stumpwm:toggle-mode-line (stumpwm:current-screen)
                           (stumpwm:current-head))
 
+(setf *time-modeline-string* "%a %b %e %k:%M")
 (setf stumpwm:*screen-mode-line-format*
-      (list "%w | %d"))
+      (list "%d | %w"))

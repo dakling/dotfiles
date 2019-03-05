@@ -14,13 +14,21 @@
     (when cmd
       (eval-command cmd t))))
 
-;; Browse somewhere
+;; clean up a little
 (undefine-key *root-map* (kbd "c"))
 (undefine-key *root-map* (kbd "!"))
+(undefine-key *root-map* (kbd "C-m"))
+(undefine-key *root-map* (kbd "C-a"))
+(undefine-key *root-map* (kbd "C-n"))
+(undefine-key *root-map* (kbd "C-SPC"))
+;; open stuff
 (define-key *root-map* (kbd "d") "colon1 exec ")
 (define-key *root-map* (kbd "t") "exec termite")
 (define-key *root-map* (kbd "e") "exec emacsclient -nc -s instance1")
 (define-key *root-map* (kbd "s-e") "exec emacs")
+;; spacemacsy style
+(define-key *root-map* (kbd "m") "only")
+(define-key *root-map* (kbd "M") "lastmsg")
 ;; Ssh somewhere
 ;; (define-key *root-map* (kbd "C-s") "colon1 exec termite -e ssh ")
 ;; Lock screen
@@ -31,6 +39,10 @@
 (define-key *top-map* (kbd "s-h") "move-focus left")
 (define-key *top-map* (kbd "s-k") "move-focus up")
 (define-key *top-map* (kbd "s-j") "move-focus down")
+(define-key *top-map* (kbd "s-L") "move-window right")
+(define-key *top-map* (kbd "s-H") "move-window left")
+(define-key *top-map* (kbd "s-K") "move-window up")
+(define-key *top-map* (kbd "s-J") "move-window down")
 
 ;; Web jump (works for Google and Imdb)
 (defmacro make-web-jump (name prefix)

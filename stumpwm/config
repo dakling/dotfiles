@@ -29,6 +29,11 @@
 ;; spacemacsy style
 (define-key *root-map* (kbd "m") "only")
 (define-key *root-map* (kbd "M") "lastmsg")
+;; audio keys
+(define-key *top-map* (kbd "XF86AudioLowerVolume") "exec amixer set Master 5%-")
+(define-key *top-map* (kbd "XF86AudioRaiseVolume") "exec amixer set Master 5%+")
+(define-key *top-map* (kbd "XF86AudioMute") "exec amixer set Master toggle")
+
 ;; Ssh somewhere
 ;; (define-key *root-map* (kbd "C-s") "colon1 exec termite -e ssh ")
 ;; Lock screen

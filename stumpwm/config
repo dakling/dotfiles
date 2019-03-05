@@ -15,6 +15,8 @@
       (eval-command cmd t))))
 
 ;; Browse somewhere
+(undefine-key *root-map* (kbd "c"))
+(undefine-key *root-map* (kbd "!"))
 (define-key *root-map* (kbd "d") "colon1 exec ")
 (define-key *root-map* (kbd "t") "exec termite")
 (define-key *root-map* (kbd "e") "exec emacsclient -nc -s instance1")

@@ -4,6 +4,13 @@
 
 (in-package :stumpwm)
 
+(load-module "stumptray")
+
+(load-module "clipboard-history")
+
+(define-key *root-map* (kbd "C-y") "show-clipboard-history")
+;; start the polling timer process
+(clipboard-history:start-clipboard-manager)
 ;; change the prefix key to something else
 (set-prefix-key (kbd "s-q"))
 
@@ -79,20 +86,6 @@
   (0 t nil :class "Konqueror" :role "...konqueror-mainwindow")
   (1 t nil :class "Termite"))
 
-(define-frame-preference "Ardour"
-  (0 t   t   :instance "ardour_editor" :type :normal)
-  (0 t   t   :title "Ardour - Session Control")
-  (0 nil nil :class "Termite")
-  (1 t   nil :type :normal)
-  (1 t   t   :instance "ardour_mixer")
-  (2 t   t   :instance "jvmetro")
-  (1 t   t   :instance "qjackctl")
-  (3 t   t   :instance "qjackctl" :role "qjackctlMainForm"))
-
-(define-frame-preference "Shareland"
-  (0 t   nil :class "Termite")
-  (1 nil t   :class "aMule"))
-
 (define-frame-preference "Emacs"
   (1 t t :restore "emacs-editing-dump" :title "...xdvi")
   (0 t t :create "emacs-dump" :class "Emacs"))
@@ -112,23 +105,41 @@
   "acpi -b | awk -F '[ ,]' '{printf \"%s%s\", $3, $5}' | sed s/Discharging/\-/ | sed s/Unknown// | sed s/Full// | sed s/Charging/+/")
 
 (defvar *vol-status-command*
-  "amixer get Master | grep [[:digit:]]\\+%' -o | tr -d '\\n'")
+  "pulseaudio-ctl full-status | cut -b 1-3")
+
+(setf *time-modeline-string* "%a %b %e %k:%M")
 
 (setf *screen-mode-line-format*
       (list "[^B%n^b] %W^>"
             '(:eval (run-shell-command *battery-status-command* t))
-            " | Vol. "
-            '(:eval (run-shell-command *vol-status-command* t))
+            ;; " | Vol. "
+            ;; '(:eval (run-shell-command *vol-status-command* t))
             " | %d"))
 
 (setf *window-format* "%m%n%s%c")
 
-(setf *mode-line-timeout* 1)
+(setf *mode-line-timeout* 60)
 
 ;; turn on/off the mode line for the current head only.
 (stumpwm:toggle-mode-line (stumpwm:current-screen)
                           (stumpwm:current-head))
 
-;; (setf *time-modeline-string* "%a %b %e %k:%M")
-;; (setf stumpwm:*screen-mode-line-format*
-;;       (list "%d | %w"))
+
+;; autostart
+;; (defun execute-autostart (autostart-command-list)
+;;   (dolist (cmd autostart-command-list)
+;;     run-shell-command cmd))
+
+;; (defvar *autostart-command-list* (list
+;;  "xmodmap -e 'clear mod4'"
+;;  "xmodmap -e 'add mod4 = Super_L'"
+;;  "emacs --daemon=instance1"
+;;  "dropbox"
+;; ))
+
+;; (execute-autostart *autostart-command-list*)
+
+ (run-shell-command "xmodmap -e 'clear mod4'")
+ (run-shell-command "xmodmap -e 'add mod4 = Super_L'")
+ (run-shell-command "emacs --daemon=instance1")
+ (run-shell-command "dropbox")

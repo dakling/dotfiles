@@ -437,29 +437,29 @@ you should place your code here."
         mu4e-view-show-images t
         mu4e-view-show-addresses t)
   (setq mu4e-account-alist
-        '(("gmail"
+        '(("Gmail"
            ;; Under each account, set the account-specific variables you want.
            (mu4e-sent-messages-behavior delete)
            (mu4e-sent-folder "/Gmail/sent")
            (mu4e-drafts-folder "/Gmail/drafts")
            (user-mail-address "dario.klingenberg@gmail.com")
            (user-full-name "Dario Klingenberg"))
-          ("web"
+          ("Web"
            (mu4e-sent-messages-behavior sent)
-           (mu4e-sent-folder "/web/Sent Items")
-           (mu4e-drafts-folder "/web/Drafts")
+           (mu4e-sent-folder "/Web/Sent Items")
+           (mu4e-drafts-folder "/Web/Drafts")
            (user-mail-address "dario.klingenberg@web.de")
            (user-full-name "dario"))
-          ("fdy"
+          ("FDY"
            (mu4e-sent-messages-behavior sent)
-           (mu4e-sent-folder "/fdy/Sent Items")
-           (mu4e-drafts-folder "/fdy/Drafts")
+           (mu4e-sent-folder "/FDY/Sent Items")
+           (mu4e-drafts-folder "/FDY/Drafts")
            (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
            (user-full-name "Dario Klingenberg"))
-          ("gsc"
+          ("GSC"
            (mu4e-sent-messages-behavior sent)
-           (mu4e-sent-folder "/gsc/Sent Items")
-           (mu4e-drafts-folder "/gsc/Drafts")
+           (mu4e-sent-folder "/GSC/Sent Items")
+           (mu4e-drafts-folder "/GSC/Drafts")
            (user-mail-address "klingeberg@gsc.tu-darmstadt.de")
            (user-full-name "Dario Klingenberg"))
           ))

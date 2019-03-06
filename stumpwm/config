@@ -87,14 +87,10 @@
 ;; restored from *data-dir*/create file.
 ;; TIP: if the :restore flag is set then group dump is restored even for an
 ;; existing group using *data-dir*/restore file.
-(define-frame-preference "Default"
-  ;; frame raise lock (lock AND raise == jumpto)
-  (0 t nil :class "Konqueror" :role "...konqueror-mainwindow")
-  (1 t nil :class "Termite"))
-
-(define-frame-preference "Emacs"
-  (1 t t :restore "emacs-editing-dump" :title "...xdvi")
-  (0 t t :create "emacs-dump" :class "Emacs"))
+;; (define-frame-preference "Default"
+;;   ;; frame raise lock (lock AND raise == jumpto)
+;;   (0 t nil :class "Konqueror" :role "...konqueror-mainwindow")
+;;   (1 t nil :class "Termite"))
 
 ;; cursor
 (setf *grab-pointer-foreground* (xlib:make-color :red 0.1 :green 0.25 :blue 0.5))
@@ -132,20 +128,13 @@
 
 
 ;; autostart
-;; (defun execute-autostart (autostart-command-list)
-;;   (dolist (cmd autostart-command-list)
-;;     run-shell-command cmd))
 
-;; (defvar *autostart-command-list* (list
-;;  "xmodmap -e 'clear mod4'"
-;;  "xmodmap -e 'add mod4 = Super_L'"
-;;  "emacs --daemon=instance1"
-;;  "dropbox"
-;; ))
-
-;; (execute-autostart *autostart-command-list*)
-
- (run-shell-command "xmodmap -e 'clear mod4'")
- (run-shell-command "xmodmap -e 'add mod4 = Super_L'")
- (run-shell-command "emacs --daemon=instance1")
- (run-shell-command "dropbox")
+(let ((autostart-command-list
+        (list
+ "xmodmap -e 'clear mod4'"
+ "xmodmap -e 'add mod4 = Super_L'"
+ "emacs --daemon=instance1"
+ "dropbox"
+  )))
+  (dolist (cmd autostart-command-list)
+    (run-shell-command cmd)))

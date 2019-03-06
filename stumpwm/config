@@ -68,7 +68,8 @@
 (define-key *root-map* (kbd "b") "duckduckgo")
 
 ;; Message window font
-(set-font "-xos4-terminus-medium-r-normal--14-140-72-72-c-80-iso8859-15")
+;; (set-font "-xos4-terminus-medium-r-normal--14-140-72-72-c-80-iso8859-15")
+(set-font "Vera")
 
 ;;; Define window placement policy...
 
@@ -140,7 +141,7 @@
 
 ;; (execute-autostart *autostart-command-list*)
 
- (run-shell-command "xmodmap -e 'clear mod4'")
- (run-shell-command "xmodmap -e 'add mod4 = Super_L'")
- (run-shell-command "emacs --daemon=instance1")
- (run-shell-command "dropbox")
+(run-shell-command "xmodmap -e 'clear mod4'")
+(run-shell-command "xmodmap -e 'add mod4 = Super_L'")
+(run-shell-command "emacs --daemon=instance1")
+(run-shell-command "dropbox")

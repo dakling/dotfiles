@@ -414,6 +414,7 @@ you should place your code here."
   ;; (setq-default TeX-master "../main.tex") ; Master file is always called main in the directory above
   (spacemacs/set-leader-keys-for-major-mode 'latex-mode "o m" (lambda() (interactive)(find-file TeX-master)))
   (spacemacs/set-leader-keys-for-major-mode 'latex-mode "o h" (lambda() (interactive)(find-file "header.tex")))
+  (spacemacs/set-leader-keys-for-major-mode 'latex-mode "o b" (lambda() (interactive)(find-file "bibliography.tex")))
   (spacemacs/set-leader-keys-for-major-mode 'pdf-view-mode "-" 'pdf-view-shrink)
   (setq powerline-default-separator 'bar)
   ;; (add-hook 'pdf-view-mode (lambda ()(evil-define-key 'normal key-translation-map (kbd "l") (kbd "d"))))

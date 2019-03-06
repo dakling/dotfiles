@@ -4,6 +4,10 @@
 
 (in-package :stumpwm)
 
+(ql:quickload :clx-truetype)
+(load-module "ttf-fonts")
+(xft:cache-fonts)
+
 ;; (load-module "stumptray")
 
 ;; (load-module "clipboard-history")
@@ -73,7 +77,7 @@
 (define-key *root-map* (kbd "b") "duckduckgo")
 
 ;; Message window font
-(set-font "-xos4-terminus-medium-r-normal--14-140-72-72-c-80-iso8859-15")
+;; (set-font (make-instance 'xft:font :family "Noto Serif" :subfamily "Medium" :size 11))
 
 ;;; Define window placement policy...
 

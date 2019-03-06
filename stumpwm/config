@@ -4,6 +4,10 @@
 
 (in-package :stumpwm)
 
+(ql:quickload :clx-truetype)
+(load-module "ttf-fonts")
+(xft:cache-fonts)
+
 ;; (load-module "stumptray")
 
 ;; (load-module "clipboard-history")
@@ -34,6 +38,9 @@
 (define-key *root-map* (kbd "t") "exec termite")
 (define-key *root-map* (kbd "e") "exec emacsclient -nc -s instance1")
 (define-key *root-map* (kbd "s-e") "exec emacs")
+;; vertical split should be the default
+(define-key *root-map* (kbd "s") "hsplit")
+(define-key *root-map* (kbd "v") "vsplit")
 ;; spacemacsy style
 (define-key *root-map* (kbd "m") "only")
 (define-key *root-map* (kbd "M") "lastmsg")
@@ -56,6 +63,8 @@
 (define-key *top-map* (kbd "s-H") "move-window left")
 (define-key *top-map* (kbd "s-K") "move-window up")
 (define-key *top-map* (kbd "s-J") "move-window down")
+(define-key *top-map* (kbd "s-c") "delete")
+(define-key *top-map* (kbd "s-d") "exec rofi -show drun -no-click-on-exit")
 
 ;; Web jump (works for Google and Imdb)
 (defmacro make-web-jump (name prefix)
@@ -69,7 +78,7 @@
 
 ;; Message window font
 ;; (set-font "-xos4-terminus-medium-r-normal--14-140-72-72-c-80-iso8859-15")
-(set-font "Vera")
+(set-font (make-instance 'xft:font :family "Noto Serif" :subfamily "Medium" :size 11))
 
 ;;; Define window placement policy...
 
@@ -83,14 +92,10 @@
 ;; restored from *data-dir*/create file.
 ;; TIP: if the :restore flag is set then group dump is restored even for an
 ;; existing group using *data-dir*/restore file.
-(define-frame-preference "Default"
-  ;; frame raise lock (lock AND raise == jumpto)
-  (0 t nil :class "Konqueror" :role "...konqueror-mainwindow")
-  (1 t nil :class "Termite"))
-
-(define-frame-preference "Emacs"
-  (1 t t :restore "emacs-editing-dump" :title "...xdvi")
-  (0 t t :create "emacs-dump" :class "Emacs"))
+;; (define-frame-preference "Default"
+;;   ;; frame raise lock (lock AND raise == jumpto)
+;;   (0 t nil :class "Konqueror" :role "...konqueror-mainwindow")
+;;   (1 t nil :class "Termite"))
 
 ;; cursor
 (setf *grab-pointer-foreground* (xlib:make-color :red 0.1 :green 0.25 :blue 0.5))
@@ -128,20 +133,13 @@
 
 
 ;; autostart
-;; (defun execute-autostart (autostart-command-list)
-;;   (dolist (cmd autostart-command-list)
-;;     run-shell-command cmd))
 
-;; (defvar *autostart-command-list* (list
-;;  "xmodmap -e 'clear mod4'"
-;;  "xmodmap -e 'add mod4 = Super_L'"
-;;  "emacs --daemon=instance1"
-;;  "dropbox"
-;; ))
-
-;; (execute-autostart *autostart-command-list*)
-
-(run-shell-command "xmodmap -e 'clear mod4'")
-(run-shell-command "xmodmap -e 'add mod4 = Super_L'")
-(run-shell-command "emacs --daemon=instance1")
-(run-shell-command "dropbox")
+(let ((autostart-command-list
+        (list
+ "xmodmap -e 'clear mod4'"
+ "xmodmap -e 'add mod4 = Super_L'"
+ "emacs --daemon=instance1"
+ "dropbox"
+  )))
+  (dolist (cmd autostart-command-list)
+    (run-shell-command cmd)))

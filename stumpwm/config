@@ -34,6 +34,9 @@
 (define-key *root-map* (kbd "t") "exec termite")
 (define-key *root-map* (kbd "e") "exec emacsclient -nc -s instance1")
 (define-key *root-map* (kbd "s-e") "exec emacs")
+;; vertical split should be the default
+(define-key *root-map* (kbd "s") "hsplit")
+(define-key *root-map* (kbd "v") "vsplit")
 ;; spacemacsy style
 (define-key *root-map* (kbd "m") "only")
 (define-key *root-map* (kbd "M") "lastmsg")
@@ -56,6 +59,7 @@
 (define-key *top-map* (kbd "s-H") "move-window left")
 (define-key *top-map* (kbd "s-K") "move-window up")
 (define-key *top-map* (kbd "s-J") "move-window down")
+(define-key *top-map* (kbd "s-d") "rofi --show drun -no-click-on-exit")
 
 ;; Web jump (works for Google and Imdb)
 (defmacro make-web-jump (name prefix)

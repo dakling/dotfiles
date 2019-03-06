@@ -78,7 +78,8 @@
 
 ;; Message window font
 ;; (set-font "-xos4-terminus-medium-r-normal--14-140-72-72-c-80-iso8859-15")
-(set-font (make-instance 'xft:font :family "Noto Serif" :subfamily "Medium" :size 11))
+;; (set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :size 11))
+(set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Bold" :size 11))
 
 ;;; Define window placement policy...
 

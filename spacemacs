@@ -428,10 +428,10 @@ you should place your code here."
                      (when (string= major-mode 'latex-mode)
                        (latex/build))))
 ;;; Set up some common mu4e variables
-  (setq mu4e-maildir "~/.mail"
+  (setq mu4e-maildir "~/Mail"
         mu4e-trash-folder "/Trash"
         mu4e-refile-folder "/Archive"
-        mu4e-get-mail-command "mbsync -a"
+        mu4e-get-mail-command "offlineimap"
         mu4e-update-interval nil
         mu4e-compose-signature-auto-include nil
         mu4e-view-show-images t
@@ -440,8 +440,8 @@ you should place your code here."
         '(("gmail"
            ;; Under each account, set the account-specific variables you want.
            (mu4e-sent-messages-behavior delete)
-           (mu4e-sent-folder "/gmail/Gmail/.Sent Mail")
-           (mu4e-drafts-folder "/gmail/Gmail/.Drafts")
+           (mu4e-sent-folder "/Gmail/sent")
+           (mu4e-drafts-folder "/Gmail/drafts")
            (user-mail-address "dario.klingenberg@gmail.com")
            (user-full-name "Dario Klingenberg"))
           ("web"
@@ -449,7 +449,20 @@ you should place your code here."
            (mu4e-sent-folder "/web/Sent Items")
            (mu4e-drafts-folder "/web/Drafts")
            (user-mail-address "dario.klingenberg@web.de")
-           (user-full-name "dario"))))
+           (user-full-name "dario"))
+          ("fdy"
+           (mu4e-sent-messages-behavior sent)
+           (mu4e-sent-folder "/fdy/Sent Items")
+           (mu4e-drafts-folder "/fdy/Drafts")
+           (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
+           (user-full-name "Dario Klingenberg"))
+          ("gsc"
+           (mu4e-sent-messages-behavior sent)
+           (mu4e-sent-folder "/gsc/Sent Items")
+           (mu4e-drafts-folder "/gsc/Drafts")
+           (user-mail-address "klingeberg@gsc.tu-darmstadt.de")
+           (user-full-name "Dario Klingenberg"))
+          ))
   (mu4e/mail-account-reset)
 
 ;; ;;; Mail directory shortcuts
@@ -501,6 +514,9 @@ you should place your code here."
     (nix-mode helm-nixos-options company-nixos-options nixos-options geiser exwm-x switch-window mmm-mode markdown-toc markdown-mode gh-md slime-company slime helm-hoogle helm-gitignore common-lisp-snippets omnisharp shut-up csharp-mode smeargle orgit magit-gitflow gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit magit-popup git-commit ghub treepy graphql with-editor org-mime intero flycheck hlint-refactor hindent haskell-snippets company-ghci company-ghc ghc haskell-mode company-cabal cmm-mode go gnugo xpm ascii-art-to-unicode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional cython-mode company-anaconda anaconda-mode pythonic eww-lnum mu4e-maildirs-extension mu4e-alert ht exwm xelb engine-mode wgrep smex ivy-hydra flyspell-correct-ivy counsel-projectile counsel swiper ivy xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help w3m pdf-tools tablist evil-snipe ample-zenburn-theme ranger unfill org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download mwim htmlize helm-company helm-c-yasnippet gnuplot fuzzy flyspell-correct-helm flyspell-correct company-statistics company-auctex company auto-yasnippet yasnippet auto-dictionary auctex-latexmk auctex ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async)))
  '(preview-auto-cache-preamble nil)
  '(ranger-show-hidden nil)
+ '(send-mail-function (quote smtpmail-send-it))
+ '(smtpmail-smtp-server "smtp.tu-darmstadt.de")
+ '(smtpmail-smtp-service 587)
  '(vc-follow-symlinks t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

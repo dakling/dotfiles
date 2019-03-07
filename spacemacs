@@ -347,6 +347,8 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+  ;; for obvious reasons get rid of fd as escape sequence
+  (setq-default evil-escape-key-sequence nil)
   ;; exwm
  ;;  (display-time-mode)
  ;;  (server-start)
@@ -413,7 +415,8 @@ you should place your code here."
   (add-hook 'doc-view-mode-hook 'auto-revert-mode)
   ;; (setq-default TeX-master "../main.tex") ; Master file is always called main in the directory above
   (spacemacs/set-leader-keys-for-major-mode 'latex-mode "o m" (lambda() (interactive)(find-file TeX-master)))
-  (spacemacs/set-leader-keys-for-major-mode 'latex-mode "o h" (lambda() (interactive)(find-file "header.tex")))
+  (spacemacs/set-leader-keys-for-major-mode 'latex-mode "o g" (lambda() (interactive)(find-file (getenv "LatexGlobalConfig"))))
+  (spacemacs/set-leader-keys-for-major-mode 'latex-mode "o l" (lambda() (interactive)(find-file "definLocal.tex")))
   (spacemacs/set-leader-keys-for-major-mode 'latex-mode "o b" (lambda() (interactive)(find-file "bibliography.tex")))
   (spacemacs/set-leader-keys-for-major-mode 'pdf-view-mode "-" 'pdf-view-shrink)
   (setq powerline-default-separator 'bar)

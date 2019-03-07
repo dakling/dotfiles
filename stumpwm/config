@@ -32,8 +32,11 @@
 (undefine-key *root-map* (kbd "!"))
 (undefine-key *root-map* (kbd "C-m"))
 (undefine-key *root-map* (kbd "C-a"))
+(undefine-key *root-map* (kbd "C-b"))
 (undefine-key *root-map* (kbd "C-n"))
 (undefine-key *root-map* (kbd "C-SPC"))
+;; (undefine-key *root-map* (kbd ";"))
+;; (undefine-key *root-map* (kbd ":"))
 ;; open stuff
 (define-key *root-map* (kbd "d") "colon1 exec ")
 (define-key *root-map* (kbd "t") "exec termite")
@@ -49,6 +52,10 @@
 (define-key *top-map* (kbd "XF86AudioLowerVolume") "exec amixer set Master 5%-")
 (define-key *top-map* (kbd "XF86AudioRaiseVolume") "exec amixer set Master 5%+")
 (define-key *top-map* (kbd "XF86AudioMute") "exec amixer set Master toggle")
+;;misc
+(define-key *root-map* (kbd ",") "colon")
+(define-key *root-map* (kbd ".") "eval")
+(define-key *root-map* (kbd "s-w") "banish")
 
 ;; Ssh somewhere
 ;; (define-key *root-map* (kbd "C-s") "colon1 exec termite -e ssh ")
@@ -137,10 +144,19 @@
 
 (let ((autostart-command-list
         (list
- "xmodmap -e 'clear mod4'"
- "xmodmap -e 'add mod4 = Super_L'"
- "emacs --daemon=instance1"
- "dropbox"
+  "xmodmap -e 'clear mod4'"
+  "xmodmap -e 'add mod4 = Super_L'"
+  "emacs --daemon=instance1"
+  "dropbox"
+  "pamac-tray"
+  "nm-applet"
+  "easystroke enable"
+  "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
+  "setxkbmap -option ctrl:nocaps"  
+  "xcape -e 'Control_L=Escape'"
+  "/usr/share/HESSENBOX_DA/HESSENBOX_DA-Client.sh start"
+  "onboard"
+  "touchegg"
   )))
   (dolist (cmd autostart-command-list)
     (run-shell-command cmd)))

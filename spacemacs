@@ -433,38 +433,82 @@ you should place your code here."
         mu4e-refile-folder "/Archive"
         mu4e-get-mail-command "offlineimap"
         mu4e-update-interval nil
-        mu4e-compose-signature-auto-include nil
+        mu4e-compose-signature-auto-include t
         mu4e-view-show-images t
+        mu4e-enable-notifications t
         mu4e-view-show-addresses t)
   (setq mu4e-account-alist
         '(("Gmail"
            ;; Under each account, set the account-specific variables you want.
            (mu4e-sent-messages-behavior delete)
+           (mu4e-compose-signature-auto-include nil)
            (mu4e-sent-folder "/Gmail/sent")
            (mu4e-drafts-folder "/Gmail/drafts")
            (user-mail-address "dario.klingenberg@gmail.com")
+           (smtpmail-smtp-server "smtp.gmail.com")
+           (smtpmail-smtp-service 465)
            (user-full-name "Dario Klingenberg"))
           ("Web"
            (mu4e-sent-messages-behavior sent)
+           (mu4e-compose-signature-auto-include nil)
            (mu4e-sent-folder "/Web/Sent Items")
            (mu4e-drafts-folder "/Web/Drafts")
+           (smtpmail-smtp-server "smtp.web.de")
+           (smtpmail-smtp-service 587)
            (user-mail-address "dario.klingenberg@web.de")
            (user-full-name "dario"))
           ("FDY"
            (mu4e-sent-messages-behavior sent)
+           (mu4e-compose-signature-auto-include t)
+           (mu4e-compose-signature
+"Technische Universität Darmstadt
+Dario Klingenberg, M.Sc.
+Fachgebiet für Strömungsdynamik
+Fachbereich Maschinenbau
+Fachgebiet für Strömungsdynamik (FDY)
+Otto-Berndt-Straße 2 (L1|01 322)
+64287 Darmstadt
+
+E-Mail: klingenberg@fdy.tu-darmstadt.de
+Telefon: +49 6151 16-26207
+Fax: +49 6151 16-26203
+Web: http://www.fdy.tu-darmstadt.de")
            (mu4e-sent-folder "/FDY/Sent Items")
            (mu4e-drafts-folder "/FDY/Drafts")
+           (smtpmail-smtp-server "smtp.tu-darmstadt.de")
+           (smtpmail-smtp-service 465)
            (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
            (user-full-name "Dario Klingenberg"))
           ("GSC"
            (mu4e-sent-messages-behavior sent)
+           (mu4e-compose-signature-auto-include t)
+           (mu4e-compose-signature
+"Technische Universität Darmstadt
+Dario Klingenberg, M.Sc.
+Graduate School Computational Engineering
+Dolivostraße 15
+64293 Darmstadt
+
+E-Mail: klingenberg@gsc.tu-darmstadt.de
+Telefon: +49 6151 16-24381
+Fax: +49 6151 16-24404
+Web: http://www.gsc.ce.tu-darmstadt.de/")
            (mu4e-sent-folder "/GSC/Sent Items")
            (mu4e-drafts-folder "/GSC/Drafts")
-           (user-mail-address "klingeberg@gsc.tu-darmstadt.de")
+           (smtpmail-smtp-server "smtp.gsc.ce.tu-darmstadt.de")
+           (smtpmail-smtp-service 465)
+           (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
            (user-full-name "Dario Klingenberg"))
           ))
   (mu4e/mail-account-reset)
-
+  (with-eval-after-load 'mu4e-alert
+    ;; Enable Desktop notifications
+    (mu4e-alert-set-default-style 'notifications)) ; For linux
+  (with-eval-after-load 'mu4e
+    (evil-define-key 'evilified mu4e-main-mode-map (kbd "j") 'evil-next-line)
+    (bind-keys :map mu4e-main-mode-map
+               ;; ("j" . evil-next-line)
+               ("c" . mu4e-compose-new)))
 ;; ;;; Mail directory shortcuts
 ;;   (setq mu4e-maildir-shortcuts
 ;;         '(("/gmail/INBOX" . ?g)

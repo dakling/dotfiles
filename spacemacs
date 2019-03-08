@@ -40,8 +40,8 @@ values."
      helm
      (auto-completion :variables
         auto-completion-enable-snippets-in-popup t
-        auto-completion-tab-key-behavior 'complete
-        auto-completion-ret-key-behavior nil
+        auto-completion-tab-key-behavior 'cycle
+        auto-completion-ret-key-behavior 'complete
         ;; spacemacs-default-company-backends '(company-files company-capf)
         auto-completion-enable-sort-by-usage t)
       (haskell :variables haskell-completion-backend 'intero)
@@ -77,6 +77,7 @@ values."
                                       eww-lnum
                                       ;; exwm
                                       md4rd
+                                      yasnippet-snippets
                                       )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -434,9 +435,8 @@ you should place your code here."
   (setq mu4e-maildir "~/Mail"
         mu4e-trash-folder "/Trash"
         mu4e-refile-folder "/Archive"
-        mu4e-get-mail-command "offlineimap"
+        mu4e-get-mail-command "offlineimap -o"
         mu4e-update-interval 60
-        mu4e-update-interval nil
         mu4e-compose-signature-auto-include t
         mu4e-view-show-images t
         mu4e-enable-notifications t
@@ -542,7 +542,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
  '(TeX-electric-math (quote ("\\(" . "")))
  '(TeX-electric-sub-and-superscript t)
  '(TeX-source-correlate-mode t)
- '(TeX-source-correlate-start-server t t)
+ '(TeX-source-correlate-start-server t)
  '(TeX-view-program-selection
    (quote
     (((output-dvi has-no-display-manager)
@@ -555,11 +555,12 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
  '(ansi-color-names-vector
    ["#0a0814" "#f2241f" "#67b11d" "#b1951d" "#4f97d7" "#a31db1" "#28def0" "#b2b2b2"])
  '(electric-pair-mode t)
+ '(evil-want-Y-yank-to-eol t)
  '(find-directory-functions (quote (cvs-dired-noselect dired-noselect)))
  '(inhibit-startup-screen nil)
  '(package-selected-packages
    (quote
-    (nix-mode helm-nixos-options company-nixos-options nixos-options geiser exwm-x switch-window mmm-mode markdown-toc markdown-mode gh-md slime-company slime helm-hoogle helm-gitignore common-lisp-snippets omnisharp shut-up csharp-mode smeargle orgit magit-gitflow gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit magit-popup git-commit ghub treepy graphql with-editor org-mime intero flycheck hlint-refactor hindent haskell-snippets company-ghci company-ghc ghc haskell-mode company-cabal cmm-mode go gnugo xpm ascii-art-to-unicode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional cython-mode company-anaconda anaconda-mode pythonic eww-lnum mu4e-maildirs-extension mu4e-alert ht exwm xelb engine-mode wgrep smex ivy-hydra flyspell-correct-ivy counsel-projectile counsel swiper ivy xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help w3m pdf-tools tablist evil-snipe ample-zenburn-theme ranger unfill org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download mwim htmlize helm-company helm-c-yasnippet gnuplot fuzzy flyspell-correct-helm flyspell-correct company-statistics company-auctex company auto-yasnippet yasnippet auto-dictionary auctex-latexmk auctex ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async)))
+    (yasnippet-snippets nix-mode helm-nixos-options company-nixos-options nixos-options geiser exwm-x switch-window mmm-mode markdown-toc markdown-mode gh-md slime-company slime helm-hoogle helm-gitignore common-lisp-snippets omnisharp shut-up csharp-mode smeargle orgit magit-gitflow gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit magit-popup git-commit ghub treepy graphql with-editor org-mime intero flycheck hlint-refactor hindent haskell-snippets company-ghci company-ghc ghc haskell-mode company-cabal cmm-mode go gnugo xpm ascii-art-to-unicode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional cython-mode company-anaconda anaconda-mode pythonic eww-lnum mu4e-maildirs-extension mu4e-alert ht exwm xelb engine-mode wgrep smex ivy-hydra flyspell-correct-ivy counsel-projectile counsel swiper ivy xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help w3m pdf-tools tablist evil-snipe ample-zenburn-theme ranger unfill org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download mwim htmlize helm-company helm-c-yasnippet gnuplot fuzzy flyspell-correct-helm flyspell-correct company-statistics company-auctex company auto-yasnippet yasnippet auto-dictionary auctex-latexmk auctex ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async)))
  '(preview-auto-cache-preamble nil)
  '(ranger-show-hidden nil)
  '(send-mail-function (quote smtpmail-send-it))

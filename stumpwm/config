@@ -73,6 +73,7 @@
 (define-key *top-map* (kbd "s-J") "move-window down")
 (define-key *top-map* (kbd "s-c") "delete")
 (define-key *top-map* (kbd "s-d") "exec rofi -show drun -no-click-on-exit")
+(define-key *top-map* (kbd "s-o") "exec onboard")
 
 ;; program keymap
 (defvar *program-map*

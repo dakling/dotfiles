@@ -77,9 +77,9 @@
 ;; program keymap
 (defvar *program-map*
   (let ((m (stumpwm:make-sparse-keymap)))
-    (stumpwm:define-key m (stumpwm:kbd "i") "firefox")
-    (stumpwm:define-key m (stumpwm:kbd "p") "pamac-manager")
-    (stumpwm:define-key m (stumpwm:kbd "d") "pcmanfm")
+    (stumpwm:define-key m (stumpwm:kbd "i") "exec firefox")
+    (stumpwm:define-key m (stumpwm:kbd "p") "exec pamac-manager")
+    (stumpwm:define-key m (stumpwm:kbd "d") "exec pcmanfm")
     m ; NOTE: this is important
     ))
 (stumpwm:define-key stumpwm:*top-map* (stumpwm:kbd "s-x") '*program-map*)

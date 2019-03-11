@@ -75,6 +75,18 @@
 (define-key *top-map* (kbd "s-J") "move-window down")
 (define-key *top-map* (kbd "s-c") "delete")
 (define-key *top-map* (kbd "s-d") "exec rofi -show drun -no-click-on-exit")
+(define-key *top-map* (kbd "s-o") "exec onboard")
+
+;; program keymap
+(defvar *program-map*
+  (let ((m (stumpwm:make-sparse-keymap)))
+    (stumpwm:define-key m (stumpwm:kbd "i") "exec firefox")
+    (stumpwm:define-key m (stumpwm:kbd "p") "exec pamac-manager")
+    (stumpwm:define-key m (stumpwm:kbd "d") "exec pcmanfm")
+    m ; NOTE: this is important
+    ))
+(stumpwm:define-key stumpwm:*top-map* (stumpwm:kbd "s-x") '*program-map*)
+
 
 ;; Web jump (works for Google and Imdb)
 (defmacro make-web-jump (name prefix)

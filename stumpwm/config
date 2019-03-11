@@ -11,6 +11,8 @@
 (ql:quickload :xembed)
 (load-module "stumptray")
 
+(load-module "maildir")
+
 ;; (load-module "clipboard-history")
 
 ;; (define-key *root-map* (kbd "C-y") "show-clipboard-history")
@@ -129,15 +131,15 @@
             '(:eval (run-shell-command *battery-status-command* t))
             ;; " | Vol. "
             ;; '(:eval (run-shell-command *vol-status-command* t))
-            " | %d"))
+            "| %D | %d"))
 
 (setf *window-format* "%m%n%s%c")
 
 (setf *mode-line-timeout* 60)
 
-;; turn on/off the mode line for the current head only.
-(stumpwm:toggle-mode-line (stumpwm:current-screen)
-                          (stumpwm:current-head))
+;; turn on the mode line
+(enable-mode-line (stumpwm:current-screen)
+                          (stumpwm:current-head) t)
 
 
 ;; autostart

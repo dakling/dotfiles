@@ -437,7 +437,7 @@ you should place your code here."
         mu4e-trash-folder "/Trash"
         mu4e-refile-folder "/Archive"
         mu4e-get-mail-command "offlineimap -o"
-        mu4e-update-interval 60
+        mu4e-update-interval 600
         mu4e-compose-signature-auto-include t
         mu4e-view-show-images t
         mu4e-enable-notifications t

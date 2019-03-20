@@ -83,6 +83,7 @@
     (stumpwm:define-key m (stumpwm:kbd "i") "exec firefox")
     (stumpwm:define-key m (stumpwm:kbd "p") "exec pamac-manager")
     (stumpwm:define-key m (stumpwm:kbd "d") "exec pcmanfm")
+    (stumpwm:define-key m (stumpwm:kbd "e") "exec thunderbird")
     m ; NOTE: this is important
     ))
 (stumpwm:define-key stumpwm:*top-map* (stumpwm:kbd "s-x") '*program-map*)

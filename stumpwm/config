@@ -37,6 +37,7 @@
 (undefine-key *root-map* (kbd "C-b"))
 (undefine-key *root-map* (kbd "C-n"))
 (undefine-key *root-map* (kbd "C-SPC"))
+(undefine-key *group-map* (kbd "\""))
 ;; (undefine-key *root-map* (kbd ";"))
 ;; (undefine-key *root-map* (kbd ":"))
 ;; open stuff
@@ -58,6 +59,8 @@
 (define-key *root-map* (kbd ",") "colon")
 (define-key *root-map* (kbd ".") "eval")
 (define-key *root-map* (kbd "s-w") "banish")
+(define-key *group-map* (kbd "g") "grouplist")
+(define-key *group-map* (kbd "G") "groups")
 
 ;; Ssh somewhere
 ;; (define-key *root-map* (kbd "C-s") "colon1 exec termite -e ssh ")

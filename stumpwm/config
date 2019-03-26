@@ -79,6 +79,12 @@
 (define-key *top-map* (kbd "s-c") "delete")
 (define-key *top-map* (kbd "s-d") "exec rofi -show drun -no-click-on-exit")
 (define-key *top-map* (kbd "s-o") "exec onboard")
+(loop for i from 0 to 9 do ; map "s-i" to "gselect i" for faster workspace switching
+      (define-key *top-map*
+        (kbd (concatenate 'string
+                          "s-"
+                          (write-to-string i))) ; = "s-i"
+        (concatenate 'string "gselect " (write-to-string i)))) ; = "gselect i"
 
 ;; program keymap
 (defvar *program-map*

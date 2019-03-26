@@ -85,6 +85,12 @@
                           "s-"
                           (write-to-string i))) ; = "s-i"
         (concatenate 'string "gselect " (write-to-string i)))) ; = "gselect i"
+(loop for i from 0 to 9 do ; map "s-M-i" to "gmove i" for faster workspace switching ;TODO how to do this with shift?
+      (define-key *top-map*
+        (kbd (concatenate 'string
+                          "s-M-"
+                          (write-to-string i))) ; = "s-i"
+        (concatenate 'string "gmove " (write-to-string i))))
 
 ;; program keymap
 (defvar *program-map*

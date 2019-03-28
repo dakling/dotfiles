@@ -419,7 +419,7 @@ you should place your code here."
   (spacemacs/set-leader-keys-for-major-mode 'latex-mode "o m" (lambda() (interactive)(find-file TeX-master)))
   (spacemacs/set-leader-keys-for-major-mode 'latex-mode "o g" (lambda() (interactive)(find-file (getenv "LatexGlobalConfig"))))
   (spacemacs/set-leader-keys-for-major-mode 'latex-mode "o l" (lambda() (interactive)(find-file "definLocal.tex")))
-  (spacemacs/set-leader-keys-for-major-mode 'latex-mode "o b" (lambda() (interactive)(find-file "bibliography.tex")))
+  (spacemacs/set-leader-keys-for-major-mode 'latex-mode "o b" (lambda() (interactive)(find-file "bibliography.bib")))
   (spacemacs/set-leader-keys-for-major-mode 'pdf-view-mode "-" 'pdf-view-shrink)
   (setq powerline-default-separator 'bar)
   ;; (add-hook 'pdf-view-mode (lambda ()(evil-define-key 'normal key-translation-map (kbd "l") (kbd "d"))))

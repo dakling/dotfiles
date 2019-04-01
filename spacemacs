@@ -60,9 +60,7 @@ values."
      ;; syntax-checking
      latex
      (ranger :variables ranger-override-dired t)
-     (pdf-tools :variables
-                pdf-view-continuous t
-                pdf-view-incompatible-modes linum-mode)
+     (pdf-tools :variables pdf-view-continuous t)
      haskell
      common-lisp
      scheme
@@ -416,6 +414,7 @@ you should place your code here."
   ;; (set-frame-parameter nil 'fullscreen 'fullboth)
   (setq eshell-cmpl-ignore-case t)
   (setq ivy-ignore-buffers '("\\` " "\\`\\*"))
+  (setq pdf-view-incompatible-modes linum-mode)
   (add-hook 'doc-view-mode-hook 'auto-revert-mode)
   ;; (setq-default TeX-master "../main.tex") ; Master file is always called main in the directory above
   (spacemacs/set-leader-keys-for-major-mode 'latex-mode "o m" (lambda() (interactive)(find-file TeX-master)))

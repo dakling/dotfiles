@@ -60,7 +60,9 @@ values."
      ;; syntax-checking
      latex
      (ranger :variables ranger-override-dired t)
-     (pdf-tools :variables pdf-view-continuous t)
+     (pdf-tools :variables
+                pdf-view-continuous t
+                pdf-view-incompatible-modes linum-mode)
      haskell
      common-lisp
      scheme

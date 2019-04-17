@@ -31,9 +31,47 @@
 (setq initial-scratch-message "Welcome in Emacs") ; print a default message in the empty scratch buffer opened at startup
 
 ;; user configuration
+(use-package general :ensure t
+  :config
+  (general-evil-setup t)
+
+  (general-create-definer my-leader-def
+    :prefix "SPC"
+    :states '(normal))
+
+  (general-create-definer my-local-leader-def
+    :prefix "#")
+
+  ;; many spacemacs bindings go here
+  (my-leader-def
+   "ar" '(ranger :which-key "call ranger")
+   "g"  '(:ignore t :which-key "Git")
+   ;;"gs" '(magit-status :which-key "git status")
+   "f" '(:ignore :which-key "file")
+   "fs" '(save-buffer :which-key "save file")
+   "ff" '(counsel-find-file :which-key "find file")
+   "w" '(:ignore :which-key "window")
+   "wo" '(other-window :which-key "other window")
+   "SPC" '(counsel-M-x :which-key "M-x")
+   "fp" '(counsel-locate :which-key "counsel-locate")
+   "fg" '(counsel-ag :which-key "counsel-ag")
+   ))
+
 (use-package evil
   :ensure t
   :init (evil-mode))
+
+(use-package evil-surround
+  :ensure t
+  :config
+  (global-evil-surround-mode 1)
+  :general (general-define-key
+	    :states '(visual)
+	    "s" 'evil-surround-region))
+
+(use-package evil-commentary
+  :ensure t
+  :init (evil-commentary-mode))
  
 (use-package which-key
   :ensure t
@@ -51,32 +89,9 @@
   :config
   (setq ranger-cleanup-eagerly t))
 
-(use-package general :ensure t
-  :config
-  (general-evil-setup t)
-
-  ;; many spacemacs bindings go here
-  (general-define-key
-   :states '(normal)
-   :prefix "SPC"
-   "ar" '(ranger :which-key "call ranger")
-   "g"  '(:ignore t :which-key "Git")
-   "gs" '(magit-status :which-key "git status")
-   "f" '(:ignore :which-key "file")
-   "fs" '(save-buffer :which-key "save file")
-   "ff" '(counsel-find-file :which-key "find file")
-   "w" '(:ignore :which-key "window")
-   "TAB" '(other-window :which-key "other window")
-   "SPC" '(counsel-M-x :which-key "M-x")
-   "fp" '(counsel-locate :which-key "counsel-locate")
-   "fg" '(counsel-ag :which-key "counsel-ag")
-   ))
-
 (use-package ivy :ensure t
   :diminish (ivy-mode . "") ; does not display ivy in the modeline
   :init (ivy-mode 1)        ; enable ivy globally at startup
-  :bind (:map ivy-mode-map  ; bind in the ivy buffer
-         ("C-'" . ivy-avy)) ; C-' to ivy-avy
   :config
   (setq ivy-use-virtual-buffers t)   ; extend searching to bookmarks and …
   (setq ivy-height 20)               ; set height of the ivy window
@@ -85,7 +100,24 @@
 
 (use-package counsel :ensure t)
 
-(use-package magit :ensure t)
+(use-package magit
+  :ensure t
+  :general (my-leader-def
+	     "gs" '(magit-status :which-key "git status"))
+  )
+
+(use-package evil-magit :ensure t)
+
+;;;programming languages
+;; lisp
+(use-package slime
+  :ensure t
+  :config (setq inferior-lisp-program "/usr/bin/sbcl")
+  ;;:init (setenv 'SBCL-HOME " ") ;;TODO
+  :general (my-local-leader-def
+	     :keymaps 'lisp-mode-map
+	     "'" '(slime :which-key "start slime"))
+  )
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -94,7 +126,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (magit counsel zeno-theme zeno evil ranger which-key general use-package))))
+    (evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

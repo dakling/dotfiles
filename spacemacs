@@ -54,7 +54,9 @@ values."
      org
      (shell :variables
             shell-default-shell 'eshell
-            shell-default-position 'full
+            ;; shell-default-position 'full
+            shell-default-height 100
+            shell-default-full-span nil
             shell-enable-smart-eshell t)
      spell-checking
      ;; syntax-checking

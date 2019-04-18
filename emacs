@@ -48,14 +48,14 @@
   (general-evil-setup t)
 
   (general-create-definer my-leader-def
-    :prefix "SPC"
     :keymaps 'override
-    :states '(normal))
+    :prefix "SPC"
+    :states 'normal)
 
   (general-create-definer my-local-leader-def
     :keymaps 'override
-    :prefix "SPC m"
-    )
+    :prefix "-"
+    :states 'normal)
 
   ;; many spacemacs bindings go here
   (my-leader-def
@@ -144,7 +144,8 @@
     :states 'normal
     :keymaps 'pdf-view-mode-map
     ;; evil-style bindings
-    "SPC"  nil
+    ;; "SPC"  nil ;TODO where to put this globally?
+    "-"  nil ;TODO where to put this globally?
     "j"  '(pdf-view-next-line-or-next-page :which-key "scroll down")
     "k"  '(pdf-view-previous-line-or-previous-page :which-key "scroll up")
     "L"  '(image-forward-hscroll :which-key "scroll right")
@@ -156,10 +157,10 @@
     "0"  '(image-bol :which-key "go left")
     "$"  '(image-eol :which-key "go right"))
   (my-local-leader-def
-    :states 'normal
+    ;; :states 'normal
     :keymaps 'pdf-view-mode-map
     ;; Scale/Fit
-    "f"  nil
+    ;; "f"  nil
     "fw"  '(pdf-view-fit-width-to-window :which-key "fit width")
     "fh"  '(pdf-view-fit-height-to-window :which-key "fit heigth")
     "fp"  '(pdf-view-fit-page-to-window :which-key "fit page")

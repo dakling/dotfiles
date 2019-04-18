@@ -436,7 +436,7 @@ you should place your code here."
                      (when (string= major-mode 'latex-mode)
                        (latex/build))))
 ;;; Set up some common mu4e variables
-  (setq mu4e-maildir "~/Mail"
+  (setq mu4e-maildir "~j/Mail"
         mu4e-trash-folder "/Trash"
         mu4e-refile-folder "/Archive"
         mu4e-get-mail-command "offlineimap -o"

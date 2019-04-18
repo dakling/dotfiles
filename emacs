@@ -88,6 +88,9 @@
    "SPC" '(counsel-M-x :which-key "M-x")
    "fp" '(counsel-locate :which-key "counsel-locate")
    "fg" '(counsel-ag :which-key "counsel-ag")
+   "b" '(:ignore :which-key "buffer")
+   "bb" '(counsel-ibuffer :which-key "switch buffer")
+   "bk" '(ido-kill-buffer :which-key "kill buffer") ; TODO kill current buffer immediately
    ))
 
 (use-package evil
@@ -143,6 +146,10 @@
 
 (use-package counsel :ensure t)
 
+(use-package company
+  :ensure t
+  :init (company-mode 1))
+
 (use-package magit
   :ensure t
   :general (my-leader-def
@@ -189,6 +196,68 @@
     "R"  '(pdf-view-reset-slice :which-key "reset slice")
     "zr" '(pdf-view-scale-reset :which-key "zoom reset"))
   )
+;;exwm
+(use-package exwm 
+  :ensure t
+  :config
+(display-time-mode)
+  (server-start)
+  (setq mouse-autoselect-window t
+        focus-follows-mouse t)
+  (require 'exwm)
+  (require 'exwm-config)
+  (setq exwm-workspace-number 10)
+  (setq exwm-workspace-show-all-buffers t)
+  (setq exwm-layout-show-all-buffers t)
+  (require 'exwm-randr)
+  (set 'monitor1 "eDP1")
+  (set 'monitor2 "HDMI2")
+  (setq exwm-randr-workspace-output-plist
+          '(0 monitor1
+            2 monitor1
+            4 monitor1
+            6 monitor1
+            8 monitor1
+            1 monitor2
+            3 monitor2
+            5 monitor2
+            7 monitor2
+            9 monitor2))
+  (add-hook 'exwm-randr-screen-change-hook
+            (lambda ()
+              (start-process-shell-command
+               "xrandr" nil "xrandr --ouput HDMI2 --output eDP1 --auto")))
+  (exwm-randr-enable)
+  (require 'exwm-systemtray)
+  (exwm-systemtray-enable)
+  (evil-set-initial-state 'exwm-mode 'emacs)
+  (setq exwm-input-global-keys
+      `(([?\s-r] . exwm-reset)
+        ([?\s-w] . exwm-workspace-switch)
+        ,@(mapcar (lambda (i)
+                    `(,(kbd (format "s-%d" i)) .
+                      (lambda ()
+                        (interactive)
+                        (exwm-workspace-switch-create ,i))))
+                  (number-sequence 0 9))
+ ;; Bind "s-&" to launch applications ('M-&' also works if the output
+        ;; buffer does not bother you).
+        ([?\s-d] . (lambda (command)
+  	                 (interactive (list (read-shell-command "$ ")))
+  	                 (start-process-shell-command command nil command)))
+        ([s-f12] . (lambda ()
+  	                 (interactive)
+  	                 (start-process "" nil "/usr/bin/slock")))
+        ([s-f2] . (lambda ()
+                    (interactive)
+                    (start-process "" nil "qutebrowser")))
+        ([s-f1] . (lambda ()
+  	                  eshell))
+        ))
+ (push ?\s-\  exwm-input-prefix-keys)
+  (push ?\M-m  exwm-input-prefix-keys)
+  (exwm-enable)
+  )
 
 ;;;programming languages
 ;; lisp
@@ -218,6 +287,94 @@
 ;; maple
 ;; (use-package maplev)
 
+;; mail
+(use-package evil-mu4e
+  :ensure t
+  :config
+  (setq mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e")
+  (setq mu4e-maildir "~/Mail"
+        mu4e-trash-folder "/Trash"
+        mu4e-refile-folder "/Archive"
+        mu4e-get-mail-command "offlineimap -o"
+        mu4e-update-interval 600
+        mu4e-compose-signature-auto-include t
+        mu4e-view-show-images t
+        mu4e-enable-notifications t
+        message-send-mail-function 'smtpmail-send-it
+        smtpmail-stream-type 'starttls
+        mu4e-view-show-addresses t)
+  (setq mu4e-account-alist
+        '(("Gmail"
+           ;; Under each account, set the account-specific variables you want.
+           (mu4e-sent-messages-behavior delete)
+           (mu4e-compose-signature-auto-include nil)
+           (mu4e-sent-folder "/Gmail/sent")
+           (mu4e-drafts-folder "/Gmail/drafts")
+           (user-mail-address "dario.klingenberg@gmail.com")
+           (smtpmail-smtp-server "smtp.gmail.com")
+           (smtpmail-smtp-service 465)
+           (user-full-name "Dario Klingenberg"))
+          ("Web"
+           (mu4e-sent-messages-behavior sent)
+           (mu4e-compose-signature-auto-include nil)
+           (mu4e-sent-folder "/Web/Sent Items")
+           (mu4e-drafts-folder "/Web/Drafts")
+           (smtpmail-smtp-server "smtp.web.de")
+           (smtpmail-smtp-service 587)
+           (user-mail-address "dario.klingenberg@web.de")
+           (user-full-name "dario"))
+          ("FDY"
+           (mu4e-sent-messages-behavior sent)
+           (mu4e-compose-signature-auto-include t)
+           (mu4e-compose-signature
+"Technische Universität Darmstadt
+Dario Klingenberg, M.Sc.
+Fachgebiet für Strömungsdynamik
+Fachbereich Maschinenbau
+Fachgebiet für Strömungsdynamik (FDY)
+Otto-Berndt-Straße 2 (L1|01 322)
+64287 Darmstadt
+
+E-Mail: klingenberg@fdy.tu-darmstadt.de
+Telefon: +49 6151 16-26207
+Fax: +49 6151 16-26203
+Web: http://www.fdy.tu-darmstadt.de")
+           (mu4e-sent-folder "/FDY/Sent Items")
+           (mu4e-drafts-folder "/FDY/Drafts")
+           (smtpmail-smtp-server "smtp.tu-darmstadt.de")
+           (smtpmail-smtp-service 465)
+           (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
+           (user-full-name "Dario Klingenberg"))
+          ("GSC"
+           (mu4e-sent-messages-behavior sent)
+           (mu4e-compose-signature-auto-include t)
+           (mu4e-compose-signature
+"Technische Universität Darmstadt
+Dario Klingenberg, M.Sc.
+Graduate School Computational Engineering
+Dolivostraße 15
+64293 Darmstadt
+
+E-Mail: klingenberg@gsc.tu-darmstadt.de
+Telefon: +49 6151 16-24381
+Fax: +49 6151 16-24404
+Web: http://www.gsc.ce.tu-darmstadt.de/")
+           (mu4e-sent-folder "/GSC/Sent Items")
+           (mu4e-drafts-folder "/GSC/Drafts")
+           (smtpmail-smtp-server "smtp.gsc.ce.tu-darmstadt.de")
+           (smtpmail-smtp-service 465)
+           (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
+           (user-full-name "Dario Klingenberg"))
+          ))
+  (mu4e/mail-account-reset)
+  (with-eval-after-load 'mu4e-alert
+    ;; Enable Desktop notifications
+    (mu4e-alert-set-default-style 'notifications)) ; For linux
+  (with-eval-after-load 'mu4e
+    (evil-define-key 'evilified mu4e-main-mode-map (kbd "j") 'evil-next-line)
+    (bind-keys :map mu4e-main-mode-map
+               ;; ("j" . evil-next-line)
+               ("c" . mu4e-compose-new))))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -226,10 +383,20 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))
+    (evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+;;; TODO
+;; - font
+;; - scrolling (?)
+;; - autocomplete
+;; - snippets
+;; - buffer management
+;; - window management
+;; - mail
+;; - exwm

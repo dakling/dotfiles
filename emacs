@@ -29,11 +29,25 @@
 (setq coding-system-for-write 'utf-8 )
 (setq sentence-end-double-space nil)	; sentence SHOULD end with only a point.
 (setq default-fill-column 80)		; toggle wrapping text at the 80th character
-(setq initial-scratch-message "Welcome in Emacs") ; print a default message in the empty scratch buffer opened at startup
+(setq initial-scratch-message "Welcome") ; print a default message in the empty scratch buffer opened at startup
 (defalias 'yes-or-no-p 'y-or-n-p) ;reduce typing effort
 (electric-pair-mode 1) ;close brackets
 
-;; user configuration
+;; useful functions
+(defun find-config-file ()
+  "open emacs configuration file"
+  (interactive)
+  (find-file "~/.dotfiles/dotfiles/emacs"))
+(defun load-config-file ()
+  "load emacs configuration file"
+  (interactive)
+  (load-file "~/.dotfiles/dotfiles/emacs"))
+(defun find-dotfile-dir ()
+  "open dotfile directory"
+  (interactive)
+  (find-file "~/.dotfiles/dotfiles/"))
+
+;; packages with configuration
 (use-package general :ensure t
 :init
   (setq general-override-states '(insert
@@ -65,6 +79,10 @@
    "f" '(:ignore :which-key "file")
    "fs" '(save-buffer :which-key "save file")
    "ff" '(counsel-find-file :which-key "find file")
+   "fed" '(find-config-file :which-key "find config file")
+   ;; "fed" '((lambda () (interactive) (find-file "~/.emacs.d")) :which-key "find config file") ;less nice (I think) alternative
+   "fer" '(load-config-file :which-key "load config file")
+   "feD" '(find-dotfile-dir :which-key "find dotfile directory")
    ;; "w" '(:ignore :which-key "window")
    ;; "wo" '(other-window :which-key "other window")
    "SPC" '(counsel-M-x :which-key "M-x")
@@ -102,7 +120,7 @@
   :diminish which-key-mode)
 
 ;;appearance
-(use-package zeno-theme :ensure t)
+(use-package zenburn-theme :ensure t)
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (menu-bar-no-scroll-bar)
@@ -195,6 +213,8 @@
 	     "ee" '(reduce-eval-last-statement :which-key "eval last statement")
 	     "eb" '(reduce-run-buffer :which-key "run buffer"))
   )
+;; maple
+;; (use-package maplev)
 
 
 (custom-set-variables
@@ -204,7 +224,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))
+    (zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

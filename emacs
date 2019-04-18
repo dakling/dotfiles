@@ -122,6 +122,7 @@
 ;;appearance
 (use-package zenburn-theme :ensure t)
 ;; (use-package cyberpunk-theme :ensure t)
+(use-package smart-mode-line-atom-one-dark-theme :ensure t)
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (menu-bar-no-scroll-bar)
@@ -225,7 +226,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))
+    (smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

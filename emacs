@@ -54,7 +54,8 @@
 
   (general-create-definer my-local-leader-def
     :keymaps 'override
-    :prefix "SPC m")
+    :prefix "SPC m"
+    )
 
   ;; many spacemacs bindings go here
   (my-leader-def
@@ -143,6 +144,7 @@
     :states 'normal
     :keymaps 'pdf-view-mode-map
     ;; evil-style bindings
+    "SPC"  nil
     "j"  '(pdf-view-next-line-or-next-page :which-key "scroll down")
     "k"  '(pdf-view-previous-line-or-previous-page :which-key "scroll up")
     "L"  '(image-forward-hscroll :which-key "scroll right")
@@ -152,7 +154,10 @@
     "u"  '(pdf-view-scroll-down-or-previous-page :which-key "scroll down")
     "d"  '(pdf-view-scroll-up-or-next-page :which-key "scroll up")
     "0"  '(image-bol :which-key "go left")
-    "$"  '(image-eol :which-key "go right")
+    "$"  '(image-eol :which-key "go right"))
+  (my-local-leader-def
+    :states 'normal
+    :keymaps 'pdf-view-mode-map
     ;; Scale/Fit
     "f"  nil
     "fw"  '(pdf-view-fit-width-to-window :which-key "fit width")
@@ -183,6 +188,7 @@
 (use-package reduce-ide
   :defer t
   :general (my-local-leader-def
+	     :states 'normal
 	     :keymaps 'reduce-mode-map
 	     "e" '(:ignore :which-key "eval")
 	     "ee" '(reduce-eval-last-statement :which-key "eval last statement")

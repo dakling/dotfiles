@@ -289,9 +289,9 @@
 ;; maple
 ;; (use-package maplev)
 
-;;latex
-(use-package auctex
-  :ensure t)
+;;latex (auctex)
+(use-package tex
+  :ensure auctex)
 
 ;; mail
 (use-package evil-mu4e
@@ -406,3 +406,4 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 ;; - mail
 ;; - exwm
 ;; - latex
+;; - eshell

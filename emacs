@@ -418,5 +418,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 ;; - buffer management
 ;; - mail
 ;; - exwm
+;; - exwm SPC w (window management)
 ;; - latex
 ;; - eshell

@@ -71,6 +71,9 @@
     :prefix "-"
     :states 'normal)
 
+  (general-nmap "SPC w" (general-simulate-key "C-w"))
+  (general-define-key "ESC" 'keyboard-quit :which-key "abort command")
+
   ;; many spacemacs bindings go here
   (my-leader-def
    "ar" '(ranger :which-key "call ranger")
@@ -83,7 +86,6 @@
    ;; "fed" '((lambda () (interactive) (find-file "~/.emacs.d")) :which-key "find config file") ;less nice (I think) alternative
    "fer" '(load-config-file :which-key "load config file")
    "feD" '(find-dotfile-dir :which-key "find dotfile directory")
-   ;; "w" '(:ignore :which-key "window")
    ;; "wo" '(other-window :which-key "other window")
    "SPC" '(counsel-M-x :which-key "M-x")
    "fp" '(counsel-locate :which-key "counsel-locate")
@@ -287,6 +289,10 @@
 ;; maple
 ;; (use-package maplev)
 
+;;latex
+(use-package auctex
+  :ensure t)
+
 ;; mail
 (use-package evil-mu4e
   :ensure t
@@ -366,7 +372,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
            (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
            (user-full-name "Dario Klingenberg"))
           ))
-  (mu4e/mail-account-reset)
+  ;; (mu4e/mail-account-reset)
   (with-eval-after-load 'mu4e-alert
     ;; Enable Desktop notifications
     (mu4e-alert-set-default-style 'notifications)) ; For linux
@@ -383,7 +389,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))
+    (auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -397,6 +403,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 ;; - autocomplete
 ;; - snippets
 ;; - buffer management
-;; - window management
 ;; - mail
 ;; - exwm
+;; - latex

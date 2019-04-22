@@ -64,6 +64,7 @@
   (general-create-definer my-leader-def
     :keymaps 'override
     :prefix "SPC"
+    :global-prefix "s-SPC"
     :states 'normal)
 
   (general-create-definer my-local-leader-def
@@ -72,6 +73,7 @@
     :states 'normal)
 
   (general-nmap "SPC w" (general-simulate-key "C-w"))
+  (general-nmap "s-SPC w" (general-simulate-key "C-w"))
   (general-define-key "ESC" 'keyboard-quit :which-key "abort command")
 
   ;; many spacemacs bindings go here
@@ -253,13 +255,23 @@
         ([s-f2] . (lambda ()
                     (interactive)
                     (start-process "" nil "qutebrowser")))
+        ([s-f4] . (lambda ()
+                    (interactive)
+                    (start-process "" nil "thunderbird")))
+        ([s-c] . (lambda ()
+                    (interactive)
+                    (kill-this-buffer)))
         ([s-f1] . (lambda ()
-  	                  eshell))
-        ))
- (push ?\s-\  exwm-input-prefix-keys)
-  (push ?\M-m  exwm-input-prefix-keys)
-  (exwm-enable)
-  )
+  	                  eshell))))
+  (push ?\s-\  exwm-input-prefix-keys)
+  ;; (push ?\M-m  exwm-input-prefix-keys)
+  (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
+		      (lambda () (interactive) (start-process-shell-command "" nil "pactl set-sink-volume @DEFAULT_SINK@ -5%")))
+  (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
+		      (lambda () (interactive) (start-process-shell-command "" nil "pactl set-sink-volume @DEFAULT_SINK@ +5%")))
+  (exwm-input-set-key (kbd "<XF86AudioMute>")
+		      (lambda () (interactive) (start-process-shell-command "" nil "pactl set-sink-mute @DEFAULT_SINK@ toggle")))
+  (exwm-enable))
 
 ;;;programming languages
 ;; lisp
@@ -342,7 +354,7 @@ Otto-Berndt-Straße 2 (L1|01 322)
 64287 Darmstadt
 
 E-Mail: klingenberg@fdy.tu-darmstadt.de
-Telefon: +49 6151 16-26207
+Telefon: +9 6151 16-26207
 Fax: +49 6151 16-26203
 Web: http://www.fdy.tu-darmstadt.de")
            (mu4e-sent-folder "/FDY/Sent Items")

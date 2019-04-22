@@ -65,7 +65,7 @@
     :keymaps 'override
     :prefix "SPC"
     :global-prefix "s-SPC"
-    :states 'normal)
+    :states '(normal emacs))
 
   (general-create-definer my-local-leader-def
     :keymaps 'override
@@ -74,6 +74,7 @@
 
   (general-nmap "SPC w" (general-simulate-key "C-w"))
   (general-nmap "s-SPC w" (general-simulate-key "C-w"))
+  (general-emap "s-SPC w" (general-simulate-key "C-w"))
   (general-define-key "ESC" 'keyboard-quit :which-key "abort command")
 
   ;; many spacemacs bindings go here

@@ -158,6 +158,18 @@
 (menu-bar-mode -1)
 (menu-bar-no-scroll-bar)
 
+;; eshell
+(use-package eshell
+  :config
+  (setq shell-protect-eshell-prompt nil)
+  (setq eshell-cmpl-ignore-case t))
+
+(use-package eshell-prompt-extras
+  :ensure t
+  :config
+  (setq eshell-highlight-prompt nil
+        eshell-prompt-function 'epe-theme-lambda))
+
 (use-package ranger :ensure t
   :commands (ranger)
   :config
@@ -181,8 +193,7 @@
 (use-package magit
   :ensure t
   :general (my-leader-def
-	     "gs" '(magit-status :which-key "git status"))
-  )
+	     "gs" '(magit-status :which-key "git status")))
 
 (use-package evil-magit :ensure t)
 
@@ -256,8 +267,7 @@
         ;; ([?\s-d] . (lambda (command)
   	;;                  (interactive (list (read-shell-command "$ ")))
   	;;                  (start-process-shell-command command nil command)))
-        ([?\s-d] . (lambda () (interactive)
-  	                 (start-process-shell-command "" nil "rofi -show drun")))
+        ([?\s-d] . counsel-linux-app)
         ([?\s-l] . evil-window-right)
         ([?\s-h] . evil-window-left)
         ([?\s-j] . evil-window-down)
@@ -456,7 +466,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))
+    (em-smart eshell-prompt-extras exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

@@ -73,9 +73,6 @@
     :prefix "-"
     :states 'normal)
 
-  (general-nmap "SPC w" (general-simulate-key "C-w"))
-  (general-nmap "s-SPC w" (general-simulate-key "C-w"))
-  (general-emap "s-SPC w" (general-simulate-key "C-w"))
   (general-define-key "ESC" 'keyboard-quit :which-key "abort command")
 
   ;; many spacemacs bindings go here
@@ -97,6 +94,31 @@
    "b" '(:ignore :which-key "buffer")
    "bb" '(counsel-ibuffer :which-key "switch buffer")
    "bk" '(kill-this-buffer :which-key "kill buffer") ; TODO kill current buffer immediately
+  ;; "w TAB"  'spacemacs/alternate-window
+  ;; "w2"  'spacemacs/layout-double-columns
+  ;; "w3"  'spacemacs/layout-triple-columns
+  ;; "wb"  'spacemacs/switch-to-minibuffer-window
+  "wd"  'evil-window-delete
+  "wH"  'evil-window-move-far-left
+  "wh"  'evil-window-left
+  "wJ"  'evil-window-move-very-bottom
+  "wj"  'evil-window-down
+  "wK"  'evil-window-move-very-top
+  "wk"  'evil-window-up
+  "wL"  'evil-window-move-far-right
+  "wl"  'evil-window-right
+  "wm"  'delete-other-windows
+  "wo"  'other-frame
+  "ws"  'split-window-below
+  "wS"  'split-window-below-and-focus
+  "w-"  'split-window-below
+  "wU"  'winner-redo
+  "wu"  'winner-undo
+  "wv"  'split-window-right
+  "wV"  'split-window-right-and-focus
+  "ww"  'other-window
+  "w="  'balance-windows
+  ;; "w+"  'spacemacs/window-layout-toggle
    ))
 
 (use-package evil
@@ -231,19 +253,24 @@
                       (lambda () (interactive)
                         (exwm-workspace-switch-create ,i))))
                   (number-sequence 0 9))
-        ([s-d] . (lambda (command)
-  	                 (interactive (list (read-shell-command "$ ")))
-  	                 (start-process-shell-command command nil command)))
-        ([s-f12] . (lambda () (interactive)
-  	                 (start-process "" nil "/usr/bin/slock")))
+        ;; ([?\s-d] . (lambda (command)
+  	;;                  (interactive (list (read-shell-command "$ ")))
+  	;;                  (start-process-shell-command command nil command)))
+        ([?\s-d] . (lambda () (interactive)
+  	                 (start-process-shell-command "" nil "rofi -show drun")))
+        ([?\s-l] . evil-window-right)
+        ([?\s-h] . evil-window-left)
+        ([?\s-j] . evil-window-down)
+        ([?\s-k] . evil-window-up)
+        ([?\s-c] . kill-this-buffer)
+        ([s-f1] . eshell)
         ([s-f2] . (lambda () (interactive)
                     (start-process "" nil "qutebrowser")))
+        ([s-f3] . deer)
         ([s-f4] . (lambda () (interactive)
                     (start-process "" nil "thunderbird")))
-        ([s-c] . (lambda () (interactive)
-                    (kill-this-buffer)))
-        ([s-f1] . (lambda () (interactive)
-  	                  (eshell)))))
+        ([s-f12] . (lambda () (interactive)
+  	                 (start-process "" nil "/usr/bin/slock")))))
   (push ?\s-\  exwm-input-prefix-keys)
   ;; (push ?\M-m  exwm-input-prefix-keys)
   (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
@@ -251,8 +278,7 @@
   (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
 		      (lambda () (interactive) (start-process-shell-command "" nil "pactl set-sink-volume @DEFAULT_SINK@ +5%")))
   (exwm-input-set-key (kbd "<XF86AudioMute>")
-		      (lambda () (interactive) (start-process-shell-command "" nil "pactl set-sink-mute @DEFAULT_SINK@ toggle")))
-  )
+		      (lambda () (interactive) (start-process-shell-command "" nil "pactl set-sink-mute @DEFAULT_SINK@ toggle"))))
 
 (use-package exwm-systemtray
   :after exwm

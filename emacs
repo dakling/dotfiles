@@ -368,7 +368,60 @@
 
 ;;latex (auctex)
 (use-package tex
-  :ensure auctex)
+  :ensure auctex
+  :init
+  (progn
+    (setq TeX-command-default 'LatexMK
+	  TeX-view-program-selection '((output-pdf "PDF Tools"))
+	  TeX-source-correlate-start-server t
+	  TeX-auto-save t
+	  TeX-parse-self t
+	  TeX-syntactic-comment t
+	  ;; Synctex support
+	  TeX-source-correlate-start-server nil
+	  TeX-interactive-mode 1
+	  ;; Don't insert line-break at inline math
+	  LaTeX-fill-break-at-separators nil))
+    :hook
+    (TeX-after-compilation-finished-functions . TeX-revert-document-buffer)
+    (LaTeX-mode-hook . LaTeX-math-mode)
+    (LaTeX-mode-hook . TeX-source-correlate-mode)
+    (LaTeX-mode-hook . TeX-PDF-mode)
+  :config
+  (progn
+    ;; Key bindings for plain TeX
+    :general
+    (my-local-leader-def
+						"\\"  'TeX-insert-macro                            ;; C-c C-m
+						"-"   'TeX-recenter-output-buffer                  ;; C-c C-l
+						"%"   'TeX-comment-or-uncomment-paragraph          ;; C-c %
+						";"   'TeX-comment-or-uncomment-region             ;; C-c ; or C-c :
+						;; TeX-command-run-all runs compile and open the viewer
+						"a"   'TeX-command-run-all                         ;; C-c C-a
+						"b"   'TeX-command-master
+						"k"   'TeX-kill-job                                ;; C-c C-k
+						"l"   'TeX-recenter-output-buffer                  ;; C-c C-l
+						"m"   'TeX-insert-macro                            ;; C-c C-m
+						"v"   'TeX-view                                    ;; C-c C-v
+						;; TeX-doc is a very slow function
+						"hd"  'TeX-doc
+						"xb"  'latex/font-bold
+						"xc"  'latex/font-code
+						"xe"  'latex/font-emphasis
+						"xi"  'latex/font-italic
+						"xr"  'latex/font-clear
+						"xo"  'latex/font-oblique
+						"xfc" 'latex/font-small-caps
+						"xff" 'latex/font-sans-serif
+						"xfr" 'latex/font-serif)))
+
+(use-package auctex-latexmk
+  :ensure t
+  :defer t
+  :init
+  (progn
+    (auctex-latexmk-setup)
+    (setq auctex-latexmk-inherit-TeX-PDF-mode t)))
 
 ;; mail
 (use-package evil-mu4e
@@ -376,7 +429,7 @@
   :config
   (setq mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e")
   (setq mu4e-maildir "~/Mail"
-        mu4e-trash-folder "/Trash"
+	mu4e-trash-folder "/Trash"
         mu4e-refile-folder "/Archive"
         mu4e-get-mail-command "offlineimap -o"
         mu4e-update-interval 600
@@ -466,7 +519,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (em-smart eshell-prompt-extras exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))
+    (auctex-latexmk em-smart eshell-prompt-extras exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

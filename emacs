@@ -1,3 +1,4 @@
+;;; my emacs config
 
 (setq package-enable-at-startup nil) ; tells emacs not to load any packages before starting up
 ;; the following lines tell emacs where on the internet to look up
@@ -95,7 +96,7 @@
    "fg" '(counsel-ag :which-key "counsel-ag")
    "b" '(:ignore :which-key "buffer")
    "bb" '(counsel-ibuffer :which-key "switch buffer")
-   "bk" '(ido-kill-buffer :which-key "kill buffer") ; TODO kill current buffer immediately
+   "bk" '(kill-this-buffer :which-key "kill buffer") ; TODO kill current buffer immediately
    ))
 
 (use-package evil
@@ -204,38 +205,24 @@
 ;;exwm
 (use-package exwm 
   :ensure t
-  :config
-(display-time-mode)
+  :init
   (server-start)
-  (setq mouse-autoselect-window t
-        focus-follows-mouse t)
-  (require 'exwm)
-  (require 'exwm-config)
-  (setq exwm-workspace-number 10)
-  (setq exwm-workspace-show-all-buffers t)
-  (setq exwm-layout-show-all-buffers t)
-  (require 'exwm-randr)
-  (set 'monitor1 "eDP1")
-  (set 'monitor2 "HDMI2")
-  (setq exwm-randr-workspace-output-plist
-          '(0 monitor1
-            2 monitor1
-            4 monitor1
-            6 monitor1
-            8 monitor1
-            1 monitor2
-            3 monitor2
-            5 monitor2
-            7 monitor2
-            9 monitor2))
-  (add-hook 'exwm-randr-screen-change-hook
-            (lambda ()
-              (start-process-shell-command
-               "xrandr" nil "xrandr --ouput HDMI2 --output eDP1 --auto")))
-  (exwm-randr-enable)
-  (require 'exwm-systemtray)
-  (exwm-systemtray-enable)
+  :config
+  (exwm-enable))
+
+(use-package exwm-config
+  :after exwm
+  :demand t
+  :config
   (evil-set-initial-state 'exwm-mode 'emacs)
+  (display-time-mode)
+  (setq mouse-autoselect-window t
+        focus-follows-mouse t))
+
+(use-package exwm-input
+  :after exwm
+  :demand t
+  :config
   (setq exwm-input-global-keys
       `(([?\s-r] . exwm-reset)
         ([?\s-w] . exwm-workspace-switch)
@@ -244,9 +231,7 @@
                       (lambda () (interactive)
                         (exwm-workspace-switch-create ,i))))
                   (number-sequence 0 9))
- ;; Bind "s-&" to launch applications ('M-&' also works if the output
-        ;; buffer does not bother you).
-        ([?\s-d] . (lambda (command)
+        ([s-d] . (lambda (command)
   	                 (interactive (list (read-shell-command "$ ")))
   	                 (start-process-shell-command command nil command)))
         ([s-f12] . (lambda () (interactive)
@@ -267,7 +252,55 @@
 		      (lambda () (interactive) (start-process-shell-command "" nil "pactl set-sink-volume @DEFAULT_SINK@ +5%")))
   (exwm-input-set-key (kbd "<XF86AudioMute>")
 		      (lambda () (interactive) (start-process-shell-command "" nil "pactl set-sink-mute @DEFAULT_SINK@ toggle")))
-  (exwm-enable))
+  )
+
+(use-package exwm-systemtray
+  :after exwm
+  :demand t
+  :config (exwm-systemtray-enable))
+
+(use-package exwm-randr
+  :after exwm
+  :demand t
+  :preface
+  (progn
+  (if (string-equal "klingenbergTablet" (getenv "HOSTNAME"))
+   (progn (set 'monitor1 "eDP1")
+  	  (set 'monitor2 "HDMI2"))
+   (progn (set 'monitor1 "VGA-1")
+  	  (set 'monitor2 "HDMI-1")))
+   ;; (set 'monitor1 "VGA-1")
+   ;; (set 'monitor2 "HDMI-1")
+   (defun my/exwm-xrandr ()
+     "Configure screen with xrandr."
+     (start-process-shell-command
+      "xrandr" nil
+      (if (string-equal "klingenbergTablet" (getenv "HOSTNAME"))
+      "xrandr --output VGA-1 --primary --left-of HDMI-1 --auto"
+      "xrandr --output eDP1 --primary --below-of HDMI1 --auto"))))
+  :hook (exwm-randr-screen-change . my/exwm-xrandr)
+  :init
+    (setq exwm-randr-workspace-monitor-plist (list 0 monitor1
+						 2 monitor1
+						 4 monitor1
+						 6 monitor1
+						 8 monitor1
+						 1 monitor2
+						 3 monitor2
+						 5 monitor2
+						 7 monitor2
+						 9 monitor2))
+  :config
+  (progn
+    (exwm-randr-enable)))
+
+(use-package exwm-workspace
+  :after exwm
+  :demand t
+  :init
+  (setq exwm-workspace-number 10)
+  (setq exwm-workspace-show-all-buffers t)
+  (setq exwm-layout-show-all-buffers t))
 
 ;;;programming languages
 ;; lisp
@@ -397,7 +430,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))
+    (exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -414,5 +447,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 ;; - mail
 ;; - exwm
 ;; - exwm SPC w (window management)
+;; - exwm multiple monitors
+;; - exwm host-specific settings
 ;; - latex
 ;; - eshell

@@ -173,7 +173,7 @@
 	  mode-line-misc-info
 	  mode-line-end-spaces))
   (setq sml/theme 'atom-one-dark)
-  (sml/setup))
+  (sml/setup)) 
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (menu-bar-no-scroll-bar)
@@ -253,8 +253,8 @@
     "m"  '(pdf-view-set-slice-using-mouse :which-key "slice using mouse")
     "b"  '(pdf-view-set-slice-from-bounding-box :which-key "sclice from bounding box")
     "R"  '(pdf-view-reset-slice :which-key "reset slice")
-    "zr" '(pdf-view-scale-reset :which-key "zoom reset"))
-  )
+    "zr" '(pdf-view-scale-reset :which-key "zoom reset")))
+
 ;;exwm
 (use-package exwm 
   :ensure t
@@ -293,7 +293,7 @@
 	  ([?\s-j] . evil-window-down)
 	  ([?\s-k] . evil-window-up)
 	  ([?\s-c] . kill-this-buffer)
-	  ([s-f1] . eshell)
+	  ([s-f1] . (lambda () (interactive) (eshell 'N)))
 	  ([s-f2] . (lambda () (interactive)
 		      (start-process "" nil "qutebrowser")))
 	  ([s-f3] . deer)
@@ -539,7 +539,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
     ("bc75dfb513af404a26260b3420d1f3e4131df752c19ab2984a7c85def9a2917e" default)))
  '(package-selected-packages
    (quote
-    (auctex-latexmk em-smart eshell-prompt-extras exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))
+    (multi-eshell auctex-latexmk em-smart eshell-prompt-extras exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

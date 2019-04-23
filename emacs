@@ -4,9 +4,9 @@
 ;; the following lines tell emacs where on the internet to look up
 ;; for new packages.
 (setq package-archives '(("org"       . "http://orgmode.org/elpa/")
-                         ("gnu"       . "http://elpa.gnu.org/packages/")
-                         ("melpa"     . "https://melpa.org/packages/")
-                         ("marmalade" . "http://marmalade-repo.org/packages/")
+			 ("gnu"       . "http://elpa.gnu.org/packages/")
+			 ("melpa"     . "https://melpa.org/packages/")
+			 ("marmalade" . "http://marmalade-repo.org/packages/")
 			 ("reduce ide" . "http://reduce-algebra.sourceforge.net/reduce-ide/packages/")))
 (package-initialize) ; guess what this one does ?
 
@@ -50,15 +50,15 @@
 
 ;; packages with configuration
 (use-package general :ensure t
-:init
+  :init
   (setq general-override-states '(insert
-                                  emacs
-                                  hybrid
-                                  normal
-                                  visual
-                                  motion
-                                  operator
-                                  replace))
+				  emacs
+				  hybrid
+				  normal
+				  visual
+				  motion
+				  operator
+				  replace))
   :config
   (general-evil-setup t)
 
@@ -77,49 +77,49 @@
 
   ;; many spacemacs bindings go here
   (my-leader-def
-   "ar" '(ranger :which-key "call ranger")
-   "ad" '(deer :which-key "call deer")
-   "g"  '(:ignore t :which-key "git")
-   "f" '(:ignore :which-key "file")
-   "fs" '(save-buffer :which-key "save file")
-   "ff" '(counsel-find-file :which-key "find file")
-   "fed" '(find-config-file :which-key "find config file")
-   ;; "fed" '((lambda () (interactive) (find-file "~/.emacs.d")) :which-key "find config file") ;less nice (I think) alternative
-   "fer" '(load-config-file :which-key "load config file")
-   "feD" '(find-dotfile-dir :which-key "find dotfile directory")
-   ;; "wo" '(other-window :which-key "other window")
-   "SPC" '(counsel-M-x :which-key "M-x")
-   "fp" '(counsel-locate :which-key "counsel-locate")
-   "fg" '(counsel-ag :which-key "counsel-ag")
-   "b" '(:ignore :which-key "buffer")
-   "bb" '(counsel-ibuffer :which-key "switch buffer")
-   "bk" '(kill-this-buffer :which-key "kill buffer") ; TODO kill current buffer immediately
-  ;; "w TAB"  'spacemacs/alternate-window
-  ;; "w2"  'spacemacs/layout-double-columns
-  ;; "w3"  'spacemacs/layout-triple-columns
-  ;; "wb"  'spacemacs/switch-to-minibuffer-window
-  "wd"  'evil-window-delete
-  "wH"  'evil-window-move-far-left
-  "wh"  'evil-window-left
-  "wJ"  'evil-window-move-very-bottom
-  "wj"  'evil-window-down
-  "wK"  'evil-window-move-very-top
-  "wk"  'evil-window-up
-  "wL"  'evil-window-move-far-right
-  "wl"  'evil-window-right
-  "wm"  'delete-other-windows
-  "wo"  'other-frame
-  "ws"  'split-window-below
-  "wS"  'split-window-below-and-focus
-  "w-"  'split-window-below
-  "wU"  'winner-redo
-  "wu"  'winner-undo
-  "wv"  'split-window-right
-  "wV"  'split-window-right-and-focus
-  "ww"  'other-window
-  "w="  'balance-windows
-  ;; "w+"  'spacemacs/window-layout-toggle
-   ))
+    "ar" '(ranger :which-key "call ranger")
+    "ad" '(deer :which-key "call deer")
+    "g"  '(:ignore t :which-key "git")
+    "f" '(:ignore :which-key "file")
+    "fs" '(save-buffer :which-key "save file")
+    "ff" '(counsel-find-file :which-key "find file")
+    "fed" '(find-config-file :which-key "find config file")
+    ;; "fed" '((lambda () (interactive) (find-file "~/.emacs.d")) :which-key "find config file") ;less nice (I think) alternative
+    "fer" '(load-config-file :which-key "load config file")
+    "feD" '(find-dotfile-dir :which-key "find dotfile directory")
+    ;; "wo" '(other-window :which-key "other window")
+    "SPC" '(counsel-M-x :which-key "M-x")
+    "fp" '(counsel-locate :which-key "counsel-locate")
+    "fg" '(counsel-ag :which-key "counsel-ag")
+    "b" '(:ignore :which-key "buffer")
+    "bb" '(counsel-ibuffer :which-key "switch buffer")
+    "bk" '(kill-this-buffer :which-key "kill buffer") ; TODO kill current buffer immediately
+    ;; "w TAB"  'spacemacs/alternate-window
+    ;; "w2"  'spacemacs/layout-double-columns
+    ;; "w3"  'spacemacs/layout-triple-columns
+    ;; "wb"  'spacemacs/switch-to-minibuffer-window
+    "wd"  'evil-window-delete
+    "wH"  'evil-window-move-far-left
+    "wh"  'evil-window-left
+    "wJ"  'evil-window-move-very-bottom
+    "wj"  'evil-window-down
+    "wK"  'evil-window-move-very-top
+    "wk"  'evil-window-up
+    "wL"  'evil-window-move-far-right
+    "wl"  'evil-window-right
+    "wm"  'delete-other-windows
+    "wo"  'other-frame
+    "ws"  'split-window-below
+    "wS"  'split-window-below-and-focus
+    "w-"  'split-window-below
+    "wU"  'winner-redo
+    "wu"  'winner-undo
+    "wv"  'split-window-right
+    "wV"  'split-window-right-and-focus
+    "ww"  'other-window
+    "w="  'balance-windows
+    ;; "w+"  'spacemacs/window-layout-toggle
+    ))
 
 (use-package evil
   :ensure t
@@ -144,7 +144,7 @@
 (use-package evil-commentary
   :ensure t
   :init (evil-commentary-mode))
- 
+
 (use-package which-key
   :ensure t
   :init (which-key-mode)
@@ -168,7 +168,7 @@
   :ensure t
   :config
   (setq eshell-highlight-prompt nil
-        eshell-prompt-function 'epe-theme-lambda))
+	eshell-prompt-function 'epe-theme-lambda))
 
 (use-package ranger :ensure t
   :commands (ranger)
@@ -207,21 +207,21 @@
   (evil-collection-init 'pdf)
   :general
   (general-define-key
-    :states 'normal
-    :keymaps 'pdf-view-mode-map
-    ;; evil-style bindings
-    ;; "SPC"  nil ;TODO where to put this globally?
-    "-"  nil ;TODO where to put this globally?
-    "j"  '(pdf-view-next-line-or-next-page :which-key "scroll down")
-    "k"  '(pdf-view-previous-line-or-previous-page :which-key "scroll up")
-    "L"  '(image-forward-hscroll :which-key "scroll right")
-    "H"  '(image-backward-hscroll :which-key "scroll left")
-    "l"  '(pdf-view-next-page :which-key "page down")
-    "h"  '(pdf-view-previous-page :which-key "page up")
-    "u"  '(pdf-view-scroll-down-or-previous-page :which-key "scroll down")
-    "d"  '(pdf-view-scroll-up-or-next-page :which-key "scroll up")
-    "0"  '(image-bol :which-key "go left")
-    "$"  '(image-eol :which-key "go right"))
+   :states 'normal
+   :keymaps 'pdf-view-mode-map
+   ;; evil-style bindings
+   ;; "SPC"  nil ;TODO where to put this globally?
+   "-"  nil ;TODO where to put this globally?
+   "j"  '(pdf-view-next-line-or-next-page :which-key "scroll down")
+   "k"  '(pdf-view-previous-line-or-previous-page :which-key "scroll up")
+   "L"  '(image-forward-hscroll :which-key "scroll right")
+   "H"  '(image-backward-hscroll :which-key "scroll left")
+   "l"  '(pdf-view-next-page :which-key "page down")
+   "h"  '(pdf-view-previous-page :which-key "page up")
+   "u"  '(pdf-view-scroll-down-or-previous-page :which-key "scroll down")
+   "d"  '(pdf-view-scroll-up-or-next-page :which-key "scroll up")
+   "0"  '(image-bol :which-key "go left")
+   "$"  '(image-eol :which-key "go right"))
   (my-local-leader-def
     ;; :states 'normal
     :keymaps 'pdf-view-mode-map
@@ -250,37 +250,37 @@
   (evil-set-initial-state 'exwm-mode 'emacs)
   (display-time-mode)
   (setq mouse-autoselect-window t
-        focus-follows-mouse t))
+	focus-follows-mouse t))
 
 (use-package exwm-input
   :after exwm
   :demand t
   :config
   (setq exwm-input-global-keys
-      `(([?\s-r] . exwm-reset)
-        ([?\s-w] . exwm-workspace-switch)
-        ,@(mapcar (lambda (i)
-                    `(,(kbd (format "s-%d" i)) .
-                      (lambda () (interactive)
-                        (exwm-workspace-switch-create ,i))))
-                  (number-sequence 0 9))
-        ;; ([?\s-d] . (lambda (command)
-  	;;                  (interactive (list (read-shell-command "$ ")))
-  	;;                  (start-process-shell-command command nil command)))
-        ([?\s-d] . counsel-linux-app)
-        ([?\s-l] . evil-window-right)
-        ([?\s-h] . evil-window-left)
-        ([?\s-j] . evil-window-down)
-        ([?\s-k] . evil-window-up)
-        ([?\s-c] . kill-this-buffer)
-        ([s-f1] . eshell)
-        ([s-f2] . (lambda () (interactive)
-                    (start-process "" nil "qutebrowser")))
-        ([s-f3] . deer)
-        ([s-f4] . (lambda () (interactive)
-                    (start-process "" nil "thunderbird")))
-        ([s-f12] . (lambda () (interactive)
-  	                 (start-process "" nil "/usr/bin/slock")))))
+	`(([?\s-r] . exwm-reset)
+	  ([?\s-w] . exwm-workspace-switch)
+	  ,@(mapcar (lambda (i)
+		      `(,(kbd (format "s-%d" i)) .
+			(lambda () (interactive)
+			  (exwm-workspace-switch-create ,i))))
+		    (number-sequence 0 9))
+	  ;; ([?\s-d] . (lambda (command)
+	  ;;                  (interactive (list (read-shell-command "$ ")))
+	  ;;                  (start-process-shell-command command nil command)))
+	  ([?\s-d] . counsel-linux-app)
+	  ([?\s-l] . evil-window-right)
+	  ([?\s-h] . evil-window-left)
+	  ([?\s-j] . evil-window-down)
+	  ([?\s-k] . evil-window-up)
+	  ([?\s-c] . kill-this-buffer)
+	  ([s-f1] . eshell)
+	  ([s-f2] . (lambda () (interactive)
+		      (start-process "" nil "qutebrowser")))
+	  ([s-f3] . deer)
+	  ([s-f4] . (lambda () (interactive)
+		      (start-process "" nil "thunderbird")))
+	  ([s-f12] . (lambda () (interactive)
+		       (start-process "" nil "/usr/bin/slock")))))
   (push ?\s-\  exwm-input-prefix-keys)
   ;; (push ?\M-m  exwm-input-prefix-keys)
   (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
@@ -300,23 +300,23 @@
   :demand t
   :preface
   (progn
-  (if (string-equal "klingenbergTablet" (getenv "HOSTNAME"))
-   (progn (set 'monitor1 "eDP1")
-  	  (set 'monitor2 "HDMI2"))
-   (progn (set 'monitor1 "VGA-1")
-  	  (set 'monitor2 "HDMI-1")))
-   ;; (set 'monitor1 "VGA-1")
-   ;; (set 'monitor2 "HDMI-1")
-   (defun my/exwm-xrandr ()
-     "Configure screen with xrandr."
-     (start-process-shell-command
-      "xrandr" nil
-      (if (string-equal "klingenbergTablet" (getenv "HOSTNAME"))
-      "xrandr --output VGA-1 --primary --left-of HDMI-1 --auto"
-      "xrandr --output eDP1 --primary --below-of HDMI1 --auto"))))
+    (if (string-equal "klingenbergTablet" (getenv "HOSTNAME"))
+	(progn (set 'monitor1 "eDP1")
+	       (set 'monitor2 "HDMI2"))
+      (progn (set 'monitor1 "VGA-1")
+	     (set 'monitor2 "HDMI-1")))
+    ;; (set 'monitor1 "VGA-1")
+    ;; (set 'monitor2 "HDMI-1")
+    (defun my/exwm-xrandr ()
+      "Configure screen with xrandr."
+      (start-process-shell-command
+       "xrandr" nil
+       (if (string-equal "klingenbergTablet" (getenv "HOSTNAME"))
+	   "xrandr --output VGA-1 --primary --left-of HDMI-1 --auto"
+	 "xrandr --output eDP1 --primary --below-of HDMI1 --auto"))))
   :hook (exwm-randr-screen-change . my/exwm-xrandr)
   :init
-    (setq exwm-randr-workspace-monitor-plist (list 0 monitor1
+  (setq exwm-randr-workspace-monitor-plist (list 0 monitor1
 						 2 monitor1
 						 4 monitor1
 						 6 monitor1
@@ -382,38 +382,38 @@
 	  TeX-interactive-mode 1
 	  ;; Don't insert line-break at inline math
 	  LaTeX-fill-break-at-separators nil))
-    :hook
-    (TeX-after-compilation-finished-functions . TeX-revert-document-buffer)
-    (LaTeX-mode-hook . LaTeX-math-mode)
-    (LaTeX-mode-hook . TeX-source-correlate-mode)
-    (LaTeX-mode-hook . TeX-PDF-mode)
+  :hook
+  (TeX-after-compilation-finished-functions . TeX-revert-document-buffer)
+  (LaTeX-mode-hook . LaTeX-math-mode)
+  (LaTeX-mode-hook . TeX-source-correlate-mode)
+  (LaTeX-mode-hook . TeX-PDF-mode)
   :config
   (progn
     ;; Key bindings for plain TeX
     :general
     (my-local-leader-def
-						"\\"  'TeX-insert-macro                            ;; C-c C-m
-						"-"   'TeX-recenter-output-buffer                  ;; C-c C-l
-						"%"   'TeX-comment-or-uncomment-paragraph          ;; C-c %
-						";"   'TeX-comment-or-uncomment-region             ;; C-c ; or C-c :
-						;; TeX-command-run-all runs compile and open the viewer
-						"a"   'TeX-command-run-all                         ;; C-c C-a
-						"b"   'TeX-command-master
-						"k"   'TeX-kill-job                                ;; C-c C-k
-						"l"   'TeX-recenter-output-buffer                  ;; C-c C-l
-						"m"   'TeX-insert-macro                            ;; C-c C-m
-						"v"   'TeX-view                                    ;; C-c C-v
-						;; TeX-doc is a very slow function
-						"hd"  'TeX-doc
-						"xb"  'latex/font-bold
-						"xc"  'latex/font-code
-						"xe"  'latex/font-emphasis
-						"xi"  'latex/font-italic
-						"xr"  'latex/font-clear
-						"xo"  'latex/font-oblique
-						"xfc" 'latex/font-small-caps
-						"xff" 'latex/font-sans-serif
-						"xfr" 'latex/font-serif)))
+      "\\"  'TeX-insert-macro                            ;; C-c C-m
+      "-"   'TeX-recenter-output-buffer                  ;; C-c C-l
+      "%"   'TeX-comment-or-uncomment-paragraph          ;; C-c %
+      ";"   'TeX-comment-or-uncomment-region             ;; C-c ; or C-c :
+      ;; TeX-command-run-all runs compile and open the viewer
+      "a"   'TeX-command-run-all                         ;; C-c C-a
+      "b"   'TeX-command-master
+      "k"   'TeX-kill-job                                ;; C-c C-k
+      "l"   'TeX-recenter-output-buffer                  ;; C-c C-l
+      "m"   'TeX-insert-macro                            ;; C-c C-m
+      "v"   'TeX-view                                    ;; C-c C-v
+      ;; TeX-doc is a very slow function
+      "hd"  'TeX-doc
+      "xb"  'latex/font-bold
+      "xc"  'latex/font-code
+      "xe"  'latex/font-emphasis
+      "xi"  'latex/font-italic
+      "xr"  'latex/font-clear
+      "xo"  'latex/font-oblique
+      "xfc" 'latex/font-small-caps
+      "xff" 'latex/font-sans-serif
+      "xfr" 'latex/font-serif)))
 
 (use-package auctex-latexmk
   :ensure t
@@ -430,40 +430,40 @@
   (setq mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e")
   (setq mu4e-maildir "~/Mail"
 	mu4e-trash-folder "/Trash"
-        mu4e-refile-folder "/Archive"
-        mu4e-get-mail-command "offlineimap -o"
-        mu4e-update-interval 600
-        mu4e-compose-signature-auto-include t
-        mu4e-view-show-images t
-        mu4e-enable-notifications t
-        message-send-mail-function 'smtpmail-send-it
-        smtpmail-stream-type 'starttls
-        mu4e-view-show-addresses t)
+	mu4e-refile-folder "/Archive"
+	mu4e-get-mail-command "offlineimap -o"
+	mu4e-update-interval 600
+	mu4e-compose-signature-auto-include t
+	mu4e-view-show-images t
+	mu4e-enable-notifications t
+	message-send-mail-function 'smtpmail-send-it
+	smtpmail-stream-type 'starttls
+	mu4e-view-show-addresses t)
   (setq mu4e-account-alist
-        '(("Gmail"
-           ;; Under each account, set the account-specific variables you want.
-           (mu4e-sent-messages-behavior delete)
-           (mu4e-compose-signature-auto-include nil)
-           (mu4e-sent-folder "/Gmail/sent")
-           (mu4e-drafts-folder "/Gmail/drafts")
-           (user-mail-address "dario.klingenberg@gmail.com")
-           (smtpmail-smtp-server "smtp.gmail.com")
-           (smtpmail-smtp-service 465)
-           (user-full-name "Dario Klingenberg"))
-          ("Web"
-           (mu4e-sent-messages-behavior sent)
-           (mu4e-compose-signature-auto-include nil)
-           (mu4e-sent-folder "/Web/Sent Items")
-           (mu4e-drafts-folder "/Web/Drafts")
-           (smtpmail-smtp-server "smtp.web.de")
-           (smtpmail-smtp-service 587)
-           (user-mail-address "dario.klingenberg@web.de")
-           (user-full-name "dario"))
-          ("FDY"
-           (mu4e-sent-messages-behavior sent)
-           (mu4e-compose-signature-auto-include t)
-           (mu4e-compose-signature
-"Technische Universität Darmstadt
+	'(("Gmail"
+	   ;; Under each account, set the account-specific variables you want.
+	   (mu4e-sent-messages-behavior delete)
+	   (mu4e-compose-signature-auto-include nil)
+	   (mu4e-sent-folder "/Gmail/sent")
+	   (mu4e-drafts-folder "/Gmail/drafts")
+	   (user-mail-address "dario.klingenberg@gmail.com")
+	   (smtpmail-smtp-server "smtp.gmail.com")
+	   (smtpmail-smtp-service 465)
+	   (user-full-name "Dario Klingenberg"))
+	  ("Web"
+	   (mu4e-sent-messages-behavior sent)
+	   (mu4e-compose-signature-auto-include nil)
+	   (mu4e-sent-folder "/Web/Sent Items")
+	   (mu4e-drafts-folder "/Web/Drafts")
+	   (smtpmail-smtp-server "smtp.web.de")
+	   (smtpmail-smtp-service 587)
+	   (user-mail-address "dario.klingenberg@web.de")
+	   (user-full-name "dario"))
+	  ("FDY"
+	   (mu4e-sent-messages-behavior sent)
+	   (mu4e-compose-signature-auto-include t)
+	   (mu4e-compose-signature
+	    "Technische Universität Darmstadt
 Dario Klingenberg, M.Sc.
 Fachgebiet für Strömungsdynamik
 Fachbereich Maschinenbau
@@ -475,17 +475,17 @@ E-Mail: klingenberg@fdy.tu-darmstadt.de
 Telefon: +9 6151 16-26207
 Fax: +49 6151 16-26203
 Web: http://www.fdy.tu-darmstadt.de")
-           (mu4e-sent-folder "/FDY/Sent Items")
-           (mu4e-drafts-folder "/FDY/Drafts")
-           (smtpmail-smtp-server "smtp.tu-darmstadt.de")
-           (smtpmail-smtp-service 465)
-           (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
-           (user-full-name "Dario Klingenberg"))
-          ("GSC"
-           (mu4e-sent-messages-behavior sent)
-           (mu4e-compose-signature-auto-include t)
-           (mu4e-compose-signature
-"Technische Universität Darmstadt
+	   (mu4e-sent-folder "/FDY/Sent Items")
+	   (mu4e-drafts-folder "/FDY/Drafts")
+	   (smtpmail-smtp-server "smtp.tu-darmstadt.de")
+	   (smtpmail-smtp-service 465)
+	   (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
+	   (user-full-name "Dario Klingenberg"))
+	  ("GSC"
+	   (mu4e-sent-messages-behavior sent)
+	   (mu4e-compose-signature-auto-include t)
+	   (mu4e-compose-signature
+	    "Technische Universität Darmstadt
 Dario Klingenberg, M.Sc.
 Graduate School Computational Engineering
 Dolivostraße 15
@@ -495,13 +495,13 @@ E-Mail: klingenberg@gsc.tu-darmstadt.de
 Telefon: +49 6151 16-24381
 Fax: +49 6151 16-24404
 Web: http://www.gsc.ce.tu-darmstadt.de/")
-           (mu4e-sent-folder "/GSC/Sent Items")
-           (mu4e-drafts-folder "/GSC/Drafts")
-           (smtpmail-smtp-server "smtp.gsc.ce.tu-darmstadt.de")
-           (smtpmail-smtp-service 465)
-           (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
-           (user-full-name "Dario Klingenberg"))
-          ))
+	   (mu4e-sent-folder "/GSC/Sent Items")
+	   (mu4e-drafts-folder "/GSC/Drafts")
+	   (smtpmail-smtp-server "smtp.gsc.ce.tu-darmstadt.de")
+	   (smtpmail-smtp-service 465)
+	   (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
+	   (user-full-name "Dario Klingenberg"))
+	  ))
   ;; (mu4e/mail-account-reset)
   (with-eval-after-load 'mu4e-alert
     ;; Enable Desktop notifications
@@ -509,8 +509,8 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   (with-eval-after-load 'mu4e
     (evil-define-key 'evilified mu4e-main-mode-map (kbd "j") 'evil-next-line)
     (bind-keys :map mu4e-main-mode-map
-               ;; ("j" . evil-next-line)
-               ("c" . mu4e-compose-new))))
+	       ;; ("j" . evil-next-line)
+	       ("c" . mu4e-compose-new))))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.

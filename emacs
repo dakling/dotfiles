@@ -153,7 +153,27 @@
 ;;appearance
 (use-package zenburn-theme :ensure t)
 ;; (use-package cyberpunk-theme :ensure t)
-(use-package smart-mode-line-atom-one-dark-theme :ensure t)
+(use-package smart-mode-line
+  :config
+  (setq mode-line-format
+	(list
+	 "%e"
+	  mode-line-front-space
+	  ;; exwm-workspace-current-index TODO
+	  mode-line-mule-info
+	  mode-line-client
+	  mode-line-modified
+	  mode-line-remote
+	  mode-line-frame-identification
+	  mode-line-buffer-identification
+	  sml/pos-id-separator mode-line-position evil-mode-line-tag
+	  (vc-mode vc-mode)
+	  sml/pre-modes-separator
+	  mode-line-modes
+	  mode-line-misc-info
+	  mode-line-end-spaces))
+  (setq sml/theme 'atom-one-dark)
+  (sml/setup))
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (menu-bar-no-scroll-bar)
@@ -426,7 +446,7 @@
 ;; mail
 (use-package evil-mu4e
   :ensure t
-  :config
+  :init
   (setq mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e")
   (setq mu4e-maildir "~/Mail"
 	mu4e-trash-folder "/Trash"
@@ -503,10 +523,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 	   (user-full-name "Dario Klingenberg"))
 	  ))
   ;; (mu4e/mail-account-reset)
-  (with-eval-after-load 'mu4e-alert
-    ;; Enable Desktop notifications
-    (mu4e-alert-set-default-style 'notifications)) ; For linux
-  (with-eval-after-load 'mu4e
+  :config
     (evil-define-key 'evilified mu4e-main-mode-map (kbd "j") 'evil-next-line)
     (bind-keys :map mu4e-main-mode-map
 	       ;; ("j" . evil-next-line)

@@ -527,13 +527,16 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
     (evil-define-key 'evilified mu4e-main-mode-map (kbd "j") 'evil-next-line)
     (bind-keys :map mu4e-main-mode-map
 	       ;; ("j" . evil-next-line)
-	       ("c" . mu4e-compose-new))))
+	       ("c" . mu4e-compose-new)))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("bc75dfb513af404a26260b3420d1f3e4131df752c19ab2984a7c85def9a2917e" default)))
  '(package-selected-packages
    (quote
     (auctex-latexmk em-smart eshell-prompt-extras exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))

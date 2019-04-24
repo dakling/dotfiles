@@ -1,3 +1,22 @@
+;;; auto-generated stuff
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("bc75dfb513af404a26260b3420d1f3e4131df752c19ab2984a7c85def9a2917e" default)))
+ '(package-selected-packages
+   (quote
+    (multi-eshell auctex-latexmk em-smart eshell-prompt-extras exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
 ;;; my emacs config
 
 (setq package-enable-at-startup nil) ; tells emacs not to load any packages before starting up
@@ -155,23 +174,23 @@
 ;; (use-package cyberpunk-theme :ensure t)
 (use-package smart-mode-line
   :config
-  (setq mode-line-format
-	(list
-	 "%e"
-	  mode-line-front-space
-	  ;; exwm-workspace-current-index TODO
-	  mode-line-mule-info
-	  mode-line-client
-	  mode-line-modified
-	  mode-line-remote
-	  mode-line-frame-identification
-	  mode-line-buffer-identification
-	  sml/pos-id-separator mode-line-position evil-mode-line-tag
-	  (vc-mode vc-mode)
-	  sml/pre-modes-separator
-	  mode-line-modes
-	  mode-line-misc-info
-	  mode-line-end-spaces))
+  ;; (setq mode-line-format
+  ;; 	(list
+  ;; 	 "%e"
+  ;; 	  mode-line-front-space
+  ;; 	  ;; exwm-workspace-current-index TODO
+  ;; 	  mode-line-mule-info
+  ;; 	  mode-line-client
+  ;; 	  mode-line-modified
+  ;; 	  mode-line-remote
+  ;; 	  mode-line-frame-identification
+  ;; 	  mode-line-buffer-identification
+  ;; 	  sml/pos-id-separator mode-line-position evil-mode-line-tag
+  ;; 	  (vc-mode vc-mode)
+  ;; 	  sml/pre-modes-separator
+  ;; 	  mode-line-modes
+  ;; 	  mode-line-misc-info
+  ;; 	  mode-line-end-spaces))
   (setq sml/theme 'atom-one-dark)
   (sml/setup)) 
 (tool-bar-mode -1)
@@ -529,23 +548,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 	       ;; ("j" . evil-next-line)
 	       ("c" . mu4e-compose-new)))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   (quote
-    ("bc75dfb513af404a26260b3420d1f3e4131df752c19ab2984a7c85def9a2917e" default)))
- '(package-selected-packages
-   (quote
-    (multi-eshell auctex-latexmk em-smart eshell-prompt-extras exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
 
 ;;; TODO
 ;; - font

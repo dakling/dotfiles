@@ -1,4 +1,4 @@
 #! /bin/sh
 
 # termite -e "xfreerdp /v:terminal02 /u:klingenberg /f"
-termite -e "xfreerdp /v:terminal01 /u:klingenberg /f +clipboard /home-drive"
+termite -e "xfreerdp /v:terminal03 /u:klingenberg /f +clipboard /home-drive"

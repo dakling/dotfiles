@@ -92,6 +92,8 @@
     :prefix "-"
     :states 'normal)
 
+  (general-nmap "Y" "y$")
+
   (general-define-key "ESC" 'keyboard-quit :which-key "abort command")
 
   ;; many spacemacs bindings go here
@@ -227,7 +229,7 @@
 
 (use-package company
   :ensure t
-  :init (company-mode 1))
+  :config (company-mode 1))
 
 (use-package magit
   :ensure t

@@ -9,7 +9,7 @@
     ("bc75dfb513af404a26260b3420d1f3e4131df752c19ab2984a7c85def9a2917e" default)))
  '(package-selected-packages
    (quote
-    (multi-eshell auctex-latexmk em-smart eshell-prompt-extras exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))
+    (rainbow-delimiters multi-eshell auctex-latexmk em-smart eshell-prompt-extras exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -113,7 +113,7 @@
     "fp" '(counsel-locate :which-key "counsel-locate")
     "fg" '(counsel-ag :which-key "counsel-ag")
     "b" '(:ignore :which-key "buffer")
-    "bb" '(counsel-ibuffer :which-key "switch buffer")
+    "bb" '(counsel-switch-buffer :which-key "switch buffer")
     "bk" '(kill-this-buffer :which-key "kill buffer") ; TODO kill current buffer immediately
     ;; "w TAB"  'spacemacs/alternate-window
     ;; "w2"  'spacemacs/layout-double-columns
@@ -214,7 +214,9 @@
 (use-package ranger :ensure t
   :commands (ranger)
   :config
-  (setq ranger-cleanup-eagerly t))
+  (setq ranger-cleanup-eagerly t)
+  (setq ranger-cleanup-eagerly t)
+  (ranger-override-dired-mode t))
 
 (use-package ivy :ensure t
   :diminish (ivy-mode . "") ; does not display ivy in the modeline
@@ -305,15 +307,13 @@
 			(lambda () (interactive)
 			  (exwm-workspace-switch-create ,i))))
 		    (number-sequence 0 9))
-	  ;; ([?\s-d] . (lambda (command)
-	  ;;                  (interactive (list (read-shell-command "$ ")))
-	  ;;                  (start-process-shell-command command nil command)))
 	  ([?\s-d] . counsel-linux-app)
 	  ([?\s-l] . evil-window-right)
 	  ([?\s-h] . evil-window-left)
 	  ([?\s-j] . evil-window-down)
 	  ([?\s-k] . evil-window-up)
 	  ([?\s-c] . kill-this-buffer)
+	  ([?\s-m] . delete-other-windows)
 	  ([s-f1] . (lambda () (interactive) (eshell 'N)))
 	  ([s-f2] . (lambda () (interactive)
 		      (start-process "" nil "qutebrowser")))
@@ -550,6 +550,12 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 	       ;; ("j" . evil-next-line)
 	       ("c" . mu4e-compose-new)))
 
+
+(use-package rainbow-delimiters
+  :ensure t
+  :config (rainbow-delimiters-mode 1))
+
+(show-paren-mode 1)
 
 ;;; TODO
 ;; - font

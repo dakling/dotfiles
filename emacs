@@ -171,30 +171,35 @@
   :init (which-key-mode)
   :diminish which-key-mode)
 
+(format "%s" (+ 1 2 3))
+
+
 ;;appearance
 (use-package zenburn-theme :ensure t)
 ;; (use-package cyberpunk-theme :ensure t)
 (use-package smart-mode-line
+  :init
+  (defvar my-mode-line-front-space '(:eval (if (display-graphic-p) "lalalal" "lalalal")))
   :config
-  ;; (setq mode-line-format
-  ;; 	(list
-  ;; 	 "%e"
-  ;; 	  mode-line-front-space
-  ;; 	  ;; exwm-workspace-current-index TODO
-  ;; 	  mode-line-mule-info
-  ;; 	  mode-line-client
-  ;; 	  mode-line-modified
-  ;; 	  mode-line-remote
-  ;; 	  mode-line-frame-identification
-  ;; 	  mode-line-buffer-identification
-  ;; 	  sml/pos-id-separator mode-line-position evil-mode-line-tag
-  ;; 	  (vc-mode vc-mode)
-  ;; 	  sml/pre-modes-separator
-  ;; 	  mode-line-modes
-  ;; 	  mode-line-misc-info
-  ;; 	  mode-line-end-spaces))
   (setq sml/theme 'atom-one-dark)
-  (sml/setup)) 
+  (setq mode-line-format
+  	'("%e"
+	  (:eval (format "%s " exwm-workspace-current-index)) ;; TODO representation and multiple workspaces
+  	  mode-line-front-space
+  	  mode-line-mule-info
+  	  mode-line-client
+  	  mode-line-modified
+  	  mode-line-remote
+  	  mode-line-frame-identification
+  	  mode-line-buffer-identification
+  	  sml/pos-id-separator mode-line-position evil-mode-line-tag
+  	  (vc-mode vc-mode)
+  	  sml/pre-modes-separator
+  	  mode-line-modes
+  	  mode-line-misc-info
+  	  mode-line-end-spaces))
+  (sml/setup)
+  ) 
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (menu-bar-no-scroll-bar)

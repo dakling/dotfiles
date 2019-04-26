@@ -80,6 +80,7 @@
 				  replace))
   :config
   (general-evil-setup t)
+  (general-auto-unbind-keys)
 
   (general-create-definer my-leader-def
     :keymaps 'override
@@ -171,20 +172,22 @@
   :init (which-key-mode)
   :diminish which-key-mode)
 
-(format "%s" (+ 1 2 3))
-
-
 ;;appearance
 (use-package zenburn-theme :ensure t)
 ;; (use-package cyberpunk-theme :ensure t)
 (use-package smart-mode-line
-  :init
-  (defvar my-mode-line-front-space '(:eval (if (display-graphic-p) "lalalal" "lalalal")))
   :config
   (setq sml/theme 'atom-one-dark)
   (setq mode-line-format
-  	'("%e"
-	  (:eval (format "%s " exwm-workspace-current-index)) ;; TODO representation and multiple workspaces
+	'("%e"
+	  (:eval (propertize
+	  	  (format "<%s> [%s] "
+	  		 exwm-workspace-current-index
+	  		 (my-exwm-get-other-workspace))
+	  	  'face 'font-lock-type-face)) ;; TODO representation
+	  ;; (:eval (if (exwm-workspace--active-p exwm-workspace--current)
+	  ;; 	     (format "%s " exwm-workspace-current-index)
+	  ;; 	     (format "%s " (my-exwm-get-other-workspace)))) ;; TODO this is always true, determine the correct variable
   	  mode-line-front-space
   	  mode-line-mule-info
   	  mode-line-client
@@ -301,23 +304,33 @@
 	focus-follows-mouse t))
 
 (use-package exwm-input
-  :after exwm
+  :after exwm-randr
   :demand t
+  :preface
   :config
   (setq exwm-input-global-keys
 	`(([?\s-r] . exwm-reset)
 	  ([?\s-w] . exwm-workspace-switch)
+	  ([?\s-W] . exwm-workspace-move-window)
 	  ,@(mapcar (lambda (i)
 		      `(,(kbd (format "s-%d" i)) .
 			(lambda () (interactive)
 			  (exwm-workspace-switch-create ,i))))
 		    (number-sequence 0 9))
+	  ;; ,@(mapcar (lambda (i)
+	  ;; 	      `(,(kbd (format "s-%s" i)) .
+	  ;; 		(lambda () (interactive)
+	  ;; 		  (exwm-workspace-move-window ,i))))
+	  ;; 	    (list '! \" § $ % & / ( ) =))
+		    ;; (number-sequence 0 9))
 	  ([?\s-d] . counsel-linux-app)
 	  ([?\s-l] . evil-window-right)
 	  ([?\s-h] . evil-window-left)
 	  ([?\s-j] . evil-window-down)
 	  ([?\s-k] . evil-window-up)
 	  ([?\s-c] . kill-this-buffer)
+	  ([?\s-o] . my-exwm-switch-to-other-workspace)
+	  ([?\s-O] . my-exwm-move-window-to-other-workspace)
 	  ([?\s-m] . delete-other-windows)
 	  ([s-f1] . (lambda () (interactive) (eshell 'N)))
 	  ([s-f2] . (lambda () (interactive)
@@ -345,6 +358,18 @@
   :after exwm
   :demand t
   :preface
+  (defun my-exwm-get-other-workspace ()
+    (cond ((not (= 2 (length (seq-filter #'identity (mapcar #'exwm-workspace--active-p exwm-workspace--list))))) nil) ;currently only works for two monitors
+	  ((= exwm-workspace-current-index
+	      (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))
+	   (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
+	  ((= exwm-workspace-current-index
+	      (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
+	   (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))))
+  (defun my-exwm-switch-to-other-workspace () (interactive)
+	 (exwm-workspace-switch (my-exwm-get-other-workspace)))
+  (defun my-exwm-move-window-to-other-workspace () (interactive)
+	 (exwm-workspace-move-window (my-exwm-get-other-workspace)))
   (progn
     (if (string-equal "klingenbergTablet" (getenv "HOSTNAME"))
 	(progn (set 'monitor1 "eDP1")

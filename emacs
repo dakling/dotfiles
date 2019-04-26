@@ -181,7 +181,8 @@
   (setq mode-line-format
 	'("%e"
 	  (:eval (propertize
-	  	  (format "<%s> [%s] "
+	  	  (format (concat "<%s> "
+				  (unless (null (my-exwm-get-other-workspace)) "[%s] "))
 	  		 exwm-workspace-current-index
 	  		 (my-exwm-get-other-workspace))
 	  	  'face 'font-lock-type-face)) ;; TODO representation

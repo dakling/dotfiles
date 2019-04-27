@@ -376,11 +376,11 @@
   (defun my-exwm-move-window-to-other-workspace () (interactive)
 	 (exwm-workspace-move-window (my-exwm-get-other-workspace)))
   (progn
-    (if (string-equal "klingenbergTablet" (getenv "HOSTNAME"))
-	(progn (set 'monitor1 "eDP1")
-	       (set 'monitor2 "HDMI2"))
-      (progn (set 'monitor1 "VGA-1")
-	     (set 'monitor2 "HDMI-1")))
+    (cond
+     ((string-equal "klingenbergTablet" (system-name)) (progn (set 'monitor1 "eDP1")
+							      (set 'monitor2 "HDMI2")))
+     (t (progn (set 'monitor1 "VGA-1")
+	       (set 'monitor2 "HDMI-1"))))
     ;; (set 'monitor1 "VGA-1")
     ;; (set 'monitor2 "HDMI-1")
     (defun my/exwm-xrandr ()

@@ -9,7 +9,8 @@
     ("bc75dfb513af404a26260b3420d1f3e4131df752c19ab2984a7c85def9a2917e" default)))
  '(package-selected-packages
    (quote
-    (smart-mode-line-atom-one-dark smart-mode-line-atom-dark smart-mode-line ivy evil-collection rainbow-delimiters multi-eshell auctex-latexmk em-smart eshell-prompt-extras exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))
+    (eval-sexp-fu geiser smart-mode-line-atom-one-dark smart-mode-line-atom-dark smart-mode-line ivy evil-collection rainbow-delimiters multi-eshell auctex-latexmk em-smart eshell-prompt-extras exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package)))
+ '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -140,6 +141,8 @@
     "wV"  'split-window-right-and-focus
     "ww"  'other-window
     "w="  'balance-windows
+    "ef"  'eval-defun
+    "ee"  'eval-last-sexp
     ;; "w+"  'spacemacs/window-layout-toggle
     ))
 
@@ -432,6 +435,13 @@
 (use-package geiser
   :ensure t)
 
+(use-package eval-sexp-fu
+  :ensure t
+  :config
+  (setq eval-sexp-fu-flash-face
+  '((((class color)) (:background "black" :foreground "gray" :bold t))
+    (t (:inverse-video nil)))))
+
 ;;reduce
 (use-package reduce-ide
   :defer t
@@ -593,7 +603,8 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   :ensure t
   :config (rainbow-delimiters-mode 1))
 
-(use-package guix :ensure nil)
+(when (string= "klingenbergLaptop" (system-name))
+  (use-package guix :ensure nil))
 
 (show-paren-mode 1)
 

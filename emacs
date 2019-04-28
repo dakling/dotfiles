@@ -604,7 +604,9 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   :config (rainbow-delimiters-mode 1))
 
 (when (string= "klingenbergLaptop" (system-name))
-  (use-package guix :ensure nil))
+  (use-package guix :ensure nil)
+  (async-shell-command "setxkbmap de"))
+
 
 (show-paren-mode 1)
 

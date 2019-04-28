@@ -11,7 +11,10 @@
   (gnu packages compression)	
   (gnu packages web-browsers)	
   (gnu packages gnuzilla)	
+  (chromium chromium)
   (gnu packages gcc)	
+  (gnu packages ssh)	
+  (gnu packages package-management)	
   (gnu packages curl)
   (gnu packages emacs)
   (gnu packages emacs-xyz)
@@ -75,6 +78,7 @@
              gvfs              ;for user mounts
              gcc
              curl
+	     openssh
              rlwrap
              gnupg
              emacs
@@ -83,7 +87,6 @@
              rofi
              sbcl
              sbcl-cffi-libffi
-             ;; sbcl-stumpwm
              emacs-exwm
              sbcl-next
              ;; python python2-matplotlib
@@ -92,6 +95,8 @@
              setxkbmap
              unzip
              icecat
+	     chromium
+	     flatpak
              zathura-pdf-poppler zathura
              %base-packages))
 

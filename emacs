@@ -9,7 +9,8 @@
     ("bc75dfb513af404a26260b3420d1f3e4131df752c19ab2984a7c85def9a2917e" default)))
  '(package-selected-packages
    (quote
-    (rainbow-delimiters multi-eshell auctex-latexmk em-smart eshell-prompt-extras exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package))))
+    (eval-sexp-fu rainbow-delimiters multi-eshell auctex-latexmk em-smart eshell-prompt-extras exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package)))
+ '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -27,14 +28,14 @@
 			 ("melpa"     . "https://melpa.org/packages/")
 			 ("marmalade" . "http://marmalade-repo.org/packages/")
 			 ("reduce ide" . "http://reduce-algebra.sourceforge.net/reduce-ide/packages/")))
-(package-initialize) ; guess what this one does ?
+(package-initialize) 
 
 ;; Bootstrap `use-package'
 (unless (package-installed-p 'use-package) ; unless it is already installed
   (package-refresh-contents) ; updage packages archive
   (package-install 'use-package)) ; and install the most recent version of use-package
 
-(require 'use-package) ; guess what this one does too ?
+(require 'use-package)
 
 ;; defaults suggested by blog and extended by me
 (setq delete-old-versions -1 )		; delete excess backup versions silently
@@ -141,6 +142,8 @@
     "ww"  'other-window
     "w="  'balance-windows
     ;; "w+"  'spacemacs/window-layout-toggle
+    "ee"  'eval-last-sexp
+    "ef"  'eval-defun
     ))
 
 (use-package evil
@@ -181,21 +184,24 @@
   (setq mode-line-format
 	'("%e"
 	  (:eval (propertize
-	  	  (format "<%s> [%s] "
+	  	  (format "<%s> [%s]"
 	  		 exwm-workspace-current-index
 	  		 (my-exwm-get-other-workspace))
-	  	  'face 'font-lock-type-face)) ;; TODO representation
+	  	  'face 'sml/numbers-separator))
 	  ;; (:eval (if (exwm-workspace--active-p exwm-workspace--current)
 	  ;; 	     (format "%s " exwm-workspace-current-index)
 	  ;; 	     (format "%s " (my-exwm-get-other-workspace)))) ;; TODO this is always true, determine the correct variable
-  	  mode-line-front-space
+  	  sml/pos-id-separator
   	  mode-line-mule-info
   	  mode-line-client
   	  mode-line-modified
   	  mode-line-remote
   	  mode-line-frame-identification
   	  mode-line-buffer-identification
-  	  sml/pos-id-separator mode-line-position evil-mode-line-tag
+  	  sml/pos-id-separator
+  	  mode-line-front-space
+	  mode-line-position
+	  evil-mode-line-tag
   	  (vc-mode vc-mode)
   	  sml/pre-modes-separator
   	  mode-line-modes
@@ -222,7 +228,6 @@
 (use-package ranger :ensure t
   :commands (ranger)
   :config
-  (setq ranger-cleanup-eagerly t)
   (setq ranger-cleanup-eagerly t)
   (ranger-override-dired-mode t))
 
@@ -306,7 +311,6 @@
 (use-package exwm-input
   :after exwm-randr
   :demand t
-  :preface
   :config
   (setq exwm-input-global-keys
 	`(([?\s-r] . exwm-reset)
@@ -423,6 +427,13 @@
 	     "ee" '(slime-eval-last-expression :which-key "eval last expression")
 	     "eb" '(slime-eval-buffer :which-key "eval buffer"))
   )
+
+(use-package eval-sexp-fu
+  :ensure t
+  :config
+  (setq eval-sexp-fu-flash-face
+    '((((class color)) (:background "white" :foreground "black" :bold t))
+      (t (:inverse-video t)))))
 
 ;;reduce
 (use-package reduce-ide
@@ -583,7 +594,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 
 (use-package rainbow-delimiters
   :ensure t
-  :config (rainbow-delimiters-mode 1))
+  :init (rainbow-delimiters-mode t))
 
 (show-paren-mode 1)
 

@@ -9,11 +9,7 @@
     ("bc75dfb513af404a26260b3420d1f3e4131df752c19ab2984a7c85def9a2917e" default)))
  '(package-selected-packages
    (quote
-<<<<<<< HEAD
-    (eval-sexp-fu rainbow-delimiters multi-eshell auctex-latexmk em-smart eshell-prompt-extras exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package)))
-=======
-    (eval-sexp-fu geiser smart-mode-line-atom-one-dark smart-mode-line-atom-dark smart-mode-line ivy evil-collection rainbow-delimiters multi-eshell auctex-latexmk em-smart eshell-prompt-extras exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package)))
->>>>>>> 73c6266da069f12dbf6fd728d75c79c510be10d2
+    (geiser eval-sexp-fu rainbow-delimiters multi-eshell auctex-latexmk em-smart eshell-prompt-extras exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -194,12 +190,8 @@
   (setq mode-line-format
 	'("%e"
 	  (:eval (propertize
-<<<<<<< HEAD
-	  	  (format "<%s> [%s]"
-=======
 	  	  (format (concat "<%s> "
 				  (unless (null (my-exwm-get-other-workspace)) "[%s] "))
->>>>>>> 73c6266da069f12dbf6fd728d75c79c510be10d2
 	  		 exwm-workspace-current-index
 	  		 (my-exwm-get-other-workspace))
 	  	  'face 'sml/numbers-separator))
@@ -443,23 +435,15 @@
 	     "eb" '(slime-eval-buffer :which-key "eval buffer"))
   )
 
-<<<<<<< HEAD
-=======
 (use-package geiser
   :ensure t)
 
->>>>>>> 73c6266da069f12dbf6fd728d75c79c510be10d2
 (use-package eval-sexp-fu
   :ensure t
   :config
   (setq eval-sexp-fu-flash-face
-<<<<<<< HEAD
-    '((((class color)) (:background "white" :foreground "black" :bold t))
-      (t (:inverse-video t)))))
-=======
   '((((class color)) (:background "black" :foreground "gray" :bold t))
     (t (:inverse-video nil)))))
->>>>>>> 73c6266da069f12dbf6fd728d75c79c510be10d2
 
 ;;reduce
 (use-package reduce-ide

@@ -9,7 +9,7 @@
     ("bc75dfb513af404a26260b3420d1f3e4131df752c19ab2984a7c85def9a2917e" default)))
  '(package-selected-packages
    (quote
-    (auto-dim-other-buffers geiser eval-sexp-fu rainbow-delimiters multi-eshell auctex-latexmk em-smart eshell-prompt-extras exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package)))
+    (omnisharp auto-dim-other-buffers geiser eval-sexp-fu rainbow-delimiters multi-eshell auctex-latexmk em-smart eshell-prompt-extras exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -44,13 +44,23 @@
 (setq backup-directory-alist `(("." . "~/.emacs.d/backups")) ) ; which directory to put backups file
 (setq vc-follow-symlinks t )				       ; don't ask for confirmation when opening symlinked file
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)) ) ;transform backups file name
-(setq inhibit-startup-screen t )	; inhibit useless and old-school startup screen
+(setq inhibit-startup-screen t )	; inhibit startup screen
 (setq ring-bell-function 'ignore )	; silent bell when you make a mistake
 (setq coding-system-for-read 'utf-8 )	; use utf-8 by default
 (setq coding-system-for-write 'utf-8 )
 (setq sentence-end-double-space nil)	; sentence SHOULD end with only a point.
 (setq default-fill-column 80)		; toggle wrapping text at the 80th character
-(setq initial-scratch-message "Welcome") ; print a default message in the empty scratch buffer opened at startup
+(recentf-mode 1)
+(setq
+ initial-scratch-message
+ "Welcome
+
+Starting points: 
+(recentf-open-files)
+(find-file \"~/Documents/TODO.org\")
+(async-shell-command \"thunderbird\")
+"
+ ) ; print a default message in the empty scratch buffer opened at startup
 (defalias 'yes-or-no-p 'y-or-n-p) ;reduce typing effort
 (electric-pair-mode 1) ;close brackets
 
@@ -71,6 +81,7 @@
   (find-file "~/.dotfiles/dotfiles/"))
 
 (defun fdy-mount (source target)
+  "mount a directory from fdy windows remote server"
   (async-shell-command (concat
 		  "sudo mount //dc1/"
 		  source
@@ -79,6 +90,7 @@
 		  " -t cifs -o username=klingenberg,noexec,uid=klingenberg")))
 
 (defun qmount (location)
+  "shortcuts for mounting frequent locations"
   (interactive)
   (apply #'fdy-mount
    (cond ((string= location "lectures") '("misc/fdy-lectures.git" "~/git/mntfdy-lectures.git"))
@@ -120,23 +132,23 @@
 
   ;; many spacemacs bindings go here
   (my-leader-def
+    "a" '(:ignore t :which-key "applications")
     "ar" '(ranger :which-key "call ranger")
     "ad" '(deer :which-key "call deer")
     "g"  '(:ignore t :which-key "git")
-    "f" '(:ignore :which-key "file")
+    "f" '(:ignore t :which-key "file")
     "fs" '(save-buffer :which-key "save file")
     "ff" '(counsel-find-file :which-key "find file")
     "fed" '(find-config-file :which-key "find config file")
-    ;; "fed" '((lambda () (interactive) (find-file "~/.emacs.d")) :which-key "find config file") ;less nice (I think) alternative
     "fer" '(load-config-file :which-key "load config file")
     "feD" '(find-dotfile-dir :which-key "find dotfile directory")
-    ;; "wo" '(other-window :which-key "other window")
     "SPC" '(counsel-M-x :which-key "M-x")
     "fp" '(counsel-locate :which-key "counsel-locate")
     "fg" '(counsel-ag :which-key "counsel-ag")
-    "b" '(:ignore :which-key "buffer")
+    "b" '(:ignore t :which-key "buffer")
     "bb" '(counsel-switch-buffer :which-key "switch buffer")
-    "bk" '(kill-this-buffer :which-key "kill buffer") ; TODO kill current buffer immediately
+    "bk" '(kill-this-buffer :which-key "kill buffer")
+    "w"  '(:ignore t :which-key "window management")
     "w TAB"  '(lambda () (interactive) (ivy--switch-buffer-action (buffer-name (other-buffer (current-buffer)))))
     ;; "w2"  'spacemacs/layout-double-columns
     ;; "w3"  'spacemacs/layout-triple-columns
@@ -160,9 +172,10 @@
     "wV"  'split-window-right-and-focus
     "ww"  'other-window
     "w="  'balance-windows
-    "ef"  'eval-defun
-    "ee"  'eval-last-sexp
+    "r"   '(:ignore t :which-key "recent-files")
+    "rr"  'counsel-recentf
     ;; "w+"  'spacemacs/window-layout-toggle
+    "e"  '(:ignore t :which-key "eval elisp")
     "ee"  'eval-last-sexp
     "ef"  'eval-defun
     ))
@@ -479,6 +492,15 @@
 ;; maple
 ;; (use-package maplev)
 
+;;c#
+(use-package omnisharp
+  :ensure t
+  :hook
+  (csharp-mode-hook omnisharp-mode)
+  (csharp-mode-hook company-mode)
+  :config
+  (add-to-list 'company-backends 'company-omnisharp))
+
 ;;latex (auctex)
 (use-package tex
   :ensure auctex
@@ -655,3 +677,4 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 ;; - latex
 ;; - eshell
 ;; - make a nice scratch buffer with recent files and useful functions
+;; - el-go

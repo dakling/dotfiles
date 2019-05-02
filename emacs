@@ -9,7 +9,7 @@
     ("bc75dfb513af404a26260b3420d1f3e4131df752c19ab2984a7c85def9a2917e" default)))
  '(package-selected-packages
    (quote
-    (geiser eval-sexp-fu rainbow-delimiters multi-eshell auctex-latexmk em-smart eshell-prompt-extras exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package)))
+    (auto-dim-other-buffers geiser eval-sexp-fu rainbow-delimiters multi-eshell auctex-latexmk em-smart eshell-prompt-extras exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -58,15 +58,35 @@
 (defun find-config-file ()
   "open emacs configuration file"
   (interactive)
-  (find-file "~/.dotfiles/dotfiles/emacs"))
+  (find-file "~/.emacs"))
+
 (defun load-config-file ()
   "load emacs configuration file"
   (interactive)
-  (load-file "~/.dotfiles/dotfiles/emacs"))
+  (load-file "~/.emacs"))
+
 (defun find-dotfile-dir ()
   "open dotfile directory"
   (interactive)
   (find-file "~/.dotfiles/dotfiles/"))
+
+(defun fdy-mount (source target)
+  (async-shell-command (concat
+		  "sudo mount //dc1/"
+		  source
+		  " "
+		  target
+		  " -t cifs -o username=klingenberg,noexec,uid=klingenberg")))
+
+(defun qmount (location)
+  (interactive)
+  (apply #'fdy-mount
+   (cond ((string= location "lectures") '("misc/fdy-lectures.git" "~/git/mntfdy-lectures.git"))
+	 ((string= location "klausuren") '("lehre/TM1/Klausuren.git" "~/git/mnt/Klausuren.git"))
+	 ((string= location "publication") '("misc/fdy-publications.git" "~/git/mnt/fdy-publications.git"))
+	 ((string= location "misc") '("misc" "~/misc"))
+	 ((string= location "scratch") '("scratch" "~/scratch"))
+	 ((string= location "lehre") '("lehre" "~/lehre")))))
 
 ;; packages with configuration
 (use-package general :ensure t
@@ -117,7 +137,7 @@
     "b" '(:ignore :which-key "buffer")
     "bb" '(counsel-switch-buffer :which-key "switch buffer")
     "bk" '(kill-this-buffer :which-key "kill buffer") ; TODO kill current buffer immediately
-    ;; "w TAB"  'spacemacs/alternate-window
+    "w TAB"  '(lambda () (interactive) (ivy--switch-buffer-action (buffer-name (other-buffer (current-buffer)))))
     ;; "w2"  'spacemacs/layout-double-columns
     ;; "w3"  'spacemacs/layout-triple-columns
     ;; "wb"  'spacemacs/switch-to-minibuffer-window
@@ -131,7 +151,6 @@
     "wL"  'evil-window-move-far-right
     "wl"  'evil-window-right
     "wm"  'delete-other-windows
-    "wo"  'other-frame
     "ws"  'split-window-below
     "wS"  'split-window-below-and-focus
     "w-"  'split-window-below
@@ -215,7 +234,7 @@
   	  mode-line-misc-info
   	  mode-line-end-spaces))
   (sml/setup)
-  ) 
+  (set-face-background 'mode-line-inactive "light")) 
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (menu-bar-no-scroll-bar)
@@ -259,6 +278,8 @@
 	     "gs" '(magit-status :which-key "git status")))
 
 (use-package evil-magit :ensure t)
+
+(use-package ediff :ensure t)
 
 (use-package pdf-tools
   :ensure t
@@ -471,7 +492,7 @@
 	  TeX-syntactic-comment t
 	  ;; Synctex support
 	  TeX-source-correlate-start-server nil
-	  TeX-interactive-mode 1
+	  TeX-interactive-mode -1
 	  ;; Don't insert line-break at inline math
 	  LaTeX-fill-break-at-separators nil))
   :hook
@@ -479,33 +500,36 @@
   (LaTeX-mode-hook . LaTeX-math-mode)
   (LaTeX-mode-hook . TeX-source-correlate-mode)
   (LaTeX-mode-hook . TeX-PDF-mode)
+  (after-save-hook . TeX-command-run-all)
   :config
-  (progn
+  (tex-interactive-mode nil)
     ;; Key bindings for plain TeX
-    :general
-    (my-local-leader-def
-      "\\"  'TeX-insert-macro                            ;; C-c C-m
-      "-"   'TeX-recenter-output-buffer                  ;; C-c C-l
-      "%"   'TeX-comment-or-uncomment-paragraph          ;; C-c %
-      ";"   'TeX-comment-or-uncomment-region             ;; C-c ; or C-c :
-      ;; TeX-command-run-all runs compile and open the viewer
-      "a"   'TeX-command-run-all                         ;; C-c C-a
-      "b"   'TeX-command-master
-      "k"   'TeX-kill-job                                ;; C-c C-k
-      "l"   'TeX-recenter-output-buffer                  ;; C-c C-l
-      "m"   'TeX-insert-macro                            ;; C-c C-m
-      "v"   'TeX-view                                    ;; C-c C-v
-      ;; TeX-doc is a very slow function
-      "hd"  'TeX-doc
-      "xb"  'latex/font-bold
-      "xc"  'latex/font-code
-      "xe"  'latex/font-emphasis
-      "xi"  'latex/font-italic
-      "xr"  'latex/font-clear
-      "xo"  'latex/font-oblique
-      "xfc" 'latex/font-small-caps
-      "xff" 'latex/font-sans-serif
-      "xfr" 'latex/font-serif)))
+  :general
+  (my-local-leader-def
+    "\\"  'TeX-insert-macro                            ;; C-c C-m
+    "-"   'TeX-recenter-output-buffer                  ;; C-c C-l
+    "%"   'TeX-comment-or-uncomment-paragraph          ;; C-c %
+    ";"   'TeX-comment-or-uncomment-region             ;; C-c ; or C-c :
+    ;; TeX-command-run-all runs compile and open the viewer
+    "a"   'TeX-command-run-all                         ;; C-c C-a
+    "b"   'TeX-command-master
+    "k"   'TeX-kill-job                                ;; C-c C-k
+    "l"   'TeX-recenter-output-buffer                  ;; C-c C-l
+    "m"   'TeX-insert-macro                            ;; C-c C-m
+    "v"   'TeX-view                                    ;; C-c C-v
+    ;; TeX-doc is a very slow function
+    "hd"  'TeX-doc
+    "xb"  'latex/font-bold
+    "xc"  'latex/font-code
+    "xe"  'latex/font-emphasis
+    "xi"  'latex/font-italic
+    "xr"  'latex/font-clear
+    "xo"  'latex/font-oblique
+    "xfc" 'latex/font-small-caps
+    "xff" 'latex/font-sans-serif
+    "xfr" 'latex/font-serif
+    "ol" '(lambda() (interactive) (find-file "definLocal.tex"))
+    "ob" '(lambda() (interactive) (find-file "bibliography.bib"))))
 
 (use-package auctex-latexmk
   :ensure t
@@ -610,6 +634,10 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   (use-package guix :ensure nil)
   (async-shell-command "setxkbmap de"))
 
+;; (use-package auto-dim-other-buffers
+;;   :ensure t
+;;   :config (auto-dim-other-buffers-mode t))
+
 
 (show-paren-mode 1)
 
@@ -626,3 +654,4 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 ;; - exwm host-specific settings
 ;; - latex
 ;; - eshell
+;; - make a nice scratch buffer with recent files and useful functions

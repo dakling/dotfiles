@@ -7,9 +7,10 @@
  '(custom-safe-themes
    (quote
     ("bc75dfb513af404a26260b3420d1f3e4131df752c19ab2984a7c85def9a2917e" default)))
+ '(global-evil-surround-mode t)
  '(package-selected-packages
    (quote
-    (omnisharp auto-dim-other-buffers geiser eval-sexp-fu rainbow-delimiters multi-eshell auctex-latexmk em-smart eshell-prompt-extras exwm-randr auctex evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package)))
+    (yasnippet-snippets omnisharp auctex-latexmk yasnippet auctex company-auctex auto-dim-other-buffers geiser eval-sexp-fu rainbow-delimiters multi-eshell em-smart eshell-prompt-extras exwm-randr evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -46,10 +47,11 @@
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)) ) ;transform backups file name
 (setq inhibit-startup-screen t )	; inhibit startup screen
 (setq ring-bell-function 'ignore )	; silent bell when you make a mistake
-(setq coding-system-for-read 'utf-8 )	; use utf-8 by default
-(setq coding-system-for-write 'utf-8 )
+(set-language-environment "UTF-8")
+;; (setq coding-system-for-write 'utf-8 )
 (setq sentence-end-double-space nil)	; sentence SHOULD end with only a point.
 (setq default-fill-column 80)		; toggle wrapping text at the 80th character
+(setq default-major-mode 'text-mode)
 (recentf-mode 1)
 (setq
  initial-scratch-message
@@ -283,7 +285,27 @@ Starting points:
 
 (use-package company
   :ensure t
-  :config (company-mode 1))
+  :config (global-company-mode 1))
+
+(use-package yasnippet
+  :ensure t
+  :config
+  (progn
+   (yas-global-mode 1)
+   (add-to-list 'company-backends 'company-yasnippet t)
+   ;; Add yasnippet support for all company backends
+   ;; https://github.com/syl20bnr/spacemacs/pull/179
+   (defvar company-mode/enable-yas t
+     "Enable yasnippet for all backends.")
+   (defun company-mode/backend-with-yas (backend)
+     (if (or (not company-mode/enable-yas) (and (listp backend) (member 'company-yasnippet backend)))
+	 backend
+       (append (if (consp backend) backend (list backend))
+	       '(:with company-yasnippet))))
+   (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))))
+
+(use-package yasnippet-snippets
+  :ensure t)
 
 (use-package magit
   :ensure t
@@ -494,12 +516,14 @@ Starting points:
 
 ;;c#
 (use-package omnisharp
+  ;; :after company
   :ensure t
   :hook
   (csharp-mode-hook omnisharp-mode)
-  (csharp-mode-hook company-mode)
-  :config
-  (add-to-list 'company-backends 'company-omnisharp))
+  ;; (csharp-mode-hook company-mode)
+  ;; :config
+  ;; (add-to-list 'company-backends 'company-omnisharp)
+  )
 
 ;;latex (auctex)
 (use-package tex
@@ -524,21 +548,22 @@ Starting points:
   (LaTeX-mode-hook . TeX-PDF-mode)
   (after-save-hook . TeX-command-run-all)
   :config
-  (tex-interactive-mode nil)
+  (progn
+    (TeX-interactive-mode -1)
+    (setq TeX-electric-math '("\\(" . "\\)"))
+    (setq TeX-electric-sub-and-superscript t))
     ;; Key bindings for plain TeX
   :general
   (my-local-leader-def
-    "\\"  'TeX-insert-macro                            ;; C-c C-m
-    "-"   'TeX-recenter-output-buffer                  ;; C-c C-l
-    "%"   'TeX-comment-or-uncomment-paragraph          ;; C-c %
-    ";"   'TeX-comment-or-uncomment-region             ;; C-c ; or C-c :
-    ;; TeX-command-run-all runs compile and open the viewer
-    "a"   'TeX-command-run-all                         ;; C-c C-a
+    "-"   'TeX-recenter-output-buffer         
+    "%"   'TeX-comment-or-uncomment-paragraph 
+    ";"   'TeX-comment-or-uncomment-region    
+    "a"   'TeX-command-run-all                
     "b"   'TeX-command-master
-    "k"   'TeX-kill-job                                ;; C-c C-k
-    "l"   'TeX-recenter-output-buffer                  ;; C-c C-l
-    "m"   'TeX-insert-macro                            ;; C-c C-m
-    "v"   'TeX-view                                    ;; C-c C-v
+    "k"   'TeX-kill-job                       
+    "l"   'TeX-recenter-output-buffer         
+    "m"   'TeX-insert-macro                   
+    "v"   'TeX-view                           
     ;; TeX-doc is a very slow function
     "hd"  'TeX-doc
     "xb"  'latex/font-bold

@@ -53,6 +53,7 @@
 (setq sentence-end-double-space nil)	; sentence SHOULD end with only a point.
 (setq default-fill-column 80)		; toggle wrapping text at the 80th character
 (setq default-major-mode 'text-mode)
+(add-hook 'focus-out-hook (lambda () (when buffer-file-name (save-buffer))))
 (recentf-mode 1)
 (setq
  initial-scratch-message
@@ -716,7 +717,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 ;; - font
 ;; - scrolling (?)
 ;; - autocomplete
-;; - snippets
 ;; - buffer management
 ;; - mail
 ;; - exwm

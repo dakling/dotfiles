@@ -549,6 +549,7 @@ Starting points:
   :config
   (progn
     (TeX-interactive-mode -1)
+    (TeX-source-correlate-mode -1)
     (setq TeX-electric-math '("\\(" . "\\)"))
     (setq TeX-electric-sub-and-superscript t)
     (setq TeX-save-query nil)

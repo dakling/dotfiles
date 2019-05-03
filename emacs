@@ -7,10 +7,11 @@
  '(custom-safe-themes
    (quote
     ("bc75dfb513af404a26260b3420d1f3e4131df752c19ab2984a7c85def9a2917e" default)))
+ '(electric-pair-mode t)
  '(global-evil-surround-mode t)
  '(package-selected-packages
    (quote
-    (yasnippet-snippets omnisharp auctex-latexmk yasnippet auctex company-auctex auto-dim-other-buffers geiser eval-sexp-fu rainbow-delimiters multi-eshell em-smart eshell-prompt-extras exwm-randr evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package)))
+    (auctex-latexmk ace-link company-reftex yasnippet-snippets omnisharp yasnippet auctex company-auctex auto-dim-other-buffers geiser eval-sexp-fu rainbow-delimiters multi-eshell em-smart eshell-prompt-extras exwm-randr evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -85,22 +86,22 @@ Starting points:
 (defun fdy-mount (source target)
   "mount a directory from fdy windows remote server"
   (async-shell-command (concat
-		  "sudo mount //dc1/"
-		  source
-		  " "
-		  target
-		  " -t cifs -o username=klingenberg,noexec,uid=klingenberg")))
+			"sudo mount //dc1/"
+			source
+			" "
+			target
+			" -t cifs -o username=klingenberg,noexec,uid=klingenberg")))
 
 (defun qmount (location)
   "shortcuts for mounting frequent locations"
   (interactive)
   (apply #'fdy-mount
-   (cond ((string= location "lectures") '("misc/fdy-lectures.git" "~/git/mntfdy-lectures.git"))
-	 ((string= location "klausuren") '("lehre/TM1/Klausuren.git" "~/git/mnt/Klausuren.git"))
-	 ((string= location "publication") '("misc/fdy-publications.git" "~/git/mnt/fdy-publications.git"))
-	 ((string= location "misc") '("misc" "~/misc"))
-	 ((string= location "scratch") '("scratch" "~/scratch"))
-	 ((string= location "lehre") '("lehre" "~/lehre")))))
+	 (cond ((string= location "lectures") '("misc/fdy-lectures.git" "~/git/mntfdy-lectures.git"))
+	       ((string= location "klausuren") '("lehre/TM1/Klausuren.git" "~/git/mnt/Klausuren.git"))
+	       ((string= location "publication") '("misc/fdy-publications.git" "~/git/mnt/fdy-publications.git"))
+	       ((string= location "misc") '("misc" "~/misc"))
+	       ((string= location "scratch") '("scratch" "~/scratch"))
+	       ((string= location "lehre") '("lehre" "~/lehre")))))
 
 ;; packages with configuration
 (use-package general :ensure t
@@ -137,6 +138,7 @@ Starting points:
     "a" '(:ignore t :which-key "applications")
     "ar" '(ranger :which-key "call ranger")
     "ad" '(deer :which-key "call deer")
+    "ab" '(eww :which-key "open browser")
     "g"  '(:ignore t :which-key "git")
     "f" '(:ignore t :which-key "file")
     "fs" '(save-buffer :which-key "save file")
@@ -224,30 +226,30 @@ Starting points:
   (setq mode-line-format
 	'("%e"
 	  (:eval (propertize
-	  	  (format (concat "<%s> "
+		  (format (concat "<%s> "
 				  (unless (null (my-exwm-get-other-workspace)) "[%s] "))
-	  		 exwm-workspace-current-index
-	  		 (my-exwm-get-other-workspace))
-	  	  'face 'sml/numbers-separator))
+			  exwm-workspace-current-index
+			  (my-exwm-get-other-workspace))
+		  'face 'sml/numbers-separator))
 	  ;; (:eval (if (exwm-workspace--active-p exwm-workspace--current)
 	  ;; 	     (format "%s " exwm-workspace-current-index)
 	  ;; 	     (format "%s " (my-exwm-get-other-workspace)))) ;; TODO this is always true, determine the correct variable
-  	  sml/pos-id-separator
-  	  mode-line-mule-info
-  	  mode-line-client
-  	  mode-line-modified
-  	  mode-line-remote
-  	  mode-line-frame-identification
-  	  mode-line-buffer-identification
-  	  sml/pos-id-separator
-  	  mode-line-front-space
+	  sml/pos-id-separator
+	  mode-line-mule-info
+	  mode-line-client
+	  mode-line-modified
+	  mode-line-remote
+	  mode-line-frame-identification
+	  mode-line-buffer-identification
+	  sml/pos-id-separator
+	  mode-line-front-space
 	  mode-line-position
 	  evil-mode-line-tag
-  	  (vc-mode vc-mode)
-  	  sml/pre-modes-separator
-  	  mode-line-modes
-  	  mode-line-misc-info
-  	  mode-line-end-spaces))
+	  (vc-mode vc-mode)
+	  sml/pre-modes-separator
+	  mode-line-modes
+	  mode-line-misc-info
+	  mode-line-end-spaces))
   (sml/setup)
   (set-face-background 'mode-line-inactive "light")) 
 (tool-bar-mode -1)
@@ -291,18 +293,18 @@ Starting points:
   :ensure t
   :config
   (progn
-   (yas-global-mode 1)
-   (add-to-list 'company-backends 'company-yasnippet t)
-   ;; Add yasnippet support for all company backends
-   ;; https://github.com/syl20bnr/spacemacs/pull/179
-   (defvar company-mode/enable-yas t
-     "Enable yasnippet for all backends.")
-   (defun company-mode/backend-with-yas (backend)
-     (if (or (not company-mode/enable-yas) (and (listp backend) (member 'company-yasnippet backend)))
-	 backend
-       (append (if (consp backend) backend (list backend))
-	       '(:with company-yasnippet))))
-   (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))))
+    (yas-global-mode 1)
+    (add-to-list 'company-backends 'company-yasnippet t)
+    ;; Add yasnippet support for all company backends
+    ;; https://github.com/syl20bnr/spacemacs/pull/179
+    (defvar company-mode/enable-yas t
+      "Enable yasnippet for all backends.")
+    (defun company-mode/backend-with-yas (backend)
+      (if (or (not company-mode/enable-yas) (and (listp backend) (member 'company-yasnippet backend)))
+	  backend
+	(append (if (consp backend) backend (list backend))
+		'(:with company-yasnippet))))
+    (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))))
 
 (use-package yasnippet-snippets
   :ensure t)
@@ -339,6 +341,8 @@ Starting points:
    "h"  '(pdf-view-previous-page :which-key "page up")
    "u"  '(pdf-view-scroll-down-or-previous-page :which-key "scroll down")
    "d"  '(pdf-view-scroll-up-or-next-page :which-key "scroll up")
+   "/"  '(isearch-forward :which-key search forward)
+   "?"  '(isearch-backward :which-key search backward)
    "0"  '(image-bol :which-key "go left")
    "$"  '(image-eol :which-key "go right"))
   (my-local-leader-def
@@ -389,7 +393,7 @@ Starting points:
 	  ;; 		(lambda () (interactive)
 	  ;; 		  (exwm-workspace-move-window ,i))))
 	  ;; 	    (list '! \" § $ % & / ( ) =))
-		    ;; (number-sequence 0 9))
+	  ;; (number-sequence 0 9))
 	  ([?\s-d] . counsel-linux-app)
 	  ([?\s-l] . evil-window-right)
 	  ([?\s-h] . evil-window-left)
@@ -472,9 +476,10 @@ Starting points:
   :after exwm
   :demand t
   :init
-  (setq exwm-workspace-number 10)
-  (setq exwm-workspace-show-all-buffers t)
-  (setq exwm-layout-show-all-buffers t))
+  (progn
+    (setq exwm-workspace-number 10)
+    (setq exwm-workspace-show-all-buffers t)
+    (setq exwm-layout-show-all-buffers t)))
 
 ;;;programming languages
 ;; lisp
@@ -498,8 +503,8 @@ Starting points:
   :ensure t
   :config
   (setq eval-sexp-fu-flash-face
-  '((((class color)) (:background "black" :foreground "gray" :bold t))
-    (t (:inverse-video nil)))))
+	'((((class color)) (:background "black" :foreground "gray" :bold t))
+	  (t (:inverse-video nil)))))
 
 ;;reduce
 (use-package reduce-ide
@@ -519,40 +524,42 @@ Starting points:
   ;; :after company
   :ensure t
   :hook
-  (csharp-mode-hook omnisharp-mode)
-  ;; (csharp-mode-hook company-mode)
-  ;; :config
-  ;; (add-to-list 'company-backends 'company-omnisharp)
-  )
+  ((csharp-mode-hook omnisharp-mode)
+   ;; (csharp-mode-hook company-mode)
+   ;; :config
+   ;; (add-to-list 'company-backends 'company-omnisharp)
+   ))
 
 ;;latex (auctex)
 (use-package tex
   :ensure auctex
   :init
   (progn
-    (setq TeX-command-default 'LatexMK
-	  TeX-view-program-selection '((output-pdf "PDF Tools"))
-	  TeX-source-correlate-start-server t
-	  TeX-auto-save t
-	  TeX-parse-self t
-	  TeX-syntactic-comment t
-	  ;; Synctex support
-	  TeX-source-correlate-start-server nil
-	  TeX-interactive-mode -1
-	  ;; Don't insert line-break at inline math
-	  LaTeX-fill-break-at-separators nil))
-  :hook
-  (TeX-after-compilation-finished-functions . TeX-revert-document-buffer)
-  (LaTeX-mode-hook . LaTeX-math-mode)
-  (LaTeX-mode-hook . TeX-source-correlate-mode)
-  (LaTeX-mode-hook . TeX-PDF-mode)
-  (after-save-hook . TeX-command-run-all)
+    (setq
+     ;; TeX-command-default 'LaTeX
+     TeX-view-program-selection '((output-pdf "PDF Tools"))
+     TeX-source-correlate-start-server t
+     TeX-auto-save t
+     TeX-parse-self t
+     TeX-syntactic-comment t
+     ;; Synctex support
+     TeX-source-correlate-start-server nil
+     ;; Don't insert line-break at inline math
+     LaTeX-fill-break-at-separators nil))
   :config
   (progn
     (TeX-interactive-mode -1)
     (setq TeX-electric-math '("\\(" . "\\)"))
-    (setq TeX-electric-sub-and-superscript t))
-    ;; Key bindings for plain TeX
+    (setq TeX-electric-sub-and-superscript t)
+    (setq TeX-save-query nil)
+    (reftex-mode 1)
+    (add-hook 'TeX-after-compilation-finished-functions . TeX-revert-document-buffer)
+    (add-hook 'LaTeX-mode-hook 'flyspell-mode)
+    (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+    (add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
+    (add-hook 'LaTeX-mode-hook 'TeX-PDF-mode)
+    ;; (add-to-list 'company-backends 'company-auctex t)
+    (add-to-list 'company-backends 'company-math t))
   :general
   (my-local-leader-def
     "-"   'TeX-recenter-output-buffer         
@@ -578,14 +585,30 @@ Starting points:
     "ol" '(lambda() (interactive) (find-file "definLocal.tex"))
     "ob" '(lambda() (interactive) (find-file "bibliography.bib"))))
 
-(use-package auctex-latexmk
-  :ensure t
-  :defer t
-  :init
-  (progn
-    (auctex-latexmk-setup)
-    (setq auctex-latexmk-inherit-TeX-PDF-mode t)))
+;; (use-package auctex-latexmk
+;;   :ensure t
+;;   :defer t
+;;   :init
+;;   (progn
+;;     (auctex-latexmk-setup)
+;;     (setq auctex-latexmk-inherit-TeX-PDF-mode t)))
 
+(use-package company-reftex
+  :ensure t
+  :config
+  (add-to-list 'company-backends 'company-reftex-labels t)
+  (add-to-list 'company-backends 'company-reftex-citations t))
+
+;; browser
+(use-package eww
+  :ensure t
+  ;; :general
+  ;; (general-define-key
+  ;;  "f" 'ace-link)
+  )
+
+(use-package ace-link
+  :ensure t)
 ;; mail
 (use-package evil-mu4e
   :ensure t
@@ -667,10 +690,10 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 	  ))
   ;; (mu4e/mail-account-reset)
   :config
-    (evil-define-key 'evilified mu4e-main-mode-map (kbd "j") 'evil-next-line)
-    (bind-keys :map mu4e-main-mode-map
-	       ;; ("j" . evil-next-line)
-	       ("c" . mu4e-compose-new)))
+  (evil-define-key 'evilified mu4e-main-mode-map (kbd "j") 'evil-next-line)
+  (bind-keys :map mu4e-main-mode-map
+	     ;; ("j" . evil-next-line)
+	     ("c" . mu4e-compose-new)))
 
 
 (use-package rainbow-delimiters

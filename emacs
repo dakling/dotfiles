@@ -555,7 +555,7 @@ Starting points:
     (setq TeX-electric-sub-and-superscript t)
     (setq TeX-save-query nil)
     (reftex-mode 1)
-    (add-hook 'TeX-after-compilation-finished-functions . TeX-revert-document-buffer)
+    (add-hook 'TeX-after-compilation-finished-functions 'TeX-revert-document-buffer)
     (add-hook 'LaTeX-mode-hook 'flyspell-mode)
     (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
     (add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
@@ -564,6 +564,7 @@ Starting points:
     (add-to-list 'company-backends 'company-math t))
   :general
   (my-local-leader-def
+    :keymaps 'tex-mode-map
     "-"   'TeX-recenter-output-buffer         
     "%"   'TeX-comment-or-uncomment-paragraph 
     ";"   'TeX-comment-or-uncomment-region    
@@ -585,6 +586,7 @@ Starting points:
     "xff" 'latex/font-sans-serif
     "xfr" 'latex/font-serif
     "ol" '(lambda() (interactive) (find-file "definLocal.tex"))
+    "og" '(lambda() (interactive) (find-file (getenv "LatexGlobalConfig")))
     "ob" '(lambda() (interactive) (find-file "bibliography.bib"))))
 
 ;; (use-package auctex-latexmk

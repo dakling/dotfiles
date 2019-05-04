@@ -86,7 +86,7 @@ Starting points:
   (interactive)
   (find-file "~/.dotfiles/dotfiles/"))
 
-(defun system-name-p (name)
+(defun system-name= (name)
   (string-equal name (system-name)))
 
 (defun fdy-mount (source target)
@@ -449,7 +449,7 @@ Starting points:
 	 (exwm-workspace-move-window (my-exwm-get-other-workspace)))
   (progn
     (cond
-     ((system-name-p "klingenbergTablet") (progn (set 'monitor1 "eDP1")
+     ((system-name= "klingenbergTablet") (progn (set 'monitor1 "eDP1")
 							      (set 'monitor2 "HDMI2")))
      (t (progn (set 'monitor1 "VGA-1")
 	       (set 'monitor2 "HDMI-1"))))
@@ -459,7 +459,7 @@ Starting points:
       "Configure screen with xrandr."
       (start-process-shell-command
        "xrandr" nil
-       (if (system-name-p "klingenbergTablet")
+       (if (system-name= "klingenbergTablet")
 	   "xrandr --output VGA-1 --primary --left-of HDMI-1 --auto"
 	 "xrandr --output eDP1 --primary --below-of HDMI1 --auto"))))
   :hook (exwm-randr-screen-change . my/exwm-xrandr)
@@ -709,10 +709,10 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   :ensure t
   :init (rainbow-delimiters-mode t))
 
-(when (or (system-name-p "klingenbergTablet") (system-name-p "klingenbergLaptop"))
+(when (or (system-name= "klingenbergTablet") (system-name= "klingenbergLaptop"))
   (use-package guix :ensure t))
 
-(when (system-name-p "klingenbergLaptop")
+(when (system-name= "klingenbergLaptop")
   (async-shell-command "setxkbmap de"))
 
 ;; (use-package auto-dim-other-buffers

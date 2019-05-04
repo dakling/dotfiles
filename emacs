@@ -11,7 +11,7 @@
  '(global-evil-surround-mode t)
  '(package-selected-packages
    (quote
-    (auctex-latexmk ace-link company-reftex yasnippet-snippets omnisharp yasnippet auctex company-auctex auto-dim-other-buffers geiser eval-sexp-fu rainbow-delimiters multi-eshell em-smart eshell-prompt-extras exwm-randr evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package)))
+    (guix auctex-latexmk ace-link company-reftex yasnippet-snippets omnisharp yasnippet auctex company-auctex auto-dim-other-buffers geiser eval-sexp-fu rainbow-delimiters multi-eshell em-smart eshell-prompt-extras exwm-randr evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -83,6 +83,9 @@ Starting points:
   "open dotfile directory"
   (interactive)
   (find-file "~/.dotfiles/dotfiles/"))
+
+(defun system-name-p (name)
+  (string-equal name (system-name)))
 
 (defun fdy-mount (source target)
   "mount a directory from fdy windows remote server"
@@ -444,7 +447,7 @@ Starting points:
 	 (exwm-workspace-move-window (my-exwm-get-other-workspace)))
   (progn
     (cond
-     ((string-equal "klingenbergTablet" (system-name)) (progn (set 'monitor1 "eDP1")
+     ((system-name-p "klingenbergTablet") (progn (set 'monitor1 "eDP1")
 							      (set 'monitor2 "HDMI2")))
      (t (progn (set 'monitor1 "VGA-1")
 	       (set 'monitor2 "HDMI-1"))))
@@ -454,7 +457,7 @@ Starting points:
       "Configure screen with xrandr."
       (start-process-shell-command
        "xrandr" nil
-       (if (string-equal "klingenbergTablet" (getenv "HOSTNAME"))
+       (if (system-name-p "klingenbergTablet")
 	   "xrandr --output VGA-1 --primary --left-of HDMI-1 --auto"
 	 "xrandr --output eDP1 --primary --below-of HDMI1 --auto"))))
   :hook (exwm-randr-screen-change . my/exwm-xrandr)
@@ -704,8 +707,8 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   :ensure t
   :init (rainbow-delimiters-mode t))
 
-(when (string= "klingenbergLaptop" (system-name))
-  (use-package guix :ensure nil)
+(when (or (system-name-p "klingenbergTablet") (system-name-p "klingenbergLaptop"))
+  (use-package guix :ensure t)
   (async-shell-command "setxkbmap de"))
 
 ;; (use-package auto-dim-other-buffers

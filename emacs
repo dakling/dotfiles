@@ -53,6 +53,8 @@
 (setq sentence-end-double-space nil)	; sentence SHOULD end with only a point.
 (setq default-fill-column 80)		; toggle wrapping text at the 80th character
 (setq default-major-mode 'text-mode)
+(add-to-list 'default-frame-alist
+                       '(font . "Source Code Pro"))
 (add-hook 'focus-out-hook (lambda () (when buffer-file-name (save-buffer))))
 (recentf-mode 1)
 (setq
@@ -708,7 +710,9 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   :init (rainbow-delimiters-mode t))
 
 (when (or (system-name-p "klingenbergTablet") (system-name-p "klingenbergLaptop"))
-  (use-package guix :ensure t)
+  (use-package guix :ensure t))
+
+(when (system-name-p "klingenbergLaptop")
   (async-shell-command "setxkbmap de"))
 
 ;; (use-package auto-dim-other-buffers

@@ -188,7 +188,9 @@ Starting points:
     "e"  '(:ignore t :which-key "eval elisp")
     "ee"  'eval-last-sexp
     "ef"  'eval-defun
-    ))
+    "ss"  (lambda () (interactive) (shell-command "shutdown now"))
+    "sr"  (lambda () (interactive) (shell-command "reboot now"))
+    "sl"  (lambda () (interactive) (shell-command "/usr/bin/slock"))))
 
 (use-package evil
   :ensure t

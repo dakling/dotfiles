@@ -54,7 +54,7 @@
 (setq default-fill-column 80)		; toggle wrapping text at the 80th character
 (setq default-major-mode 'text-mode)
 (add-to-list 'default-frame-alist
-                       '(font . "Source Code Pro"))
+	     '(font . "Source Code Pro"))
 (add-hook 'focus-out-hook (lambda () (when buffer-file-name (save-buffer))))
 (recentf-mode 1)
 (setq
@@ -452,7 +452,7 @@ Starting points:
   (progn
     (cond
      ((system-name= "klingenbergTablet") (progn (set 'monitor1 "eDP1")
-							      (set 'monitor2 "HDMI2")))
+						(set 'monitor2 "HDMI2")))
      (t (progn (set 'monitor1 "VGA-1")
 	       (set 'monitor2 "HDMI-1"))))
     ;; (set 'monitor1 "VGA-1")
@@ -620,47 +620,67 @@ Starting points:
 
 (use-package ace-link
   :ensure t)
+
 ;; mail
-(use-package evil-mu4e
-  :ensure t
-  :init
-  (setq mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e")
-  (setq mu4e-maildir "~/Mail"
-	mu4e-trash-folder "/Trash"
-	mu4e-refile-folder "/Archive"
-	mu4e-get-mail-command "offlineimap -o"
-	mu4e-update-interval 600
-	mu4e-compose-signature-auto-include t
-	mu4e-view-show-images t
-	mu4e-enable-notifications t
-	message-send-mail-function 'smtpmail-send-it
-	smtpmail-stream-type 'starttls
-	mu4e-view-show-addresses t)
-  (setq mu4e-account-alist
-	'(("Gmail"
-	   ;; Under each account, set the account-specific variables you want.
-	   (mu4e-sent-messages-behavior delete)
-	   (mu4e-compose-signature-auto-include nil)
-	   (mu4e-sent-folder "/Gmail/sent")
-	   (mu4e-drafts-folder "/Gmail/drafts")
-	   (user-mail-address "dario.klingenberg@gmail.com")
-	   (smtpmail-smtp-server "smtp.gmail.com")
-	   (smtpmail-smtp-service 465)
-	   (user-full-name "Dario Klingenberg"))
-	  ("Web"
-	   (mu4e-sent-messages-behavior sent)
-	   (mu4e-compose-signature-auto-include nil)
-	   (mu4e-sent-folder "/Web/Sent Items")
-	   (mu4e-drafts-folder "/Web/Drafts")
-	   (smtpmail-smtp-server "smtp.web.de")
-	   (smtpmail-smtp-service 587)
-	   (user-mail-address "dario.klingenberg@web.de")
-	   (user-full-name "dario"))
-	  ("FDY"
-	   (mu4e-sent-messages-behavior sent)
-	   (mu4e-compose-signature-auto-include t)
-	   (mu4e-compose-signature
-	    "Technische Universität Darmstadt
+(require 'mu4e)
+(defun my-mu4e-set-account ()
+  "Set the account for composing a message."
+  (let* ((account
+	  (if mu4e-compose-parent-message
+	      (let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
+		(string-match "/\\(.*?\\)/" maildir)
+		(match-string 1 maildir))
+	    (completing-read (format "Compose with account: (%s) "
+				     (mapconcat #'(lambda (var) (car var))
+						my-mu4e-account-alist "/"))
+			     (mapcar #'(lambda (var) (car var)) my-mu4e-account-alist)
+			     nil t nil nil (caar my-mu4e-account-alist))))
+	 (account-vars (cdr (assoc account my-mu4e-account-alist))))
+    (if account-vars
+	(mapc #'(lambda (var)
+		  (set (car var) (cadr var)))
+	      account-vars)
+      (error "No email account found"))))
+
+;; ask for account when composing mail
+(add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
+(setq mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e")
+(setq mu4e-maildir "~/Mail")
+(setq mu4e-trash-folder "/Trash")
+(setq mu4e-refile-folder "/Archive")
+(setq mu4e-get-mail-command "offlineimap -o")
+(setq mu4e-update-interval 300)
+(setq mu4e-compose-signature-auto-include t)
+(setq mu4e-view-show-images t)
+(setq mu4e-enable-notifications t)
+(setq message-send-mail-function #'smtpmail-send-it)
+(setq smtpmail-stream-type 'starttls)
+(setq mu4e-view-show-addresses t)
+(setq my-mu4e-account-alist
+      '(("Gmail"
+	 ;; Under each account, set the account-specific variables you want.
+	 (mu4e-sent-messages-behavior delete)
+	 (mu4e-compose-signature-auto-include nil)
+	 (mu4e-sent-folder "/Gmail/sent")
+	 (mu4e-drafts-folder "/Gmail/drafts")
+	 (user-mail-address "dario.klingenberg@gmail.com")
+	 (smtpmail-smtp-server "smtp.gmail.com")
+	 (smtpmail-smtp-service 465)
+	 (user-full-name "Dario Klingenberg"))
+	("Web"
+	 (mu4e-sent-messages-behavior sent)
+	 (mu4e-compose-signature-auto-include nil)
+	 (mu4e-sent-folder "/Web/Sent Items")
+	 (mu4e-drafts-folder "/Web/Drafts")
+	 (smtpmail-smtp-server "smtp.web.de")
+	 (smtpmail-smtp-service 587)
+	 (user-mail-address "dario.klingenberg@web.de")
+	 (user-full-name "dario"))
+	("FDY"
+	 (mu4e-sent-messages-behavior sent)
+	 (mu4e-compose-signature-auto-include t)
+	 (mu4e-compose-signature
+	  "Technische Universität Darmstadt
 Dario Klingenberg, M.Sc.
 Fachgebiet für Strömungsdynamik
 Fachbereich Maschinenbau
@@ -672,17 +692,17 @@ E-Mail: klingenberg@fdy.tu-darmstadt.de
 Telefon: +9 6151 16-26207
 Fax: +49 6151 16-26203
 Web: http://www.fdy.tu-darmstadt.de")
-	   (mu4e-sent-folder "/FDY/Sent Items")
-	   (mu4e-drafts-folder "/FDY/Drafts")
-	   (smtpmail-smtp-server "smtp.tu-darmstadt.de")
-	   (smtpmail-smtp-service 465)
-	   (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
-	   (user-full-name "Dario Klingenberg"))
-	  ("GSC"
-	   (mu4e-sent-messages-behavior sent)
-	   (mu4e-compose-signature-auto-include t)
-	   (mu4e-compose-signature
-	    "Technische Universität Darmstadt
+	 (mu4e-sent-folder "/FDY/Sent Items")
+	 (mu4e-drafts-folder "/FDY/Drafts")
+	 (smtpmail-smtp-server "smtp.tu-darmstadt.de")
+	 (smtpmail-smtp-service 465)
+	 (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
+	 (user-full-name "Dario Klingenberg"))
+	("GSC"
+	 (mu4e-sent-messages-behavior sent)
+	 (mu4e-compose-signature-auto-include t)
+	 (mu4e-compose-signature
+	  "Technische Universität Darmstadt
 Dario Klingenberg, M.Sc.
 Graduate School Computational Engineering
 Dolivostraße 15
@@ -692,14 +712,17 @@ E-Mail: klingenberg@gsc.tu-darmstadt.de
 Telefon: +49 6151 16-24381
 Fax: +49 6151 16-24404
 Web: http://www.gsc.ce.tu-darmstadt.de/")
-	   (mu4e-sent-folder "/GSC/Sent Items")
-	   (mu4e-drafts-folder "/GSC/Drafts")
-	   (smtpmail-smtp-server "smtp.gsc.ce.tu-darmstadt.de")
-	   (smtpmail-smtp-service 465)
-	   (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
-	   (user-full-name "Dario Klingenberg"))
-	  ))
-  ;; (mu4e/mail-account-reset)
+	 (mu4e-sent-folder "/GSC/Sent Items")
+	 (mu4e-drafts-folder "/GSC/Drafts")
+	 (smtpmail-smtp-server "smtp.gsc.ce.tu-darmstadt.de")
+	 (smtpmail-smtp-service 465)
+	 (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
+	 (user-full-name "Dario Klingenberg"))
+	))
+;; (mu4e/mail-account-reset)
+
+(use-package evil-mu4e
+  :ensure t
   :config
   (evil-define-key 'evilified mu4e-main-mode-map (kbd "j") 'evil-next-line)
   (bind-keys :map mu4e-main-mode-map

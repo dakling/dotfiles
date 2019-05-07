@@ -104,7 +104,7 @@ Starting points:
   (apply #'fdy-mount
 	 (cond ((string= location "lectures") '("misc/fdy-lectures.git" "~/git/mntfdy-lectures.git"))
 	       ((string= location "klausuren") '("lehre/TM1/Klausuren.git" "~/git/mnt/Klausuren.git"))
-	       ((string= location "publication") '("misc/fdy-publications.git" "~/git/mnt/fdy-publications.git"))
+	       ((string= location "publications") '("misc/fdy-publications.git" "~/git/mnt/fdy-publications.git"))
 	       ((string= location "misc") '("misc" "~/misc"))
 	       ((string= location "scratch") '("scratch" "~/scratch"))
 	       ((string= location "lehre") '("lehre" "~/lehre")))))

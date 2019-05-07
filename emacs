@@ -109,6 +109,9 @@ Starting points:
 	       ((string= location "scratch") '("scratch" "~/scratch"))
 	       ((string= location "lehre") '("lehre" "~/lehre")))))
 
+(defun fdy-sshfs ()
+    (async-shell-command "sshfs klingenberg@130.83.248.192:/home/klingenberg/ -p 3389 /home/klingenberg/fdy_pc/")) ;TODO generalize
+
 ;; packages with configuration
 (use-package general :ensure t
   :init

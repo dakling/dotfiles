@@ -11,7 +11,7 @@
  '(global-evil-surround-mode t)
  '(package-selected-packages
    (quote
-    (guix auctex-latexmk ace-link company-reftex yasnippet-snippets omnisharp yasnippet auctex company-auctex auto-dim-other-buffers geiser eval-sexp-fu rainbow-delimiters multi-eshell em-smart eshell-prompt-extras exwm-randr evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package)))
+    (ox-impress-js ox-reveal auctex-latexmk ace-link company-reftex yasnippet-snippets omnisharp yasnippet auctex company-auctex auto-dim-other-buffers geiser eval-sexp-fu rainbow-delimiters multi-eshell em-smart eshell-prompt-extras exwm-randr evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -514,6 +514,14 @@ Starting points:
 	'((((class color)) (:background "black" :foreground "gray" :bold t))
 	  (t (:inverse-video nil)))))
 
+(use-package ox-reveal
+  :ensure t
+  :general
+  (my-local-leader-def
+    :keymaps 'org-mode-map
+    "b" '(org-reveal-export-to-html :which-key "export to html")
+    "a" '(org-reveal-export-to-html-and-browse :which-key "export to html and browse")))
+
 ;;reduce
 (use-package reduce-ide
   :defer t
@@ -567,11 +575,15 @@ Starting points:
     (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
     (add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
     (add-hook 'LaTeX-mode-hook 'TeX-PDF-mode)
+    (general-define-key
+     :states 'normal
+     :keymaps 'TeX-mode-map
+     "-"  nil)
     ;; (add-to-list 'company-backends 'company-auctex t)
     (add-to-list 'company-backends 'company-math t))
   :general
   (my-local-leader-def
-    :keymaps 'tex-mode-map
+    :keymaps 'TeX-mode-map
     "-"   'TeX-recenter-output-buffer         
     "%"   'TeX-comment-or-uncomment-paragraph 
     ";"   'TeX-comment-or-uncomment-region    

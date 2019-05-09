@@ -380,8 +380,8 @@ Starting points:
   :config
   (evil-set-initial-state 'exwm-mode 'emacs)
   (display-time-mode)
-  (setq mouse-autoselect-window t
-	focus-follows-mouse t))
+  (setq mouse-autoselect-window nil
+	focus-follows-mouse nil))
 
 (use-package exwm-input
   :after exwm-randr

@@ -566,15 +566,22 @@ Starting points:
   (progn
     (TeX-interactive-mode -1)
     (TeX-source-correlate-mode -1)
+    (electric-pair-mode -1)
     (setq TeX-electric-math '("\\(" . "\\)"))
     (setq TeX-electric-sub-and-superscript t)
     (setq TeX-save-query nil)
+    (setq LaTeX-electric-left-right-brace t)
     (reftex-mode 1)
     (add-hook 'TeX-after-compilation-finished-functions 'TeX-revert-document-buffer)
     (add-hook 'LaTeX-mode-hook 'flyspell-mode)
     (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
     (add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
     (add-hook 'LaTeX-mode-hook 'TeX-PDF-mode)
+    (add-hook 'LaTeX-mode-hook
+	      (lambda ()
+		(progn
+		 (push '(?d . ("\\left\( " . " \\right\)")) evil-surround-pairs-alist)
+		 (push '(?\$ . ("\\\(" . "\\\)")) evil-surround-pairs-alist))))
     (general-define-key
      :states 'normal
      :keymaps 'TeX-mode-map
@@ -589,6 +596,7 @@ Starting points:
     ";"   'TeX-comment-or-uncomment-region    
     "a"   'TeX-command-run-all                
     "b"   'TeX-command-master
+    "e"   'TeX-next-error
     "k"   'TeX-kill-job                       
     "l"   'TeX-recenter-output-buffer         
     "m"   'TeX-insert-macro                   
@@ -771,5 +779,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 ;; - exwm host-specific settings
 ;; - latex
 ;; - eshell
+;; - eshell: expand 
 ;; - make a nice scratch buffer with recent files and useful functions
 ;; - el-go
+

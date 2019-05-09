@@ -592,8 +592,8 @@ Starting points:
   (my-local-leader-def
     :keymaps 'TeX-mode-map
     "-"   'TeX-recenter-output-buffer         
-    "%"   'TeX-comment-or-uncomment-paragraph 
-    ";"   'TeX-comment-or-uncomment-region    
+    "."   'LaTeX-mark-environment
+    "*"   'LaTeX-mark-section
     "a"   'TeX-command-run-all                
     "b"   'TeX-command-master
     "e"   'TeX-next-error
@@ -601,6 +601,17 @@ Starting points:
     "l"   'TeX-recenter-output-buffer         
     "m"   'TeX-insert-macro                   
     "v"   'TeX-view                           
+    "c" '(:ignore :which-key "change")
+    "cs" '(:ignore :which-key "change environment")
+    "cse" '((lambda() (interactive) (LaTeX-environment 1)) :which-key "change current environment")
+    "yae" '((lambda() (interactive)
+	      (progn
+		(LaTeX-mark-environment)
+		(kill-ring-save 0 0 t))) :which-key "yank current environment")
+    "dae" '((lambda() (interactive)
+	      (progn 
+		(LaTeX-mark-environment)
+		(kill-region 0 0 t))) :which-key "delete current environment")
     ;; TeX-doc is a very slow function
     "hd"  'TeX-doc
     "xb"  'latex/font-bold
@@ -612,6 +623,7 @@ Starting points:
     "xfc" 'latex/font-small-caps
     "xff" 'latex/font-sans-serif
     "xfr" 'latex/font-serif
+    "rr" 'reftex-toc
     "ol" '(lambda() (interactive) (find-file "definLocal.tex"))
     "og" '(lambda() (interactive) (find-file (getenv "LatexGlobalConfig")))
     "ob" '(lambda() (interactive) (find-file "bibliography.bib"))))

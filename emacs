@@ -7,11 +7,11 @@
  '(custom-safe-themes
    (quote
     ("bc75dfb513af404a26260b3420d1f3e4131df752c19ab2984a7c85def9a2917e" default)))
- '(electric-pair-mode t)
+ '(electric-pair-mode nil)
  '(global-evil-surround-mode t)
  '(package-selected-packages
    (quote
-    (ox-impress-js ox-reveal auctex-latexmk ace-link company-reftex yasnippet-snippets omnisharp yasnippet auctex company-auctex auto-dim-other-buffers geiser eval-sexp-fu rainbow-delimiters multi-eshell em-smart eshell-prompt-extras exwm-randr evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package)))
+    (org-ref org-plus-contrib :ox-extra :ox-extras org-bullets ox-impress-js ox-reveal auctex-latexmk ace-link company-reftex yasnippet-snippets omnisharp yasnippet auctex company-auctex auto-dim-other-buffers geiser eval-sexp-fu rainbow-delimiters multi-eshell em-smart eshell-prompt-extras exwm-randr evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -514,6 +514,27 @@ Starting points:
 	'((((class color)) (:background "black" :foreground "gray" :bold t))
 	  (t (:inverse-video nil)))))
 
+;;org
+(use-package org-plus-contrib
+  :ensure t
+  :config
+  (require 'ox-extra)
+  (ox-extras-activate '(ignore-headlines)))
+
+(use-package org-ref
+  :ensure t)
+
+(my-local-leader-def
+  :keymaps 'org-mode-map
+  "e" '(org-export-dispatch :which-key "export"))
+
+(add-to-list 'org-export-backends 'beamer)
+
+(use-package org-bullets
+  :ensure t
+  :config
+  (org-bullets-mode 1))
+
 (use-package ox-reveal
   :ensure t
   :general
@@ -566,11 +587,9 @@ Starting points:
   (progn
     (TeX-interactive-mode -1)
     (TeX-source-correlate-mode -1)
-    (electric-pair-mode -1)
     (setq TeX-electric-math '("\\(" . "\\)"))
     (setq TeX-electric-sub-and-superscript t)
     (setq TeX-save-query nil)
-    (setq LaTeX-electric-left-right-brace t)
     (reftex-mode 1)
     (add-hook 'TeX-after-compilation-finished-functions 'TeX-revert-document-buffer)
     (add-hook 'LaTeX-mode-hook 'flyspell-mode)

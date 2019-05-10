@@ -148,6 +148,7 @@ Starting points:
     "g"  '(:ignore t :which-key "git")
     "f" '(:ignore t :which-key "file")
     "fs" '(save-buffer :which-key "save file")
+    "fS" '(write-file :which-key "save file as")
     "ff" '(counsel-find-file :which-key "find file")
     "fed" '(find-config-file :which-key "find config file")
     "fer" '(load-config-file :which-key "load config file")

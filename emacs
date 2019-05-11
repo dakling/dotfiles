@@ -7,7 +7,6 @@
  '(custom-safe-themes
    (quote
     ("bc75dfb513af404a26260b3420d1f3e4131df752c19ab2984a7c85def9a2917e" default)))
- '(electric-pair-mode nil)
  '(global-evil-surround-mode t)
  '(package-selected-packages
    (quote

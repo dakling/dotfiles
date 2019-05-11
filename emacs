@@ -527,7 +527,11 @@ Starting points:
     "e" '(org-export-dispatch :which-key "export")))
 
 (use-package org-ref
-  :ensure t)
+  :ensure t
+  :config
+  (setq
+   org-ref-default-bibliography '("~/Dropbox/bibliography/bibliography.bib") %TODO
+   bibtex-completion-library-path "~/Dropbox/bibliography/bibtex-pdfs"))
 
 (use-package org-bullets
   :ensure t

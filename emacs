@@ -11,7 +11,7 @@
  '(global-evil-surround-mode t)
  '(package-selected-packages
    (quote
-    (org-ref org-plus-contrib :ox-extra :ox-extras org-bullets ox-impress-js ox-reveal auctex-latexmk ace-link company-reftex yasnippet-snippets omnisharp yasnippet auctex company-auctex auto-dim-other-buffers geiser eval-sexp-fu rainbow-delimiters multi-eshell em-smart eshell-prompt-extras exwm-randr evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package)))
+    (guix org-ref org-plus-contrib :ox-extra org-bullets ox-impress-js ox-reveal auctex-latexmk ace-link company-reftex yasnippet-snippets omnisharp yasnippet auctex company-auctex auto-dim-other-buffers geiser eval-sexp-fu rainbow-delimiters multi-eshell em-smart eshell-prompt-extras exwm-randr evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -516,20 +516,19 @@ Starting points:
 	  (t (:inverse-video nil)))))
 
 ;;org
-(use-package org-plus-contrib
-  :ensure t
+(use-package org
+  :ensure org-plus-contrib
   :config
+  (add-to-list 'org-export-backends 'beamer)
   (require 'ox-extra)
-  (ox-extras-activate '(ignore-headlines)))
+  (ox-extras-activate '(ignore-headlines))
+  :general
+  (my-local-leader-def
+    :keymaps 'org-mode-map
+    "e" '(org-export-dispatch :which-key "export")))
 
 (use-package org-ref
   :ensure t)
-
-(my-local-leader-def
-  :keymaps 'org-mode-map
-  "e" '(org-export-dispatch :which-key "export"))
-
-(add-to-list 'org-export-backends 'beamer)
 
 (use-package org-bullets
   :ensure t
@@ -537,12 +536,7 @@ Starting points:
   (org-bullets-mode 1))
 
 (use-package ox-reveal
-  :ensure t
-  :general
-  (my-local-leader-def
-    :keymaps 'org-mode-map
-    "b" '(org-reveal-export-to-html :which-key "export to html")
-    "a" '(org-reveal-export-to-html-and-browse :which-key "export to html and browse")))
+  :ensure t)
 
 ;;reduce
 (use-package reduce-ide

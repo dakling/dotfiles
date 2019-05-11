@@ -7,10 +7,10 @@
  '(custom-safe-themes
    (quote
     ("bc75dfb513af404a26260b3420d1f3e4131df752c19ab2984a7c85def9a2917e" default)))
- '(global-evil-surround-mode t)
+ '(global-evil-surround-mode 1)
  '(package-selected-packages
    (quote
-    (guix org-ref org-plus-contrib :ox-extra org-bullets ox-impress-js ox-reveal auctex-latexmk ace-link company-reftex yasnippet-snippets omnisharp yasnippet auctex company-auctex auto-dim-other-buffers geiser eval-sexp-fu rainbow-delimiters multi-eshell em-smart eshell-prompt-extras exwm-randr evil-mu4e mu4e company exwm smart-mode-line-atom-one-dark-theme zenburn-theme pdf-tools reduce-ide evil-commentary evil-surround slime evil-magit magit counsel zeno-theme zeno evil ranger which-key general use-package)))
+    (zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme ranger rainbow-delimiters ox-reveal org-ref org-plus-contrib org-bullets omnisharp multi-eshell guix general exwm evil-surround evil-mu4e evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex-latexmk ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -528,10 +528,19 @@ Starting points:
 
 (use-package org-ref
   :ensure t
+  :init
+  (setq org-latex-pdf-process (list "latexmk -shell-escape -f -pdf %f"))
   :config
   (setq
-   org-ref-default-bibliography '("~/Dropbox/bibliography/bibliography.bib") %TODO
-   bibtex-completion-library-path "~/Dropbox/bibliography/bibtex-pdfs"))
+   org-ref-ivy-cite t
+   org-ref-default-bibliography '("~/HESSENBOX-DA/bibliography/bibliography.bib")
+   bibtex-completion-library-path "~/HESSENBOX-DA/bibliography/bibtex-pdfs")
+  :general
+  (my-local-leader-def
+    :keymaps 'org-mode-map
+    "r" '(:ignore :which-key "references")
+    "rc" '(org-ref-helm-insert-cite-link :which-key "insert citation")
+    "rr" '(org-ref-insert-ref-link :which-key "insert reference")))
 
 (use-package org-bullets
   :ensure t

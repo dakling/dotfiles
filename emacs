@@ -157,7 +157,7 @@ Starting points:
     "fg" '(counsel-ag :which-key "counsel-ag")
     "b" '(:ignore t :which-key "buffer")
     "bb" '(counsel-switch-buffer :which-key "switch buffer")
-    "bk" '(kill-this-buffer :which-key "kill buffer")
+    "bd" '(kill-this-buffer :which-key "kill buffer")
     "w"  '(:ignore t :which-key "window management")
     "w TAB"  '(lambda () (interactive) (ivy--switch-buffer-action (buffer-name (other-buffer (current-buffer)))))
     ;; "w2"  'spacemacs/layout-double-columns
@@ -326,169 +326,170 @@ Starting points:
 
 (use-package ediff :ensure t)
 
-(use-package pdf-tools
-  :ensure t
-  :init
-  (pdf-tools-install)
-  :magic ("%PDF" . pdf-view-mode)
-  :config
-  (setq pdf-view-continuous nil)
-  (evil-collection-init 'pdf)
-  :general
-  (general-define-key
-   :states 'normal
-   :keymaps 'pdf-view-mode-map
-   ;; evil-style bindings
-   ;; "SPC"  nil ;TODO where to put this globally?
-   "-"  nil ;TODO where to put this globally?
-   "j"  '(pdf-view-next-line-or-next-page :which-key "scroll down")
-   "k"  '(pdf-view-previous-line-or-previous-page :which-key "scroll up")
-   "L"  '(image-forward-hscroll :which-key "scroll right")
-   "H"  '(image-backward-hscroll :which-key "scroll left")
-   "l"  '(pdf-view-next-page :which-key "page down")
-   "h"  '(pdf-view-previous-page :which-key "page up")
-   "u"  '(pdf-view-scroll-down-or-previous-page :which-key "scroll down")
-   "d"  '(pdf-view-scroll-up-or-next-page :which-key "scroll up")
-   "/"  '(isearch-forward :which-key search forward)
-   "?"  '(isearch-backward :which-key search backward)
-   "0"  '(image-bol :which-key "go left")
-   "$"  '(image-eol :which-key "go right"))
-  (my-local-leader-def
-    ;; :states 'normal
-    :keymaps 'pdf-view-mode-map
-    ;; Scale/Fit
-    ;; "f"  nil
-    "fw"  '(pdf-view-fit-width-to-window :which-key "fit width")
-    "fh"  '(pdf-view-fit-height-to-window :which-key "fit heigth")
-    "fp"  '(pdf-view-fit-page-to-window :which-key "fit page")
-    "m"  '(pdf-view-set-slice-using-mouse :which-key "slice using mouse")
-    "b"  '(pdf-view-set-slice-from-bounding-box :which-key "sclice from bounding box")
-    "R"  '(pdf-view-reset-slice :which-key "reset slice")
-    "zr" '(pdf-view-scale-reset :which-key "zoom reset")))
+(unless (system-name= "lina")
+  (use-package pdf-tools
+    :ensure t
+    :init
+    (pdf-tools-install)
+    :magic ("%PDF" . pdf-view-mode)
+    :config
+    (setq pdf-view-continuous nil)
+    (evil-collection-init 'pdf)
+    :general
+    (general-define-key
+     :states 'normal
+     :keymaps 'pdf-view-mode-map
+     ;; evil-style bindings
+     ;; "SPC"  nil ;TODO where to put this globally?
+     "-"  nil ;TODO where to put this globally?
+     "j"  '(pdf-view-next-line-or-next-page :which-key "scroll down")
+     "k"  '(pdf-view-previous-line-or-previous-page :which-key "scroll up")
+     "L"  '(image-forward-hscroll :which-key "scroll right")
+     "H"  '(image-backward-hscroll :which-key "scroll left")
+     "l"  '(pdf-view-next-page :which-key "page down")
+     "h"  '(pdf-view-previous-page :which-key "page up")
+     "u"  '(pdf-view-scroll-down-or-previous-page :which-key "scroll down")
+     "d"  '(pdf-view-scroll-up-or-next-page :which-key "scroll up")
+     "/"  '(isearch-forward :which-key search forward)
+     "?"  '(isearch-backward :which-key search backward)
+     "0"  '(image-bol :which-key "go left")
+     "$"  '(image-eol :which-key "go right"))
+    (my-local-leader-def
+      ;; :states 'normal
+      :keymaps 'pdf-view-mode-map
+      ;; Scale/Fit
+      ;; "f"  nil
+      "fw"  '(pdf-view-fit-width-to-window :which-key "fit width")
+      "fh"  '(pdf-view-fit-height-to-window :which-key "fit heigth")
+      "fp"  '(pdf-view-fit-page-to-window :which-key "fit page")
+      "m"  '(pdf-view-set-slice-using-mouse :which-key "slice using mouse")
+      "b"  '(pdf-view-set-slice-from-bounding-box :which-key "sclice from bounding box")
+      "R"  '(pdf-view-reset-slice :which-key "reset slice")
+      "zr" '(pdf-view-scale-reset :which-key "zoom reset"))))
 
 ;;exwm
-(use-package exwm 
-  :ensure t
-  :init
-  (server-start)
-  :config
-  (exwm-enable))
+(unless (system-name= "lina")
+  (use-package exwm 
+    :ensure t
+    :init
+    (server-start)
+    :config
+    (exwm-enable))
 
-(use-package exwm-config
-  :after exwm
-  :demand t
-  :config
-  (evil-set-initial-state 'exwm-mode 'emacs)
-  (display-time-mode)
-  (setq mouse-autoselect-window nil
-	focus-follows-mouse nil))
+  (use-package exwm-config
+    :after exwm
+    :demand t
+    :config
+    (evil-set-initial-state 'exwm-mode 'emacs)
+    (display-time-mode)
+    (setq mouse-autoselect-window nil
+	  focus-follows-mouse nil))
 
-(use-package exwm-input
-  :after exwm-randr
-  :demand t
-  :config
-  (setq exwm-input-global-keys
-	`(([?\s-r] . exwm-reset)
-	  ([?\s-w] . exwm-workspace-switch)
-	  ([?\s-W] . exwm-workspace-move-window)
-	  ,@(mapcar (lambda (i)
-		      `(,(kbd (format "s-%d" i)) .
-			(lambda () (interactive)
-			  (exwm-workspace-switch-create ,i))))
-		    (number-sequence 0 9))
-	  ;; ,@(mapcar (lambda (i)
-	  ;; 	      `(,(kbd (format "s-%s" i)) .
-	  ;; 		(lambda () (interactive)
-	  ;; 		  (exwm-workspace-move-window ,i))))
-	  ;; 	    (list '! \" § $ % & / ( ) =))
-	  ;; (number-sequence 0 9))
-	  ([?\s-d] . counsel-linux-app)
-	  ([?\s-l] . evil-window-right)
-	  ([?\s-h] . evil-window-left)
-	  ([?\s-j] . evil-window-down)
-	  ([?\s-k] . evil-window-up)
-	  ([?\s-c] . kill-this-buffer)
-	  ([?\s-o] . my-exwm-switch-to-other-workspace)
-	  ([?\s-O] . my-exwm-move-window-to-other-workspace)
-	  ([?\s-m] . delete-other-windows)
-	  ([s-f1] . (lambda () (interactive) (eshell 'N)))
-	  ([s-f2] . (lambda () (interactive)
-		      (start-process "" nil "qutebrowser")))
-	  ([s-f3] . deer)
-	  ([s-f4] . (lambda () (interactive)
-		      (start-process "" nil "thunderbird")))
-	  ([s-f12] . (lambda () (interactive)
-		       (start-process "" nil "/usr/bin/slock")))))
-  (push ?\s-\  exwm-input-prefix-keys)
-  ;; (push ?\M-m  exwm-input-prefix-keys)
-  (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
-		      (lambda () (interactive) (start-process-shell-command "" nil "pactl set-sink-volume @DEFAULT_SINK@ -5%")))
-  (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
-		      (lambda () (interactive) (start-process-shell-command "" nil "pactl set-sink-volume @DEFAULT_SINK@ +5%")))
-  (exwm-input-set-key (kbd "<XF86AudioMute>")
-		      (lambda () (interactive) (start-process-shell-command "" nil "pactl set-sink-mute @DEFAULT_SINK@ toggle"))))
+  (use-package exwm-input
+    :after exwm-randr
+    :demand t
+    :config
+    (setq exwm-input-global-keys
+	  `(([?\s-r] . exwm-reset)
+	    ([?\s-w] . exwm-workspace-switch)
+	    ([?\s-W] . exwm-workspace-move-window)
+	    ,@(mapcar (lambda (i)
+			`(,(kbd (format "s-%d" i)) .
+			  (lambda () (interactive)
+			    (exwm-workspace-switch-create ,i))))
+		      (number-sequence 0 9))
+	    ;; ,@(mapcar (lambda (i)
+	    ;; 	      `(,(kbd (format "s-%s" i)) .
+	    ;; 		(lambda () (interactive)
+	    ;; 		  (exwm-workspace-move-window ,i))))
+	    ;; 	    (list '! \" § $ % & / ( ) =))
+	    ;; (number-sequence 0 9))
+	    ([?\s-d] . counsel-linux-app)
+	    ([?\s-l] . evil-window-right)
+	    ([?\s-h] . evil-window-left)
+	    ([?\s-j] . evil-window-down)
+	    ([?\s-k] . evil-window-up)
+	    ([?\s-c] . kill-this-buffer)
+	    ([?\s-o] . my-exwm-switch-to-other-workspace)
+	    ([?\s-O] . my-exwm-move-window-to-other-workspace)
+	    ([?\s-m] . delete-other-windows)
+	    ([s-f1] . (lambda () (interactive) (eshell 'N)))
+	    ([s-f2] . (lambda () (interactive)
+			(start-process "" nil "qutebrowser")))
+	    ([s-f3] . deer)
+	    ([s-f4] . (lambda () (interactive)
+			(start-process "" nil "thunderbird")))
+	    ([s-f12] . (lambda () (interactive)
+			 (start-process "" nil "/usr/bin/slock")))))
+    (push ?\s-\  exwm-input-prefix-keys)
+    ;; (push ?\M-m  exwm-input-prefix-keys)
+    (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
+			(lambda () (interactive) (start-process-shell-command "" nil "pactl set-sink-volume @DEFAULT_SINK@ -5%")))
+    (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
+			(lambda () (interactive) (start-process-shell-command "" nil "pactl set-sink-volume @DEFAULT_SINK@ +5%")))
+    (exwm-input-set-key (kbd "<XF86AudioMute>")
+			(lambda () (interactive) (start-process-shell-command "" nil "pactl set-sink-mute @DEFAULT_SINK@ toggle"))))
 
-(use-package exwm-systemtray
-  :after exwm
-  :demand t
-  :config (exwm-systemtray-enable))
+  (use-package exwm-systemtray
+    :after exwm
+    :demand t
+    :config (exwm-systemtray-enable))
 
-(use-package exwm-randr
-  :after exwm
-  :demand t
-  :preface
-  (defun my-exwm-get-other-workspace ()
-    (cond ((not (= 2 (length (seq-filter #'identity (mapcar #'exwm-workspace--active-p exwm-workspace--list))))) nil) ;currently only works for two monitors
-	  ((= exwm-workspace-current-index
-	      (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))
-	   (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
-	  ((= exwm-workspace-current-index
-	      (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
-	   (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))))
-  (defun my-exwm-switch-to-other-workspace () (interactive)
-	 (exwm-workspace-switch (my-exwm-get-other-workspace)))
-  (defun my-exwm-move-window-to-other-workspace () (interactive)
-	 (exwm-workspace-move-window (my-exwm-get-other-workspace)))
-  (progn
-    (cond
-     ((system-name= "klingenbergTablet") (progn (set 'monitor1 "eDP1")
-						(set 'monitor2 "HDMI2")))
-     (t (progn (set 'monitor1 "VGA-1")
-	       (set 'monitor2 "HDMI-1"))))
-    ;; (set 'monitor1 "VGA-1")
-    ;; (set 'monitor2 "HDMI-1")
-    (defun my/exwm-xrandr ()
-      "Configure screen with xrandr."
-      (start-process-shell-command
-       "xrandr" nil
-       (if (system-name= "klingenbergTablet")
-	   "xrandr --output VGA-1 --primary --left-of HDMI-1 --auto"
-	 "xrandr --output eDP1 --primary --below-of HDMI1 --auto"))))
-  :hook (exwm-randr-screen-change . my/exwm-xrandr)
-  :init
-  (setq exwm-randr-workspace-monitor-plist (list 0 monitor1
-						 2 monitor1
-						 4 monitor1
-						 6 monitor1
-						 8 monitor1
-						 1 monitor2
-						 3 monitor2
-						 5 monitor2
-						 7 monitor2
-						 9 monitor2))
-  :config
-  (progn
-    (exwm-randr-enable)))
+  (use-package exwm-randr
+    :after exwm
+    :demand t
+    :preface
+    (defun my-exwm-get-other-workspace ()
+      (cond ((not (= 2 (length (seq-filter #'identity (mapcar #'exwm-workspace--active-p exwm-workspace--list))))) nil) ;currently only works for two monitors
+	    ((= exwm-workspace-current-index
+		(cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))
+	     (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
+	    ((= exwm-workspace-current-index
+		(cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
+	     (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))))
+    (defun my-exwm-switch-to-other-workspace () (interactive)
+	   (exwm-workspace-switch (my-exwm-get-other-workspace)))
+    (defun my-exwm-move-window-to-other-workspace () (interactive)
+	   (exwm-workspace-move-window (my-exwm-get-other-workspace)))
+    (progn
+      (cond
+       ((system-name= "klingenbergTablet") (progn (set 'monitor1 "eDP1")
+						  (set 'monitor2 "HDMI2")))
+       (t (progn (set 'monitor1 "VGA-1")
+		 (set 'monitor2 "HDMI-1"))))
+      ;; (set 'monitor1 "VGA-1")
+      ;; (set 'monitor2 "HDMI-1")
+      (defun my/exwm-xrandr ()
+	"Configure screen with xrandr."
+	(start-process-shell-command
+	 "xrandr" nil
+	 (if (system-name= "klingenbergTablet")
+	     "xrandr --output VGA-1 --primary --left-of HDMI-1 --auto"
+	   "xrandr --output eDP1 --primary --below-of HDMI1 --auto"))))
+    :hook (exwm-randr-screen-change . my/exwm-xrandr)
+    :init
+    (setq exwm-randr-workspace-monitor-plist (list 0 monitor1
+						   2 monitor1
+						   4 monitor1
+						   6 monitor1
+						   8 monitor1
+						   1 monitor2
+						   3 monitor2
+						   5 monitor2
+						   7 monitor2
+						   9 monitor2))
+    :config
+    (progn
+      (exwm-randr-enable)))
 
-(use-package exwm-workspace
-  :after exwm
-  :demand t
-  :init
-  (progn
-    (setq exwm-workspace-number 10)
-    (setq exwm-workspace-show-all-buffers t)
-    (setq exwm-layout-show-all-buffers t)))
-
+  (use-package exwm-workspace
+    :after exwm
+    :demand t
+    :init
+    (progn
+      (setq exwm-workspace-number 10)
+      (setq exwm-workspace-show-all-buffers t)
+      (setq exwm-layout-show-all-buffers t))))
 ;;;programming languages
 ;; lisp
 (use-package slime
@@ -521,6 +522,7 @@ Starting points:
   (add-to-list 'org-export-backends 'beamer)
   (require 'ox-extra)
   (ox-extras-activate '(ignore-headlines))
+  (setq org-return-follows-link t)
   :general
   (my-local-leader-def
     :keymaps 'org-mode-map
@@ -606,8 +608,8 @@ Starting points:
     (add-hook 'LaTeX-mode-hook
 	      (lambda ()
 		(progn
-		 (push '(?d . ("\\left\( " . " \\right\)")) evil-surround-pairs-alist)
-		 (push '(?\$ . ("\\\(" . "\\\)")) evil-surround-pairs-alist))))
+		  (push '(?d . ("\\left\( " . " \\right\)")) evil-surround-pairs-alist)
+		  (push '(?\$ . ("\\\(" . "\\\)")) evil-surround-pairs-alist))))
     (general-define-key
      :states 'normal
      :keymaps 'TeX-mode-map
@@ -680,65 +682,66 @@ Starting points:
   :ensure t)
 
 ;; mail
-(require 'mu4e)
-(defun my-mu4e-set-account ()
-  "Set the account for composing a message."
-  (let* ((account
-	  (if mu4e-compose-parent-message
-	      (let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
-		(string-match "/\\(.*?\\)/" maildir)
-		(match-string 1 maildir))
-	    (completing-read (format "Compose with account: (%s) "
-				     (mapconcat #'(lambda (var) (car var))
-						my-mu4e-account-alist "/"))
-			     (mapcar #'(lambda (var) (car var)) my-mu4e-account-alist)
-			     nil t nil nil (caar my-mu4e-account-alist))))
-	 (account-vars (cdr (assoc account my-mu4e-account-alist))))
-    (if account-vars
-	(mapc #'(lambda (var)
-		  (set (car var) (cadr var)))
-	      account-vars)
-      (error "No email account found"))))
+(unless (system-name= "lina")
+ (require 'mu4e)
+ (defun my-mu4e-set-account ()
+   "Set the account for composing a message."
+   (let* ((account
+	   (if mu4e-compose-parent-message
+	       (let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
+		 (string-match "/\\(.*?\\)/" maildir)
+		 (match-string 1 maildir))
+	     (completing-read (format "Compose with account: (%s) "
+				      (mapconcat #'(lambda (var) (car var))
+						 my-mu4e-account-alist "/"))
+			      (mapcar #'(lambda (var) (car var)) my-mu4e-account-alist)
+			      nil t nil nil (caar my-mu4e-account-alist))))
+	  (account-vars (cdr (assoc account my-mu4e-account-alist))))
+     (if account-vars
+	 (mapc #'(lambda (var)
+		   (set (car var) (cadr var)))
+	       account-vars)
+       (error "No email account found"))))
 
-;; ask for account when composing mail
-(add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
-(setq mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e")
-(setq mu4e-maildir "~/Mail")
-(setq mu4e-trash-folder "/Trash")
-(setq mu4e-refile-folder "/Archive")
-(setq mu4e-get-mail-command "offlineimap -o")
-(setq mu4e-update-interval 300)
-(setq mu4e-compose-signature-auto-include t)
-(setq mu4e-view-show-images t)
-(setq mu4e-enable-notifications t)
-(setq message-send-mail-function #'smtpmail-send-it)
-(setq smtpmail-stream-type 'starttls)
-(setq mu4e-view-show-addresses t)
-(setq my-mu4e-account-alist
-      '(("Gmail"
-	 ;; Under each account, set the account-specific variables you want.
-	 (mu4e-sent-messages-behavior delete)
-	 (mu4e-compose-signature-auto-include nil)
-	 (mu4e-sent-folder "/Gmail/sent")
-	 (mu4e-drafts-folder "/Gmail/drafts")
-	 (user-mail-address "dario.klingenberg@gmail.com")
-	 (smtpmail-smtp-server "smtp.gmail.com")
-	 (smtpmail-smtp-service 465)
-	 (user-full-name "Dario Klingenberg"))
-	("Web"
-	 (mu4e-sent-messages-behavior sent)
-	 (mu4e-compose-signature-auto-include nil)
-	 (mu4e-sent-folder "/Web/Sent Items")
-	 (mu4e-drafts-folder "/Web/Drafts")
-	 (smtpmail-smtp-server "smtp.web.de")
-	 (smtpmail-smtp-service 587)
-	 (user-mail-address "dario.klingenberg@web.de")
-	 (user-full-name "dario"))
-	("FDY"
-	 (mu4e-sent-messages-behavior sent)
-	 (mu4e-compose-signature-auto-include t)
-	 (mu4e-compose-signature
-	  "Technische Universität Darmstadt
+ ;; ask for account when composing mail
+ (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
+ (setq mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e")
+ (setq mu4e-maildir "~/Mail")
+ (setq mu4e-trash-folder "/Trash")
+ (setq mu4e-refile-folder "/Archive")
+ (setq mu4e-get-mail-command "offlineimap -o")
+ (setq mu4e-update-interval 300)
+ (setq mu4e-compose-signature-auto-include t)
+ (setq mu4e-view-show-images t)
+ (setq mu4e-enable-notifications t)
+ (setq message-send-mail-function #'smtpmail-send-it)
+ (setq smtpmail-stream-type 'starttls)
+ (setq mu4e-view-show-addresses t)
+ (setq my-mu4e-account-alist
+       '(("Gmail"
+	  ;; Under each account, set the account-specific variables you want.
+	  (mu4e-sent-messages-behavior delete)
+	  (mu4e-compose-signature-auto-include nil)
+	  (mu4e-sent-folder "/Gmail/sent")
+	  (mu4e-drafts-folder "/Gmail/drafts")
+	  (user-mail-address "dario.klingenberg@gmail.com")
+	  (smtpmail-smtp-server "smtp.gmail.com")
+	  (smtpmail-smtp-service 465)
+	  (user-full-name "Dario Klingenberg"))
+	 ("Web"
+	  (mu4e-sent-messages-behavior sent)
+	  (mu4e-compose-signature-auto-include nil)
+	  (mu4e-sent-folder "/Web/Sent Items")
+	  (mu4e-drafts-folder "/Web/Drafts")
+	  (smtpmail-smtp-server "smtp.web.de")
+	  (smtpmail-smtp-service 587)
+	  (user-mail-address "dario.klingenberg@web.de")
+	  (user-full-name "dario"))
+	 ("FDY"
+	  (mu4e-sent-messages-behavior sent)
+	  (mu4e-compose-signature-auto-include t)
+	  (mu4e-compose-signature
+	   "Technische Universität Darmstadt
 Dario Klingenberg, M.Sc.
 Fachgebiet für Strömungsdynamik
 Fachbereich Maschinenbau
@@ -750,17 +753,17 @@ E-Mail: klingenberg@fdy.tu-darmstadt.de
 Telefon: +9 6151 16-26207
 Fax: +49 6151 16-26203
 Web: http://www.fdy.tu-darmstadt.de")
-	 (mu4e-sent-folder "/FDY/Sent Items")
-	 (mu4e-drafts-folder "/FDY/Drafts")
-	 (smtpmail-smtp-server "smtp.tu-darmstadt.de")
-	 (smtpmail-smtp-service 465)
-	 (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
-	 (user-full-name "Dario Klingenberg"))
-	("GSC"
-	 (mu4e-sent-messages-behavior sent)
-	 (mu4e-compose-signature-auto-include t)
-	 (mu4e-compose-signature
-	  "Technische Universität Darmstadt
+	  (mu4e-sent-folder "/FDY/Sent Items")
+	  (mu4e-drafts-folder "/FDY/Drafts")
+	  (smtpmail-smtp-server "smtp.tu-darmstadt.de")
+	  (smtpmail-smtp-service 465)
+	  (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
+	  (user-full-name "Dario Klingenberg"))
+	 ("GSC"
+	  (mu4e-sent-messages-behavior sent)
+	  (mu4e-compose-signature-auto-include t)
+	  (mu4e-compose-signature
+	   "Technische Universität Darmstadt
 Dario Klingenberg, M.Sc.
 Graduate School Computational Engineering
 Dolivostraße 15
@@ -770,22 +773,22 @@ E-Mail: klingenberg@gsc.tu-darmstadt.de
 Telefon: +49 6151 16-24381
 Fax: +49 6151 16-24404
 Web: http://www.gsc.ce.tu-darmstadt.de/")
-	 (mu4e-sent-folder "/GSC/Sent Items")
-	 (mu4e-drafts-folder "/GSC/Drafts")
-	 (smtpmail-smtp-server "smtp.gsc.ce.tu-darmstadt.de")
-	 (smtpmail-smtp-service 465)
-	 (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
-	 (user-full-name "Dario Klingenberg"))
-	))
-;; (mu4e/mail-account-reset)
+	  (mu4e-sent-folder "/GSC/Sent Items")
+	  (mu4e-drafts-folder "/GSC/Drafts")
+	  (smtpmail-smtp-server "smtp.gsc.ce.tu-darmstadt.de")
+	  (smtpmail-smtp-service 465)
+	  (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
+	  (user-full-name "Dario Klingenberg"))
+	 ))
+ ;; (mu4e/mail-account-reset)
 
-(use-package evil-mu4e
-  :ensure t
-  :config
-  (evil-define-key 'evilified mu4e-main-mode-map (kbd "j") 'evil-next-line)
-  (bind-keys :map mu4e-main-mode-map
-	     ;; ("j" . evil-next-line)
-	     ("c" . mu4e-compose-new)))
+ (use-package evil-mu4e
+   :ensure t
+   :config
+   (evil-define-key 'evilified mu4e-main-mode-map (kbd "j") 'evil-next-line)
+   (bind-keys :map mu4e-main-mode-map
+	      ;; ("j" . evil-next-line)
+	      ("c" . mu4e-compose-new))))
 
 
 (use-package rainbow-delimiters

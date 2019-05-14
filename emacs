@@ -523,7 +523,6 @@ Starting points:
   (ox-extras-activate '(ignore-headlines))
   (org-bullets-mode 1)
   :general
-  (progn
     (my-local-leader-def
       :keymaps 'org-mode-map
       "e" '(org-export-dispatch :which-key "export"))
@@ -531,7 +530,6 @@ Starting points:
      :states '(motion normal)
      :keymaps 'org-mode-map
      "RET" '(org-open-at-point :which-key "open link")))
-    )
 
 (use-package evil-org
   :ensure t

@@ -10,7 +10,7 @@
  '(global-evil-surround-mode 1)
  '(package-selected-packages
    (quote
-    (zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme ranger rainbow-delimiters ox-reveal org-ref org-plus-contrib org-bullets omnisharp multi-eshell guix general exwm evil-surround evil-mu4e evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex-latexmk ace-link)))
+    (zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme ranger rainbow-delimiters ox-reveal org-ref org-plus-contrib org-bullets omnisharp multi-eshell guix general exwm evil-surround evil-mu4e evil-magit evil-commentary evil-collection eval-sexp-fu counsel company-reftex auctex-latexmk ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -267,14 +267,8 @@ Starting points:
 ;; eshell
 (use-package eshell
   :config
-  (setq shell-protect-eshell-prompt nil)
+  (setq shell-protect-eshell-prompt t)
   (setq eshell-cmpl-ignore-case t))
-
-(use-package eshell-prompt-extras
-  :ensure t
-  :config
-  (setq eshell-highlight-prompt nil
-	eshell-prompt-function 'epe-theme-lambda))
 
 (use-package ranger :ensure t
   :commands (ranger)
@@ -342,8 +336,10 @@ Starting points:
      ;; evil-style bindings
      ;; "SPC"  nil ;TODO where to put this globally?
      "-"  nil ;TODO where to put this globally?
-     "j"  '(pdf-view-next-line-or-next-page :which-key "scroll down")
-     "k"  '(pdf-view-previous-line-or-previous-page :which-key "scroll up")
+     "j"  '(pdf-view-scroll-up-or-next-page :which-key "scroll down")
+     "k"  '(pdf-view-scroll-down-or-previous-page :which-key "scroll up")
+     ;; "j"  '(pdf-view-next-line-or-next-page :which-key "scroll down")
+     ;; "k"  '(pdf-view-previous-line-or-previous-page :which-key "scroll up")
      "L"  '(image-forward-hscroll :which-key "scroll right")
      "H"  '(image-backward-hscroll :which-key "scroll left")
      "l"  '(pdf-view-next-page :which-key "page down")
@@ -523,6 +519,7 @@ Starting points:
   (require 'ox-extra)
   (ox-extras-activate '(ignore-headlines))
   (setq org-return-follows-link t)
+  (org-bullets-mode 1)
   :general
   (my-local-leader-def
     :keymaps 'org-mode-map
@@ -546,6 +543,7 @@ Starting points:
 
 (use-package org-bullets
   :ensure t
+  :after org
   :config
   (org-bullets-mode 1))
 

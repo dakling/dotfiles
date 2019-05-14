@@ -729,8 +729,19 @@ Starting points:
  (setq mu4e-compose-signature-auto-include t)
  (setq mu4e-view-show-images t)
  (setq mu4e-enable-notifications t)
- (setq message-send-mail-function #'smtpmail-send-it)
- (setq smtpmail-stream-type 'starttls)
+ (setq send-mail-function 'smtpmail-send-it)
+ ;;experimental
+ ;; (setq mu4e-sent-messages-behavior 'delete)
+ ;; (setq mail-user-agent 'mu4e-user-agent)
+ ;; (setq smtpmail-smtp-server "smtp.gmail.com")
+ ;; (setq mu4e-sent-folder "/Gmail/sent")
+ ;; (setq mu4e-drafts-folder "/Gmail/drafts")
+ ;; (setq user-mail-address "dario.klingenberg@gmail.com")
+ ;; (setq smtpmail-smtp-server "smtp.gmail.com")
+ ;; (setq smtpmail-smtp-service 465)
+ ;;experimental end
+ (setq message-send-mail-function 'smtpmail-send-it)
+ (setq smtpmail-stream-type 'ssl)
  (setq mu4e-view-show-addresses t)
  (setq my-mu4e-account-alist
        '(("Gmail"
@@ -742,6 +753,7 @@ Starting points:
 	  (user-mail-address "dario.klingenberg@gmail.com")
 	  (smtpmail-smtp-server "smtp.gmail.com")
 	  (smtpmail-smtp-service 465)
+	  (smtpmail-stream-type ssl)
 	  (user-full-name "Dario Klingenberg"))
 	 ("Web"
 	  (mu4e-sent-messages-behavior sent)
@@ -750,6 +762,7 @@ Starting points:
 	  (mu4e-drafts-folder "/Web/Drafts")
 	  (smtpmail-smtp-server "smtp.web.de")
 	  (smtpmail-smtp-service 587)
+	  (smtpmail-stream-type starttls)
 	  (user-mail-address "dario.klingenberg@web.de")
 	  (user-full-name "dario"))
 	 ("FDY"
@@ -772,6 +785,7 @@ Web: http://www.fdy.tu-darmstadt.de")
 	  (mu4e-drafts-folder "/FDY/Drafts")
 	  (smtpmail-smtp-server "smtp.tu-darmstadt.de")
 	  (smtpmail-smtp-service 465)
+	  (smtpmail-stream-type ssl)
 	  (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
 	  (user-full-name "Dario Klingenberg"))
 	 ("GSC"
@@ -792,10 +806,9 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 	  (mu4e-drafts-folder "/GSC/Drafts")
 	  (smtpmail-smtp-server "smtp.gsc.ce.tu-darmstadt.de")
 	  (smtpmail-smtp-service 465)
+	  (smtpmail-stream-type ssl)
 	  (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
-	  (user-full-name "Dario Klingenberg"))
-	 ))
- ;; (mu4e/mail-account-reset)
+	  (user-full-name "Dario Klingenberg"))))
 
  (use-package evil-mu4e
    :ensure t

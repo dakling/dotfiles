@@ -265,9 +265,13 @@ Starting points:
 (menu-bar-no-scroll-bar)
 
 ;; eshell
-(setq shell-protect-eshell-prompt t
-      ;eshell-cmpl-ignore-case t
-      )
+;; (setq pcomplete-ignore-case t)
+
+(use-package eshell-prompt-extras
+  :ensure t
+  :config
+  (setq eshell-highlight-prompt t
+	eshell-prompt-function 'epe-theme-lambda))
 
 (use-package ranger :ensure t
   :commands (ranger)
@@ -817,7 +821,8 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 ;; - exwm host-specific settings
 ;; - latex
 ;; - eshell
-;; - eshell: expand 
+;; - eshell: expand
+;; related to https://lists.gnu.org/archive/html/bug-gnu-emacs/2012-11/msg00878.html
 ;; - make a nice scratch buffer with recent files and useful functions
 ;; - el-go
 

@@ -10,7 +10,7 @@
  '(global-evil-surround-mode 1)
  '(package-selected-packages
    (quote
-    (zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme ranger rainbow-delimiters ox-reveal org-ref org-plus-contrib org-bullets omnisharp multi-eshell guix general exwm evil-surround evil-mu4e evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex-latexmk ace-link)))
+    (evil-org zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme ranger rainbow-delimiters ox-reveal org-ref org-plus-contrib org-bullets omnisharp guix general exwm evil-surround evil-mu4e evil-magit evil-commentary evil-collection eval-sexp-fu counsel company-reftex auctex-latexmk ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -127,12 +127,12 @@ Starting points:
     :keymaps 'override
     :prefix "SPC"
     :global-prefix "s-SPC"
-    :states '(normal emacs))
+    :states '(motion normal emacs))
 
   (general-create-definer my-local-leader-def
     :keymaps 'override
     :prefix "-"
-    :states 'normal)
+    :states '(motion normal))
 
   (general-nmap "Y" "y$")
 
@@ -265,15 +265,12 @@ Starting points:
 (menu-bar-no-scroll-bar)
 
 ;; eshell
-(use-package eshell
-  :config
-  (setq shell-protect-eshell-prompt nil)
-  (setq eshell-cmpl-ignore-case t))
+;; (setq pcomplete-ignore-case t)
 
 (use-package eshell-prompt-extras
   :ensure t
   :config
-  (setq eshell-highlight-prompt nil
+  (setq eshell-highlight-prompt t
 	eshell-prompt-function 'epe-theme-lambda))
 
 (use-package ranger :ensure t
@@ -337,13 +334,15 @@ Starting points:
     (evil-collection-init 'pdf)
     :general
     (general-define-key
-     :states 'normal
+     :states '(motion normal)
      :keymaps 'pdf-view-mode-map
      ;; evil-style bindings
      ;; "SPC"  nil ;TODO where to put this globally?
      "-"  nil ;TODO where to put this globally?
-     "j"  '(pdf-view-next-line-or-next-page :which-key "scroll down")
-     "k"  '(pdf-view-previous-line-or-previous-page :which-key "scroll up")
+     "j"  '(pdf-view-scroll-up-or-next-page :which-key "scroll down")
+     "k"  '(pdf-view-scroll-down-or-previous-page :which-key "scroll up")
+     ;; "j"  '(pdf-view-next-line-or-next-page :which-key "scroll down")
+     ;; "k"  '(pdf-view-previous-line-or-previous-page :which-key "scroll up")
      "L"  '(image-forward-hscroll :which-key "scroll right")
      "H"  '(image-backward-hscroll :which-key "scroll left")
      "l"  '(pdf-view-next-page :which-key "page down")
@@ -522,11 +521,28 @@ Starting points:
   (add-to-list 'org-export-backends 'beamer)
   (require 'ox-extra)
   (ox-extras-activate '(ignore-headlines))
-  (setq org-return-follows-link t)
+  (org-bullets-mode 1)
   :general
-  (my-local-leader-def
-    :keymaps 'org-mode-map
-    "e" '(org-export-dispatch :which-key "export")))
+  (progn
+    (my-local-leader-def
+      :keymaps 'org-mode-map
+      "e" '(org-export-dispatch :which-key "export"))
+    (general-define-key
+     :states '(motion normal)
+     :keymaps 'org-mode-map
+     "RET" '(org-open-at-point :which-key "open link")))
+    )
+
+(use-package evil-org
+  :ensure t
+  :after org
+  :config
+  (add-hook 'org-mode-hook 'evil-org-mode)
+  (add-hook 'evil-org-mode-hook
+            (lambda ()
+              (evil-org-set-key-theme)))
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys))
 
 (use-package org-ref
   :ensure t
@@ -546,6 +562,7 @@ Starting points:
 
 (use-package org-bullets
   :ensure t
+  :after org
   :config
   (org-bullets-mode 1))
 
@@ -611,7 +628,7 @@ Starting points:
 		  (push '(?d . ("\\left\( " . " \\right\)")) evil-surround-pairs-alist)
 		  (push '(?\$ . ("\\\(" . "\\\)")) evil-surround-pairs-alist))))
     (general-define-key
-     :states 'normal
+     :states '(motion normal)
      :keymaps 'TeX-mode-map
      "-"  nil)
     ;; (add-to-list 'company-backends 'company-auctex t)
@@ -820,7 +837,8 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 ;; - exwm host-specific settings
 ;; - latex
 ;; - eshell
-;; - eshell: expand 
+;; - eshell: expand
+;; related to https://lists.gnu.org/archive/html/bug-gnu-emacs/2012-11/msg00878.html
 ;; - make a nice scratch buffer with recent files and useful functions
 ;; - el-go
 

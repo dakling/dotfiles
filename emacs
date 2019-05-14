@@ -10,7 +10,7 @@
  '(global-evil-surround-mode 1)
  '(package-selected-packages
    (quote
-    (zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme ranger rainbow-delimiters ox-reveal org-ref org-plus-contrib org-bullets omnisharp multi-eshell guix general exwm evil-surround evil-mu4e evil-magit evil-commentary evil-collection eval-sexp-fu counsel company-reftex auctex-latexmk ace-link)))
+    (zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme ranger rainbow-delimiters ox-reveal org-ref org-plus-contrib org-bullets omnisharp guix general exwm evil-surround evil-mu4e evil-magit evil-commentary evil-collection eval-sexp-fu counsel company-reftex auctex-latexmk ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -265,10 +265,9 @@ Starting points:
 (menu-bar-no-scroll-bar)
 
 ;; eshell
-(use-package eshell
-  :config
-  (setq shell-protect-eshell-prompt t)
-  (setq eshell-cmpl-ignore-case t))
+(setq shell-protect-eshell-prompt t
+      ;eshell-cmpl-ignore-case t
+      )
 
 (use-package ranger :ensure t
   :commands (ranger)

@@ -63,7 +63,6 @@
 Starting points: 
 (recentf-open-files)
 (find-file \"~/Documents/TODO.org\")
-(async-shell-command \"thunderbird\")
 "
  ) ; print a default message in the empty scratch buffer opened at startup
 (defalias 'yes-or-no-p 'y-or-n-p) ;reduce typing effort
@@ -144,6 +143,7 @@ Starting points:
     "ar" '(ranger :which-key "call ranger")
     "ad" '(deer :which-key "call deer")
     "ab" '(eww :which-key "open browser")
+    "am" '(mu4e :which-key "open mail")
     "g"  '(:ignore t :which-key "git")
     "f" '(:ignore t :which-key "file")
     "fs" '(save-buffer :which-key "save file")
@@ -417,7 +417,7 @@ Starting points:
 			(start-process "" nil "qutebrowser")))
 	    ([s-f3] . deer)
 	    ([s-f4] . (lambda () (interactive)
-			(start-process "" nil "thunderbird")))
+			(mu4e)))
 	    ([s-f12] . (lambda () (interactive)
 			 (start-process "" nil "/usr/bin/slock")))))
     (push ?\s-\  exwm-input-prefix-keys)

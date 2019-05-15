@@ -10,7 +10,7 @@
  '(global-evil-surround-mode 1)
  '(package-selected-packages
    (quote
-    (evil-org zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme ranger rainbow-delimiters ox-reveal org-ref org-plus-contrib org-bullets omnisharp guix general exwm evil-surround evil-mu4e evil-magit evil-commentary evil-collection eval-sexp-fu counsel company-reftex auctex-latexmk ace-link)))
+    (mu4e-alert evil-org zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme ranger rainbow-delimiters ox-reveal org-ref org-plus-contrib org-bullets omnisharp guix general exwm evil-surround evil-mu4e evil-magit evil-commentary evil-collection eval-sexp-fu counsel company-reftex auctex-latexmk ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -698,6 +698,7 @@ Starting points:
 ;; mail
 (unless (system-name= "lina")
  (require 'mu4e)
+ (setenv "GPG_AGENT_INFO" nil)
  (defun my-mu4e-set-account ()
    "Set the account for composing a message."
    (let* ((account
@@ -733,28 +734,7 @@ Starting points:
  (setq smtpmail-stream-type 'ssl)
  (setq mu4e-view-show-addresses t)
  (setq my-mu4e-account-alist
-       '(("Gmail"
-	  ;; Under each account, set the account-specific variables you want.
-	  (mu4e-sent-messages-behavior delete)
-	  (mu4e-compose-signature-auto-include nil)
-	  (mu4e-sent-folder "/Gmail/sent")
-	  (mu4e-drafts-folder "/Gmail/drafts")
-	  (user-mail-address "dario.klingenberg@gmail.com")
-	  (smtpmail-smtp-server "smtp.gmail.com")
-	  (smtpmail-smtp-service 465)
-	  (smtpmail-stream-type ssl)
-	  (user-full-name "Dario Klingenberg"))
-	 ("Web"
-	  (mu4e-sent-messages-behavior sent)
-	  (mu4e-compose-signature-auto-include nil)
-	  (mu4e-sent-folder "/Web/Sent Items")
-	  (mu4e-drafts-folder "/Web/Drafts")
-	  (smtpmail-smtp-server "smtp.web.de")
-	  (smtpmail-smtp-service 587)
-	  (smtpmail-stream-type starttls)
-	  (user-mail-address "dario.klingenberg@web.de")
-	  (user-full-name "dario"))
-	 ("FDY"
+       '(("FDY"
 	  (mu4e-sent-messages-behavior sent)
 	  (mu4e-compose-signature-auto-include t)
 	  (mu4e-compose-signature
@@ -797,7 +777,28 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 	  (smtpmail-smtp-service 465)
 	  (smtpmail-stream-type ssl)
 	  (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
-	  (user-full-name "Dario Klingenberg"))))
+	  (user-full-name "Dario Klingenberg"))
+	 ("Gmail"
+	  ;; Under each account, set the account-specific variables you want.
+	  (mu4e-sent-messages-behavior delete)
+	  (mu4e-compose-signature-auto-include nil)
+	  (mu4e-sent-folder "/Gmail/sent")
+	  (mu4e-drafts-folder "/Gmail/drafts")
+	  (user-mail-address "dario.klingenberg@gmail.com")
+	  (smtpmail-smtp-server "smtp.gmail.com")
+	  (smtpmail-smtp-service 465)
+	  (smtpmail-stream-type ssl)
+	  (user-full-name "Dario Klingenberg"))
+	 ("Web"
+	  (mu4e-sent-messages-behavior sent)
+	  (mu4e-compose-signature-auto-include nil)
+	  (mu4e-sent-folder "/Web/Sent Items")
+	  (mu4e-drafts-folder "/Web/Drafts")
+	  (smtpmail-smtp-server "smtp.web.de")
+	  (smtpmail-smtp-service 587)
+	  (smtpmail-stream-type starttls)
+	  (user-mail-address "dario.klingenberg@web.de")
+	  (user-full-name "dario"))))
 
  (use-package evil-mu4e
    :ensure t
@@ -810,8 +811,27 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    (general-define-key
     :states '(motion normal)
     :keymaps 'mu4e-view-mode-map
-    "RET" '(mu4e~view-browse-url-from-binding :which-key "follow link"))))
+    "RET" '(mu4e~view-browse-url-from-binding :which-key "follow link")))
 
+ ;; taken from reddit
+ (use-package mu4e-alert
+   :ensure t
+   :config
+   (mu4e-alert-enable-notifications)
+   (setq alert-default-style 'libnotify) ; not sure why this is needed
+   (mu4e-alert-set-default-style 'libnotify)
+   (setq mu4e-alert-interesting-mail-query
+	 (concat "(maildir:<fu> AND date:today..now"
+		 " OR maildir:<bar> AND date:today..now"
+		 " AND flag:unread"))
+   (alert-add-rule
+    :category "mu4e-alert"
+    :predicate (lambda (_) (string-match-p "^mu4e-" (symbol-name major-mode)))
+    :continue t)
+
+   ;; display stuff on modeline as well as notify
+   (add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
+   (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)))
 
 (use-package rainbow-delimiters
   :ensure t

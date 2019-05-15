@@ -29,11 +29,11 @@ ssl_version = tls1_2
 remotehost = imap.gmail.com
 remoteuser = dario.klingenberg@gmail.com
 remotepasseval = get_pass_gmail()
-nametrans = lambda foldername: re.sub ('^\[gmail\]', 'bak',
-                               re.sub ('sent_mail', 'sent',
-                               re.sub ('starred', 'flagged',
-                               re.sub (' ', '_', foldername.lower()))))
-folderfilter = lambda foldername: foldername not in ['[Gmail]/All Mail']
+# nametrans = lambda foldername: re.sub ('^\[gmail\]', 'bak',
+#                                re.sub ('sent_mail', 'sent',
+#                                re.sub ('starred', 'flagged',
+#                                re.sub (' ', '_', foldername.lower()))))
+# folderfilter = lambda foldername: foldername not in ['[Gmail]/All Mail']
 
 [Repository web-loc]
 type = Maildir

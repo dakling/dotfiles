@@ -125,3 +125,4 @@ xset r rate 400 20
 
 # # Start Emacs
 exec emacs
+# exec xmonad

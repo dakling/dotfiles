@@ -91,6 +91,7 @@
 export PATH="/root/.guix-profile/bin${PATH:+:}$PATH"
 export PATH="/home/klingenberg/.guix-profile/bin:/home/klingenberg/.guix-profile/sbin${PATH:+:}$PATH"
 export INFOPATH="/home/klingenberg/.guix-profile/share/info${INFOPATH:+:}$INFOPATH"
+export GUILE_LOAD_PATH="/home/klingenberg/.guix-profile/share/guile/site/2.2${GUILE_LOAD_PATH:+:}$GUILE_LOAD_PATH"
 
 # for exwm
 #autostart
@@ -105,6 +106,7 @@ easystroke enable&
 setxkbmap -option ctrl:nocaps  &
 xcape -e 'Control_L=Escape'&
 /usr/share/HESSENBOX_DA/HESSENBOX_DA-Client.sh start&
+/usr/lib/notification-daemon-1.0/notification-daemon&
 onboard&
 touchegg&
 
@@ -125,3 +127,4 @@ xset r rate 400 20
 
 # # Start Emacs
 exec emacs
+# exec xmonad

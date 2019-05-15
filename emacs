@@ -10,7 +10,7 @@
  '(global-evil-surround-mode 1)
  '(package-selected-packages
    (quote
-    (evil-org zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme ranger rainbow-delimiters ox-reveal org-ref org-plus-contrib org-bullets omnisharp guix general exwm evil-surround evil-mu4e evil-magit evil-commentary evil-collection eval-sexp-fu counsel company-reftex auctex-latexmk ace-link)))
+    (mu4e-alert evil-org zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme ranger rainbow-delimiters ox-reveal org-ref org-plus-contrib org-bullets omnisharp guix general exwm evil-surround evil-mu4e evil-magit evil-commentary evil-collection eval-sexp-fu counsel company-reftex auctex-latexmk ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -20,7 +20,6 @@
  )
 
 ;;; my emacs config
-
 (setq package-enable-at-startup nil) ; tells emacs not to load any packages before starting up
 ;; the following lines tell emacs where on the internet to look up
 ;; for new packages.
@@ -63,7 +62,6 @@
 Starting points: 
 (recentf-open-files)
 (find-file \"~/Documents/TODO.org\")
-(async-shell-command \"thunderbird\")
 "
  ) ; print a default message in the empty scratch buffer opened at startup
 (defalias 'yes-or-no-p 'y-or-n-p) ;reduce typing effort
@@ -144,6 +142,7 @@ Starting points:
     "ar" '(ranger :which-key "call ranger")
     "ad" '(deer :which-key "call deer")
     "ab" '(eww :which-key "open browser")
+    "am" '(mu4e :which-key "open mail")
     "g"  '(:ignore t :which-key "git")
     "f" '(:ignore t :which-key "file")
     "fs" '(save-buffer :which-key "save file")
@@ -294,6 +293,13 @@ Starting points:
   :ensure t
   :config (global-company-mode 1))
 
+
+;; abbrev mode
+(setq abbrev-file-name             ;; tell emacs where to read abbrev
+      "~/HESSENBOX-DA/programming/abbrev-snippets.el")    ;; definitions from...
+(setq save-abbrevs 'silently)
+(setq-default abbrev-mode t)
+
 (use-package yasnippet
   :ensure t
   :config
@@ -417,7 +423,7 @@ Starting points:
 			(start-process "" nil "qutebrowser")))
 	    ([s-f3] . deer)
 	    ([s-f4] . (lambda () (interactive)
-			(start-process "" nil "thunderbird")))
+			(mu4e)))
 	    ([s-f12] . (lambda () (interactive)
 			 (start-process "" nil "/usr/bin/slock")))))
     (push ?\s-\  exwm-input-prefix-keys)
@@ -595,7 +601,6 @@ Starting points:
 (use-package tex
   :ensure auctex
   :init
-  (progn
     (setq
      ;; TeX-command-default 'LaTeX
      TeX-view-program-selection '((output-pdf "PDF Tools"))
@@ -606,9 +611,9 @@ Starting points:
      ;; Synctex support
      TeX-source-correlate-start-server nil
      ;; Don't insert line-break at inline math
-     LaTeX-fill-break-at-separators nil))
+     LaTeX-math-abbrev-prefix "#"
+     LaTeX-fill-break-at-separators nil)
   :config
-  (progn
     (TeX-interactive-mode -1)
     (TeX-source-correlate-mode -1)
     (setq TeX-electric-math '("\\(" . "\\)"))
@@ -625,15 +630,15 @@ Starting points:
 		(progn
 		  (push '(?d . ("\\left\( " . " \\right\)")) evil-surround-pairs-alist)
 		  (push '(?\$ . ("\\\(" . "\\\)")) evil-surround-pairs-alist))))
-    (general-define-key
-     :states '(motion normal)
-     :keymaps 'TeX-mode-map
-     "-"  nil)
+    ;; (general-define-key
+    ;;  :states '(motion normal)
+    ;;  :keymaps 'LaTeX-mode-map
+    ;;  "-"  nil)
     ;; (add-to-list 'company-backends 'company-auctex t)
-    (add-to-list 'company-backends 'company-math t))
+    (add-to-list 'company-backends 'company-math t)
   :general
   (my-local-leader-def
-    :keymaps 'TeX-mode-map
+    :keymaps 'LaTeX-mode-map
     "-"   'TeX-recenter-output-buffer         
     "."   'LaTeX-mark-environment
     "*"   'LaTeX-mark-section
@@ -699,6 +704,8 @@ Starting points:
 ;; mail
 (unless (system-name= "lina")
  (require 'mu4e)
+ (setenv "GPG_AGENT_INFO" nil)
+ (setq mu4e-confirm-quit nil)
  (defun my-mu4e-set-account ()
    "Set the account for composing a message."
    (let* ((account
@@ -734,28 +741,7 @@ Starting points:
  (setq smtpmail-stream-type 'ssl)
  (setq mu4e-view-show-addresses t)
  (setq my-mu4e-account-alist
-       '(("Gmail"
-	  ;; Under each account, set the account-specific variables you want.
-	  (mu4e-sent-messages-behavior delete)
-	  (mu4e-compose-signature-auto-include nil)
-	  (mu4e-sent-folder "/Gmail/sent")
-	  (mu4e-drafts-folder "/Gmail/drafts")
-	  (user-mail-address "dario.klingenberg@gmail.com")
-	  (smtpmail-smtp-server "smtp.gmail.com")
-	  (smtpmail-smtp-service 465)
-	  (smtpmail-stream-type ssl)
-	  (user-full-name "Dario Klingenberg"))
-	 ("Web"
-	  (mu4e-sent-messages-behavior sent)
-	  (mu4e-compose-signature-auto-include nil)
-	  (mu4e-sent-folder "/Web/Sent Items")
-	  (mu4e-drafts-folder "/Web/Drafts")
-	  (smtpmail-smtp-server "smtp.web.de")
-	  (smtpmail-smtp-service 587)
-	  (smtpmail-stream-type starttls)
-	  (user-mail-address "dario.klingenberg@web.de")
-	  (user-full-name "dario"))
-	 ("FDY"
+       '(("FDY"
 	  (mu4e-sent-messages-behavior sent)
 	  (mu4e-compose-signature-auto-include t)
 	  (mu4e-compose-signature
@@ -798,7 +784,28 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 	  (smtpmail-smtp-service 465)
 	  (smtpmail-stream-type ssl)
 	  (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
-	  (user-full-name "Dario Klingenberg"))))
+	  (user-full-name "Dario Klingenberg"))
+	 ("Gmail"
+	  ;; Under each account, set the account-specific variables you want.
+	  (mu4e-sent-messages-behavior delete)
+	  (mu4e-compose-signature-auto-include nil)
+	  (mu4e-sent-folder "/Gmail/sent")
+	  (mu4e-drafts-folder "/Gmail/drafts")
+	  (user-mail-address "dario.klingenberg@gmail.com")
+	  (smtpmail-smtp-server "smtp.gmail.com")
+	  (smtpmail-smtp-service 465)
+	  (smtpmail-stream-type ssl)
+	  (user-full-name "Dario Klingenberg"))
+	 ("Web"
+	  (mu4e-sent-messages-behavior sent)
+	  (mu4e-compose-signature-auto-include nil)
+	  (mu4e-sent-folder "/Web/Sent Items")
+	  (mu4e-drafts-folder "/Web/Drafts")
+	  (smtpmail-smtp-server "smtp.web.de")
+	  (smtpmail-smtp-service 587)
+	  (smtpmail-stream-type starttls)
+	  (user-mail-address "dario.klingenberg@web.de")
+	  (user-full-name "dario"))))
 
  (use-package evil-mu4e
    :ensure t
@@ -806,8 +813,32 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    (evil-define-key 'evilified mu4e-main-mode-map (kbd "j") 'evil-next-line)
    (bind-keys :map mu4e-main-mode-map
 	      ;; ("j" . evil-next-line)
-	      ("c" . mu4e-compose-new))))
+	      ("c" . mu4e-compose-new))
+   :general
+   (general-define-key
+    :states '(motion normal)
+    :keymaps 'mu4e-view-mode-map
+    "RET" '(mu4e~view-browse-url-from-binding :which-key "follow link")))
 
+ ;; taken from reddit
+ (use-package mu4e-alert
+   :ensure t
+   :config
+   (mu4e-alert-enable-notifications)
+   ;; (setq alert-default-style 'libnotify) ; not sure why this is needed
+   (mu4e-alert-set-default-style 'notifications)
+   (setq mu4e-alert-interesting-mail-query
+	 (concat "(maildir:<fu> AND date:today..now"
+		 " OR maildir:<bar> AND date:today..now"
+		 " AND flag:unread"))
+   (alert-add-rule
+    :category "mu4e-alert"
+    :predicate (lambda (_) (string-match-p "^mu4e-" (symbol-name major-mode)))
+    :continue t)
+
+   ;; display stuff on modeline as well as notify
+   (add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
+   (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)))
 
 (use-package rainbow-delimiters
   :ensure t
@@ -827,19 +858,9 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 (show-paren-mode 1)
 
 ;;; TODO
-;; - font
 ;; - scrolling (?)
-;; - autocomplete
-;; - buffer management
-;; - mail
-;; - exwm
-;; - exwm SPC w (window management)
-;; - exwm multiple monitors
-;; - exwm host-specific settings
-;; - latex
-;; - eshell
+;; - mail: notifications
 ;; - eshell: expand
 ;; related to https://lists.gnu.org/archive/html/bug-gnu-emacs/2012-11/msg00878.html
-;; - make a nice scratch buffer with recent files and useful functions
 ;; - el-go
 

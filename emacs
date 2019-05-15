@@ -20,7 +20,6 @@
  )
 
 ;;; my emacs config
-
 (setq package-enable-at-startup nil) ; tells emacs not to load any packages before starting up
 ;; the following lines tell emacs where on the internet to look up
 ;; for new packages.
@@ -293,6 +292,13 @@ Starting points:
 (use-package company
   :ensure t
   :config (global-company-mode 1))
+
+
+;; abbrev mode
+(setq abbrev-file-name             ;; tell emacs where to read abbrev
+      "~/HESSENBOX-DA/programming/abbrev-snippets.el")    ;; definitions from...
+(setq save-abbrevs 'silently)
+(setq-default abbrev-mode t)
 
 (use-package yasnippet
   :ensure t
@@ -699,6 +705,7 @@ Starting points:
 (unless (system-name= "lina")
  (require 'mu4e)
  (setenv "GPG_AGENT_INFO" nil)
+ (setq mu4e-confirm-quit nil)
  (defun my-mu4e-set-account ()
    "Set the account for composing a message."
    (let* ((account
@@ -818,8 +825,8 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    :ensure t
    :config
    (mu4e-alert-enable-notifications)
-   (setq alert-default-style 'libnotify) ; not sure why this is needed
-   (mu4e-alert-set-default-style 'libnotify)
+   ;; (setq alert-default-style 'libnotify) ; not sure why this is needed
+   (mu4e-alert-set-default-style 'notifications)
    (setq mu4e-alert-interesting-mail-query
 	 (concat "(maildir:<fu> AND date:today..now"
 		 " OR maildir:<bar> AND date:today..now"

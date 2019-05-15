@@ -595,7 +595,6 @@ Starting points:
 (use-package tex
   :ensure auctex
   :init
-  (progn
     (setq
      ;; TeX-command-default 'LaTeX
      TeX-view-program-selection '((output-pdf "PDF Tools"))
@@ -606,9 +605,9 @@ Starting points:
      ;; Synctex support
      TeX-source-correlate-start-server nil
      ;; Don't insert line-break at inline math
-     LaTeX-fill-break-at-separators nil))
+     LaTeX-math-abbrev-prefix "#"
+     LaTeX-fill-break-at-separators nil)
   :config
-  (progn
     (TeX-interactive-mode -1)
     (TeX-source-correlate-mode -1)
     (setq TeX-electric-math '("\\(" . "\\)"))
@@ -625,15 +624,15 @@ Starting points:
 		(progn
 		  (push '(?d . ("\\left\( " . " \\right\)")) evil-surround-pairs-alist)
 		  (push '(?\$ . ("\\\(" . "\\\)")) evil-surround-pairs-alist))))
-    (general-define-key
-     :states '(motion normal)
-     :keymaps 'TeX-mode-map
-     "-"  nil)
+    ;; (general-define-key
+    ;;  :states '(motion normal)
+    ;;  :keymaps 'LaTeX-mode-map
+    ;;  "-"  nil)
     ;; (add-to-list 'company-backends 'company-auctex t)
-    (add-to-list 'company-backends 'company-math t))
+    (add-to-list 'company-backends 'company-math t)
   :general
   (my-local-leader-def
-    :keymaps 'TeX-mode-map
+    :keymaps 'LaTeX-mode-map
     "-"   'TeX-recenter-output-buffer         
     "."   'LaTeX-mark-environment
     "*"   'LaTeX-mark-section
@@ -837,19 +836,9 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 (show-paren-mode 1)
 
 ;;; TODO
-;; - font
 ;; - scrolling (?)
-;; - autocomplete
-;; - buffer management
-;; - mail
-;; - exwm
-;; - exwm SPC w (window management)
-;; - exwm multiple monitors
-;; - exwm host-specific settings
-;; - latex
-;; - eshell
+;; - mail: notifications
 ;; - eshell: expand
 ;; related to https://lists.gnu.org/archive/html/bug-gnu-emacs/2012-11/msg00878.html
-;; - make a nice scratch buffer with recent files and useful functions
 ;; - el-go
 

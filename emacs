@@ -730,16 +730,6 @@ Starting points:
  (setq mu4e-view-show-images t)
  (setq mu4e-enable-notifications t)
  (setq send-mail-function 'smtpmail-send-it)
- ;;experimental
- ;; (setq mu4e-sent-messages-behavior 'delete)
- ;; (setq mail-user-agent 'mu4e-user-agent)
- ;; (setq smtpmail-smtp-server "smtp.gmail.com")
- ;; (setq mu4e-sent-folder "/Gmail/sent")
- ;; (setq mu4e-drafts-folder "/Gmail/drafts")
- ;; (setq user-mail-address "dario.klingenberg@gmail.com")
- ;; (setq smtpmail-smtp-server "smtp.gmail.com")
- ;; (setq smtpmail-smtp-service 465)
- ;;experimental end
  (setq message-send-mail-function 'smtpmail-send-it)
  (setq smtpmail-stream-type 'ssl)
  (setq mu4e-view-show-addresses t)

@@ -7,7 +7,6 @@
  '(custom-safe-themes
    (quote
     ("bc75dfb513af404a26260b3420d1f3e4131df752c19ab2984a7c85def9a2917e" default)))
- '(global-evil-surround-mode 1)
  '(package-selected-packages
    (quote
     (mu4e-alert evil-org zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme ranger rainbow-delimiters ox-reveal org-ref org-plus-contrib org-bullets omnisharp guix general exwm evil-surround evil-mu4e evil-magit evil-commentary evil-collection eval-sexp-fu counsel company-reftex auctex-latexmk ace-link)))
@@ -207,9 +206,11 @@ Starting points:
   :ensure t
   :config
   (global-evil-surround-mode 1)
-  :general (general-define-key
-	    :states '(visual)
-	    "s" 'evil-surround-region))
+ (evil-define-key 'operator global-map "s" 'evil-surround-edit)
+    (evil-define-key 'operator global-map "S" 'evil-Surround-edit)
+    (evil-define-key 'visual global-map "s" 'evil-surround-region)
+    (evil-define-key 'visual global-map "gS" 'evil-Surround-region)
+    )
 
 (use-package evil-commentary
   :ensure t

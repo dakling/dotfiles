@@ -7,9 +7,10 @@
  '(custom-safe-themes
    (quote
     ("bc75dfb513af404a26260b3420d1f3e4131df752c19ab2984a7c85def9a2917e" default)))
+ '(global-evil-surround-mode 1)
  '(package-selected-packages
    (quote
-    (mu4e-alert evil-org zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme ranger rainbow-delimiters ox-reveal org-ref org-plus-contrib org-bullets omnisharp guix general exwm evil-surround evil-mu4e evil-magit evil-commentary evil-collection eval-sexp-fu counsel company-reftex auctex-latexmk ace-link)))
+    (evil-snipe sly-quicklisp sly mu4e-alert evil-org zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme ranger rainbow-delimiters ox-reveal org-ref org-plus-contrib org-bullets omnisharp guix general exwm evil-surround evil-mu4e evil-magit evil-commentary evil-collection eval-sexp-fu counsel company-reftex auctex-latexmk ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -209,8 +210,16 @@ Starting points:
  (evil-define-key 'operator global-map "s" 'evil-surround-edit)
     (evil-define-key 'operator global-map "S" 'evil-Surround-edit)
     (evil-define-key 'visual global-map "s" 'evil-surround-region)
-    (evil-define-key 'visual global-map "gS" 'evil-Surround-region)
-    )
+    (evil-define-key 'visual global-map "gS" 'evil-Surround-region))
+
+(use-package evil-snipe
+  :ensure t
+  :config
+  (setq evil-snipe-scope 'visible)
+  (evil-snipe-mode 1)
+  (evil-snipe-override-mode 1)
+  (evil-define-key 'visual evil-snipe-local-mode-map "z" 'evil-snipe-s)
+  (evil-define-key 'visual evil-snipe-local-mode-map "Z" 'evil-snipe-S))
 
 (use-package evil-commentary
   :ensure t
@@ -498,18 +507,36 @@ Starting points:
       (setq exwm-layout-show-all-buffers t))))
 ;;;programming languages
 ;; lisp
-(use-package slime
-  :defer t
-  :config (setq inferior-lisp-program "/usr/bin/sbcl")
-  ;;:init (setenv 'SBCL-HOME " ") ;;TODO
+;; (use-package slime
+;;   :defer t
+;;   :config
+;;   ;;(setq inferior-lisp-program "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")
+;;   (sbcl-cvs ("/home/klingenberg/sbcl-cvs/src/runtime/sbcl"
+;; 	     "--core" "/home/klingenberg/.sbcl.core")
+;; 	    :env ("SBCL_HOME=/home/klingenberg/"))
+;;   ;;:init (setenv 'SBCL-HOME " ") ;;TODO
+;;   :general (my-local-leader-def
+;; 	     :keymaps 'lisp-mode-map
+;; 	     "'" '(slime :which-key "start slime")
+;; 	     "e" '(:ignore :which-key "slime eval")
+;; 	     "ef" '(slime-eval-function :which-key "eval function")
+;; 	     "ee" '(slime-eval-last-expression :which-key "eval last expression")
+;; 	     "eb" '(slime-eval-buffer :which-key "eval buffer")))
+
+(use-package sly
+  :ensure t
+  :config
+  (add-hook 'sly-db-mode 'evil-insert-state) ;TODO
   :general (my-local-leader-def
 	     :keymaps 'lisp-mode-map
-	     "'" '(slime :which-key "start slime")
-	     "e" '(:ignore :which-key "slime eval")
-	     "ef" '(slime-eval-function :which-key "eval function")
-	     "ee" '(slime-eval-last-expression :which-key "eval last expression")
-	     "eb" '(slime-eval-buffer :which-key "eval buffer"))
-  )
+	     "'" '(sly :which-key "start reps")
+	     "e" '(:ignore :which-key "eval")
+	     "ef" '(sly-eval-defun :which-key "eval function")
+	     "ee" '(sly-eval-last-expression :which-key "eval last expression")
+	     "eb" '(sly-eval-buffer :which-key "eval buffer")))
+
+;; (use-package sly-quicklisp
+;;   :ensure t)
 
 (use-package geiser
   :ensure t)

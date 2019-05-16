@@ -8,4 +8,6 @@
    "offlineimap"
    "msmtp"
    "libnotify"
+   "sbcl"
+   "cairo"
    "guile"))

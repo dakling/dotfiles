@@ -7,10 +7,12 @@
  '(custom-safe-themes
    (quote
     ("bc75dfb513af404a26260b3420d1f3e4131df752c19ab2984a7c85def9a2917e" default)))
+ '(evil-snipe-mode t)
+ '(evil-snipe-override-mode t)
  '(global-evil-surround-mode 1)
  '(package-selected-packages
    (quote
-    (evil-snipe sly-quicklisp sly mu4e-alert evil-org zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme ranger rainbow-delimiters ox-reveal org-ref org-plus-contrib org-bullets omnisharp guix general exwm evil-surround evil-mu4e evil-magit evil-commentary evil-collection eval-sexp-fu counsel company-reftex auctex-latexmk ace-link)))
+    (org-re-reveal evil-snipe sly-quicklisp sly mu4e-alert evil-org zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme ranger rainbow-delimiters ox-reveal org-ref org-plus-contrib org-bullets omnisharp guix general exwm evil-surround evil-mu4e evil-magit evil-commentary evil-collection eval-sexp-fu counsel company-reftex auctex-latexmk ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -83,6 +85,11 @@ Starting points:
   (interactive)
   (find-file "~/.dotfiles/dotfiles/"))
 
+(defun find-todo ()
+  "open dotfile directory"
+  (interactive)
+  (find-file "~/Documents/TODO.org"))
+
 (defun system-name= (name)
   (string-equal name (system-name)))
 
@@ -151,6 +158,7 @@ Starting points:
     "fed" '(find-config-file :which-key "find config file")
     "fer" '(load-config-file :which-key "load config file")
     "feD" '(find-dotfile-dir :which-key "find dotfile directory")
+    "ft"  '(find-todo :which-key "find todo file")
     "SPC" '(counsel-M-x :which-key "M-x")
     "fp" '(counsel-locate :which-key "counsel-locate")
     "fg" '(counsel-ag :which-key "counsel-ag")
@@ -547,7 +555,6 @@ Starting points:
   (setq eval-sexp-fu-flash-face
 	'((((class color)) (:background "black" :foreground "gray" :bold t))
 	  (t (:inverse-video nil)))))
-
 ;;org
 (use-package org
   :ensure org-plus-contrib
@@ -556,6 +563,10 @@ Starting points:
   (require 'ox-extra)
   (ox-extras-activate '(ignore-headlines))
   (org-bullets-mode 1)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((lisp . t)))
+  (setq org-babel-lisp-eval-fn 'sly-eval)
   :general
     (my-local-leader-def
       :keymaps 'org-mode-map
@@ -598,7 +609,7 @@ Starting points:
   :config
   (org-bullets-mode 1))
 
-(use-package ox-reveal
+(use-package org-re-reveal
   :ensure t)
 
 ;;reduce

@@ -142,6 +142,7 @@ Starting points:
   (general-nmap "Y" "y$")
 
   (general-define-key "ESC" 'keyboard-quit :which-key "abort command")
+  (general-define-key "TAB" 'company-complete :which-key "trigger completion")
 
   ;; many spacemacs bindings go here
   (my-leader-def

@@ -310,7 +310,10 @@ Starting points:
 
 (use-package company
   :ensure t
-  :config (global-company-mode 1))
+  :config
+  (setq company-dabbrev-downcase nil)
+  (setq read-file-name-completion-ignore-case t)
+  (global-company-mode 1))
 
 
 ;; abbrev mode

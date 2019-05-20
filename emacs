@@ -7,10 +7,12 @@
  '(custom-safe-themes
    (quote
     ("bc75dfb513af404a26260b3420d1f3e4131df752c19ab2984a7c85def9a2917e" default)))
+ '(evil-snipe-mode t)
+ '(evil-snipe-override-mode t)
  '(global-evil-surround-mode 1)
  '(package-selected-packages
    (quote
-    (zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme ranger rainbow-delimiters ox-reveal org-ref org-plus-contrib org-bullets omnisharp multi-eshell guix general exwm evil-surround evil-mu4e evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex-latexmk ace-link)))
+    (eshell-prompt-extras org-re-reveal evil-snipe sly-quicklisp sly mu4e-alert evil-org zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme ranger rainbow-delimiters ox-reveal org-ref org-plus-contrib org-bullets omnisharp guix general exwm evil-surround evil-mu4e evil-magit evil-commentary evil-collection eval-sexp-fu counsel company-reftex auctex-latexmk ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -20,7 +22,6 @@
  )
 
 ;;; my emacs config
-
 (setq package-enable-at-startup nil) ; tells emacs not to load any packages before starting up
 ;; the following lines tell emacs where on the internet to look up
 ;; for new packages.
@@ -63,7 +64,6 @@
 Starting points: 
 (recentf-open-files)
 (find-file \"~/Documents/TODO.org\")
-(async-shell-command \"thunderbird\")
 "
  ) ; print a default message in the empty scratch buffer opened at startup
 (defalias 'yes-or-no-p 'y-or-n-p) ;reduce typing effort
@@ -84,6 +84,11 @@ Starting points:
   "open dotfile directory"
   (interactive)
   (find-file "~/.dotfiles/dotfiles/"))
+
+(defun find-todo ()
+  "open dotfile directory"
+  (interactive)
+  (find-file "~/Documents/TODO.org"))
 
 (defun system-name= (name)
   (string-equal name (system-name)))
@@ -127,16 +132,17 @@ Starting points:
     :keymaps 'override
     :prefix "SPC"
     :global-prefix "s-SPC"
-    :states '(normal emacs))
+    :states '(motion normal emacs))
 
   (general-create-definer my-local-leader-def
     :keymaps 'override
     :prefix "-"
-    :states 'normal)
+    :states '(motion normal))
 
   (general-nmap "Y" "y$")
 
   (general-define-key "ESC" 'keyboard-quit :which-key "abort command")
+  (general-define-key "TAB" 'company-complete :which-key "trigger completion")
 
   ;; many spacemacs bindings go here
   (my-leader-def
@@ -144,6 +150,7 @@ Starting points:
     "ar" '(ranger :which-key "call ranger")
     "ad" '(deer :which-key "call deer")
     "ab" '(eww :which-key "open browser")
+    "am" '(mu4e :which-key "open mail")
     "g"  '(:ignore t :which-key "git")
     "f" '(:ignore t :which-key "file")
     "fs" '(save-buffer :which-key "save file")
@@ -152,6 +159,7 @@ Starting points:
     "fed" '(find-config-file :which-key "find config file")
     "fer" '(load-config-file :which-key "load config file")
     "feD" '(find-dotfile-dir :which-key "find dotfile directory")
+    "ft"  '(find-todo :which-key "find todo file")
     "SPC" '(counsel-M-x :which-key "M-x")
     "fp" '(counsel-locate :which-key "counsel-locate")
     "fg" '(counsel-ag :which-key "counsel-ag")
@@ -208,9 +216,19 @@ Starting points:
   :ensure t
   :config
   (global-evil-surround-mode 1)
-  :general (general-define-key
-	    :states '(visual)
-	    "s" 'evil-surround-region))
+ (evil-define-key 'operator global-map "s" 'evil-surround-edit)
+    (evil-define-key 'operator global-map "S" 'evil-Surround-edit)
+    (evil-define-key 'visual global-map "s" 'evil-surround-region)
+    (evil-define-key 'visual global-map "gS" 'evil-Surround-region))
+
+(use-package evil-snipe
+  :ensure t
+  :config
+  (setq evil-snipe-scope 'visible)
+  (evil-snipe-mode 1)
+  (evil-snipe-override-mode 1)
+  (evil-define-key 'visual evil-snipe-local-mode-map "z" 'evil-snipe-s)
+  (evil-define-key 'visual evil-snipe-local-mode-map "Z" 'evil-snipe-S))
 
 (use-package evil-commentary
   :ensure t
@@ -265,15 +283,12 @@ Starting points:
 (menu-bar-no-scroll-bar)
 
 ;; eshell
-(use-package eshell
-  :config
-  (setq shell-protect-eshell-prompt nil)
-  (setq eshell-cmpl-ignore-case t))
+;; (setq pcomplete-ignore-case t)
 
 (use-package eshell-prompt-extras
   :ensure t
   :config
-  (setq eshell-highlight-prompt nil
+  (setq eshell-highlight-prompt t
 	eshell-prompt-function 'epe-theme-lambda))
 
 (use-package ranger :ensure t
@@ -295,7 +310,17 @@ Starting points:
 
 (use-package company
   :ensure t
-  :config (global-company-mode 1))
+  :config
+  (setq company-dabbrev-downcase nil)
+  (setq read-file-name-completion-ignore-case t)
+  (global-company-mode 1))
+
+
+;; abbrev mode
+(setq abbrev-file-name             ;; tell emacs where to read abbrev
+      "~/HESSENBOX-DA/programming/abbrev-snippets.el")    ;; definitions from...
+(setq save-abbrevs 'silently)
+(setq-default abbrev-mode t)
 
 (use-package yasnippet
   :ensure t
@@ -337,13 +362,15 @@ Starting points:
     (evil-collection-init 'pdf)
     :general
     (general-define-key
-     :states 'normal
+     :states '(motion normal)
      :keymaps 'pdf-view-mode-map
      ;; evil-style bindings
      ;; "SPC"  nil ;TODO where to put this globally?
      "-"  nil ;TODO where to put this globally?
-     "j"  '(pdf-view-next-line-or-next-page :which-key "scroll down")
-     "k"  '(pdf-view-previous-line-or-previous-page :which-key "scroll up")
+     "j"  '(pdf-view-scroll-up-or-next-page :which-key "scroll down")
+     "k"  '(pdf-view-scroll-down-or-previous-page :which-key "scroll up")
+     ;; "j"  '(pdf-view-next-line-or-next-page :which-key "scroll down")
+     ;; "k"  '(pdf-view-previous-line-or-previous-page :which-key "scroll up")
      "L"  '(image-forward-hscroll :which-key "scroll right")
      "H"  '(image-backward-hscroll :which-key "scroll left")
      "l"  '(pdf-view-next-page :which-key "page down")
@@ -418,7 +445,7 @@ Starting points:
 			(start-process "" nil "qutebrowser")))
 	    ([s-f3] . deer)
 	    ([s-f4] . (lambda () (interactive)
-			(start-process "" nil "thunderbird")))
+			(mu4e)))
 	    ([s-f12] . (lambda () (interactive)
 			 (start-process "" nil "/usr/bin/slock")))))
     (push ?\s-\  exwm-input-prefix-keys)
@@ -492,18 +519,36 @@ Starting points:
       (setq exwm-layout-show-all-buffers t))))
 ;;;programming languages
 ;; lisp
-(use-package slime
-  :defer t
-  :config (setq inferior-lisp-program "/usr/bin/sbcl")
-  ;;:init (setenv 'SBCL-HOME " ") ;;TODO
+;; (use-package slime
+;;   :defer t
+;;   :config
+;;   ;;(setq inferior-lisp-program "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")
+;;   (sbcl-cvs ("/home/klingenberg/sbcl-cvs/src/runtime/sbcl"
+;; 	     "--core" "/home/klingenberg/.sbcl.core")
+;; 	    :env ("SBCL_HOME=/home/klingenberg/"))
+;;   ;;:init (setenv 'SBCL-HOME " ") ;;TODO
+;;   :general (my-local-leader-def
+;; 	     :keymaps 'lisp-mode-map
+;; 	     "'" '(slime :which-key "start slime")
+;; 	     "e" '(:ignore :which-key "slime eval")
+;; 	     "ef" '(slime-eval-function :which-key "eval function")
+;; 	     "ee" '(slime-eval-last-expression :which-key "eval last expression")
+;; 	     "eb" '(slime-eval-buffer :which-key "eval buffer")))
+
+(use-package sly
+  :ensure t
+  :config
+  (add-hook 'sly-db-mode 'evil-insert-state) ;TODO
   :general (my-local-leader-def
 	     :keymaps 'lisp-mode-map
-	     "'" '(slime :which-key "start slime")
-	     "e" '(:ignore :which-key "slime eval")
-	     "ef" '(slime-eval-function :which-key "eval function")
-	     "ee" '(slime-eval-last-expression :which-key "eval last expression")
-	     "eb" '(slime-eval-buffer :which-key "eval buffer"))
-  )
+	     "'" '(sly :which-key "start reps")
+	     "e" '(:ignore :which-key "eval")
+	     "ef" '(sly-eval-defun :which-key "eval function")
+	     "ee" '(sly-eval-last-expression :which-key "eval last expression")
+	     "eb" '(sly-eval-buffer :which-key "eval buffer")))
+
+;; (use-package sly-quicklisp
+;;   :ensure t)
 
 (use-package geiser
   :ensure t)
@@ -514,7 +559,6 @@ Starting points:
   (setq eval-sexp-fu-flash-face
 	'((((class color)) (:background "black" :foreground "gray" :bold t))
 	  (t (:inverse-video nil)))))
-
 ;;org
 (use-package org
   :ensure org-plus-contrib
@@ -523,11 +567,30 @@ Starting points:
   (add-to-list 'org-export-backends 'md)
   (require 'ox-extra)
   (ox-extras-activate '(ignore-headlines))
-  (setq org-return-follows-link t)
+  (org-bullets-mode 1)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((lisp . t)))
+  (setq org-babel-lisp-eval-fn 'sly-eval)
   :general
-  (my-local-leader-def
-    :keymaps 'org-mode-map
-    "e" '(org-export-dispatch :which-key "export")))
+    (my-local-leader-def
+      :keymaps 'org-mode-map
+      "e" '(org-export-dispatch :which-key "export"))
+    (general-define-key
+     :states '(motion normal)
+     :keymaps 'org-mode-map
+     "RET" '(org-open-at-point :which-key "open link")))
+
+(use-package evil-org
+  :ensure t
+  :after org
+  :config
+  (add-hook 'org-mode-hook 'evil-org-mode)
+  (add-hook 'evil-org-mode-hook
+            (lambda ()
+              (evil-org-set-key-theme)))
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys))
 
 (use-package org-ref
   :ensure t
@@ -547,10 +610,11 @@ Starting points:
 
 (use-package org-bullets
   :ensure t
+  :after org
   :config
   (org-bullets-mode 1))
 
-(use-package ox-reveal
+(use-package org-re-reveal
   :ensure t)
 
 ;;reduce
@@ -581,7 +645,6 @@ Starting points:
 (use-package tex
   :ensure auctex
   :init
-  (progn
     (setq
      ;; TeX-command-default 'LaTeX
      TeX-view-program-selection '((output-pdf "PDF Tools"))
@@ -592,9 +655,9 @@ Starting points:
      ;; Synctex support
      TeX-source-correlate-start-server nil
      ;; Don't insert line-break at inline math
-     LaTeX-fill-break-at-separators nil))
+     LaTeX-math-abbrev-prefix "#"
+     LaTeX-fill-break-at-separators nil)
   :config
-  (progn
     (TeX-interactive-mode -1)
     (TeX-source-correlate-mode -1)
     (setq TeX-electric-math '("\\(" . "\\)"))
@@ -611,15 +674,15 @@ Starting points:
 		(progn
 		  (push '(?d . ("\\left\( " . " \\right\)")) evil-surround-pairs-alist)
 		  (push '(?\$ . ("\\\(" . "\\\)")) evil-surround-pairs-alist))))
-    (general-define-key
-     :states 'normal
-     :keymaps 'TeX-mode-map
-     "-"  nil)
+    ;; (general-define-key
+    ;;  :states '(motion normal)
+    ;;  :keymaps 'LaTeX-mode-map
+    ;;  "-"  nil)
     ;; (add-to-list 'company-backends 'company-auctex t)
-    (add-to-list 'company-backends 'company-math t))
+    (add-to-list 'company-backends 'company-math t)
   :general
   (my-local-leader-def
-    :keymaps 'TeX-mode-map
+    :keymaps 'LaTeX-mode-map
     "-"   'TeX-recenter-output-buffer         
     "."   'LaTeX-mark-environment
     "*"   'LaTeX-mark-section
@@ -685,6 +748,8 @@ Starting points:
 ;; mail
 (unless (system-name= "lina")
  (require 'mu4e)
+ (setenv "GPG_AGENT_INFO" nil)
+ (setq mu4e-confirm-quit nil)
  (defun my-mu4e-set-account ()
    "Set the account for composing a message."
    (let* ((account
@@ -715,30 +780,12 @@ Starting points:
  (setq mu4e-compose-signature-auto-include t)
  (setq mu4e-view-show-images t)
  (setq mu4e-enable-notifications t)
- (setq message-send-mail-function #'smtpmail-send-it)
- (setq smtpmail-stream-type 'starttls)
+ (setq send-mail-function 'smtpmail-send-it)
+ (setq message-send-mail-function 'smtpmail-send-it)
+ (setq smtpmail-stream-type 'ssl)
  (setq mu4e-view-show-addresses t)
  (setq my-mu4e-account-alist
-       '(("Gmail"
-	  ;; Under each account, set the account-specific variables you want.
-	  (mu4e-sent-messages-behavior delete)
-	  (mu4e-compose-signature-auto-include nil)
-	  (mu4e-sent-folder "/Gmail/sent")
-	  (mu4e-drafts-folder "/Gmail/drafts")
-	  (user-mail-address "dario.klingenberg@gmail.com")
-	  (smtpmail-smtp-server "smtp.gmail.com")
-	  (smtpmail-smtp-service 465)
-	  (user-full-name "Dario Klingenberg"))
-	 ("Web"
-	  (mu4e-sent-messages-behavior sent)
-	  (mu4e-compose-signature-auto-include nil)
-	  (mu4e-sent-folder "/Web/Sent Items")
-	  (mu4e-drafts-folder "/Web/Drafts")
-	  (smtpmail-smtp-server "smtp.web.de")
-	  (smtpmail-smtp-service 587)
-	  (user-mail-address "dario.klingenberg@web.de")
-	  (user-full-name "dario"))
-	 ("FDY"
+       '(("FDY"
 	  (mu4e-sent-messages-behavior sent)
 	  (mu4e-compose-signature-auto-include t)
 	  (mu4e-compose-signature
@@ -758,6 +805,7 @@ Web: http://www.fdy.tu-darmstadt.de")
 	  (mu4e-drafts-folder "/FDY/Drafts")
 	  (smtpmail-smtp-server "smtp.tu-darmstadt.de")
 	  (smtpmail-smtp-service 465)
+	  (smtpmail-stream-type ssl)
 	  (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
 	  (user-full-name "Dario Klingenberg"))
 	 ("GSC"
@@ -778,10 +826,30 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 	  (mu4e-drafts-folder "/GSC/Drafts")
 	  (smtpmail-smtp-server "smtp.gsc.ce.tu-darmstadt.de")
 	  (smtpmail-smtp-service 465)
+	  (smtpmail-stream-type ssl)
 	  (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
 	  (user-full-name "Dario Klingenberg"))
-	 ))
- ;; (mu4e/mail-account-reset)
+	 ("Gmail"
+	  ;; Under each account, set the account-specific variables you want.
+	  (mu4e-sent-messages-behavior delete)
+	  (mu4e-compose-signature-auto-include nil)
+	  (mu4e-sent-folder "/Gmail/sent")
+	  (mu4e-drafts-folder "/Gmail/drafts")
+	  (user-mail-address "dario.klingenberg@gmail.com")
+	  (smtpmail-smtp-server "smtp.gmail.com")
+	  (smtpmail-smtp-service 465)
+	  (smtpmail-stream-type ssl)
+	  (user-full-name "Dario Klingenberg"))
+	 ("Web"
+	  (mu4e-sent-messages-behavior sent)
+	  (mu4e-compose-signature-auto-include nil)
+	  (mu4e-sent-folder "/Web/Sent Items")
+	  (mu4e-drafts-folder "/Web/Drafts")
+	  (smtpmail-smtp-server "smtp.web.de")
+	  (smtpmail-smtp-service 587)
+	  (smtpmail-stream-type starttls)
+	  (user-mail-address "dario.klingenberg@web.de")
+	  (user-full-name "dario"))))
 
  (use-package evil-mu4e
    :ensure t
@@ -789,8 +857,32 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    (evil-define-key 'evilified mu4e-main-mode-map (kbd "j") 'evil-next-line)
    (bind-keys :map mu4e-main-mode-map
 	      ;; ("j" . evil-next-line)
-	      ("c" . mu4e-compose-new))))
+	      ("c" . mu4e-compose-new))
+   :general
+   (general-define-key
+    :states '(motion normal)
+    :keymaps 'mu4e-view-mode-map
+    "RET" '(mu4e~view-browse-url-from-binding :which-key "follow link")))
 
+ ;; taken from reddit
+ (use-package mu4e-alert
+   :ensure t
+   :config
+   (mu4e-alert-enable-notifications)
+   ;; (setq alert-default-style 'libnotify) ; not sure why this is needed
+   (mu4e-alert-set-default-style 'notifications)
+   (setq mu4e-alert-interesting-mail-query
+	 (concat "(maildir:<fu> AND date:today..now"
+		 " OR maildir:<bar> AND date:today..now"
+		 " AND flag:unread"))
+   (alert-add-rule
+    :category "mu4e-alert"
+    :predicate (lambda (_) (string-match-p "^mu4e-" (symbol-name major-mode)))
+    :continue t)
+
+   ;; display stuff on modeline as well as notify
+   (add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
+   (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)))
 
 (use-package rainbow-delimiters
   :ensure t
@@ -810,18 +902,9 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 (show-paren-mode 1)
 
 ;;; TODO
-;; - font
 ;; - scrolling (?)
-;; - autocomplete
-;; - buffer management
-;; - mail
-;; - exwm
-;; - exwm SPC w (window management)
-;; - exwm multiple monitors
-;; - exwm host-specific settings
-;; - latex
-;; - eshell
-;; - eshell: expand 
-;; - make a nice scratch buffer with recent files and useful functions
+;; - mail: notifications
+;; - eshell: expand
+;; related to https://lists.gnu.org/archive/html/bug-gnu-emacs/2012-11/msg00878.html
 ;; - el-go
 

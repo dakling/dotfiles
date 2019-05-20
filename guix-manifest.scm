@@ -2,4 +2,12 @@
  '("fontconfig"
    "font-adobe-source-code-pro"
    "emacs"
+   "emacs-exwm"
+   "emacs-pdf-tools"
+   "mu"
+   "offlineimap"
+   "msmtp"
+   "libnotify"
+   "sbcl"
+   "cairo"
    "guile"))

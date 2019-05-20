@@ -520,6 +520,7 @@ Starting points:
   :ensure org-plus-contrib
   :config
   (add-to-list 'org-export-backends 'beamer)
+  (add-to-list 'org-export-backends 'md)
   (require 'ox-extra)
   (ox-extras-activate '(ignore-headlines))
   (setq org-return-follows-link t)

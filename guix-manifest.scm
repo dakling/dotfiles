@@ -10,4 +10,5 @@
    "libnotify"
    "sbcl"
    "cairo"
+   "global"
    "guile"))

@@ -57,15 +57,11 @@
 	     '(font . "Source Code Pro"))
 (add-hook 'focus-out-hook (lambda () (when buffer-file-name (save-buffer))))
 (recentf-mode 1)
+
 (setq
  initial-scratch-message
- "Welcome
+ "Welcome") ; print a default message in the empty scratch buffer opened at startup
 
-Starting points: 
-(recentf-open-files)
-(find-file \"~/Documents/TODO.org\")
-"
- ) ; print a default message in the empty scratch buffer opened at startup
 (defalias 'yes-or-no-p 'y-or-n-p) ;reduce typing effort
 (electric-pair-mode 1) ;close brackets
 

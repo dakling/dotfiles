@@ -608,10 +608,9 @@
   :init
   (setq org-latex-pdf-process (list "latexmk -shell-escape -f -pdf %f"))
   :config
-  (setq
-   org-ref-ivy-cite t
-   org-ref-default-bibliography '("~/HESSENBOX-DA/bibliography/bibliography.bib")
-   bibtex-completion-library-path "~/HESSENBOX-DA/bibliography/bibtex-pdfs")
+  (setq org-ref-ivy-cite t)
+  (setq org-ref-default-bibliography '("~/HESSENBOX-DA/bibliography/bibliography.bib"))
+  (setq bibtex-completion-library-path "~/HESSENBOX-DA/bibliography/bibtex-pdfs")
   :general
   (my-local-leader-def
     :keymaps 'org-mode-map

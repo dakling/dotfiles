@@ -12,7 +12,7 @@
  '(global-evil-surround-mode 1)
  '(package-selected-packages
    (quote
-    (ggtags eshell-prompt-extras org-re-reveal evil-snipe sly-quicklisp sly mu4e-alert evil-org zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme ranger rainbow-delimiters ox-reveal org-ref org-plus-contrib org-bullets omnisharp guix general exwm evil-surround evil-mu4e evil-magit evil-commentary evil-collection eval-sexp-fu counsel company-reftex auctex-latexmk ace-link)))
+    (doom-themes doom-modeline sublimity smooth-scrolling ggtags eshell-prompt-extras org-re-reveal evil-snipe sly-quicklisp sly mu4e-alert evil-org zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme ranger rainbow-delimiters ox-reveal org-ref org-plus-contrib org-bullets omnisharp guix general exwm evil-surround evil-mu4e evil-magit evil-commentary evil-collection eval-sexp-fu counsel company-reftex auctex-latexmk ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -236,9 +236,23 @@
   :diminish which-key-mode)
 
 ;;appearance
-(use-package zenburn-theme :ensure t)
-;; (use-package cyberpunk-theme :ensure t)
+;; (use-package zenburn-theme :ensure t)
+;; ;; (use-package cyberpunk-theme :ensure t)
+(use-package doom-themes
+  :ensure t)
+(load-theme 'doom-vibrant t)
 (use-package smart-mode-line-atom-one-dark-theme :ensure t)
+;; (use-package doom-modeline
+;;   :ensure t
+;;   :hook (after-init . doom-modeline-mode)
+;;   :config
+;;   (setq doom-modeline-height 25)
+;;   )
+
+(use-package smooth-scrolling
+  :ensure t
+  :config
+  (smooth-scrolling-mode 1))
 
 (use-package smart-mode-line
   :after smart-mode-line-atom-one-dark-theme
@@ -291,6 +305,7 @@
   :commands (ranger)
   :config
   (setq ranger-cleanup-eagerly t)
+  (setq ranger-cleanup-on-disable t)
   (ranger-override-dired-mode t))
 
 (use-package ivy :ensure t

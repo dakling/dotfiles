@@ -11,4 +11,5 @@
    "sbcl"
    "cairo"
    "global"
+   "icecat"
    "guile"))

@@ -147,6 +147,7 @@
     "ad" '(deer :which-key "call deer")
     "ab" '(eww :which-key "open browser")
     "am" '(mu4e :which-key "open mail")
+    "as" '((lambda () (interactive) (eshell 'N)) :which-key "open eshell")
     "g"  '(:ignore t :which-key "git")
     "f" '(:ignore t :which-key "file")
     "fs" '(save-buffer :which-key "save file")

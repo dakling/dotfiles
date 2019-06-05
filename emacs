@@ -53,6 +53,7 @@
 (setq sentence-end-double-space nil)	; sentence SHOULD end with only a point.
 (setq default-fill-column 80)		; toggle wrapping text at the 80th character
 (setq default-major-mode 'text-mode)
+(setq revert-without-query '("*pdf")) ; automatically revert pdf-files
 (add-to-list 'default-frame-alist
 	     '(font . "Source Code Pro"))
 (add-hook 'focus-out-hook (lambda () (when buffer-file-name (save-buffer))))
@@ -589,7 +590,12 @@
   :general
     (my-local-leader-def
       :keymaps 'org-mode-map
-      "e" '(org-export-dispatch :which-key "export"))
+      "e" '(org-export-dispatch :which-key "export")
+      "a" '((lambda () (interactive)
+		    (let ((current-prefix-arg '-))
+		      (call-interactively 'org-export-dispatch))) :which-key "repeat last export")
+      "s" '(org-edit-special :which-key "edit source code")
+      )
     (general-define-key
      :states '(motion normal)
      :keymaps 'org-mode-map
@@ -631,8 +637,7 @@
   :ensure t)
 
 (use-package ggtags
-  :ensure t
-  :config (ggtags-global-mode))
+  :ensure t)
 
 ;;reduce
 (use-package reduce-ide

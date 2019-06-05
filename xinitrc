@@ -89,6 +89,10 @@
 ####
 #guix
 export PATH="/root/.guix-profile/bin${PATH:+:}$PATH"
+export PATH="/root/.config/guix/current/bin${PATH:+:}$PATH"
+export XDG_DATA_DIRS="/root/.guix-profile/share${XDG_DATA_DIRS:+:}$XDG_DATA_DIRS"
+export GIO_EXTRA_MODULES="/root/.guix-profile/lib/gio/modules${GIO_EXTRA_MODULES:+:}$GIO_EXTRA_MODULES"
+export GUILE_LOAD_PATH="/root/.guix-profile/share/guile/site/2.2${GUILE_LOAD_PATH:+:}$GUILE_LOAD_PATH"
 export PATH="/home/klingenberg/.guix-profile/bin:/home/klingenberg/.guix-profile/sbin${PATH:+:}$PATH"
 export INFOPATH="/home/klingenberg/.guix-profile/share/info${INFOPATH:+:}$INFOPATH"
 export GUILE_LOAD_PATH="/home/klingenberg/.guix-profile/share/guile/site/2.2${GUILE_LOAD_PATH:+:}$GUILE_LOAD_PATH"

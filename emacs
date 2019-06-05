@@ -93,10 +93,10 @@
   "mount a directory from fdy windows remote server"
   (async-shell-command (concat
 			"sudo mount //dc1/"
+			" -t cifs -o username=klingenberg,noexec,uid=klingenberg"
 			source
 			" "
-			target
-			" -t cifs -o username=klingenberg,noexec,uid=klingenberg")))
+			target)))
 
 (defun qmount (location)
   "shortcuts for mounting frequent locations"
@@ -578,6 +578,7 @@
   :config
   (add-to-list 'org-export-backends 'beamer)
   (add-to-list 'org-export-backends 'md)
+  (setq org-confirm-babel-evaluate nil)
   (require 'ox-extra)
   (ox-extras-activate '(ignore-headlines))
   (org-bullets-mode 1)

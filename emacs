@@ -49,7 +49,6 @@
 (setq inhibit-startup-screen t)	; inhibit startup screen
 (setq ring-bell-function 'ignore)	; silent bell when you make a mistake
 (set-language-environment "UTF-8")
-;; (setq coding-system-for-write 'utf-8)
 (setq sentence-end-double-space nil)	; sentence SHOULD end with only a point.
 (setq default-fill-column 80)		; toggle wrapping text at the 80th character
 (setq default-major-mode 'text-mode)
@@ -592,8 +591,8 @@
       :keymaps 'org-mode-map
       "e" '(org-export-dispatch :which-key "export")
       "a" '((lambda () (interactive)
-		    (let ((current-prefix-arg '-))
-		      (call-interactively 'org-export-dispatch))) :which-key "repeat last export")
+      		    (let ((current-prefix-arg '-))
+      		      (call-interactively 'org-export-dispatch))) :which-key "repeat last export")
       "s" '(org-edit-special :which-key "edit source code")
       )
     (general-define-key

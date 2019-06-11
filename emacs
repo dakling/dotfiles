@@ -92,11 +92,11 @@
 (defun fdy-mount (source target)
   "mount a directory from fdy windows remote server"
   (async-shell-command (concat
-			"sudo mount //dc1/"
-			" -t cifs -o username=klingenberg,noexec,uid=klingenberg"
+			"sudo /usr/bin/mount //dc1/"
 			source
 			" "
-			target)))
+			target
+			" -t cifs -o username=klingenberg,noexec,uid=klingenberg")))
 
 (defun qmount (location)
   "shortcuts for mounting frequent locations"

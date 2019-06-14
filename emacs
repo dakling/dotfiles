@@ -194,7 +194,7 @@
     "ee"  'eval-last-sexp
     "ef"  'eval-defun
     "ss"  (lambda () (interactive) (shell-command "shutdown now"))
-    "sr"  (lambda () (interactive) (shell-command "reboot now"))
+    "sr"  (lambda () (interactive) (shell-command "reboot"))
     "sl"  (lambda () (interactive) (shell-command "/usr/bin/slock"))))
 
 (use-package evil

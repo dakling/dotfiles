@@ -12,6 +12,8 @@
    "msmtp"
    "libnotify"
    "sbcl"
+   "sqlite"
+   "libfixposix"
    "sbcl-next"
    "cairo"
    "global"

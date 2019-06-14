@@ -12,6 +12,7 @@
    "msmtp"
    "libnotify"
    "sbcl"
+   "sbcl-next"
    "cairo"
    "global"
    "icecat"

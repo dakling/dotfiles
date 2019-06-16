@@ -12,7 +12,7 @@
  '(global-evil-surround-mode 1)
  '(package-selected-packages
    (quote
-    (mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -581,7 +581,6 @@
   (setq org-confirm-babel-evaluate nil)
   (require 'ox-extra)
   (ox-extras-activate '(ignore-headlines))
-  (org-bullets-mode 1)
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((lisp . t)))
@@ -610,6 +609,9 @@
               (evil-org-set-key-theme)))
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
+
+(use-package org-bullets
+  :config (org-bullets-mode 1))
 
 (use-package org-ref
   :ensure t

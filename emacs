@@ -429,8 +429,10 @@
     :after exwm-randr
     :demand t
     :config
+    (define-key exwm-mode-map (kbd "C-c") nil)
     (setq exwm-input-global-keys
 	  `(([?\s-r] . exwm-reset)
+	    ([?\s-e] . exwm-input-release-keyboard)
 	    ([?\s-w] . exwm-workspace-switch)
 	    ([?\s-W] . exwm-workspace-move-window)
 	    ,@(mapcar (lambda (i)

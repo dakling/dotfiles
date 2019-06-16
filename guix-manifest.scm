@@ -1,6 +1,7 @@
 (specifications->manifest
  '("fontconfig"
    "font-adobe-source-code-pro"
+   "openconnect"
    "cifs-utils"
    "nfs-utils"
    "samba"
@@ -11,6 +12,7 @@
    "offlineimap"
    "msmtp"
    "libnotify"
+   "texlive"
    "sbcl"
    "sqlite"
    "libfixposix"

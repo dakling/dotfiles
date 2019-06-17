@@ -578,7 +578,7 @@
 (use-package org
   :ensure org-plus-contrib
   :config
-  (add-hook 'org-mode-hook 'org-indent-mode)
+  (add-hook 'org-mode-hook '(lambda () (org-indent-mode 1)))
   (add-to-list 'org-export-backends 'beamer)
   (add-to-list 'org-export-backends 'md)
   (setq org-confirm-babel-evaluate nil)

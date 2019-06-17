@@ -577,6 +577,8 @@
 ;;org
 (use-package org
   :ensure org-plus-contrib
+  :init
+  (org-indent-mode 1)
   :config
   (add-to-list 'org-export-backends 'beamer)
   (add-to-list 'org-export-backends 'md)

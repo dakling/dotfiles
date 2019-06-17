@@ -578,6 +578,7 @@
 (use-package org
   :ensure org-plus-contrib
   :config
+  (setq org-startup-indented t)
   (add-hook 'org-mode-hook '(lambda () (org-indent-mode 1)))
   (add-to-list 'org-export-backends 'beamer)
   (add-to-list 'org-export-backends 'md)

@@ -577,9 +577,8 @@
 ;;org
 (use-package org
   :ensure org-plus-contrib
-  :init
-  (org-indent-mode 1)
   :config
+  (add-hook 'org-mode-hook 'org-indent-mode)
   (add-to-list 'org-export-backends 'beamer)
   (add-to-list 'org-export-backends 'md)
   (setq org-confirm-babel-evaluate nil)

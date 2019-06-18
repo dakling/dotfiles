@@ -615,7 +615,8 @@
   (evil-org-agenda-set-keys))
 
 (use-package org-bullets
-  :config (org-bullets-mode 1))
+  :config
+  (add-hook 'org-mode-hook '(lambda () (org-bullets-mode 1))))
 
 (use-package org-ref
   :ensure t

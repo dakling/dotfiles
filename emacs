@@ -578,6 +578,8 @@
 (use-package org
   :ensure org-plus-contrib
   :config
+  (setq org-startup-indented t)
+  (add-hook 'org-mode-hook '(lambda () (org-indent-mode 1)))
   (add-to-list 'org-export-backends 'beamer)
   (add-to-list 'org-export-backends 'md)
   (setq org-confirm-babel-evaluate nil)
@@ -613,7 +615,8 @@
   (evil-org-agenda-set-keys))
 
 (use-package org-bullets
-  :config (org-bullets-mode 1))
+  :config
+  (add-hook 'org-mode-hook '(lambda () (org-bullets-mode 1))))
 
 (use-package org-ref
   :ensure t

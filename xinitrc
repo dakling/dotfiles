@@ -133,4 +133,5 @@ xset r rate 400 20
 
 # # Start Emacs
 exec emacs
+# exec xfce4-session
 # exec xmonad

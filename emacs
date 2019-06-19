@@ -373,8 +373,10 @@
     (pdf-tools-install)
     :magic ("%PDF" . pdf-view-mode)
     :config
+    (add-hook 'pdf-view-mode-hook 'pdf-view-midnight-minor-mode)
     (setq pdf-view-continuous nil)
     (evil-collection-init 'pdf)
+    (setq pdf-view-midnight-colors '("WhiteSmoke" . "gray16"))
     :general
     (general-define-key
      :states '(motion normal)
@@ -405,7 +407,7 @@
       "fh"  '(pdf-view-fit-height-to-window :which-key "fit heigth")
       "fp"  '(pdf-view-fit-page-to-window :which-key "fit page")
       "m"  '(pdf-view-set-slice-using-mouse :which-key "slice using mouse")
-      "b"  '(pdf-view-set-slice-from-bounding-box :which-key "sclice from bounding box")
+      "b"  '(pdf-view-set-slice-from-bounding-box :which-key "slice from bounding box")
       "R"  '(pdf-view-reset-slice :which-key "reset slice")
       "zr" '(pdf-view-scale-reset :which-key "zoom reset"))))
 

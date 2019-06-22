@@ -147,7 +147,9 @@
     "ad" '(deer :which-key "call deer")
     "ab" '(eww :which-key "open browser")
     "am" '(mu4e :which-key "open mail")
-    "as" '((lambda () (interactive) (eshell 'N)) :which-key "open eshell")
+    "at" '(ansi-term :which-key "open ansi-term")
+    "as" '(eshell :which-key "open existing eshell")
+    "aS" '((lambda () (interactive) (eshell 'N)) :which-key "open new eshell")
     "g"  '(:ignore t :which-key "git")
     "f" '(:ignore t :which-key "file")
     "fs" '(save-buffer :which-key "save file")
@@ -371,8 +373,10 @@
     (pdf-tools-install)
     :magic ("%PDF" . pdf-view-mode)
     :config
+    (add-hook 'pdf-view-mode-hook 'pdf-view-midnight-minor-mode)
     (setq pdf-view-continuous nil)
     (evil-collection-init 'pdf)
+    (setq pdf-view-midnight-colors '("WhiteSmoke" . "gray16"))
     :general
     (general-define-key
      :states '(motion normal)
@@ -403,7 +407,7 @@
       "fh"  '(pdf-view-fit-height-to-window :which-key "fit heigth")
       "fp"  '(pdf-view-fit-page-to-window :which-key "fit page")
       "m"  '(pdf-view-set-slice-using-mouse :which-key "slice using mouse")
-      "b"  '(pdf-view-set-slice-from-bounding-box :which-key "sclice from bounding box")
+      "b"  '(pdf-view-set-slice-from-bounding-box :which-key "slice from bounding box")
       "R"  '(pdf-view-reset-slice :which-key "reset slice")
       "zr" '(pdf-view-scale-reset :which-key "zoom reset"))))
 
@@ -455,7 +459,8 @@
 	    ([?\s-o] . my-exwm-switch-to-other-workspace)
 	    ([?\s-O] . my-exwm-move-window-to-other-workspace)
 	    ([?\s-m] . delete-other-windows)
-	    ([s-f1] . (lambda () (interactive) (eshell 'N)))
+	    ([C-s-f1] . (lambda () (interactive) (eshell 'N)))
+	    ([s-f1] . eshell)
 	    ([s-f2] . (lambda () (interactive)
 			(start-process "" nil "qutebrowser")))
 	    ([s-f3] . deer)

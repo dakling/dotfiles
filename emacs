@@ -919,9 +919,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 (when (or (system-name= "klingenbergTablet") (system-name= "klingenbergLaptop"))
   (use-package guix :ensure t))
 
-(when (system-name= "klingenbergLaptop")
-  (async-shell-command "setxkbmap de"))
-
 ;; (use-package auto-dim-other-buffers
 ;;   :ensure t
 ;;   :config (auto-dim-other-buffers-mode t))

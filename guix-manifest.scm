@@ -5,6 +5,7 @@
    "cifs-utils"
    "nfs-utils"
    "samba"
+   "freerdp"
    "emacs"
    "emacs-exwm"
    "emacs-pdf-tools"

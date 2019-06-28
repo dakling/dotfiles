@@ -10,6 +10,7 @@
  '(evil-snipe-mode t)
  '(evil-snipe-override-mode t)
  '(global-evil-surround-mode 1)
+ '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
     (guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))

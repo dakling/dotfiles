@@ -561,6 +561,7 @@
   :ensure t
   :config
   (add-hook 'sly-db-mode 'evil-insert-state) ;TODO
+  (setq inferior-lisp-program "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")
   :general (my-local-leader-def
 	     :keymaps 'lisp-mode-map
 	     "'" '(sly :which-key "start reps")
@@ -573,7 +574,14 @@
 ;;   :ensure t)
 
 (use-package geiser
-  :ensure t)
+  :ensure t
+  :general (my-local-leader-def
+	     :keymaps 'scheme-mode-map
+	     "'" '(geiser :which-key "start reps")
+	     "e" '(:ignore :which-key "eval")
+	     "ef" '(geiser-eval-definition :which-key "eval definition")
+	     "ee" '(geiser-eval-last-sexp :which-key "eval last expression")
+	     "eb" '(geiser-eval-buffer :which-key "eval buffer")))
 
 (use-package eval-sexp-fu
   :ensure t

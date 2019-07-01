@@ -500,21 +500,28 @@
 	   (exwm-workspace-switch (my-exwm-get-other-workspace)))
     (defun my-exwm-move-window-to-other-workspace () (interactive)
 	   (exwm-workspace-move-window (my-exwm-get-other-workspace)))
-    (progn
-      (cond
-       ((system-name= "klingenbergTablet") (progn (set 'monitor1 "eDP1")
-						  (set 'monitor2 "HDMI2")))
-       (t (progn (set 'monitor1 "VGA-1")
-		 (set 'monitor2 "HDMI-1"))))
-      ;; (set 'monitor1 "VGA-1")
-      ;; (set 'monitor2 "HDMI-1")
-      (defun my/exwm-xrandr ()
-	"Configure screen with xrandr."
-	(start-process-shell-command
-	 "xrandr" nil
-	 (if (system-name= "klingenbergTablet")
-	     "xrandr --output VGA-1 --primary --left-of HDMI-1 --auto"
-	   "xrandr --output eDP1 --primary --below-of HDMI1 --auto"))))
+    (cond
+     ((system-name= "klingenbergTablet") (progn (set 'monitor1 "eDP1")
+						(set 'monitor2 "HDMI2")
+						(set 'placement "below")))
+     ((system-name= "klingenbergLaptop") (progn (set 'monitor1 "LVDS1")
+						(set 'monitor2 "VGA1")
+						(set 'placement "below")))
+     (t (progn (set 'monitor1 "VGA-1")
+	       (set 'monitor2 "HDMI-1")
+	       (set 'placement "left-of"))))
+    (defun my/exwm-xrandr ()
+      "Configure screen with xrandr."
+      (shell-command
+       (if (file-exists-p "~/.screenlayout/default.sh")
+	   "~/.screenlayout/default.sh" ; prefer saved command by arandr by default
+	 (concat "xrandr --output "
+		 monitor1
+		 " --primary --auto --"
+		 placement
+		 " "
+		 monitor2
+		 " --auto"))))
     :hook (exwm-randr-screen-change . my/exwm-xrandr)
     :init
     (setq exwm-randr-workspace-monitor-plist (list 0 monitor1

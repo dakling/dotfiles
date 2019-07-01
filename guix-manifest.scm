@@ -34,4 +34,5 @@
    "cairo"
    "global"
    "icecat"
+   "arandr"
    "guile"))

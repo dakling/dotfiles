@@ -602,6 +602,12 @@
   :config
   (setq org-startup-indented t)
   (add-hook 'org-mode-hook '(lambda () (org-indent-mode 1)))
+  ;; in case drastic measures are required:
+  ;; (setq org-latex-pdf-process
+  ;; 	'("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+  ;; 	  "bibtex %b"
+  ;; 	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+  ;; 	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
   (add-to-list 'org-export-backends 'beamer)
   (add-to-list 'org-export-backends 'md)
   (setq org-confirm-babel-evaluate nil)

@@ -771,7 +771,10 @@
     "xfc" 'latex/font-small-caps
     "xff" 'latex/font-sans-serif
     "xfr" 'latex/font-serif
-    "rr" 'reftex-toc
+    "r"   '(:ignore :which-key "reftex")
+    "rt" '(reftex-toc :which-key "table of contents")
+    "rr"   '(reftex-cleveref-cref :which-key "cref")
+    "rc"   '(reftex-citation :which-key "cite")
     "ol" '(lambda() (interactive) (find-file "definLocal.tex"))
     "og" '(lambda() (interactive) (find-file (getenv "LatexGlobalConfig")))
     "ob" '(lambda() (interactive) (find-file "bibliography.bib"))))

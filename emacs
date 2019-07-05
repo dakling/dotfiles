@@ -62,7 +62,7 @@
 
 (setq
  initial-scratch-message
- "Welcome") ; print a default message in the empty scratch buffer opened at startup
+ "(print \"Welcome\")") ; print a default message in the empty scratch buffer opened at startup
 
 (defalias 'yes-or-no-p 'y-or-n-p) ;reduce typing effort
 (electric-pair-mode 1) ;close brackets

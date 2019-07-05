@@ -104,7 +104,7 @@
   "shortcuts for mounting frequent locations"
   (interactive)
   (apply #'fdy-mount
-	 (cond ((string= location "lectures") '("misc/fdy-lectures.git" "~/git/mntfdy-lectures.git"))
+	 (cond ((string= location "lectures") '("misc/fdy-lectures.git" "~/git/mnt/fdy-lectures.git"))
 	       ((string= location "klausuren") '("lehre/TM1/Klausuren.git" "~/git/mnt/Klausuren.git"))
 	       ((string= location "publications") '("misc/fdy-publications.git" "~/git/mnt/fdy-publications.git"))
 	       ((string= location "misc") '("misc" "~/misc"))
@@ -161,6 +161,7 @@
     "fer" '(load-config-file :which-key "load config file")
     "feD" '(find-dotfile-dir :which-key "find dotfile directory")
     "ft"  '(find-todo :which-key "find todo file")
+    "fz"  '((lambda () (interactive) (switch-to-buffer "*scratch*")) :which-key "find scratch buffer")
     "SPC" '(counsel-M-x :which-key "M-x")
     "fp" '(counsel-locate :which-key "counsel-locate")
     "fg" '(counsel-ag :which-key "counsel-ag")

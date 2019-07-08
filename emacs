@@ -142,8 +142,14 @@
   (general-define-key "ESC" 'keyboard-quit :which-key "abort command")
   (general-define-key "TAB" 'company-complete :which-key "trigger completion")
 
+  (general-define-key
+   :keymaps 'override
+   :states 'normal
+   "gb" '(pop-tag-mark :which-key "go back"))
+
   ;; many spacemacs bindings go here
   (my-leader-def
+    "SPC" '(counsel-M-x :which-key "M-x")
     "a" '(:ignore t :which-key "applications")
     "ar" '(ranger :which-key "call ranger")
     "ad" '(deer :which-key "call deer")
@@ -162,7 +168,6 @@
     "feD" '(find-dotfile-dir :which-key "find dotfile directory")
     "ft"  '(find-todo :which-key "find todo file")
     "fz"  '((lambda () (interactive) (switch-to-buffer "*scratch*")) :which-key "find scratch buffer")
-    "SPC" '(counsel-M-x :which-key "M-x")
     "fp" '(counsel-locate :which-key "counsel-locate")
     "fg" '(counsel-ag :which-key "counsel-ag")
     "b" '(:ignore t :which-key "buffer")

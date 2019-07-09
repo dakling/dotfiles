@@ -13,7 +13,7 @@
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -692,16 +692,27 @@
 ;; maple
 ;; (use-package maplev)
 
+(use-package wgrep
+  :ensure t)
+
 ;;c#
 (use-package omnisharp
   ;; :after company
   :ensure t
-  :hook
-  ((csharp-mode-hook omnisharp-mode)
-   ;; (csharp-mode-hook company-mode)
-   ;; :config
-   ;; (add-to-list 'company-backends 'company-omnisharp)
-   ))
+  ;; :hook
+  ;; (csharp-mode-hook omnisharp-mode)
+  ;; (csharp-mode-hook company-mode)
+  :config
+  (add-to-list 'company-backends 'company-omnisharp)
+  :general
+  (general-define-key
+   :states 'normal
+   :keymaps 'csharp-mode-map ; TODO figure out why this does not work with omnisharp-mode-map
+   "gd" '(omnisharp-go-to-definition :which-key "go to definition"))
+  (my-local-leader-def
+    :keymaps 'csharp-mode-map ; TODO figure out why this does not work with omnisharp-mode-map
+    "b" '((lambda () (interactive) (compile "msbuild")) :which-key "build")))
+
 
 ;;latex (auctex)
 (use-package tex

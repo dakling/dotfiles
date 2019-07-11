@@ -628,10 +628,14 @@
       :keymaps 'org-mode-map
       "e" '(org-export-dispatch :which-key "export")
       "a" '((lambda () (interactive)
-      		    (let ((current-prefix-arg '-))
+      		    (let ((current-prefix-arg '-)) ; simulate pressing C-u
       		      (call-interactively 'org-export-dispatch))) :which-key "repeat last export")
       "s" '(org-edit-special :which-key "edit source code")
-      )
+      "l" '(:ignore :which-key "links")
+      "ll" '(org-insert-link :which-key "insert link")
+      "lf" '((lambda () (interactive)
+      		    (let ((current-prefix-arg '(4))) ; simulate pressing C-u
+      		      (call-interactively 'org-insert-link))) :which-key "insert link to file"))
     (general-define-key
      :states '(motion normal)
      :keymaps 'org-mode-map

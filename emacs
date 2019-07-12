@@ -159,6 +159,7 @@
     "as" '(eshell :which-key "open existing eshell")
     "aS" '((lambda () (interactive) (eshell 'N)) :which-key "open new eshell")
     "g"  '(:ignore t :which-key "git")
+    "cc" '(org-capture :which-key "org capture")
     "f" '(:ignore t :which-key "file")
     "fs" '(save-buffer :which-key "save file")
     "fS" '(write-file :which-key "save file as")
@@ -623,6 +624,7 @@
    'org-babel-load-languages
    '((lisp . t)))
   (setq org-babel-lisp-eval-fn 'sly-eval)
+  (setq org-default-notes-file "~/Documents/TODO.org")
   :general
     (my-local-leader-def
       :keymaps 'org-mode-map

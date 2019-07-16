@@ -13,7 +13,7 @@
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -90,6 +90,16 @@
 
 (defun system-name= (name)
   (string-equal name (system-name)))
+
+;; (defun write-to-string (input)
+;;   (cond
+;;    ((null input) nil)
+;;    ((listp input) (concat (write-to-string (car input)) (write-to-string (cdr input))))
+;;    ((not (null input)) (format "%s" input))))
+
+;; (defmacro ! (&rest args)
+;;   "convenient way to execute shell commands from scratch buffer"
+;;   `(shell-command (mapcar #'write-to-string ,args)))
 
 (defun fdy-mount (source target)
   "mount a directory from fdy windows remote server"

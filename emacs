@@ -619,6 +619,7 @@
   :config
   (setq org-startup-indented t)
   (add-hook 'org-mode-hook '(lambda () (org-indent-mode 1)))
+  (add-hook 'org-mode-hook 'flyspell-mode)
   ;; in case drastic measures are required:
   ;; (setq org-latex-pdf-process
   ;; 	'("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"

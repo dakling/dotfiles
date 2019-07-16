@@ -99,6 +99,9 @@ export GUILE_LOAD_PATH="/home/klingenberg/.guix-profile/share/guile/site/2.2${GU
 export XDG_DATA_DIRS="/home/klingenberg/.guix-profile/share${XDG_DATA_DIRS:+:}$XDG_DATA_DIRS"
 export GIO_EXTRA_MODULES="/home/klingenberg/.guix-profile/lib/gio/modules${GIO_EXTRA_MODULES:+:}$GIO_EXTRA_MODULES"
 
+#environment
+export BROWSER="/home/klingenberg/common-lisp/next/next"
+
 # for exwm
 #autostart
 nm-applet&

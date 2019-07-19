@@ -30,7 +30,7 @@
    "sqlite"
    "sbcl-cl-sqlite"
    "libfixposix"
-   "sbcl-next"
+   ;; "sbcl-next" ;; install from source
    "cairo"
    "global"
    "icecat"

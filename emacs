@@ -13,7 +13,7 @@
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (google-translate wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -717,7 +717,8 @@
   ;; :after company
   :ensure t
   ;; :hook
-  ;; (csharp-mode-hook omnisharp-mode)
+  (csharp-mode-hook omnisharp-mode)
+  (csharp-mode-hook flycheck-mode)
   ;; (csharp-mode-hook company-mode)
   :config
   (add-to-list 'company-backends 'company-omnisharp)
@@ -729,7 +730,18 @@
    "gr" '(omnisharp-rename :which-key "rename"))
   (my-local-leader-def
     :keymaps 'csharp-mode-map ; TODO figure out why this does not work with omnisharp-mode-map
-    "b" '((lambda () (interactive) (compile "msbuild")) :which-key "build")))
+    "b" '(:ignore :which-key "build")
+    "bd" '((lambda () (interactive) (compile "msbuild /p:Configuration=Debug")) :which-key "build debug")
+    "br" '((lambda () (interactive) (compile "msbuild /p:Configuration=Release")) :which-key "build release")
+    ))
+
+(use-package fsharp-mode
+  :ensure t
+  :general
+  (my-local-leader-def
+    :keymaps 'fsharp-mode-map
+    "ef" '(fsharp-eval-phrase :which-key "eval current phrase")
+    ))
 
 
 ;;latex (auctex)

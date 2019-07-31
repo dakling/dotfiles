@@ -16,7 +16,7 @@
    "offlineimap"
    "msmtp"
    "libnotify"
-   "texlive"
+   ;; "texlive"
    "sbcl"
    "webkitgtk"
    "glib-networking"

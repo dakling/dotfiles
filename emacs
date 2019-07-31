@@ -716,7 +716,7 @@
 (use-package omnisharp
   ;; :after company
   :ensure t
-  ;; :hook
+  :hook
   (csharp-mode-hook omnisharp-mode)
   (csharp-mode-hook flycheck-mode)
   ;; (csharp-mode-hook company-mode)

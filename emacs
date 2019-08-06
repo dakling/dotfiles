@@ -214,6 +214,7 @@
     "e"  '(:ignore t :which-key "eval elisp")
     "ee"  'eval-last-sexp
     "ef"  'eval-defun
+    "ep"  'eval-print-last-sexp
     "ss"  (lambda () (interactive) (shell-command "shutdown now"))
     "sr"  (lambda () (interactive) (shell-command "reboot"))
     "sl"  (lambda () (interactive) (shell-command "/usr/bin/slock"))))

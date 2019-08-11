@@ -1,6 +1,0 @@
-text/html; w3m -I %{charset} -T text/html; copiousoutput;
-text/calendar; ~/.mutt/dump-ical.py %s; copiousoutput;
-text/*; nvim %s;
-application/pdf; xdg-open %s;
-application/*; xdg-open %s;
-image/*; xdg-open %s;

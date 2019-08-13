@@ -62,7 +62,10 @@
 
 (setq
  initial-scratch-message
- "(print \"Welcome\")") ; print a default message in the empty scratch buffer opened at startup
+ "(print \"Welcome\")
+
+(shell-command-to-string \"acpi -b\")
+") ; print a default message in the empty scratch buffer opened at startup
 
 (defalias 'yes-or-no-p 'y-or-n-p) ;reduce typing effort
 (electric-pair-mode 1) ;close brackets
@@ -214,6 +217,7 @@
     "e"  '(:ignore t :which-key "eval elisp")
     "ee"  'eval-last-sexp
     "ef"  'eval-defun
+    "ep"  'eval-print-last-sexp
     "ss"  (lambda () (interactive) (shell-command "shutdown now"))
     "sr"  (lambda () (interactive) (shell-command "reboot"))
     "sl"  (lambda () (interactive) (shell-command "/usr/bin/slock"))))
@@ -716,7 +720,7 @@
 (use-package omnisharp
   ;; :after company
   :ensure t
-  ;; :hook
+  :hook
   (csharp-mode-hook omnisharp-mode)
   (csharp-mode-hook flycheck-mode)
   ;; (csharp-mode-hook company-mode)

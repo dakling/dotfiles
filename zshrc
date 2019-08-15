@@ -34,7 +34,7 @@ export QT_QPA_PLATFORMTHEME="qt5ct"
 # export GTK_CSD=0
 # source $HOME/OpenFOAM/OpenFOAM-dev/etc/bashrc
 export BOSSS_INSTALL=/home/klingenberg/BoSSS-experimental
-export LatexGlobalConfig=/home/klingenberg/Documents/programming/latex/definGlobal.tex
+export LatexGlobalConfig=/home/klingenberg/Documents/programming/latex_macros/definGlobal.tex
 export BIBLIOGRAPHY=/home/klingenberg/Documents/programming/latex/bibliography.bib
 export TERMINAL=termite
 export PATH="$PATH:/home/klingenberg/.stack/"

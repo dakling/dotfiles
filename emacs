@@ -320,7 +320,7 @@
 (menu-bar-no-scroll-bar)
 
 ;; eshell
-;; (setq pcomplete-ignore-case t)
+(setq eshell-cmpl-ignore-case t)
 
 (use-package eshell-prompt-extras
   :ensure t

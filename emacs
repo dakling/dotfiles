@@ -64,6 +64,8 @@
  initial-scratch-message
  "(print \"Welcome\")
 
+(async-shell-command \"yay --sudoloop -Syu\")
+
 (shell-command-to-string \"acpi -b\")
 ") ; print a default message in the empty scratch buffer opened at startup
 

@@ -100,6 +100,14 @@
   (interactive)
   (shell-command "xdotool mousemove 0 0"))
 
+(defun my--convert-to-pdf (filename)
+  (shell-command (concat "unoconv " filename)))
+
+(defun my-dired-convert-to-pdf ()
+  (interactive)
+  (mapc #'my--convert-to-pdf (dired-get-marked-files))
+  (ranger-refresh))
+
 ;; (defmacro ! (&rest args)
 ;;   "convenient way to execute shell commands from scratch buffer"
 ;;   `(shell-command (mapcar #'write-to-string ,args)))
@@ -331,8 +339,12 @@
 (use-package ranger :ensure t
   :commands (ranger)
   :config
+  (general-define-key
+   :keymaps 'ranger-normal-mode-map
+   ;; :states 'normal
+   "cp" '(my-dired-convert-to-pdf :which-key "convert to pdf")
+   "gr" '(ranger-refresh :which-key "refresh"))
   (setq ranger-cleanup-eagerly t)
-  (setq ranger-cleanup-on-disable t)
   (ranger-override-dired-mode t))
 
 (use-package ivy :ensure t

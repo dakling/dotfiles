@@ -111,6 +111,16 @@
   (mapc #'my--convert-to-pdf (dired-get-marked-files))
   (ranger-refresh))
 
+(defun my-brightness+ ()
+  (interactive)
+  (shell-command "xbacklight -inc 10"))
+
+(my-brightness+)
+
+(defun my-brightness- ()
+  (interactive)
+  (shell-command "xbacklight -dec 10"))
+
 ;; (defmacro ! (&rest args)
 ;;   "convenient way to execute shell commands from scratch buffer"
 ;;   `(shell-command (mapcar #'write-to-string ,args)))
@@ -512,6 +522,10 @@
 			 (start-process "" nil "/usr/bin/slock")))))
     (push ?\s-\  exwm-input-prefix-keys)
     ;; (push ?\M-m  exwm-input-prefix-keys)
+    (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
+			#'my-brightness+)
+    (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
+			#'my-brightness-)
     (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
 			(lambda () (interactive) (start-process-shell-command "" nil "pactl set-sink-volume @DEFAULT_SINK@ -5%")))
     (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")

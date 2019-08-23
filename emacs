@@ -96,11 +96,9 @@
 (defun system-name= (name)
   (string-equal name (system-name)))
 
-;; (defun write-to-string (input)
-;;   (cond
-;;    ((null input) nil)
-;;    ((listp input) (concat (write-to-string (car input)) (write-to-string (cdr input))))
-;;    ((not (null input)) (format "%s" input))))
+(defun my-get-rid-of-mouse ()
+  (interactive)
+  (shell-command "xdotool mousemove 0 0"))
 
 ;; (defmacro ! (&rest args)
 ;;   "convenient way to execute shell commands from scratch buffer"
@@ -484,6 +482,7 @@
 	    ([?\s-j] . evil-window-down)
 	    ([?\s-k] . evil-window-up)
 	    ([?\s-c] . kill-this-buffer)
+	    ([?\s-q] . my-get-rid-of-mouse)
 	    ([?\s-o] . my-exwm-switch-to-other-workspace)
 	    ([?\s-O] . my-exwm-move-window-to-other-workspace)
 	    ([?\s-m] . delete-other-windows)

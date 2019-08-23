@@ -14,7 +14,7 @@
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -386,7 +386,6 @@ It only works for frames with exactly two windows.
   :config
   (general-define-key
    :keymaps 'ranger-normal-mode-map
-   ;; :states 'normal
    "cp" '(my-dired-convert-to-pdf :which-key "convert to pdf")
    "gr" '(ranger-refresh :which-key "refresh"))
   (setq ranger-cleanup-eagerly t)
@@ -415,7 +414,6 @@ It only works for frames with exactly two windows.
   (setq company-dabbrev-downcase nil)
   (setq read-file-name-completion-ignore-case t)
   (global-company-mode 1))
-
 
 ;; abbrev mode
 (setq abbrev-file-name             ;; tell emacs where to read abbrev
@@ -652,6 +650,9 @@ It only works for frames with exactly two windows.
 ;; 	     "ef" '(slime-eval-function :which-key "eval function")
 ;; 	     "ee" '(slime-eval-last-expression :which-key "eval last expression")
 ;; 	     "eb" '(slime-eval-buffer :which-key "eval buffer")))
+
+(use-package lispy
+  :ensure t)
 
 (use-package sly
   :ensure t

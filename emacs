@@ -346,7 +346,10 @@
   (setq ivy-count-format "(%d/%d) ") ; count format, from the ivy help page
   )
 
-(use-package counsel :ensure t)
+(use-package counsel
+  :ensure t
+  :config
+  (setq counsel-find-file-ignore-regexp "\.dropbox"))
 
 (use-package company
   :ensure t

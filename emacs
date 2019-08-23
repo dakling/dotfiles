@@ -14,7 +14,7 @@
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -115,8 +115,6 @@
   (interactive)
   (shell-command "xbacklight -inc 10"))
 
-(my-brightness+)
-
 (defun my-brightness- ()
   (interactive)
   (shell-command "xbacklight -dec 10"))
@@ -144,6 +142,35 @@
 	       ((string= location "misc") '("misc" "~/misc"))
 	       ((string= location "scratch") '("scratch" "~/scratch"))
 	       ((string= location "lehre") '("lehre" "~/lehre")))))
+
+(defun ambrevar/toggle-window-split ()
+  "Switch between vertical and horizontal split.
+It only works for frames with exactly two windows.
+(Credits go to ambrevar and his awesome blog)"
+  (interactive)
+  (if (= (count-windows) 2)
+      (let* ((this-win-buffer (window-buffer))
+	     (next-win-buffer (window-buffer (next-window)))
+	     (this-win-edges (window-edges (selected-window)))
+	     (next-win-edges (window-edges (next-window)))
+	     (this-win-2nd (not (and (<= (car this-win-edges)
+					 (car next-win-edges))
+				     (<= (cadr this-win-edges)
+					 (cadr next-win-edges)))))
+	     (splitter
+	      (if (= (car this-win-edges)
+		     (car (window-edges (next-window))))
+		  'split-window-horizontally
+		'split-window-vertically)))
+	(delete-other-windows)
+	(let ((first-win (selected-window)))
+	  (funcall splitter)
+	  (if this-win-2nd (other-window 1))
+	  (set-window-buffer (selected-window) this-win-buffer)
+	  (set-window-buffer (next-window) next-win-buffer )
+	  (select-window first-win)
+	  (if this-win-2nd (other-window 1))))))
+
 
 ;; packages with configuration
 (use-package general :ensure t
@@ -185,10 +212,12 @@
   (my-leader-def
     "SPC" '(counsel-M-x :which-key "M-x")
     "a" '(:ignore t :which-key "applications")
-    "ar" '(ranger :which-key "call ranger")
     "ad" '(deer :which-key "call deer")
     "ab" '(eww :which-key "open browser")
     "am" '(mu4e :which-key "open mail")
+    "ap" '(helm-system-packages :which-key "package management")
+    "ao" '(sx-search :which-key "search stackoverflow")
+    "ar" '(md4rd :which-key "reddit")
     "at" '(ansi-term :which-key "open ansi-term")
     "aS" '(eshell :which-key "open existing eshell")
     "as" '((lambda () (interactive) (eshell 'N)) :which-key "open new eshell")
@@ -234,7 +263,7 @@
     "w="  'balance-windows
     "r"   '(:ignore t :which-key "recent-files")
     "rr"  'counsel-recentf
-    ;; "w+"  'spacemacs/window-layout-toggle
+    "w+"  '(ambrevar/toggle-window-split :which-key "toggle window split")
     "e"  '(:ignore t :which-key "eval elisp")
     "ee"  'eval-last-sexp
     "ef"  'eval-defun
@@ -289,7 +318,10 @@
   :ensure t
   :config
   (load-theme 'doom-vibrant t))
-(use-package smart-mode-line-atom-one-dark-theme :ensure t)
+
+(use-package smart-mode-line-atom-one-dark-theme
+  :ensure t)
+
 ;; (use-package doom-modeline
 ;;   :ensure t
 ;;   :hook (after-init . doom-modeline-mode)
@@ -373,6 +405,9 @@
   :ensure t
   :config
   (setq counsel-find-file-ignore-regexp "\.dropbox"))
+
+(use-package helm-system-packages
+  :ensure t)
 
 (use-package company
   :ensure t
@@ -893,6 +928,7 @@
  (require 'mu4e)
  (setenv "GPG_AGENT_INFO" nil)
  (setq mu4e-confirm-quit nil)
+ (mu4e-conversation-mode 1)
  (defun my-mu4e-set-account ()
    "Set the account for composing a message."
    (let* ((account
@@ -1027,6 +1063,9 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    (add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
    (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)))
 
+(use-package mu4e-conversation
+  :ensure t)
+
 (use-package rainbow-delimiters
   :ensure t
   :init (rainbow-delimiters-mode t))
@@ -1059,8 +1098,11 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 
 (use-package sx
   :ensure t
-  ;; TODO config
-  )
+  :config
+  (general-define-key
+   :keymaps 'sx-question-list-mode-map
+   :states 'normal
+   "RET" 'sx-display))
 
 (use-package md4rd
   :ensure t
@@ -1069,7 +1111,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    (lambda (elem) (add-to-list 'md4rd-subs-active elem))
    '(linux
      baduk)))
-
 
 (show-paren-mode 1)
 

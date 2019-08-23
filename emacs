@@ -10,10 +10,11 @@
  '(evil-snipe-mode t)
  '(evil-snipe-override-mode t)
  '(global-evil-surround-mode 1)
+ '(gud-tooltip-mode t)
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -59,6 +60,7 @@
 	     '(font . "Source Code Pro"))
 (add-hook 'focus-out-hook (lambda () (when buffer-file-name (save-buffer))))
 (recentf-mode 1)
+(setq delete-by-moving-to-trash t)
 
 (setq
  initial-scratch-message
@@ -91,7 +93,8 @@
 (defun find-todo ()
   "open dotfile directory"
   (interactive)
-  (find-file "~/Documents/TODO.org"))
+  (find-file "~/Documents/TODO.org")
+  (calendar))
 
 (defun system-name= (name)
   (string-equal name (system-name)))
@@ -1023,6 +1026,36 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 
 (use-package google-translate
   :ensure t)
+
+(use-package excorporate
+  :ensure t
+  :config
+  (general-define-key
+   :keymaps 'calendar-mode-map
+   :states 'normal
+   "e" '((lambda ()
+	   (interactive)
+	    (exco-calendar-show-day)
+	    (switch-to-buffer "diary-excorporate-transient"))
+	 :which-key "excorporate show day"))
+  (setq excorporate-configuration (cons "klingenberg@fdy.tu-darmstadt.de" "https://mail.tu-darmstadt.de/ews/exchange.asmx")))
+
+(use-package emms
+  :ensure t)
+
+(use-package sx
+  :ensure t
+  ;; TODO config
+  )
+
+(use-package md4rd
+  :ensure t
+  :config
+  (mapc
+   (lambda (elem) (add-to-list 'md4rd-subs-active elem))
+   '(linux
+     baduk)))
+
 
 (show-paren-mode 1)
 

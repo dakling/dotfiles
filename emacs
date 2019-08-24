@@ -14,7 +14,7 @@
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -206,11 +206,12 @@ It only works for frames with exactly two windows.
   (general-define-key
    :keymaps 'override
    :states 'normal
-   "gb" '(pop-tag-mark :which-key "go back"))
+   "gb" '(pop-tag-mark :which-key "go back")
+   "/" 'helm-occur)
 
   ;; many spacemacs bindings go here
   (my-leader-def
-    "SPC" '(counsel-M-x :which-key "M-x")
+    "SPC" '(helm-M-x :which-key "M-x")
     "a" '(:ignore t :which-key "applications")
     "ad" '(deer :which-key "call deer")
     "ab" '(eww :which-key "open browser")
@@ -226,16 +227,16 @@ It only works for frames with exactly two windows.
     "f" '(:ignore t :which-key "file")
     "fs" '(save-buffer :which-key "save file")
     "fS" '(write-file :which-key "save file as")
-    "ff" '(counsel-find-file :which-key "find file")
+    "ff" '(helm-find-files :which-key "find file")
     "fed" '(find-config-file :which-key "find config file")
     "fer" '(load-config-file :which-key "load config file")
     "feD" '(find-dotfile-dir :which-key "find dotfile directory")
     "ft"  '(find-todo :which-key "find todo file")
     "fz"  '((lambda () (interactive) (switch-to-buffer "*scratch*")) :which-key "find scratch buffer")
-    "fp" '(counsel-locate :which-key "counsel-locate")
-    "fg" '(counsel-ag :which-key "counsel-ag")
+    "fp" '(helm-locate :which-key "counsel-locate")
+    "fg" '(helm-do-grep-ag :which-key "counsel-ag")
     "b" '(:ignore t :which-key "buffer")
-    "bb" '(counsel-switch-buffer :which-key "switch buffer")
+    "bb" '(helm-mini :which-key "switch buffer")
     "bd" '(kill-this-buffer :which-key "kill buffer")
     "w"  '(:ignore t :which-key "window management")
     "w TAB"  '(lambda () (interactive) (ivy--switch-buffer-action (buffer-name (other-buffer (current-buffer)))))
@@ -262,7 +263,7 @@ It only works for frames with exactly two windows.
     "ww"  'other-window
     "w="  'balance-windows
     "r"   '(:ignore t :which-key "recent-files")
-    "rr"  'counsel-recentf
+    "rr"  'helm-recentf
     "w+"  '(ambrevar/toggle-window-split :which-key "toggle window split")
     "e"  '(:ignore t :which-key "eval elisp")
     "ee"  'eval-last-sexp
@@ -280,9 +281,12 @@ It only works for frames with exactly two windows.
   :config (evil-mode 1))
 
 (use-package evil-collection
-  :after evil
+  :after (evil helm) 
   :ensure t
-  :config (evil-collection-init))
+  :init
+  (setq evil-collection-setup-minibuffer t)
+  :config
+  (evil-collection-init))
 
 (use-package evil-surround
   :ensure t
@@ -404,6 +408,11 @@ It only works for frames with exactly two windows.
   :ensure t
   :config
   (setq counsel-find-file-ignore-regexp "\.dropbox"))
+
+(use-package helm
+  :ensure t
+  :config
+  (helm-mode 1))
 
 (use-package helm-system-packages
   :ensure t)
@@ -926,6 +935,10 @@ It only works for frames with exactly two windows.
 
 ;; mail
 (unless (system-name= "lina")
+
+(use-package mu4e-conversation
+  :ensure t)
+
  (require 'mu4e)
  (setenv "GPG_AGENT_INFO" nil)
  (setq mu4e-confirm-quit nil)
@@ -1048,7 +1061,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
  (use-package mu4e-alert
    :ensure t
    :config
-   (mu4e-alert-enable-notifications)
+   (mu4e-alert-enable-mode-line-display)
    ;; (setq alert-default-style 'libnotify) ; not sure why this is needed
    (mu4e-alert-set-default-style 'notifications)
    (setq mu4e-alert-interesting-mail-query
@@ -1063,9 +1076,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    ;; display stuff on modeline as well as notify
    (add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
    (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)))
-
-(use-package mu4e-conversation
-  :ensure t)
 
 (use-package rainbow-delimiters
   :ensure t
@@ -1112,6 +1122,11 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    (lambda (elem) (add-to-list 'md4rd-subs-active elem))
    '(linux
      baduk)))
+
+(use-package podcaster
+  :ensure t
+  :config
+  (setq podcaster-feeds-urls "https://www.zeitsprung.fm"))
 
 (show-paren-mode 1)
 

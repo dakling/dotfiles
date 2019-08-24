@@ -14,7 +14,7 @@
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -206,15 +206,14 @@ It only works for frames with exactly two windows.
   (general-define-key
    :keymaps 'override
    :states 'normal
-   "gb" '(pop-tag-mark :which-key "go back")
-   "/" 'helm-occur)
+   "gb" '(pop-tag-mark :which-key "go back"))
 
   ;; many spacemacs bindings go here
   (my-leader-def
     "SPC" '(helm-M-x :which-key "M-x")
     "a" '(:ignore t :which-key "applications")
     "ad" '(deer :which-key "call deer")
-    "ab" '(eww :which-key "open browser")
+    "ab" '(helm-eww :which-key "open browser")
     "am" '(mu4e :which-key "open mail")
     "ap" '(helm-system-packages :which-key "package management")
     "ao" '(sx-search :which-key "search stackoverflow")
@@ -223,6 +222,7 @@ It only works for frames with exactly two windows.
     "aS" '(eshell :which-key "open existing eshell")
     "as" '((lambda () (interactive) (eshell 'N)) :which-key "open new eshell")
     "g"  '(:ignore t :which-key "git")
+    "/"  '(helm-occur t :which-key "helm-occur")
     "cc" '(org-capture :which-key "org capture")
     "f" '(:ignore t :which-key "file")
     "fs" '(save-buffer :which-key "save file")
@@ -233,10 +233,11 @@ It only works for frames with exactly two windows.
     "feD" '(find-dotfile-dir :which-key "find dotfile directory")
     "ft"  '(find-todo :which-key "find todo file")
     "fz"  '((lambda () (interactive) (switch-to-buffer "*scratch*")) :which-key "find scratch buffer")
-    "fp" '(helm-locate :which-key "counsel-locate")
-    "fg" '(helm-do-grep-ag :which-key "counsel-ag")
+    "fp" '(helm-locate :which-key "helm-locate")
+    "fg" '(helm-do-grep-ag :which-key "helm-ag")
     "b" '(:ignore t :which-key "buffer")
     "bb" '(helm-mini :which-key "switch buffer")
+    "be" '(helm-exwm :which-key "switch to exwm buffer")
     "bd" '(kill-this-buffer :which-key "kill buffer")
     "w"  '(:ignore t :which-key "window management")
     "w TAB"  '(lambda () (interactive) (ivy--switch-buffer-action (buffer-name (other-buffer (current-buffer)))))
@@ -410,11 +411,46 @@ It only works for frames with exactly two windows.
   (setq counsel-find-file-ignore-regexp "\.dropbox"))
 
 (use-package helm
+  :after helm-exwm
   :ensure t
   :config
+  (setq helm-mode-fuzzy-match t)
+  (setq helm-completion-in-region-fuzzy-match t)
+  (setq helm-M-x-fuzzy-match t)
+  (setq helm-buffers-fuzzy-matching           t)
+  (setq helm-completion-in-region-fuzzy-match t)
+  (setq helm-file-cache-fuzzy-match           t)
+  (setq helm-imenu-fuzzy-match                t)
+  (setq helm-mode-fuzzy-match                 t)
+  (setq helm-locate-fuzzy-match               t) 
+  (setq helm-quick-update                     t)
+  (setq helm-recentf-fuzzy-match              t)
+  (setq helm-exwm-emacs-buffers-source (helm-exwm-build-emacs-buffers-source))
+  (setq helm-exwm-source (helm-exwm-build-source))
+  (setq helm-mini-default-sources `(helm-exwm-emacs-buffers-source
+                                    helm-exwm-source
+                                    helm-source-recentf))
   (helm-mode 1))
 
 (use-package helm-system-packages
+  :ensure t)
+
+(use-package helm-mu
+  :ensure t)
+
+(use-package helm-exwm
+  :ensure t)
+
+(use-package helm-eww
+  :ensure t)
+
+(use-package helm-dictionary
+  :ensure t)
+
+(use-package helm-tramp
+  :ensure t)
+
+(use-package helm-unicode
   :ensure t)
 
 (use-package company
@@ -1048,8 +1084,8 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    :ensure t
    :config
    (evil-define-key 'evilified mu4e-main-mode-map (kbd "j") 'evil-next-line)
+   (evil-define-key 'evilified mu4e-main-mode-map (kbd "s") 'helm-mu)
    (bind-keys :map mu4e-main-mode-map
-	      ;; ("j" . evil-next-line)
 	      ("c" . mu4e-compose-new))
    :general
    (general-define-key

@@ -495,7 +495,7 @@ It only works for frames with exactly two windows.
 
 (use-package ediff :ensure t)
 
-(unless (system-name= "lina")
+(unless (or (system-name= "localhost") (system-name= "lina"))
   (use-package pdf-tools
     :ensure t
     :init
@@ -970,55 +970,55 @@ It only works for frames with exactly two windows.
   :ensure t)
 
 ;; mail
-(unless (system-name= "lina")
 
-(use-package mu4e-conversation
-  :ensure t)
+(defun my-mu4e-setup ()
+  (use-package mu4e-conversation
+    :ensure t)
 
- (require 'mu4e)
- (setenv "GPG_AGENT_INFO" nil)
- (setq mu4e-confirm-quit nil)
- (mu4e-conversation-mode 1)
- (defun my-mu4e-set-account ()
-   "Set the account for composing a message."
-   (let* ((account
-	   (if mu4e-compose-parent-message
-	       (let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
-		 (string-match "/\\(.*?\\)/" maildir)
-		 (match-string 1 maildir))
-	     (completing-read (format "Compose with account: (%s) "
-				      (mapconcat #'(lambda (var) (car var))
-						 my-mu4e-account-alist "/"))
-			      (mapcar #'(lambda (var) (car var)) my-mu4e-account-alist)
-			      nil t nil nil (caar my-mu4e-account-alist))))
-	  (account-vars (cdr (assoc account my-mu4e-account-alist))))
-     (if account-vars
-	 (mapc #'(lambda (var)
-		   (set (car var) (cadr var)))
-	       account-vars)
-       (error "No email account found"))))
+  (require 'mu4e)
+  (setenv "GPG_AGENT_INFO" nil)
+  (setq mu4e-confirm-quit nil)
+  (mu4e-conversation-mode 1)
+  (defun my-mu4e-set-account ()
+    "Set the account for composing a message."
+    (let* ((account
+	    (if mu4e-compose-parent-message
+		(let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
+		  (string-match "/\\(.*?\\)/" maildir)
+		  (match-string 1 maildir))
+	      (completing-read (format "Compose with account: (%s) "
+				       (mapconcat #'(lambda (var) (car var))
+						  my-mu4e-account-alist "/"))
+			       (mapcar #'(lambda (var) (car var)) my-mu4e-account-alist)
+			       nil t nil nil (caar my-mu4e-account-alist))))
+	   (account-vars (cdr (assoc account my-mu4e-account-alist))))
+      (if account-vars
+	  (mapc #'(lambda (var)
+		    (set (car var) (cadr var)))
+		account-vars)
+	(error "No email account found"))))
 
- ;; ask for account when composing mail
- (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
- (setq mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e")
- (setq mu4e-maildir "~/Mail")
- (setq mu4e-trash-folder "/Trash")
- (setq mu4e-refile-folder "/Archive")
- (setq mu4e-get-mail-command "offlineimap -o")
- (setq mu4e-update-interval 300)
- (setq mu4e-compose-signature-auto-include t)
- (setq mu4e-view-show-images t)
- (setq mu4e-enable-notifications t)
- (setq send-mail-function 'smtpmail-send-it)
- (setq message-send-mail-function 'smtpmail-send-it)
- (setq smtpmail-stream-type 'ssl)
- (setq mu4e-view-show-addresses t)
- (setq my-mu4e-account-alist
-       '(("FDY"
-	  (mu4e-sent-messages-behavior sent)
-	  (mu4e-compose-signature-auto-include t)
-	  (mu4e-compose-signature
-	   "Technische Universität Darmstadt
+  ;; ask for account when composing mail
+  (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
+  (setq mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e")
+  (setq mu4e-maildir "~/Mail")
+  (setq mu4e-trash-folder "/Trash")
+  (setq mu4e-refile-folder "/Archive")
+  (setq mu4e-get-mail-command "offlineimap -o")
+  (setq mu4e-update-interval 300)
+  (setq mu4e-compose-signature-auto-include t)
+  (setq mu4e-view-show-images t)
+  (setq mu4e-enable-notifications t)
+  (setq send-mail-function 'smtpmail-send-it)
+  (setq message-send-mail-function 'smtpmail-send-it)
+  (setq smtpmail-stream-type 'ssl)
+  (setq mu4e-view-show-addresses t)
+  (setq my-mu4e-account-alist
+	'(("FDY"
+	   (mu4e-sent-messages-behavior sent)
+	   (mu4e-compose-signature-auto-include t)
+	   (mu4e-compose-signature
+	    "Technische Universität Darmstadt
 Dario Klingenberg, M.Sc.
 Fachgebiet für Strömungsdynamik
 Fachbereich Maschinenbau
@@ -1030,18 +1030,18 @@ E-Mail: klingenberg@fdy.tu-darmstadt.de
 Telefon: +9 6151 16-26207
 Fax: +49 6151 16-26203
 Web: http://www.fdy.tu-darmstadt.de")
-	  (mu4e-sent-folder "/FDY/Sent Items")
-	  (mu4e-drafts-folder "/FDY/Drafts")
-	  (smtpmail-smtp-server "smtp.tu-darmstadt.de")
-	  (smtpmail-smtp-service 465)
-	  (smtpmail-stream-type ssl)
-	  (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
-	  (user-full-name "Dario Klingenberg"))
-	 ("GSC"
-	  (mu4e-sent-messages-behavior sent)
-	  (mu4e-compose-signature-auto-include t)
-	  (mu4e-compose-signature
-	   "Technische Universität Darmstadt
+	   (mu4e-sent-folder "/FDY/Sent Items")
+	   (mu4e-drafts-folder "/FDY/Drafts")
+	   (smtpmail-smtp-server "smtp.tu-darmstadt.de")
+	   (smtpmail-smtp-service 465)
+	   (smtpmail-stream-type ssl)
+	   (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
+	   (user-full-name "Dario Klingenberg"))
+	  ("GSC"
+	   (mu4e-sent-messages-behavior sent)
+	   (mu4e-compose-signature-auto-include t)
+	   (mu4e-compose-signature
+	    "Technische Universität Darmstadt
 Dario Klingenberg, M.Sc.
 Graduate School Computational Engineering
 Dolivostraße 15
@@ -1051,67 +1051,70 @@ E-Mail: klingenberg@gsc.tu-darmstadt.de
 Telefon: +49 6151 16-24381
 Fax: +49 6151 16-24404
 Web: http://www.gsc.ce.tu-darmstadt.de/")
-	  (mu4e-sent-folder "/GSC/Sent Items")
-	  (mu4e-drafts-folder "/GSC/Drafts")
-	  (smtpmail-smtp-server "smtp.gsc.ce.tu-darmstadt.de")
-	  (smtpmail-smtp-service 465)
-	  (smtpmail-stream-type ssl)
-	  (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
-	  (user-full-name "Dario Klingenberg"))
-	 ("Gmail"
-	  ;; Under each account, set the account-specific variables you want.
-	  (mu4e-sent-messages-behavior delete)
-	  (mu4e-compose-signature-auto-include nil)
-	  (mu4e-sent-folder "/Gmail/sent")
-	  (mu4e-drafts-folder "/Gmail/drafts")
-	  (user-mail-address "dario.klingenberg@gmail.com")
-	  (smtpmail-smtp-server "smtp.gmail.com")
-	  (smtpmail-smtp-service 465)
-	  (smtpmail-stream-type ssl)
-	  (user-full-name "Dario Klingenberg"))
-	 ("Web"
-	  (mu4e-sent-messages-behavior sent)
-	  (mu4e-compose-signature-auto-include nil)
-	  (mu4e-sent-folder "/Web/Sent Items")
-	  (mu4e-drafts-folder "/Web/Drafts")
-	  (smtpmail-smtp-server "smtp.web.de")
-	  (smtpmail-smtp-service 587)
-	  (smtpmail-stream-type starttls)
-	  (user-mail-address "dario.klingenberg@web.de")
-	  (user-full-name "dario"))))
+	   (mu4e-sent-folder "/GSC/Sent Items")
+	   (mu4e-drafts-folder "/GSC/Drafts")
+	   (smtpmail-smtp-server "smtp.gsc.ce.tu-darmstadt.de")
+	   (smtpmail-smtp-service 465)
+	   (smtpmail-stream-type ssl)
+	   (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
+	   (user-full-name "Dario Klingenberg"))
+	  ("Gmail"
+	   ;; Under each account, set the account-specific variables you want.
+	   (mu4e-sent-messages-behavior delete)
+	   (mu4e-compose-signature-auto-include nil)
+	   (mu4e-sent-folder "/Gmail/sent")
+	   (mu4e-drafts-folder "/Gmail/drafts")
+	   (user-mail-address "dario.klingenberg@gmail.com")
+	   (smtpmail-smtp-server "smtp.gmail.com")
+	   (smtpmail-smtp-service 465)
+	   (smtpmail-stream-type ssl)
+	   (user-full-name "Dario Klingenberg"))
+	  ("Web"
+	   (mu4e-sent-messages-behavior sent)
+	   (mu4e-compose-signature-auto-include nil)
+	   (mu4e-sent-folder "/Web/Sent Items")
+	   (mu4e-drafts-folder "/Web/Drafts")
+	   (smtpmail-smtp-server "smtp.web.de")
+	   (smtpmail-smtp-service 587)
+	   (smtpmail-stream-type starttls)
+	   (user-mail-address "dario.klingenberg@web.de")
+	   (user-full-name "dario"))))
 
- (use-package evil-mu4e
-   :ensure t
-   :config
-   (evil-define-key 'evilified mu4e-main-mode-map (kbd "j") 'evil-next-line)
-   (evil-define-key 'evilified mu4e-main-mode-map (kbd "s") 'helm-mu)
-   (bind-keys :map mu4e-main-mode-map
-	      ("c" . mu4e-compose-new))
-   :general
-   (general-define-key
-    :states '(motion normal)
-    :keymaps 'mu4e-view-mode-map
-    "RET" '(mu4e~view-browse-url-from-binding :which-key "follow link")))
+  (use-package evil-mu4e
+    :ensure t
+    :config
+    (evil-define-key 'evilified mu4e-main-mode-map (kbd "j") 'evil-next-line)
+    (evil-define-key 'evilified mu4e-main-mode-map (kbd "s") 'helm-mu)
+    (bind-keys :map mu4e-main-mode-map
+	       ("c" . mu4e-compose-new))
+    :general
+    (general-define-key
+     :states '(motion normal)
+     :keymaps 'mu4e-view-mode-map
+     "RET" '(mu4e~view-browse-url-from-binding :which-key "follow link")))
 
- ;; taken from reddit
- (use-package mu4e-alert
-   :ensure t
-   :config
-   (mu4e-alert-enable-mode-line-display)
-   ;; (setq alert-default-style 'libnotify) ; not sure why this is needed
-   (mu4e-alert-set-default-style 'notifications)
-   (setq mu4e-alert-interesting-mail-query
-	 (concat "(maildir:<fu> AND date:today..now"
-		 " OR maildir:<bar> AND date:today..now"
-		 " AND flag:unread"))
-   (alert-add-rule
-    :category "mu4e-alert"
-    :predicate (lambda (_) (string-match-p "^mu4e-" (symbol-name major-mode)))
-    :continue t)
+  ;; taken from reddit
+  (use-package mu4e-alert
+    :ensure t
+    :config
+    (mu4e-alert-enable-mode-line-display)
+    ;; (setq alert-default-style 'libnotify) ; not sure why this is needed
+    (mu4e-alert-set-default-style 'notifications)
+    (setq mu4e-alert-interesting-mail-query
+	  (concat "(maildir:<fu> AND date:today..now"
+		  " OR maildir:<bar> AND date:today..now"
+		  " AND flag:unread"))
+    (alert-add-rule
+     :category "mu4e-alert"
+     :predicate (lambda (_) (string-match-p "^mu4e-" (symbol-name major-mode)))
+     :continue t)
 
-   ;; display stuff on modeline as well as notify
-   (add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
-   (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)))
+    ;; display stuff on modeline as well as notify
+    (add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
+    (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)))
+
+(unless (or (system-name= "localhost") (system-name= "lina"))
+  (my-mu4e-setup))
 
 (use-package rainbow-delimiters
   :ensure t

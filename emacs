@@ -14,7 +14,7 @@
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -118,6 +118,11 @@
 (defun my-brightness- ()
   (interactive)
   (shell-command "xbacklight -dec 10"))
+
+(defun my-open-url (url)
+  (start-process-shell-command
+   "" nil (concat "firefox "
+		  url)))
 
 ;; (defmacro ! (&rest args)
 ;;   "convenient way to execute shell commands from scratch buffer"
@@ -270,6 +275,10 @@ It only works for frames with exactly two windows.
     "ee"  'eval-last-sexp
     "ef"  'eval-defun
     "ep"  'eval-print-last-sexp
+    "i"   '(:ignore :which-key "internet")
+    "id"  '((lambda () (interactive) (my-open-url "https://www.dazn.com")) :which-key "dazn")
+    "ig"  '((lambda () (interactive) (my-open-url "https://www.dragongoserver.net/status.php")) :which-key "dgs")
+    "iy"  '((lambda () (interactive) (my-open-url "https://www.youtube.com/")) :which-key "youtube")
     "ss"  (lambda () (interactive) (shell-command "shutdown now"))
     "sr"  (lambda () (interactive) (shell-command "reboot"))
     "sl"  (lambda () (interactive) (shell-command "/usr/bin/slock"))))
@@ -592,7 +601,7 @@ It only works for frames with exactly two windows.
 	    ([s-f1] . (lambda () (interactive) (eshell 'N)))
 	    ([C-s-f1] . eshell)
 	    ([s-f2] . (lambda () (interactive)
-			(start-process "" nil "next")))
+			(start-process "" nil "firefox")))
 	    ([s-f3] . deer)
 	    ([s-f4] . (lambda () (interactive)
 			(mu4e)))

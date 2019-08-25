@@ -978,7 +978,7 @@ It only works for frames with exactly two windows.
   (require 'mu4e)
   (setenv "GPG_AGENT_INFO" nil)
   (setq mu4e-confirm-quit nil)
-  (mu4e-conversation-mode 1)
+  (global-mu4e-conversation-mode)
   (defun my-mu4e-set-account ()
     "Set the account for composing a message."
     (let* ((account

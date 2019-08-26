@@ -14,7 +14,7 @@
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -408,14 +408,14 @@ It only works for frames with exactly two windows.
   (setq ranger-cleanup-eagerly t)
   (ranger-override-dired-mode t))
 
-(use-package ivy :ensure t
-  :diminish (ivy-mode . "") ; does not display ivy in the modeline
-  :init (ivy-mode 1)        ; enable ivy globally at startup
-  :config
-  (setq ivy-use-virtual-buffers t)   ; extend searching to bookmarks and …
-  (setq ivy-height 20)               ; set height of the ivy window
-  (setq ivy-count-format "(%d/%d) ") ; count format, from the ivy help page
-  )
+;; (use-package ivy :ensure t
+;;   :diminish (ivy-mode . "") ; does not display ivy in the modeline
+;;   :init (ivy-mode 1)        ; enable ivy globally at startup
+;;   :config
+;;   (setq ivy-use-virtual-buffers t)   ; extend searching to bookmarks and …
+;;   (setq ivy-height 20)               ; set height of the ivy window
+;;   (setq ivy-count-format "(%d/%d) ") ; count format, from the ivy help page
+;;   )
 
 (use-package counsel
   :ensure t
@@ -494,6 +494,14 @@ It only works for frames with exactly two windows.
 
 (use-package yasnippet-snippets
   :ensure t)
+
+(use-package projectile
+  :ensure t
+  :config
+  (my-leader-def
+    :states 'normal
+    "p" 'projectile-command-map)
+  (projectile-mode 1))
 
 (use-package magit
   :ensure t

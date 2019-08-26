@@ -96,8 +96,11 @@
   (find-file "~/Documents/TODO.org")
   (calendar))
 
-(defun system-name= (name)
-  (string-equal name (system-name)))
+(defun system-name= (&rest names)
+  (cl-some
+    (lambda (name)
+      (string-equal name (system-name)))
+    names))
 
 (defun my-get-rid-of-mouse ()
   (interactive)
@@ -444,9 +447,6 @@ It only works for frames with exactly two windows.
 (use-package helm-system-packages
   :ensure t)
 
-(use-package helm-mu
-  :ensure t)
-
 (use-package helm-exwm
   :ensure t)
 
@@ -504,7 +504,7 @@ It only works for frames with exactly two windows.
 
 (use-package ediff :ensure t)
 
-(unless (or (system-name= "localhost") (system-name= "lina"))
+(unless (system-name= "localhost" "lina")
   (use-package pdf-tools
     :ensure t
     :init
@@ -981,6 +981,10 @@ It only works for frames with exactly two windows.
 ;; mail
 
 (defun my-mu4e-setup ()
+
+  (use-package helm-mu
+    :ensure t)
+
   (use-package mu4e-conversation
     :ensure t)
 

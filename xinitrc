@@ -100,7 +100,7 @@ export XDG_DATA_DIRS="/home/klingenberg/.guix-profile/share${XDG_DATA_DIRS:+:}$X
 export GIO_EXTRA_MODULES="/home/klingenberg/.guix-profile/lib/gio/modules${GIO_EXTRA_MODULES:+:}$GIO_EXTRA_MODULES"
 
 #environment
-export BROWSER="/home/klingenberg/common-lisp/next/next"
+export BROWSER="firefox"
 
 # for exwm
 #autostart

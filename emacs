@@ -993,13 +993,13 @@ It only works for frames with exactly two windows.
   (use-package helm-mu
     :ensure t)
 
-  (use-package mu4e-conversation
-    :ensure t)
+  ;; (use-package mu4e-conversation
+  ;;   :ensure t)
 
   (require 'mu4e)
   (setenv "GPG_AGENT_INFO" nil)
   (setq mu4e-confirm-quit nil)
-  (global-mu4e-conversation-mode)
+  ;; (global-mu4e-conversation-mode)
   (defun my-mu4e-set-account ()
     "Set the account for composing a message."
     (let* ((account

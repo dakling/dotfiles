@@ -135,6 +135,7 @@ xsetroot -cursor_name left_ptr
 xset r rate 400 20
 
 # # Start Emacs
+# exec /home/klingenberg/HESSENBOX-DA/programming/guix-vm/run.sh 
 exec emacs
 # exec xfce4-session
 # exec xmonad

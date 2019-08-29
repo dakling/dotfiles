@@ -860,6 +860,10 @@ It only works for frames with exactly two windows.
   :ensure t)
 
 ;;c#
+(add-to-list 'load-path "~/.emacs.d/dev/")
+(require 'csharp-repl)
+(require 'bosss-repl)
+(require 'bosss)
 (use-package omnisharp
   ;; :after company
   :ensure t
@@ -880,7 +884,8 @@ It only works for frames with exactly two windows.
     "b" '(:ignore :which-key "build")
     "bd" '((lambda () (interactive) (compile "msbuild /p:Configuration=Debug")) :which-key "build debug")
     "br" '((lambda () (interactive) (compile "msbuild /p:Configuration=Release")) :which-key "build release")
-    ))
+    "ro" '(run-csharp-repl-other-frame :which-key "start repl")
+    "rr" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl")))
 
 (use-package fsharp-mode
   :ensure t

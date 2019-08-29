@@ -426,6 +426,18 @@ It only works for frames with exactly two windows.
   :after helm-exwm
   :ensure t
   :config
+  (general-define-key
+   :keymaps 'helm-find-files-map
+   "M-H" 'left-char
+   "M-L" 'right-char
+   "M-y" 'helm-ff-run-copy-file
+   "M-r" 'helm-ff-run-rename-file
+   "M-s" 'helm-ff-run-find-file-as-root
+   "M-o" 'helm-ff-run-switch-other-frame
+   "M-O" 'helm-ff-run-switch-other-window)
+  (general-define-key
+   :keymaps 'helm-buffer-map
+   "M-d" 'helm-buffer-run-kill-persistent)
   (setq helm-mode-fuzzy-match t)
   (setq helm-completion-in-region-fuzzy-match t)
   (setq helm-M-x-fuzzy-match t)

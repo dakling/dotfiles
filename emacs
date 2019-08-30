@@ -61,6 +61,7 @@
 (add-hook 'focus-out-hook (lambda () (when buffer-file-name (save-buffer))))
 (recentf-mode 1)
 (setq delete-by-moving-to-trash t)
+(setq-default indent-tabs-mode nil)
 
 (setq
  initial-scratch-message

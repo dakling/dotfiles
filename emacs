@@ -862,8 +862,6 @@ It only works for frames with exactly two windows.
 ;;c#
 (add-to-list 'load-path "~/.emacs.d/dev/")
 (require 'csharp-repl)
-(require 'bosss-repl)
-(require 'bosss)
 (use-package omnisharp
   ;; :after company
   :ensure t
@@ -886,6 +884,24 @@ It only works for frames with exactly two windows.
     "br" '((lambda () (interactive) (compile "msbuild /p:Configuration=Release")) :which-key "build release")
     "ro" '(run-csharp-repl-other-frame :which-key "start repl")
     "rr" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl")))
+
+;; bosss
+(defun bosss-init ()
+  (setq bosss-path '("/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/bin/Debug/RANS_Solver.exe"))
+  (require 'bosss-repl)
+  (require 'bosss)
+  (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
+  (add-hook 'bosss-mode-hook 'bosss-config))
+
+(defun bosss-config ()
+  (my-local-leader-def
+    :keymaps 'bosss-mode-map
+    "ro" '(run-bosss-repl-other-frame :which-key "start repl")
+    "rr" '(bosss-repl-send-current-field :which-key "send region to repl")
+    "rm" '(bosss-repl-send-region :which-key "send region to repl")
+    "in" '(bosss-create-new-field :which-key "create new input field")))
+
+(bosss-init)
 
 (use-package fsharp-mode
   :ensure t

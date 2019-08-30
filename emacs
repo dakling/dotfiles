@@ -887,7 +887,7 @@ It only works for frames with exactly two windows.
 
 ;; bosss
 (defun bosss-init ()
-  (setq bosss-path '("/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/bin/Debug/RANS_Solver.exe"))
+  (setq bosss-path "/home/klingenberg/BoSSS-experimental/")
   (require 'bosss-repl)
   (require 'bosss)
   (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))

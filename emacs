@@ -61,6 +61,7 @@
 (add-hook 'focus-out-hook (lambda () (when buffer-file-name (save-buffer))))
 (recentf-mode 1)
 (setq delete-by-moving-to-trash t)
+(setq-default indent-tabs-mode nil)
 
 (setq
  initial-scratch-message
@@ -887,6 +888,24 @@ It only works for frames with exactly two windows.
     "br" '((lambda () (interactive) (compile "msbuild /p:Configuration=Release")) :which-key "build release")
     "ro" '(run-csharp-repl-other-frame :which-key "start repl")
     "rr" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl")))
+
+;; bosss
+(defun bosss-init ()
+  (setq bosss-path "/home/klingenberg/BoSSS-experimental/")
+  (require 'bosss-repl)
+  (require 'bosss)
+  (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
+  (add-hook 'bosss-mode-hook 'bosss-config))
+
+(defun bosss-config ()
+  (my-local-leader-def
+    :keymaps 'bosss-mode-map
+    "ro" '(run-bosss-repl-other-frame :which-key "start repl")
+    "rr" '(bosss-repl-send-current-field :which-key "send region to repl")
+    "rm" '(bosss-repl-send-region :which-key "send region to repl")
+    "in" '(bosss-create-new-field :which-key "create new input field")))
+
+(bosss-init)
 
 (use-package fsharp-mode
   :ensure t

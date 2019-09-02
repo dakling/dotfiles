@@ -71,6 +71,9 @@
 (shell-command-to-string \"acpi -b\")
 ") ; print a default message in the empty scratch buffer opened at startup
 
+;; add my packages
+(add-to-list 'load-path "~/.emacs.d/dev/")
+
 (defalias 'yes-or-no-p 'y-or-n-p) ;reduce typing effort
 (electric-pair-mode 1) ;close brackets
 
@@ -859,11 +862,9 @@ It only works for frames with exactly two windows.
 (use-package wgrep
   :ensure t)
 
+
 ;;c#
-(add-to-list 'load-path "~/.emacs.d/dev/")
 (require 'csharp-repl)
-(require 'bosss-repl)
-(require 'bosss)
 (use-package omnisharp
   ;; :after company
   :ensure t
@@ -894,6 +895,25 @@ It only works for frames with exactly two windows.
     :keymaps 'fsharp-mode-map
     "ef" '(fsharp-eval-phrase :which-key "eval current phrase")
     ))
+
+;; bosss
+(add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
+
+(defun bosss-config ()
+  (my-local-leader-def
+    :keymaps 'bosss-mode-map
+    "ro" '(run-bosss-repl-other-frame :which-key "start repl")
+    "rr" '(bosss-repl-send-current-field :which-key "send current field")
+    "rm" '(bosss-repl-send-region :which-key "send current region"))
+    "in" '(bosss-create-new-field :which-key "create new input field"))
+
+(defun bosss-init ()
+  (setq bosss-path '("-r:/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/bin/Debug/RANS_Solver.exe"))
+  (require 'bosss-repl)
+  (require 'bosss)
+  (add-hook 'bosss-mode-hook 'bosss-config)
+)
+(bosss-init)
 
 
 ;;latex (auctex)

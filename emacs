@@ -79,6 +79,18 @@
 (electric-pair-mode 1) ;close brackets
 
 ;; useful functions
+(defun shutdown ()
+  (interactive)
+  (cond
+   ((system-name= "klingeberg-tablet") (async-shell-command "sudo shutdown"))
+   (t (shell-command "shutdown now"))))
+
+(defun reboot ()
+  (interactive)
+  (cond
+   ((system-name= "klingeberg-tablet") (async-shell-command "sudo reboot"))
+   (t (shell-command "reboot now"))))
+
 (defun find-config-file ()
   "open emacs configuration file"
   (interactive)
@@ -286,8 +298,8 @@ It only works for frames with exactly two windows.
     "id"  '((lambda () (interactive) (my-open-url "https://www.dazn.com")) :which-key "dazn")
     "ig"  '((lambda () (interactive) (my-open-url "https://www.dragongoserver.net/status.php")) :which-key "dgs")
     "iy"  '((lambda () (interactive) (my-open-url "https://www.youtube.com/")) :which-key "youtube")
-    "ss"  (lambda () (interactive) (shell-command "shutdown now"))
-    "sr"  (lambda () (interactive) (shell-command "reboot"))
+    "ss"  'shutdown
+    "sr"  'reboot
     "sl"  (lambda () (interactive) (shell-command "/usr/bin/slock"))))
 
 (use-package evil

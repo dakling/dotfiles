@@ -666,7 +666,7 @@ It only works for frames with exactly two windows.
     (defun my-exwm-move-window-to-other-workspace () (interactive)
 	   (exwm-workspace-move-window (my-exwm-get-other-workspace)))
     (cond
-     ((system-name= "klingenbergTablet") (progn (set 'monitor1 "eDP1")
+     ((system-name= "klingenberg-tablet") (progn (set 'monitor1 "eDP1")
 						(set 'monitor2 "HDMI2")
 						(set 'placement "below")))
      ((system-name= "klingenbergLaptop") (progn (set 'monitor1 "LVDS1")
@@ -1197,7 +1197,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   :ensure t
   :init (rainbow-delimiters-mode t))
 
-(when (or (system-name= "klingenbergTablet") (system-name= "klingenbergLaptop"))
+(when (or (system-name= "klingenberg-tablet") (system-name= "klingenbergLaptop"))
   (use-package guix :ensure t))
 
 ;; (use-package auto-dim-other-buffers

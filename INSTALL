@@ -12,7 +12,7 @@
 #mkdir -p ~/.config/nvim
 #mkdir -p ~/.config/ranger
 ##mkdir -p ~/.config/awesome
-mkdir -p ~/.config/qutebrowser
+# mkdir -p ~/.config/qutebrowser
 ## mkdir -p ~/.config/sway
 #mkdir -p ~/.config/surfraw
 #mkdir -p ~/.config/wyeb.
@@ -33,7 +33,7 @@ mkdir -p ~/.config/qutebrowser
 #ln -sf $(pwd)/spacemacs ~/.spacemacs
 ##ln -sf $(pwd)/awesome/* ~/.config/awesome
 #ln -sf $(pwd)/ranger/* ~/.config/ranger/
-ln -sf $(pwd)/qutebrowser/* ~/.config/qutebrowser/
+# ln -sf $(pwd)/qutebrowser/* ~/.config/qutebrowser/
 ## ln -sf $(pwd)/sway/config ~/.config/sway/
 #ln -sf $(pwd)/surfraw ~/.config/surfraw/conf
 #ln -sf $(pwd)/wyeb./* ~/.config/wyeb./
@@ -58,9 +58,9 @@ ln -sf $(pwd)/qutebrowser/* ~/.config/qutebrowser/
 # ln -sf $(pwd)/nvimshell/* ~/.nvimshell/
 ## sudo ln -sf $(pwd)/mutt/muttAll /usr/bin/muttAll
 
-ln -sf $(pwd)/emacs ~/.emacs
+# ln -sf $(pwd)/emacs ~/.emacs
 ln -sf $(pwd)/offlineimap/offlineimaprc ~/.offlineimaprc
 ln -sf $(pwd)/offlineimap/offlineimap.py ~/.offlineimap.py
-ln -sf $(pwd)/xinitrc ~/.xinitrc
-ln -sf $(pwd)/guix-manifest.scm ~/.guix-manifest.scm
+# ln -sf $(pwd)/xinitrc ~/.xinitrc
+# ln -sf $(pwd)/guix-manifest.scm ~/.guix-manifest.scm
 

@@ -3,6 +3,8 @@
 
 (use-modules (gnu)
              (gnu packages)
+             (gnu packages vpn)
+             (gnu services vpn)
              (gnu system nss) 
              (gnu packages version-control) 
              (gnu packages xorg)	
@@ -10,6 +12,7 @@
              (gnu packages lxde)	
              (gnu packages web-browsers)	
              (gnu packages fonts)	
+             (gnu packages syncthing)	
              (gnu packages gnuzilla)	
              (nongnu packages linux)
              (gnu packages gcc)	
@@ -23,7 +26,10 @@
              (gnu packages terminals)
              (gnu packages xdisorg)
              (gnu packages gnupg)
+             (gnu packages gnome)
+             (gnu packages mate)
              (gnu packages readline)
+             (gnu packages tex)
              (gnu packages maths)
              (gnu packages libffi)
              (gnu packages pdf)
@@ -81,24 +87,39 @@
          pcmanfm
          offlineimap
          sbcl
+         sbcl-next
          gcc
          gsl
          icecat
          mono
          xrandr
+         syncthing
          gnupg
+         openvpn
+         ;; adwaita-icon-theme
+         mate-icon-theme-faenza
+         texlive
          curl
+         xdotool
          gvfs
          git)
    %base-packages))
  (services
   (append
    (list (service openssh-service-type)
-         (service dhcpd-service-type
-                  (dhcpd-configuration
-                   (config-file (local-file "/etc/wpa_supplicant.conf"))
-                   (interfaces '("wlp1s0"))))
+         ;; (service dhcpd-service-type
+         ;;          (dhcpd-configuration
+         ;;           (config-file (local-file "/etc/wpa_supplicant.conf"))
+         ;;           (interfaces '("wlp1s0"))))
+         ;; (modify-service %desktop-services
+         ;;                 (network-manager-service-type
+         ;;                  config =>
+         ;;                  (guix-configuration
+         ;;                   (inherit config)
+         ;;                   (vpn-plugins (list openvpn)))))
          (service nix-service-type)
+         (service openvpn-client-service-type
+                  (openvpn-client-configuration))
          (set-xorg-configuration
           (xorg-configuration
            (keyboard-layout keyboard-layout))))

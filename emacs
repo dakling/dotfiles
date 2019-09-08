@@ -14,7 +14,7 @@
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -91,6 +91,11 @@
    ((system-name= "klingeberg-tablet") (async-shell-command "sudo reboot"))
    (t (shell-command "reboot now"))))
 
+(defvar browser 
+  (cond
+   ((system-name= "klingenberg-tablet") "next")
+    (t "firefox")))
+
 (defun find-config-file ()
   "open emacs configuration file"
   (interactive)
@@ -140,7 +145,7 @@
 
 (defun my-open-url (url)
   (start-process-shell-command
-   "" nil (concat "firefox "
+   "" nil (concat browser
 		  url)))
 
 ;; (defmacro ! (&rest args)
@@ -433,11 +438,6 @@ It only works for frames with exactly two windows.
 ;;   (setq ivy-count-format "(%d/%d) ") ; count format, from the ivy help page
 ;;   )
 
-(use-package counsel
-  :ensure t
-  :config
-  (setq counsel-find-file-ignore-regexp "\.dropbox"))
-
 (use-package helm
   :after helm-exwm
   :ensure t
@@ -624,7 +624,7 @@ It only works for frames with exactly two windows.
 	    ;; 		  (exwm-workspace-move-window ,i))))
 	    ;; 	    (list '! \" § $ % & / ( ) =))
 	    ;; (number-sequence 0 9))
-	    ([?\s-d] . counsel-linux-app)
+	    ([?\s-d] . dmenu)
 	    ([?\s-l] . evil-window-right)
 	    ([?\s-h] . evil-window-left)
 	    ([?\s-j] . evil-window-down)
@@ -637,7 +637,7 @@ It only works for frames with exactly two windows.
 	    ([s-f1] . (lambda () (interactive) (eshell 'N)))
 	    ([C-s-f1] . eshell)
 	    ([s-f2] . (lambda () (interactive)
-			(start-process "" nil "firefox")))
+			(start-process "" nil browser)))
 	    ([s-f3] . deer)
 	    ([s-f4] . (lambda () (interactive)
 			(mu4e)))
@@ -1211,6 +1211,9 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 
 (when (or (system-name= "klingenberg-tablet") (system-name= "klingenbergLaptop"))
   (use-package guix :ensure t))
+
+(use-package dmenu
+  :ensure t)
 
 ;; (use-package auto-dim-other-buffers
 ;;   :ensure t

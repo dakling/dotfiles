@@ -79,16 +79,22 @@
 (electric-pair-mode 1) ;close brackets
 
 ;; useful functions
+(defun system-name= (&rest names)
+  (cl-some
+    (lambda (name)
+      (string-equal name (system-name)))
+    names))
+
 (defun shutdown ()
   (interactive)
   (cond
-   ((system-name= "klingeberg-tablet") (async-shell-command "sudo shutdown"))
+   ((system-name= "klingenberg-tablet") (async-shell-command "sudo shutdown"))
    (t (shell-command "shutdown now"))))
 
 (defun reboot ()
   (interactive)
   (cond
-   ((system-name= "klingeberg-tablet") (async-shell-command "sudo reboot"))
+   ((system-name= "klingenberg-tablet") (async-shell-command "sudo reboot"))
    (t (shell-command "reboot now"))))
 
 (defvar browser 
@@ -116,12 +122,6 @@
   (interactive)
   (find-file "~/Documents/TODO.org")
   (calendar))
-
-(defun system-name= (&rest names)
-  (cl-some
-    (lambda (name)
-      (string-equal name (system-name)))
-    names))
 
 (defun my-get-rid-of-mouse ()
   (interactive)

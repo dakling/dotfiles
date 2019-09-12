@@ -919,6 +919,7 @@ It only works for frames with exactly two windows.
     "ro" '(run-bosss-repl-other-frame :which-key "start repl")
     "rr" '(bosss-repl-send-current-field :which-key "send region to repl")
     "rm" '(bosss-repl-send-region :which-key "send region to repl")
+    "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
     "in" '(bosss-create-new-field :which-key "create new input field")))
 
 (bosss-init)

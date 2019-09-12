@@ -904,6 +904,7 @@ It only works for frames with exactly two windows.
 ;; bosss
 (defun bosss-init ()
   (setq bosss-path "/home/klingenberg/BoSSS-experimental/")
+  (setq bosss-path-reference "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/bin/Debug/RANS_Solver.exe")
   (require 'bosss-repl)
   (require 'bosss)
   (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
@@ -926,26 +927,6 @@ It only works for frames with exactly two windows.
     :keymaps 'fsharp-mode-map
     "ef" '(fsharp-eval-phrase :which-key "eval current phrase")
     ))
-
-;; bosss
-(add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
-
-(defun bosss-config ()
-  (my-local-leader-def
-    :keymaps 'bosss-mode-map
-    "ro" '(run-bosss-repl-other-frame :which-key "start repl")
-    "rr" '(bosss-repl-send-current-field :which-key "send current field")
-    "rm" '(bosss-repl-send-region :which-key "send current region"))
-    "in" '(bosss-create-new-field :which-key "create new input field"))
-
-(defun bosss-init ()
-  (setq bosss-path '("-r:/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/bin/Debug/RANS_Solver.exe"))
-  (require 'bosss-repl)
-  (require 'bosss)
-  (add-hook 'bosss-mode-hook 'bosss-config)
-)
-(bosss-init)
-
 
 ;;latex (auctex)
 (use-package tex

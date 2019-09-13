@@ -919,7 +919,7 @@ It only works for frames with exactly two windows.
     :keymaps 'bosss-mode-map
     "j" '(bosss-next-field :which-key "next field")
     "k" '(bosss-previous-field :which-key "previous field")
-    "ro" '(run-bosss-repl-other-frame :which-key "start repl")
+    "ro" '(run-bosss-repl-other-window :which-key "start repl in other window")
     "rn" '(bosss-bosss-repl-run-bosss-pad :which-key "run bossspad")
     "ef" '(bosss-repl-send-current-field :which-key "send region to repl")
     "ee" '(bosss-repl-send-region :which-key "send region to repl")

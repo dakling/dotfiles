@@ -907,6 +907,7 @@ It only works for frames with exactly two windows.
 ;; bosss
 (defun bosss-init ()
   (setq bosss-path "/home/klingenberg/BoSSS-experimental/")
+  (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Debug/BoSSSpad.exe")
   (setq bosss-path-reference "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/bin/Debug/RANS_Solver.exe")
   (require 'bosss-repl)
   (require 'bosss)
@@ -916,9 +917,13 @@ It only works for frames with exactly two windows.
 (defun bosss-config ()
   (my-local-leader-def
     :keymaps 'bosss-mode-map
+    "j" '(bosss-next-field :which-key "next field")
+    "k" '(bosss-previous-field :which-key "previous field")
     "ro" '(run-bosss-repl-other-frame :which-key "start repl")
-    "rr" '(bosss-repl-send-current-field :which-key "send region to repl")
-    "rm" '(bosss-repl-send-region :which-key "send region to repl")
+    "rn" '(bosss-bosss-repl-run-bosss-pad :which-key "run bossspad")
+    "ef" '(bosss-repl-send-current-field :which-key "send region to repl")
+    "ee" '(bosss-repl-send-region :which-key "send region to repl")
+    "en" '(bosss-eval-and-next-field :which-key "eval and next field")
     "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
     "in" '(bosss-create-new-field :which-key "create new input field")))
 
@@ -929,8 +934,7 @@ It only works for frames with exactly two windows.
   :general
   (my-local-leader-def
     :keymaps 'fsharp-mode-map
-    "ef" '(fsharp-eval-phrase :which-key "eval current phrase")
-    ))
+    "ef" '(fsharp-eval-phrase :which-key "eval current phrase")))
 
 ;;latex (auctex)
 (use-package tex

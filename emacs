@@ -923,6 +923,7 @@ It only works for frames with exactly two windows.
     "rn" '(bosss-bosss-repl-run-bosss-pad :which-key "run bossspad")
     "ef" '(bosss-repl-send-current-field :which-key "send region to repl")
     "ee" '(bosss-repl-send-region :which-key "send region to repl")
+    "eb" '(bosss-repl-send-buffer :which-key "send buffer to repl")
     "en" '(bosss-eval-and-next-field :which-key "eval and next field")
     "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
     "in" '(bosss-create-new-field :which-key "create new input field")))

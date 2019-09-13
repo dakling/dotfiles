@@ -878,7 +878,6 @@ It only works for frames with exactly two windows.
 (use-package wgrep
   :ensure t)
 
-
 ;;c#
 (require 'csharp-repl)
 (use-package omnisharp
@@ -905,6 +904,10 @@ It only works for frames with exactly two windows.
     "rr" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl")))
 
 ;; bosss
+;; (use-package bosss
+;;   :load-path "~/emacs-packages/bosss/"
+;;   :ensure t)
+
 (defun bosss-init ()
   (setq bosss-path "/home/klingenberg/BoSSS-experimental/")
   (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Debug/BoSSSpad.exe")

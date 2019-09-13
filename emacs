@@ -14,7 +14,7 @@
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (projectile-ripgrep dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (bosss dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -31,6 +31,7 @@
 			 ("gnu"       . "http://elpa.gnu.org/packages/")
 			 ("melpa"     . "https://melpa.org/packages/")
 			 ("marmalade" . "http://marmalade-repo.org/packages/")
+			 ("bosss" . "http://github.com/dakling/emacs-bosss/releases/archive/")
 			 ("reduce ide" . "http://reduce-algebra.sourceforge.net/reduce-ide/packages/")))
 (package-initialize) 
 
@@ -904,20 +905,13 @@ It only works for frames with exactly two windows.
     "rr" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl")))
 
 ;; bosss
-;; (use-package bosss
-;;   :load-path "~/emacs-packages/bosss/"
-;;   :ensure t)
-
-(defun bosss-init ()
-  (setq bosss-path "/home/klingenberg/BoSSS-experimental/")
+(use-package bosss
+  :ensure t
+  :init
   (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Debug/BoSSSpad.exe")
   (setq bosss-path-reference "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/bin/Debug/RANS_Solver.exe")
-  (require 'bosss-repl)
-  (require 'bosss)
   (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
-  (add-hook 'bosss-mode-hook 'bosss-config))
-
-(defun bosss-config ()
+  :config
   (my-local-leader-def
     :keymaps 'bosss-mode-map
     "j" '(bosss-next-field :which-key "next field")
@@ -931,7 +925,30 @@ It only works for frames with exactly two windows.
     "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
     "in" '(bosss-create-new-field :which-key "create new input field")))
 
-(bosss-init)
+;; (defun bosss-init ()
+;;   (setq bosss-path "/home/klingenberg/BoSSS-experimental/")
+;;   (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Debug/BoSSSpad.exe")
+;;   (setq bosss-path-reference "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/bin/Debug/RANS_Solver.exe")
+;;   (require 'bosss-repl)
+;;   (require 'bosss)
+;;   (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
+;;   (add-hook 'bosss-mode-hook 'bosss-config))
+
+;; (defun bosss-config ()
+;;   (my-local-leader-def
+;;     :keymaps 'bosss-mode-map
+;;     "j" '(bosss-next-field :which-key "next field")
+;;     "k" '(bosss-previous-field :which-key "previous field")
+;;     "ro" '(run-bosss-repl-other-window :which-key "start repl in other window")
+;;     "rn" '(bosss-bosss-repl-run-bosss-pad :which-key "run bossspad")
+;;     "ef" '(bosss-repl-send-current-field :which-key "send region to repl")
+;;     "ee" '(bosss-repl-send-region :which-key "send region to repl")
+;;     "eb" '(bosss-repl-send-buffer :which-key "send buffer to repl")
+;;     "en" '(bosss-eval-and-next-field :which-key "eval and next field")
+;;     "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
+;;     "in" '(bosss-create-new-field :which-key "create new input field")))
+
+;; (bosss-init)
 
 (use-package fsharp-mode
   :ensure t

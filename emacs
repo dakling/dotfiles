@@ -764,9 +764,14 @@ It only works for frames with exactly two windows.
 
 ;; (use-package sly-quicklisp
 ;;   :ensure t)
-
 (use-package geiser
   :ensure t
+  :config
+  (when (system-name= "klingenberg-tablet")
+   (with-eval-after-load 'geiser-guile
+     (add-to-list 'geiser-guile-load-path "~/guix-packages/guix/"))
+   (with-eval-after-load 'yasnippet
+     (add-to-list 'yas-snippet-dirs "~/guix-packages/guix/etc/snippets")))
   :general (my-local-leader-def
 	     :keymaps 'scheme-mode-map
 	     "'" '(geiser :which-key "start reps")
@@ -1222,8 +1227,8 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   :ensure t
   :init (rainbow-delimiters-mode t))
 
-(when (or (system-name= "klingenberg-tablet") (system-name= "klingenbergLaptop"))
-  (use-package guix :ensure t))
+;; (when (or (system-name= "klingenberg-tablet") (system-name= "klingenbergLaptop"))
+;;   (use-package guix :ensure t))
 
 (use-package dmenu
   :ensure t)

@@ -14,7 +14,7 @@
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (bosss dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (bosss projectile-ripgrep helm dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -31,7 +31,8 @@
 			 ("gnu"       . "http://elpa.gnu.org/packages/")
 			 ("melpa"     . "https://melpa.org/packages/")
 			 ("marmalade" . "http://marmalade-repo.org/packages/")
-			 ("bosss" . "http://github.com/dakling/emacs-bosss/releases/archive/")
+			 ("bosss" . "~/Documents/programming/elisp/emacs-bosss/")
+			 ("csharp-repl" . "~/Documents/programming/elisp/emacs-csharp-repl/")
 			 ("reduce ide" . "http://reduce-algebra.sourceforge.net/reduce-ide/packages/")))
 (package-initialize) 
 
@@ -74,7 +75,7 @@
 ") ; print a default message in the empty scratch buffer opened at startup
 
 ;; add my packages
-(add-to-list 'load-path "~/.emacs.d/dev/")
+;; (add-to-list 'load-path "~/.emacs.d/dev/")
 
 (defalias 'yes-or-no-p 'y-or-n-p) ;reduce typing effort
 (electric-pair-mode 1) ;close brackets
@@ -880,7 +881,9 @@ It only works for frames with exactly two windows.
   :ensure t)
 
 ;;c#
-(require 'csharp-repl)
+(use-package csharp-repl
+  :ensure t)
+
 (use-package omnisharp
   ;; :after company
   :ensure t
@@ -908,9 +911,9 @@ It only works for frames with exactly two windows.
 (use-package bosss
   :ensure t
   :init
+  (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
   (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Debug/BoSSSpad.exe")
   (setq bosss-path-reference "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/bin/Debug/RANS_Solver.exe")
-  (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
   :config
   (my-local-leader-def
     :keymaps 'bosss-mode-map

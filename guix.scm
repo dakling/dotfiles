@@ -8,6 +8,7 @@
              (gnu system nss) 
              (gnu packages version-control) 
              (gnu packages xorg)	
+             (gnu packages linux)	
              (gnu packages compression)	
              (gnu packages lxde)	
              (gnu packages web-browsers)	
@@ -78,10 +79,14 @@
   (append
    (list (specification->package "nss-certs")
          emacs
+         emacs-guix
          emacs-exwm
          emacs-pdf-tools
+         acpi
          font-adobe-source-code-pro
          mu
+         zip
+         unzip
          nix
          termite
          pcmanfm
@@ -91,9 +96,10 @@
          gcc
          gsl
          icecat
-         mono
+         ;; mono ;; TODO create package for current version
          xrandr
          syncthing
+         pinentry-emacs
          gnupg
          openvpn
          ;; adwaita-icon-theme
@@ -117,10 +123,13 @@
          ;;                  (guix-configuration
          ;;                   (inherit config)
          ;;                   (vpn-plugins (list openvpn)))))
-         (service nix-service-type)
-         (service openvpn-client-service-type
-                  (openvpn-client-configuration))
          (set-xorg-configuration
           (xorg-configuration
-           (keyboard-layout keyboard-layout))))
+           (keyboard-layout keyboard-layout)
+           ;; (keyboard-layout
+           ;;  (keyboard-layout "de" "nodeadkeys"))
+           ))
+         (service nix-service-type)
+         (service openvpn-client-service-type
+                  (openvpn-client-configuration)))
    %desktop-services)))

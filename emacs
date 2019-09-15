@@ -14,7 +14,7 @@
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (bosss projectile-ripgrep helm dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (pinentry bosss projectile-ripgrep helm dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -1227,9 +1227,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   :ensure t
   :init (rainbow-delimiters-mode t))
 
-;; (when (or (system-name= "klingenberg-tablet") (system-name= "klingenbergLaptop"))
-;;   (use-package guix :ensure t))
-
 (use-package dmenu
   :ensure t)
 
@@ -1275,7 +1272,16 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 (use-package podcaster
   :ensure t
   :config
-  (setq podcaster-feeds-urls "https://www.zeitsprung.fm"))
+  (add-to-list 'podcaster-feeds-urls "https://www.zeitsprung.fm/podcasts/zs49"))
+
+;; (setenv "GPG_AGENT_INFO" "pinentry-emacs")
+;; (defun pinentry-emacs (desc prompt ok error)
+;;   (let ((str (read-passwd (concat (replace-regexp-in-string "%22" "\"" (replace-regexp-in-string "%0A" "\n" desc)) prompt ": "))))
+;;     str))
+(use-package pinentry
+  :ensure t
+  :init
+  (pinentry-start))
 
 (show-paren-mode 1)
 

@@ -655,11 +655,11 @@ It only works for frames with exactly two windows.
     (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
 			#'my-brightness-)
     (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
-			(lambda () (interactive) (start-process-shell-command "" nil "pactl set-sink-volume @DEFAULT_SINK@ -5%")))
+			'pulseaudio-control-decrease-volume)
     (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
-			(lambda () (interactive) (start-process-shell-command "" nil "pactl set-sink-volume @DEFAULT_SINK@ +5%")))
+			'pulseaudio-control-increase-volume)
     (exwm-input-set-key (kbd "<XF86AudioMute>")
-			(lambda () (interactive) (start-process-shell-command "" nil "pactl set-sink-mute @DEFAULT_SINK@ toggle"))))
+			'pulseaudio-control-toggle-current-sink-mute))
 
   (use-package exwm-systemtray
     :after exwm

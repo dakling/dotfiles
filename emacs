@@ -440,6 +440,10 @@ It only works for frames with exactly two windows.
 ;;   (setq ivy-count-format "(%d/%d) ") ; count format, from the ivy help page
 ;;   )
 
+(unless (system-name= "klingenberg-tablet")
+  (use-package pulseaudio-emacs-control
+    :ensure t))
+
 (use-package helm
   :after helm-exwm
   :ensure t

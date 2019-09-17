@@ -14,7 +14,7 @@
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (csharp-repl pinentry bosss projectile-ripgrep helm dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (pulseaudio-control pinentry bosss emacs-bosss projectile-ripgrep dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -441,7 +441,7 @@ It only works for frames with exactly two windows.
 ;;   )
 
 (unless (system-name= "klingenberg-tablet")
-  (use-package pulseaudio-emacs-control
+  (use-package pulseaudio-control
     :ensure t))
 
 (use-package helm
@@ -634,6 +634,9 @@ It only works for frames with exactly two windows.
 	    ;; 	    (list '! \" § $ % & / ( ) =))
 	    ;; (number-sequence 0 9))
 	    ([?\s-d] . dmenu)
+	    ([?\s-x] . helm-M-x)
+	    ([?\s-f] . helm-find-files)
+	    ([?\s-b] . helm-mini)
 	    ([?\s-l] . evil-window-right)
 	    ([?\s-h] . evil-window-left)
 	    ([?\s-j] . evil-window-down)

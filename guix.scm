@@ -12,6 +12,7 @@
              (gnu packages compression)	
              (gnu packages lxde)	
              (gnu packages web-browsers)	
+             (gnu packages password-utils)
              (gnu packages fonts)	
              (gnu packages syncthing)	
              (gnu packages gnuzilla)	
@@ -23,6 +24,7 @@
              (gnu packages curl)
              (gnu packages emacs)
              (gnu packages emacs-xyz)
+             (gnu packages pulseaudio)
              (gnu packages mail)
              (gnu packages terminals)
              (gnu packages xdisorg)
@@ -47,7 +49,9 @@
  (locale "en_US.utf8")
  (timezone "Europe/Berlin")
  (keyboard-layout
-  (keyboard-layout "de" "nodeadkeys"))
+  (keyboard-layout "de"
+                   "nodeadkeys"
+                   #:options '("ctrl:nocaps")))
  (bootloader
   (bootloader-configuration
    (bootloader grub-efi-bootloader)
@@ -82,6 +86,9 @@
          emacs-guix
          emacs-exwm
          emacs-pdf-tools
+         emacs-pulseaudio-control
+         gnome
+         pavucontrol
          acpi
          font-adobe-source-code-pro
          mu
@@ -91,11 +98,15 @@
          termite
          pcmanfm
          offlineimap
+         password-store
          sbcl
          sbcl-next
          gcc
          gsl
          icecat
+         pdfpc
+         evince
+         arandr
          ;; mono ;; TODO create package for current version
          xrandr
          syncthing
@@ -123,6 +134,7 @@
          ;;                  (guix-configuration
          ;;                   (inherit config)
          ;;                   (vpn-plugins (list openvpn)))))
+         (service gnome-desktop-service-type)
          (set-xorg-configuration
           (xorg-configuration
            (keyboard-layout keyboard-layout)

@@ -759,7 +759,7 @@ It only works for frames with exactly two windows.
 (use-package sly
   :ensure t
   :config
-  (add-hook 'sly-db-mode 'evil-insert-state) ;TODO
+  (lispy-mode 1)
   (setq inferior-lisp-program "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")
   :general (my-local-leader-def
 	     :keymaps 'lisp-mode-map

@@ -169,6 +169,7 @@
   (apply #'fdy-mount
 	 (cond ((string= location "lectures") '("misc/fdy-lectures.git" "~/git/mnt/fdy-lectures.git"))
 	       ((string= location "klausuren") '("lehre/TM1/Klausuren.git" "~/git/mnt/Klausuren.git"))
+	       ((string= location "bosss") '("bosss/users/klingenberg/root.git" "~/git/mnt/root.git"))
 	       ((string= location "publications") '("misc/fdy-publications.git" "~/git/mnt/fdy-publications.git"))
 	       ((string= location "misc") '("misc" "~/misc"))
 	       ((string= location "scratch") '("scratch" "~/scratch"))

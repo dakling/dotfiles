@@ -98,7 +98,8 @@ export INFOPATH="/home/klingenberg/.guix-profile/share/info${INFOPATH:+:}$INFOPA
 export GUILE_LOAD_PATH="/home/klingenberg/.guix-profile/share/guile/site/2.2${GUILE_LOAD_PATH:+:}$GUILE_LOAD_PATH"
 export XDG_DATA_DIRS="/home/klingenberg/.guix-profile/share${XDG_DATA_DIRS:+:}$XDG_DATA_DIRS"
 export GIO_EXTRA_MODULES="/home/klingenberg/.guix-profile/lib/gio/modules${GIO_EXTRA_MODULES:+:}$GIO_EXTRA_MODULES"
-
+export GUIX_PROFILE="/home/klingenberg/.guix-profile"
+. "$GUIX_PROFILE/etc/profile"
 #environment
 export BROWSER="firefox"
 

@@ -621,6 +621,7 @@ It only works for frames with exactly two windows.
     (setq exwm-input-global-keys
 	  `(([?\s-r] . exwm-reset)
 	    ([?\s-e] . exwm-input-release-keyboard)
+	    ([?\s-F] . exwm-layout-set-fullscreen)
 	    ([?\s-w] . exwm-workspace-switch)
 	    ([?\s-W] . exwm-workspace-move-window)
 	    ,@(mapcar (lambda (i)
@@ -691,8 +692,8 @@ It only works for frames with exactly two windows.
     (defun my-exwm-move-window-to-other-workspace () (interactive)
 	   (exwm-workspace-move-window (my-exwm-get-other-workspace)))
     (cond
-     ((system-name= "klingenberg-tablet") (progn (set 'monitor1 "eDP1")
-						(set 'monitor2 "HDMI2")
+     ((system-name= "klingenberg-tablet") (progn (set 'monitor1 "eDP-1")
+						(set 'monitor2 "HDMI-2")
 						(set 'placement "below")))
      ((system-name= "klingenbergLaptop") (progn (set 'monitor1 "LVDS1")
 						(set 'monitor2 "VGA1")
@@ -760,7 +761,7 @@ It only works for frames with exactly two windows.
 (use-package sly
   :ensure t
   :config
-  (add-hook 'sly-db-mode 'evil-insert-state) ;TODO
+  (lispy-mode 1)
   (setq inferior-lisp-program "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")
   :general (my-local-leader-def
 	     :keymaps 'lisp-mode-map

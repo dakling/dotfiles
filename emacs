@@ -14,7 +14,7 @@
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (jenkins butler pulseaudio-control pinentry bosss emacs-bosss projectile-ripgrep dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -31,6 +31,8 @@
 			 ("gnu"       . "http://elpa.gnu.org/packages/")
 			 ("melpa"     . "https://melpa.org/packages/")
 			 ("marmalade" . "http://marmalade-repo.org/packages/")
+			 ("bosss" . "~/Documents/programming/elisp/emacs-bosss/")
+			 ("csharp-repl" . "~/Documents/programming/elisp/emacs-csharp-repl/")
 			 ("reduce ide" . "http://reduce-algebra.sourceforge.net/reduce-ide/packages/")))
 (package-initialize) 
 
@@ -61,6 +63,7 @@
 (add-hook 'focus-out-hook (lambda () (when buffer-file-name (save-buffer))))
 (recentf-mode 1)
 (setq delete-by-moving-to-trash t)
+(setq-default indent-tabs-mode nil)
 
 (setq
  initial-scratch-message
@@ -71,10 +74,36 @@
 (shell-command-to-string \"acpi -b\")
 ") ; print a default message in the empty scratch buffer opened at startup
 
+;; add my packages
+;; (add-to-list 'load-path "~/.emacs.d/dev/")
+
 (defalias 'yes-or-no-p 'y-or-n-p) ;reduce typing effort
 (electric-pair-mode 1) ;close brackets
 
 ;; useful functions
+(defun system-name= (&rest names)
+  (cl-some
+    (lambda (name)
+      (string-equal name (system-name)))
+    names))
+
+(defun shutdown ()
+  (interactive)
+  (cond
+   ((system-name= "klingenberg-tablet") (async-shell-command "sudo shutdown"))
+   (t (shell-command "shutdown now"))))
+
+(defun reboot ()
+  (interactive)
+  (cond
+   ((system-name= "klingenberg-tablet") (async-shell-command "sudo reboot"))
+   (t (shell-command "reboot now"))))
+
+(defvar browser 
+  (cond
+   ((system-name= "klingenberg-tablet") "next")
+    (t "firefox")))
+
 (defun find-config-file ()
   "open emacs configuration file"
   (interactive)
@@ -96,9 +125,6 @@
   (find-file "~/Documents/TODO.org")
   (calendar))
 
-(defun system-name= (name)
-  (string-equal name (system-name)))
-
 (defun my-get-rid-of-mouse ()
   (interactive)
   (shell-command "xdotool mousemove 0 0"))
@@ -119,6 +145,11 @@
   (interactive)
   (shell-command "xbacklight -dec 10"))
 
+(defun my-open-url (url)
+  (start-process-shell-command
+   "" nil (concat browser
+		  url)))
+
 ;; (defmacro ! (&rest args)
 ;;   "convenient way to execute shell commands from scratch buffer"
 ;;   `(shell-command (mapcar #'write-to-string ,args)))
@@ -138,6 +169,7 @@
   (apply #'fdy-mount
 	 (cond ((string= location "lectures") '("misc/fdy-lectures.git" "~/git/mnt/fdy-lectures.git"))
 	       ((string= location "klausuren") '("lehre/TM1/Klausuren.git" "~/git/mnt/Klausuren.git"))
+	       ((string= location "bosss") '("bosss/users/klingenberg/root.git" "~/git/mnt/bosss.git"))
 	       ((string= location "publications") '("misc/fdy-publications.git" "~/git/mnt/fdy-publications.git"))
 	       ((string= location "misc") '("misc" "~/misc"))
 	       ((string= location "scratch") '("scratch" "~/scratch"))
@@ -270,8 +302,12 @@ It only works for frames with exactly two windows.
     "ee"  'eval-last-sexp
     "ef"  'eval-defun
     "ep"  'eval-print-last-sexp
-    "ss"  (lambda () (interactive) (shell-command "shutdown now"))
-    "sr"  (lambda () (interactive) (shell-command "reboot"))
+    "i"   '(:ignore :which-key "internet")
+    "id"  '((lambda () (interactive) (my-open-url "https://www.dazn.com")) :which-key "dazn")
+    "ig"  '((lambda () (interactive) (my-open-url "https://www.dragongoserver.net/status.php")) :which-key "dgs")
+    "iy"  '((lambda () (interactive) (my-open-url "https://www.youtube.com/")) :which-key "youtube")
+    "ss"  'shutdown
+    "sr"  'reboot
     "sl"  (lambda () (interactive) (shell-command "/usr/bin/slock"))))
 
 (use-package evil
@@ -396,24 +432,35 @@ It only works for frames with exactly two windows.
   (setq ranger-cleanup-eagerly t)
   (ranger-override-dired-mode t))
 
-(use-package ivy :ensure t
-  :diminish (ivy-mode . "") ; does not display ivy in the modeline
-  :init (ivy-mode 1)        ; enable ivy globally at startup
-  :config
-  (setq ivy-use-virtual-buffers t)   ; extend searching to bookmarks and …
-  (setq ivy-height 20)               ; set height of the ivy window
-  (setq ivy-count-format "(%d/%d) ") ; count format, from the ivy help page
-  )
+;; (use-package ivy :ensure t
+;;   :diminish (ivy-mode . "") ; does not display ivy in the modeline
+;;   :init (ivy-mode 1)        ; enable ivy globally at startup
+;;   :config
+;;   (setq ivy-use-virtual-buffers t)   ; extend searching to bookmarks and …
+;;   (setq ivy-height 20)               ; set height of the ivy window
+;;   (setq ivy-count-format "(%d/%d) ") ; count format, from the ivy help page
+;;   )
 
-(use-package counsel
-  :ensure t
-  :config
-  (setq counsel-find-file-ignore-regexp "\.dropbox"))
+(unless (system-name= "klingenberg-tablet")
+  (use-package pulseaudio-control
+    :ensure t))
 
 (use-package helm
   :after helm-exwm
   :ensure t
   :config
+  (general-define-key
+   :keymaps 'helm-find-files-map
+   "M-H" 'left-char
+   "M-L" 'right-char
+   "M-y" 'helm-ff-run-copy-file
+   "M-r" 'helm-ff-run-rename-file
+   "M-s" 'helm-ff-run-find-file-as-root
+   "M-o" 'helm-ff-run-switch-other-frame
+   "M-O" 'helm-ff-run-switch-other-window)
+  (general-define-key
+   :keymaps 'helm-buffer-map
+   "M-d" 'helm-buffer-run-kill-persistent)
   (setq helm-mode-fuzzy-match t)
   (setq helm-completion-in-region-fuzzy-match t)
   (setq helm-M-x-fuzzy-match t)
@@ -433,9 +480,6 @@ It only works for frames with exactly two windows.
   (helm-mode 1))
 
 (use-package helm-system-packages
-  :ensure t)
-
-(use-package helm-mu
   :ensure t)
 
 (use-package helm-exwm
@@ -486,6 +530,17 @@ It only works for frames with exactly two windows.
 (use-package yasnippet-snippets
   :ensure t)
 
+(use-package projectile
+  :ensure t
+  :config
+  (my-leader-def
+    :states 'normal
+    "p" 'projectile-command-map)
+  (projectile-mode 1))
+
+(use-package projectile-ripgrep
+  :ensure t)
+
 (use-package magit
   :ensure t
   :general (my-leader-def
@@ -495,7 +550,7 @@ It only works for frames with exactly two windows.
 
 (use-package ediff :ensure t)
 
-(unless (system-name= "lina")
+(unless (system-name= "localhost" "lina")
   (use-package pdf-tools
     :ensure t
     :init
@@ -566,6 +621,7 @@ It only works for frames with exactly two windows.
     (setq exwm-input-global-keys
 	  `(([?\s-r] . exwm-reset)
 	    ([?\s-e] . exwm-input-release-keyboard)
+	    ([?\s-F] . exwm-layout-set-fullscreen)
 	    ([?\s-w] . exwm-workspace-switch)
 	    ([?\s-W] . exwm-workspace-move-window)
 	    ,@(mapcar (lambda (i)
@@ -579,7 +635,10 @@ It only works for frames with exactly two windows.
 	    ;; 		  (exwm-workspace-move-window ,i))))
 	    ;; 	    (list '! \" § $ % & / ( ) =))
 	    ;; (number-sequence 0 9))
-	    ([?\s-d] . counsel-linux-app)
+	    ([?\s-d] . dmenu)
+	    ([?\s-x] . helm-M-x)
+	    ([?\s-f] . helm-find-files)
+	    ([?\s-b] . helm-mini)
 	    ([?\s-l] . evil-window-right)
 	    ([?\s-h] . evil-window-left)
 	    ([?\s-j] . evil-window-down)
@@ -592,7 +651,7 @@ It only works for frames with exactly two windows.
 	    ([s-f1] . (lambda () (interactive) (eshell 'N)))
 	    ([C-s-f1] . eshell)
 	    ([s-f2] . (lambda () (interactive)
-			(start-process "" nil "next")))
+			(start-process "" nil browser)))
 	    ([s-f3] . deer)
 	    ([s-f4] . (lambda () (interactive)
 			(mu4e)))
@@ -605,11 +664,11 @@ It only works for frames with exactly two windows.
     (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
 			#'my-brightness-)
     (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
-			(lambda () (interactive) (start-process-shell-command "" nil "pactl set-sink-volume @DEFAULT_SINK@ -5%")))
+			'pulseaudio-control-decrease-volume)
     (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
-			(lambda () (interactive) (start-process-shell-command "" nil "pactl set-sink-volume @DEFAULT_SINK@ +5%")))
+			'pulseaudio-control-increase-volume)
     (exwm-input-set-key (kbd "<XF86AudioMute>")
-			(lambda () (interactive) (start-process-shell-command "" nil "pactl set-sink-mute @DEFAULT_SINK@ toggle"))))
+			'pulseaudio-control-toggle-current-sink-mute))
 
   (use-package exwm-systemtray
     :after exwm
@@ -633,8 +692,8 @@ It only works for frames with exactly two windows.
     (defun my-exwm-move-window-to-other-workspace () (interactive)
 	   (exwm-workspace-move-window (my-exwm-get-other-workspace)))
     (cond
-     ((system-name= "klingenbergTablet") (progn (set 'monitor1 "eDP1")
-						(set 'monitor2 "HDMI2")
+     ((system-name= "klingenberg-tablet") (progn (set 'monitor1 "eDP-1")
+						(set 'monitor2 "HDMI-2")
 						(set 'placement "below")))
      ((system-name= "klingenbergLaptop") (progn (set 'monitor1 "LVDS1")
 						(set 'monitor2 "VGA1")
@@ -702,7 +761,7 @@ It only works for frames with exactly two windows.
 (use-package sly
   :ensure t
   :config
-  (add-hook 'sly-db-mode 'evil-insert-state) ;TODO
+  (lispy-mode 1)
   (setq inferior-lisp-program "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")
   :general (my-local-leader-def
 	     :keymaps 'lisp-mode-map
@@ -714,9 +773,14 @@ It only works for frames with exactly two windows.
 
 ;; (use-package sly-quicklisp
 ;;   :ensure t)
-
 (use-package geiser
   :ensure t
+  :config
+  (when (system-name= "klingenberg-tablet")
+   (with-eval-after-load 'geiser-guile
+     (add-to-list 'geiser-guile-load-path "~/guix-packages/guix/"))
+   (with-eval-after-load 'yasnippet
+     (add-to-list 'yas-snippet-dirs "~/guix-packages/guix/etc/snippets")))
   :general (my-local-leader-def
 	     :keymaps 'scheme-mode-map
 	     "'" '(geiser :which-key "start reps")
@@ -830,7 +894,27 @@ It only works for frames with exactly two windows.
 (use-package wgrep
   :ensure t)
 
+(use-package jenkins
+  :ensure t
+  :config
+  (setq jenkins-api-token "115e5da14d9018ef2d51d040fefc48eeb4")
+  (setq jenkins-url "http://130.83.248.141:8080/")
+  (setq jenkins-username "klingenberg")
+  :general
+  (general-define-key
+   :states 'normal
+   :keymaps 'jenkins-mode-map
+   "RET" 'jenkins-enter-job)
+  (my-local-leader-def
+    :keymaps 'jenkins-job-view-mode-map
+    "b" '(jenkins-job-call-build :which-key "build")
+    "v" '(jenkins-visit-jenkins-web-page :which-key "view")
+    "o" '(jenkins--show-console-output-from-job-screen :which-key "view")))
+
 ;;c#
+(use-package csharp-repl
+  :ensure t)
+
 (use-package omnisharp
   ;; :after company
   :ensure t
@@ -851,16 +935,61 @@ It only works for frames with exactly two windows.
     "b" '(:ignore :which-key "build")
     "bd" '((lambda () (interactive) (compile "msbuild /p:Configuration=Debug")) :which-key "build debug")
     "br" '((lambda () (interactive) (compile "msbuild /p:Configuration=Release")) :which-key "build release")
-    ))
+    "ro" '(run-csharp-repl-other-frame :which-key "start repl")
+    "rr" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl")))
+
+;; bosss
+(use-package bosss
+  :ensure t
+  :init
+  (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
+  (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Debug/BoSSSpad.exe")
+  (setq bosss-path-reference "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/bin/Debug/RANS_Solver.exe")
+  :config
+  (my-local-leader-def
+    :keymaps 'bosss-mode-map
+    "j" '(bosss-next-field :which-key "next field")
+    "k" '(bosss-previous-field :which-key "previous field")
+    "ro" '(run-bosss-repl-other-window :which-key "start repl in other window")
+    "rn" '(bosss-bosss-repl-run-bosss-pad :which-key "run bossspad")
+    "ef" '(bosss-repl-send-current-field :which-key "send region to repl")
+    "ee" '(bosss-repl-send-region :which-key "send region to repl")
+    "eb" '(bosss-repl-send-buffer :which-key "send buffer to repl")
+    "en" '(bosss-eval-and-next-field :which-key "eval and next field")
+    "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
+    "in" '(bosss-create-new-field :which-key "create new input field")))
+
+;; (defun bosss-init ()
+;;   (setq bosss-path "/home/klingenberg/BoSSS-experimental/")
+;;   (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Debug/BoSSSpad.exe")
+;;   (setq bosss-path-reference "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/bin/Debug/RANS_Solver.exe")
+;;   (require 'bosss-repl)
+;;   (require 'bosss)
+;;   (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
+;;   (add-hook 'bosss-mode-hook 'bosss-config))
+
+;; (defun bosss-config ()
+;;   (my-local-leader-def
+;;     :keymaps 'bosss-mode-map
+;;     "j" '(bosss-next-field :which-key "next field")
+;;     "k" '(bosss-previous-field :which-key "previous field")
+;;     "ro" '(run-bosss-repl-other-window :which-key "start repl in other window")
+;;     "rn" '(bosss-bosss-repl-run-bosss-pad :which-key "run bossspad")
+;;     "ef" '(bosss-repl-send-current-field :which-key "send region to repl")
+;;     "ee" '(bosss-repl-send-region :which-key "send region to repl")
+;;     "eb" '(bosss-repl-send-buffer :which-key "send buffer to repl")
+;;     "en" '(bosss-eval-and-next-field :which-key "eval and next field")
+;;     "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
+;;     "in" '(bosss-create-new-field :which-key "create new input field")))
+
+;; (bosss-init)
 
 (use-package fsharp-mode
   :ensure t
   :general
   (my-local-leader-def
     :keymaps 'fsharp-mode-map
-    "ef" '(fsharp-eval-phrase :which-key "eval current phrase")
-    ))
-
+    "ef" '(fsharp-eval-phrase :which-key "eval current phrase")))
 
 ;;latex (auctex)
 (use-package tex
@@ -970,55 +1099,59 @@ It only works for frames with exactly two windows.
   :ensure t)
 
 ;; mail
-(unless (system-name= "lina")
 
-(use-package mu4e-conversation
-  :ensure t)
+(defun my-mu4e-setup ()
 
- (require 'mu4e)
- (setenv "GPG_AGENT_INFO" nil)
- (setq mu4e-confirm-quit nil)
- (mu4e-conversation-mode 1)
- (defun my-mu4e-set-account ()
-   "Set the account for composing a message."
-   (let* ((account
-	   (if mu4e-compose-parent-message
-	       (let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
-		 (string-match "/\\(.*?\\)/" maildir)
-		 (match-string 1 maildir))
-	     (completing-read (format "Compose with account: (%s) "
-				      (mapconcat #'(lambda (var) (car var))
-						 my-mu4e-account-alist "/"))
-			      (mapcar #'(lambda (var) (car var)) my-mu4e-account-alist)
-			      nil t nil nil (caar my-mu4e-account-alist))))
-	  (account-vars (cdr (assoc account my-mu4e-account-alist))))
-     (if account-vars
-	 (mapc #'(lambda (var)
-		   (set (car var) (cadr var)))
-	       account-vars)
-       (error "No email account found"))))
+  (use-package helm-mu
+    :ensure t)
 
- ;; ask for account when composing mail
- (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
- (setq mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e")
- (setq mu4e-maildir "~/Mail")
- (setq mu4e-trash-folder "/Trash")
- (setq mu4e-refile-folder "/Archive")
- (setq mu4e-get-mail-command "offlineimap -o")
- (setq mu4e-update-interval 300)
- (setq mu4e-compose-signature-auto-include t)
- (setq mu4e-view-show-images t)
- (setq mu4e-enable-notifications t)
- (setq send-mail-function 'smtpmail-send-it)
- (setq message-send-mail-function 'smtpmail-send-it)
- (setq smtpmail-stream-type 'ssl)
- (setq mu4e-view-show-addresses t)
- (setq my-mu4e-account-alist
-       '(("FDY"
-	  (mu4e-sent-messages-behavior sent)
-	  (mu4e-compose-signature-auto-include t)
-	  (mu4e-compose-signature
-	   "Technische Universität Darmstadt
+  ;; (use-package mu4e-conversation
+  ;;   :ensure t)
+
+  (require 'mu4e)
+  (setenv "GPG_AGENT_INFO" nil)
+  (setq mu4e-confirm-quit nil)
+  ;; (global-mu4e-conversation-mode)
+  (defun my-mu4e-set-account ()
+    "Set the account for composing a message."
+    (let* ((account
+	    (if mu4e-compose-parent-message
+		(let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
+		  (string-match "/\\(.*?\\)/" maildir)
+		  (match-string 1 maildir))
+	      (completing-read (format "Compose with account: (%s) "
+				       (mapconcat #'(lambda (var) (car var))
+						  my-mu4e-account-alist "/"))
+			       (mapcar #'(lambda (var) (car var)) my-mu4e-account-alist)
+			       nil t nil nil (caar my-mu4e-account-alist))))
+	   (account-vars (cdr (assoc account my-mu4e-account-alist))))
+      (if account-vars
+	  (mapc #'(lambda (var)
+		    (set (car var) (cadr var)))
+		account-vars)
+	(error "No email account found"))))
+
+  ;; ask for account when composing mail
+  (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
+  (setq mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e")
+  (setq mu4e-maildir "~/Mail")
+  (setq mu4e-trash-folder "/Trash")
+  (setq mu4e-refile-folder "/Archive")
+  (setq mu4e-get-mail-command "offlineimap -o")
+  (setq mu4e-update-interval 300)
+  (setq mu4e-compose-signature-auto-include t)
+  (setq mu4e-view-show-images t)
+  (setq mu4e-enable-notifications t)
+  (setq send-mail-function 'smtpmail-send-it)
+  (setq message-send-mail-function 'smtpmail-send-it)
+  (setq smtpmail-stream-type 'ssl)
+  (setq mu4e-view-show-addresses t)
+  (setq my-mu4e-account-alist
+	'(("FDY"
+	   (mu4e-sent-messages-behavior sent)
+	   (mu4e-compose-signature-auto-include t)
+	   (mu4e-compose-signature
+	    "Technische Universität Darmstadt
 Dario Klingenberg, M.Sc.
 Fachgebiet für Strömungsdynamik
 Fachbereich Maschinenbau
@@ -1030,18 +1163,18 @@ E-Mail: klingenberg@fdy.tu-darmstadt.de
 Telefon: +9 6151 16-26207
 Fax: +49 6151 16-26203
 Web: http://www.fdy.tu-darmstadt.de")
-	  (mu4e-sent-folder "/FDY/Sent Items")
-	  (mu4e-drafts-folder "/FDY/Drafts")
-	  (smtpmail-smtp-server "smtp.tu-darmstadt.de")
-	  (smtpmail-smtp-service 465)
-	  (smtpmail-stream-type ssl)
-	  (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
-	  (user-full-name "Dario Klingenberg"))
-	 ("GSC"
-	  (mu4e-sent-messages-behavior sent)
-	  (mu4e-compose-signature-auto-include t)
-	  (mu4e-compose-signature
-	   "Technische Universität Darmstadt
+	   (mu4e-sent-folder "/FDY/Sent Items")
+	   (mu4e-drafts-folder "/FDY/Drafts")
+	   (smtpmail-smtp-server "smtp.tu-darmstadt.de")
+	   (smtpmail-smtp-service 465)
+	   (smtpmail-stream-type ssl)
+	   (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
+	   (user-full-name "Dario Klingenberg"))
+	  ("GSC"
+	   (mu4e-sent-messages-behavior sent)
+	   (mu4e-compose-signature-auto-include t)
+	   (mu4e-compose-signature
+	    "Technische Universität Darmstadt
 Dario Klingenberg, M.Sc.
 Graduate School Computational Engineering
 Dolivostraße 15
@@ -1051,74 +1184,77 @@ E-Mail: klingenberg@gsc.tu-darmstadt.de
 Telefon: +49 6151 16-24381
 Fax: +49 6151 16-24404
 Web: http://www.gsc.ce.tu-darmstadt.de/")
-	  (mu4e-sent-folder "/GSC/Sent Items")
-	  (mu4e-drafts-folder "/GSC/Drafts")
-	  (smtpmail-smtp-server "smtp.gsc.ce.tu-darmstadt.de")
-	  (smtpmail-smtp-service 465)
-	  (smtpmail-stream-type ssl)
-	  (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
-	  (user-full-name "Dario Klingenberg"))
-	 ("Gmail"
-	  ;; Under each account, set the account-specific variables you want.
-	  (mu4e-sent-messages-behavior delete)
-	  (mu4e-compose-signature-auto-include nil)
-	  (mu4e-sent-folder "/Gmail/sent")
-	  (mu4e-drafts-folder "/Gmail/drafts")
-	  (user-mail-address "dario.klingenberg@gmail.com")
-	  (smtpmail-smtp-server "smtp.gmail.com")
-	  (smtpmail-smtp-service 465)
-	  (smtpmail-stream-type ssl)
-	  (user-full-name "Dario Klingenberg"))
-	 ("Web"
-	  (mu4e-sent-messages-behavior sent)
-	  (mu4e-compose-signature-auto-include nil)
-	  (mu4e-sent-folder "/Web/Sent Items")
-	  (mu4e-drafts-folder "/Web/Drafts")
-	  (smtpmail-smtp-server "smtp.web.de")
-	  (smtpmail-smtp-service 587)
-	  (smtpmail-stream-type starttls)
-	  (user-mail-address "dario.klingenberg@web.de")
-	  (user-full-name "dario"))))
+	   (mu4e-sent-folder "/GSC/Sent Items")
+	   (mu4e-drafts-folder "/GSC/Drafts")
+	   (smtpmail-smtp-server "smtp.gsc.ce.tu-darmstadt.de")
+	   (smtpmail-smtp-service 465)
+	   (smtpmail-stream-type ssl)
+	   (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
+	   (user-full-name "Dario Klingenberg"))
+	  ("Gmail"
+	   ;; Under each account, set the account-specific variables you want.
+	   (mu4e-sent-messages-behavior delete)
+	   (mu4e-compose-signature-auto-include nil)
+	   (mu4e-sent-folder "/Gmail/sent")
+	   (mu4e-drafts-folder "/Gmail/drafts")
+	   (user-mail-address "dario.klingenberg@gmail.com")
+	   (smtpmail-smtp-server "smtp.gmail.com")
+	   (smtpmail-smtp-service 465)
+	   (smtpmail-stream-type ssl)
+	   (user-full-name "Dario Klingenberg"))
+	  ("Web"
+	   (mu4e-sent-messages-behavior sent)
+	   (mu4e-compose-signature-auto-include nil)
+	   (mu4e-sent-folder "/Web/Sent Items")
+	   (mu4e-drafts-folder "/Web/Drafts")
+	   (smtpmail-smtp-server "smtp.web.de")
+	   (smtpmail-smtp-service 587)
+	   (smtpmail-stream-type starttls)
+	   (user-mail-address "dario.klingenberg@web.de")
+	   (user-full-name "dario"))))
 
- (use-package evil-mu4e
-   :ensure t
-   :config
-   (evil-define-key 'evilified mu4e-main-mode-map (kbd "j") 'evil-next-line)
-   (evil-define-key 'evilified mu4e-main-mode-map (kbd "s") 'helm-mu)
-   (bind-keys :map mu4e-main-mode-map
-	      ("c" . mu4e-compose-new))
-   :general
-   (general-define-key
-    :states '(motion normal)
-    :keymaps 'mu4e-view-mode-map
-    "RET" '(mu4e~view-browse-url-from-binding :which-key "follow link")))
+  (use-package evil-mu4e
+    :ensure t
+    :config
+    (evil-define-key 'evilified mu4e-main-mode-map (kbd "j") 'evil-next-line)
+    (evil-define-key 'evilified mu4e-main-mode-map (kbd "s") 'helm-mu)
+    (bind-keys :map mu4e-main-mode-map
+	       ("c" . mu4e-compose-new))
+    :general
+    (general-define-key
+     :states '(motion normal)
+     :keymaps 'mu4e-view-mode-map
+     "RET" '(mu4e~view-browse-url-from-binding :which-key "follow link")))
 
- ;; taken from reddit
- (use-package mu4e-alert
-   :ensure t
-   :config
-   (mu4e-alert-enable-mode-line-display)
-   ;; (setq alert-default-style 'libnotify) ; not sure why this is needed
-   (mu4e-alert-set-default-style 'notifications)
-   (setq mu4e-alert-interesting-mail-query
-	 (concat "(maildir:<fu> AND date:today..now"
-		 " OR maildir:<bar> AND date:today..now"
-		 " AND flag:unread"))
-   (alert-add-rule
-    :category "mu4e-alert"
-    :predicate (lambda (_) (string-match-p "^mu4e-" (symbol-name major-mode)))
-    :continue t)
+  ;; taken from reddit
+  (use-package mu4e-alert
+    :ensure t
+    :config
+    (mu4e-alert-enable-mode-line-display)
+    ;; (setq alert-default-style 'libnotify) ; not sure why this is needed
+    (mu4e-alert-set-default-style 'notifications)
+    (setq mu4e-alert-interesting-mail-query
+	  (concat "(maildir:<fu> AND date:today..now"
+		  " OR maildir:<bar> AND date:today..now"
+		  " AND flag:unread"))
+    (alert-add-rule
+     :category "mu4e-alert"
+     :predicate (lambda (_) (string-match-p "^mu4e-" (symbol-name major-mode)))
+     :continue t)
 
-   ;; display stuff on modeline as well as notify
-   (add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
-   (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)))
+    ;; display stuff on modeline as well as notify
+    (add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
+    (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)))
+
+(unless (or (system-name= "localhost") (system-name= "lina"))
+  (my-mu4e-setup))
 
 (use-package rainbow-delimiters
   :ensure t
   :init (rainbow-delimiters-mode t))
 
-(when (or (system-name= "klingenbergTablet") (system-name= "klingenbergLaptop"))
-  (use-package guix :ensure t))
+(use-package dmenu
+  :ensure t)
 
 ;; (use-package auto-dim-other-buffers
 ;;   :ensure t
@@ -1162,14 +1298,23 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 (use-package podcaster
   :ensure t
   :config
-  (setq podcaster-feeds-urls "https://www.zeitsprung.fm"))
+  (add-to-list 'podcaster-feeds-urls "https://www.zeitsprung.fm/podcasts/zs49"))
+
+;; (setenv "GPG_AGENT_INFO" "pinentry-emacs")
+;; (defun pinentry-emacs (desc prompt ok error)
+;;   (let ((str (read-passwd (concat (replace-regexp-in-string "%22" "\"" (replace-regexp-in-string "%0A" "\n" desc)) prompt ": "))))
+;;     str))
+(use-package pinentry
+  :ensure t
+  :init
+  (pinentry-start))
 
 (show-paren-mode 1)
 
 ;;; TODO
-;; - scrolling (?)
 ;; - mail: notifications
 ;; - eshell: expand
 ;; related to https://lists.gnu.org/archive/html/bug-gnu-emacs/2012-11/msg00878.html
 ;; - el-go
+;; - perspectives
 

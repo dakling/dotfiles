@@ -1,5 +1,0 @@
-SURFRAW_graphical_browser=/usr/bin/qutebrowser
-SURFRAW_text_browser=/usr/bin/w3m
-# SURFRAW_text_browser=/usr/bin/wget
-# SURFRAW_text_browser_args=-qO-
-SURFRAW_graphical=yes

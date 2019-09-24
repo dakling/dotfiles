@@ -7,9 +7,14 @@
  '(custom-safe-themes
    (quote
     ("bc75dfb513af404a26260b3420d1f3e4131df752c19ab2984a7c85def9a2917e" default)))
+ '(evil-snipe-mode t)
+ '(evil-snipe-override-mode t)
+ '(global-evil-surround-mode 1)
+ '(gud-tooltip-mode t)
+ '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (mu4e-alert evil-org zenburn-theme yasnippet-snippets which-key use-package smart-mode-line-atom-one-dark-theme ranger rainbow-delimiters ox-reveal org-ref org-plus-contrib org-bullets omnisharp guix general exwm evil-surround evil-mu4e evil-magit evil-commentary evil-collection eval-sexp-fu counsel company-reftex auctex-latexmk ace-link)))
+    (helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -37,32 +42,35 @@
 (require 'use-package)
 
 ;; defaults suggested by blog and extended by me
-(setq delete-old-versions -1 )		; delete excess backup versions silently
-(setq version-control t )		; use version control
-(setq vc-make-backup-files t )		; make backups file even when in version controlled dir
-(setq backup-directory-alist `(("." . "~/.emacs.d/backups")) ) ; which directory to put backups file
-(setq vc-follow-symlinks t )				       ; don't ask for confirmation when opening symlinked file
-(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)) ) ;transform backups file name
-(setq inhibit-startup-screen t )	; inhibit startup screen
-(setq ring-bell-function 'ignore )	; silent bell when you make a mistake
+(setq delete-old-versions -1)		; delete excess backup versions silently
+(setq version-control t)		; use version control
+(setq vc-make-backup-files t)		; make backups file even when in version controlled dir
+(setq backup-directory-alist `(("." . "~/.emacs.d/backups"))) ; which directory to put backups file
+(setq vc-follow-symlinks t)				       ; don't ask for confirmation when opening symlinked file
+(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t))) ;transform backups file name
+(setq inhibit-startup-screen t)	; inhibit startup screen
+(setq ring-bell-function 'ignore)	; silent bell when you make a mistake
 (set-language-environment "UTF-8")
-;; (setq coding-system-for-write 'utf-8 )
 (setq sentence-end-double-space nil)	; sentence SHOULD end with only a point.
 (setq default-fill-column 80)		; toggle wrapping text at the 80th character
 (setq default-major-mode 'text-mode)
+(blink-cursor-mode -1)
+(setq revert-without-query '("*pdf")) ; automatically revert pdf-files
 (add-to-list 'default-frame-alist
 	     '(font . "Source Code Pro"))
 (add-hook 'focus-out-hook (lambda () (when buffer-file-name (save-buffer))))
 (recentf-mode 1)
+(setq delete-by-moving-to-trash t)
+
 (setq
  initial-scratch-message
- "Welcome
+ "(print \"Welcome\")
 
-Starting points: 
-(recentf-open-files)
-(find-file \"~/Documents/TODO.org\")
-"
- ) ; print a default message in the empty scratch buffer opened at startup
+(async-shell-command \"yay --sudoloop -Syu\")
+
+(shell-command-to-string \"acpi -b\")
+") ; print a default message in the empty scratch buffer opened at startup
+
 (defalias 'yes-or-no-p 'y-or-n-p) ;reduce typing effort
 (electric-pair-mode 1) ;close brackets
 
@@ -82,13 +90,43 @@ Starting points:
   (interactive)
   (find-file "~/.dotfiles/dotfiles/"))
 
+(defun find-todo ()
+  "open dotfile directory"
+  (interactive)
+  (find-file "~/Documents/TODO.org")
+  (calendar))
+
 (defun system-name= (name)
   (string-equal name (system-name)))
+
+(defun my-get-rid-of-mouse ()
+  (interactive)
+  (shell-command "xdotool mousemove 0 0"))
+
+(defun my--convert-to-pdf (filename)
+  (shell-command (concat "unoconv " filename)))
+
+(defun my-dired-convert-to-pdf ()
+  (interactive)
+  (mapc #'my--convert-to-pdf (dired-get-marked-files))
+  (ranger-refresh))
+
+(defun my-brightness+ ()
+  (interactive)
+  (shell-command "xbacklight -inc 10"))
+
+(defun my-brightness- ()
+  (interactive)
+  (shell-command "xbacklight -dec 10"))
+
+;; (defmacro ! (&rest args)
+;;   "convenient way to execute shell commands from scratch buffer"
+;;   `(shell-command (mapcar #'write-to-string ,args)))
 
 (defun fdy-mount (source target)
   "mount a directory from fdy windows remote server"
   (async-shell-command (concat
-			"sudo mount //dc1/"
+			"sudo /usr/bin/mount //dc1/"
 			source
 			" "
 			target
@@ -98,12 +136,41 @@ Starting points:
   "shortcuts for mounting frequent locations"
   (interactive)
   (apply #'fdy-mount
-	 (cond ((string= location "lectures") '("misc/fdy-lectures.git" "~/git/mntfdy-lectures.git"))
+	 (cond ((string= location "lectures") '("misc/fdy-lectures.git" "~/git/mnt/fdy-lectures.git"))
 	       ((string= location "klausuren") '("lehre/TM1/Klausuren.git" "~/git/mnt/Klausuren.git"))
 	       ((string= location "publications") '("misc/fdy-publications.git" "~/git/mnt/fdy-publications.git"))
 	       ((string= location "misc") '("misc" "~/misc"))
 	       ((string= location "scratch") '("scratch" "~/scratch"))
 	       ((string= location "lehre") '("lehre" "~/lehre")))))
+
+(defun ambrevar/toggle-window-split ()
+  "Switch between vertical and horizontal split.
+It only works for frames with exactly two windows.
+(Credits go to ambrevar and his awesome blog)"
+  (interactive)
+  (if (= (count-windows) 2)
+      (let* ((this-win-buffer (window-buffer))
+	     (next-win-buffer (window-buffer (next-window)))
+	     (this-win-edges (window-edges (selected-window)))
+	     (next-win-edges (window-edges (next-window)))
+	     (this-win-2nd (not (and (<= (car this-win-edges)
+					 (car next-win-edges))
+				     (<= (cadr this-win-edges)
+					 (cadr next-win-edges)))))
+	     (splitter
+	      (if (= (car this-win-edges)
+		     (car (window-edges (next-window))))
+		  'split-window-horizontally
+		'split-window-vertically)))
+	(delete-other-windows)
+	(let ((first-win (selected-window)))
+	  (funcall splitter)
+	  (if this-win-2nd (other-window 1))
+	  (set-window-buffer (selected-window) this-win-buffer)
+	  (set-window-buffer (next-window) next-win-buffer )
+	  (select-window first-win)
+	  (if this-win-2nd (other-window 1))))))
+
 
 ;; packages with configuration
 (use-package general :ensure t
@@ -134,27 +201,43 @@ Starting points:
   (general-nmap "Y" "y$")
 
   (general-define-key "ESC" 'keyboard-quit :which-key "abort command")
+  (general-define-key "TAB" 'company-complete :which-key "trigger completion")
+
+  (general-define-key
+   :keymaps 'override
+   :states 'normal
+   "gb" '(pop-tag-mark :which-key "go back"))
 
   ;; many spacemacs bindings go here
   (my-leader-def
+    "SPC" '(helm-M-x :which-key "M-x")
     "a" '(:ignore t :which-key "applications")
-    "ar" '(ranger :which-key "call ranger")
     "ad" '(deer :which-key "call deer")
-    "ab" '(eww :which-key "open browser")
+    "ab" '(helm-eww :which-key "open browser")
     "am" '(mu4e :which-key "open mail")
+    "ap" '(helm-system-packages :which-key "package management")
+    "ao" '(sx-search :which-key "search stackoverflow")
+    "ar" '(md4rd :which-key "reddit")
+    "at" '(ansi-term :which-key "open ansi-term")
+    "aS" '(eshell :which-key "open existing eshell")
+    "as" '((lambda () (interactive) (eshell 'N)) :which-key "open new eshell")
     "g"  '(:ignore t :which-key "git")
+    "/"  '(helm-occur t :which-key "helm-occur")
+    "cc" '(org-capture :which-key "org capture")
     "f" '(:ignore t :which-key "file")
     "fs" '(save-buffer :which-key "save file")
     "fS" '(write-file :which-key "save file as")
-    "ff" '(counsel-find-file :which-key "find file")
+    "ff" '(helm-find-files :which-key "find file")
     "fed" '(find-config-file :which-key "find config file")
     "fer" '(load-config-file :which-key "load config file")
     "feD" '(find-dotfile-dir :which-key "find dotfile directory")
-    "SPC" '(counsel-M-x :which-key "M-x")
-    "fp" '(counsel-locate :which-key "counsel-locate")
-    "fg" '(counsel-ag :which-key "counsel-ag")
+    "ft"  '(find-todo :which-key "find todo file")
+    "fz"  '((lambda () (interactive) (switch-to-buffer "*scratch*")) :which-key "find scratch buffer")
+    "fp" '(helm-locate :which-key "helm-locate")
+    "fg" '(helm-do-grep-ag :which-key "helm-ag")
     "b" '(:ignore t :which-key "buffer")
-    "bb" '(counsel-switch-buffer :which-key "switch buffer")
+    "bb" '(helm-mini :which-key "switch buffer")
+    "be" '(helm-exwm :which-key "switch to exwm buffer")
     "bd" '(kill-this-buffer :which-key "kill buffer")
     "w"  '(:ignore t :which-key "window management")
     "w TAB"  '(lambda () (interactive) (ivy--switch-buffer-action (buffer-name (other-buffer (current-buffer)))))
@@ -181,13 +264,14 @@ Starting points:
     "ww"  'other-window
     "w="  'balance-windows
     "r"   '(:ignore t :which-key "recent-files")
-    "rr"  'counsel-recentf
-    ;; "w+"  'spacemacs/window-layout-toggle
+    "rr"  'helm-recentf
+    "w+"  '(ambrevar/toggle-window-split :which-key "toggle window split")
     "e"  '(:ignore t :which-key "eval elisp")
     "ee"  'eval-last-sexp
     "ef"  'eval-defun
+    "ep"  'eval-print-last-sexp
     "ss"  (lambda () (interactive) (shell-command "shutdown now"))
-    "sr"  (lambda () (interactive) (shell-command "reboot now"))
+    "sr"  (lambda () (interactive) (shell-command "reboot"))
     "sl"  (lambda () (interactive) (shell-command "/usr/bin/slock"))))
 
 (use-package evil
@@ -198,9 +282,12 @@ Starting points:
   :config (evil-mode 1))
 
 (use-package evil-collection
-  :after evil
+  :after (evil helm) 
   :ensure t
-  :config (evil-collection-init))
+  :init
+  (setq evil-collection-setup-minibuffer t)
+  :config
+  (evil-collection-init))
 
 (use-package evil-surround
   :ensure t
@@ -210,6 +297,15 @@ Starting points:
     (evil-define-key 'operator global-map "S" 'evil-Surround-edit)
     (evil-define-key 'visual global-map "s" 'evil-surround-region)
     (evil-define-key 'visual global-map "gS" 'evil-Surround-region))
+
+(use-package evil-snipe
+  :ensure t
+  :config
+  (setq evil-snipe-scope 'visible)
+  (evil-snipe-mode 1)
+  (evil-snipe-override-mode 1)
+  (evil-define-key 'visual evil-snipe-local-mode-map "z" 'evil-snipe-s)
+  (evil-define-key 'visual evil-snipe-local-mode-map "Z" 'evil-snipe-S))
 
 (use-package evil-commentary
   :ensure t
@@ -221,9 +317,27 @@ Starting points:
   :diminish which-key-mode)
 
 ;;appearance
-(use-package zenburn-theme :ensure t)
-;; (use-package cyberpunk-theme :ensure t)
-(use-package smart-mode-line-atom-one-dark-theme :ensure t)
+;; (use-package zenburn-theme :ensure t)
+;; ;; (use-package cyberpunk-theme :ensure t)
+(use-package doom-themes
+  :ensure t
+  :config
+  (load-theme 'doom-vibrant t))
+
+(use-package smart-mode-line-atom-one-dark-theme
+  :ensure t)
+
+;; (use-package doom-modeline
+;;   :ensure t
+;;   :hook (after-init . doom-modeline-mode)
+;;   :config
+;;   (setq doom-modeline-height 25)
+;;   )
+
+(use-package smooth-scrolling
+  :ensure t
+  :config
+  (smooth-scrolling-mode 1))
 
 (use-package smart-mode-line
   :after smart-mode-line-atom-one-dark-theme
@@ -264,7 +378,7 @@ Starting points:
 (menu-bar-no-scroll-bar)
 
 ;; eshell
-;; (setq pcomplete-ignore-case t)
+(setq eshell-cmpl-ignore-case t)
 
 (use-package eshell-prompt-extras
   :ensure t
@@ -275,6 +389,10 @@ Starting points:
 (use-package ranger :ensure t
   :commands (ranger)
   :config
+  (general-define-key
+   :keymaps 'ranger-normal-mode-map
+   "cp" '(my-dired-convert-to-pdf :which-key "convert to pdf")
+   "gr" '(ranger-refresh :which-key "refresh"))
   (setq ranger-cleanup-eagerly t)
   (ranger-override-dired-mode t))
 
@@ -287,12 +405,60 @@ Starting points:
   (setq ivy-count-format "(%d/%d) ") ; count format, from the ivy help page
   )
 
-(use-package counsel :ensure t)
+(use-package counsel
+  :ensure t
+  :config
+  (setq counsel-find-file-ignore-regexp "\.dropbox"))
+
+(use-package helm
+  :after helm-exwm
+  :ensure t
+  :config
+  (setq helm-mode-fuzzy-match t)
+  (setq helm-completion-in-region-fuzzy-match t)
+  (setq helm-M-x-fuzzy-match t)
+  (setq helm-buffers-fuzzy-matching           t)
+  (setq helm-completion-in-region-fuzzy-match t)
+  (setq helm-file-cache-fuzzy-match           t)
+  (setq helm-imenu-fuzzy-match                t)
+  (setq helm-mode-fuzzy-match                 t)
+  (setq helm-locate-fuzzy-match               t) 
+  (setq helm-quick-update                     t)
+  (setq helm-recentf-fuzzy-match              t)
+  (setq helm-exwm-emacs-buffers-source (helm-exwm-build-emacs-buffers-source))
+  (setq helm-exwm-source (helm-exwm-build-source))
+  (setq helm-mini-default-sources `(helm-exwm-emacs-buffers-source
+                                    helm-exwm-source
+                                    helm-source-recentf))
+  (helm-mode 1))
+
+(use-package helm-system-packages
+  :ensure t)
+
+(use-package helm-mu
+  :ensure t)
+
+(use-package helm-exwm
+  :ensure t)
+
+(use-package helm-eww
+  :ensure t)
+
+(use-package helm-dictionary
+  :ensure t)
+
+(use-package helm-tramp
+  :ensure t)
+
+(use-package helm-unicode
+  :ensure t)
 
 (use-package company
   :ensure t
-  :config (global-company-mode 1))
-
+  :config
+  (setq company-dabbrev-downcase nil)
+  (setq read-file-name-completion-ignore-case t)
+  (global-company-mode 1))
 
 ;; abbrev mode
 (setq abbrev-file-name             ;; tell emacs where to read abbrev
@@ -336,8 +502,10 @@ Starting points:
     (pdf-tools-install)
     :magic ("%PDF" . pdf-view-mode)
     :config
+    (add-hook 'pdf-view-mode-hook 'pdf-view-midnight-minor-mode)
     (setq pdf-view-continuous nil)
     (evil-collection-init 'pdf)
+    (setq pdf-view-midnight-colors '("WhiteSmoke" . "gray16"))
     :general
     (general-define-key
      :states '(motion normal)
@@ -368,7 +536,7 @@ Starting points:
       "fh"  '(pdf-view-fit-height-to-window :which-key "fit heigth")
       "fp"  '(pdf-view-fit-page-to-window :which-key "fit page")
       "m"  '(pdf-view-set-slice-using-mouse :which-key "slice using mouse")
-      "b"  '(pdf-view-set-slice-from-bounding-box :which-key "sclice from bounding box")
+      "b"  '(pdf-view-set-slice-from-bounding-box :which-key "slice from bounding box")
       "R"  '(pdf-view-reset-slice :which-key "reset slice")
       "zr" '(pdf-view-scale-reset :which-key "zoom reset"))))
 
@@ -394,8 +562,10 @@ Starting points:
     :after exwm-randr
     :demand t
     :config
+    (define-key exwm-mode-map (kbd "C-c") nil)
     (setq exwm-input-global-keys
 	  `(([?\s-r] . exwm-reset)
+	    ([?\s-e] . exwm-input-release-keyboard)
 	    ([?\s-w] . exwm-workspace-switch)
 	    ([?\s-W] . exwm-workspace-move-window)
 	    ,@(mapcar (lambda (i)
@@ -415,12 +585,14 @@ Starting points:
 	    ([?\s-j] . evil-window-down)
 	    ([?\s-k] . evil-window-up)
 	    ([?\s-c] . kill-this-buffer)
+	    ([?\s-q] . my-get-rid-of-mouse)
 	    ([?\s-o] . my-exwm-switch-to-other-workspace)
 	    ([?\s-O] . my-exwm-move-window-to-other-workspace)
 	    ([?\s-m] . delete-other-windows)
 	    ([s-f1] . (lambda () (interactive) (eshell 'N)))
+	    ([C-s-f1] . eshell)
 	    ([s-f2] . (lambda () (interactive)
-			(start-process "" nil "qutebrowser")))
+			(start-process "" nil "next")))
 	    ([s-f3] . deer)
 	    ([s-f4] . (lambda () (interactive)
 			(mu4e)))
@@ -428,6 +600,10 @@ Starting points:
 			 (start-process "" nil "/usr/bin/slock")))))
     (push ?\s-\  exwm-input-prefix-keys)
     ;; (push ?\M-m  exwm-input-prefix-keys)
+    (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
+			#'my-brightness+)
+    (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
+			#'my-brightness-)
     (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
 			(lambda () (interactive) (start-process-shell-command "" nil "pactl set-sink-volume @DEFAULT_SINK@ -5%")))
     (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
@@ -456,21 +632,28 @@ Starting points:
 	   (exwm-workspace-switch (my-exwm-get-other-workspace)))
     (defun my-exwm-move-window-to-other-workspace () (interactive)
 	   (exwm-workspace-move-window (my-exwm-get-other-workspace)))
-    (progn
-      (cond
-       ((system-name= "klingenbergTablet") (progn (set 'monitor1 "eDP1")
-						  (set 'monitor2 "HDMI2")))
-       (t (progn (set 'monitor1 "VGA-1")
-		 (set 'monitor2 "HDMI-1"))))
-      ;; (set 'monitor1 "VGA-1")
-      ;; (set 'monitor2 "HDMI-1")
-      (defun my/exwm-xrandr ()
-	"Configure screen with xrandr."
-	(start-process-shell-command
-	 "xrandr" nil
-	 (if (system-name= "klingenbergTablet")
-	     "xrandr --output VGA-1 --primary --left-of HDMI-1 --auto"
-	   "xrandr --output eDP1 --primary --below-of HDMI1 --auto"))))
+    (cond
+     ((system-name= "klingenbergTablet") (progn (set 'monitor1 "eDP1")
+						(set 'monitor2 "HDMI2")
+						(set 'placement "below")))
+     ((system-name= "klingenbergLaptop") (progn (set 'monitor1 "LVDS1")
+						(set 'monitor2 "VGA1")
+						(set 'placement "below")))
+     (t (progn (set 'monitor1 "VGA-1")
+	       (set 'monitor2 "HDMI-1")
+	       (set 'placement "left-of"))))
+    (defun my/exwm-xrandr ()
+      "Configure screen with xrandr."
+      (shell-command
+       (if (file-exists-p "~/.screenlayout/default.sh")
+	   "~/.screenlayout/default.sh" ; prefer saved command by arandr by default
+	 (concat "xrandr --output "
+		 monitor1
+		 " --primary --auto --"
+		 placement
+		 " "
+		 monitor2
+		 " --auto"))))
     :hook (exwm-randr-screen-change . my/exwm-xrandr)
     :init
     (setq exwm-randr-workspace-monitor-plist (list 0 monitor1
@@ -497,21 +680,50 @@ Starting points:
       (setq exwm-layout-show-all-buffers t))))
 ;;;programming languages
 ;; lisp
-(use-package slime
-  :defer t
-  :config (setq inferior-lisp-program "/usr/bin/sbcl")
-  ;;:init (setenv 'SBCL-HOME " ") ;;TODO
+;; (use-package slime
+;;   :defer t
+;;   :config
+;;   ;;(setq inferior-lisp-program "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")
+;;   (sbcl-cvs ("/home/klingenberg/sbcl-cvs/src/runtime/sbcl"
+;; 	     "--core" "/home/klingenberg/.sbcl.core")
+;; 	    :env ("SBCL_HOME=/home/klingenberg/"))
+;;   ;;:init (setenv 'SBCL-HOME " ") ;;TODO
+;;   :general (my-local-leader-def
+;; 	     :keymaps 'lisp-mode-map
+;; 	     "'" '(slime :which-key "start slime")
+;; 	     "e" '(:ignore :which-key "slime eval")
+;; 	     "ef" '(slime-eval-function :which-key "eval function")
+;; 	     "ee" '(slime-eval-last-expression :which-key "eval last expression")
+;; 	     "eb" '(slime-eval-buffer :which-key "eval buffer")))
+
+(use-package lispy
+  :ensure t)
+
+(use-package sly
+  :ensure t
+  :config
+  (add-hook 'sly-db-mode 'evil-insert-state) ;TODO
+  (setq inferior-lisp-program "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")
   :general (my-local-leader-def
 	     :keymaps 'lisp-mode-map
-	     "'" '(slime :which-key "start slime")
-	     "e" '(:ignore :which-key "slime eval")
-	     "ef" '(slime-eval-function :which-key "eval function")
-	     "ee" '(slime-eval-last-expression :which-key "eval last expression")
-	     "eb" '(slime-eval-buffer :which-key "eval buffer"))
-  )
+	     "'" '(sly :which-key "start reps")
+	     "e" '(:ignore :which-key "eval")
+	     "ef" '(sly-eval-defun :which-key "eval function")
+	     "ee" '(sly-eval-last-expression :which-key "eval last expression")
+	     "eb" '(sly-eval-buffer :which-key "eval buffer")))
+
+;; (use-package sly-quicklisp
+;;   :ensure t)
 
 (use-package geiser
-  :ensure t)
+  :ensure t
+  :general (my-local-leader-def
+	     :keymaps 'scheme-mode-map
+	     "'" '(geiser :which-key "start reps")
+	     "e" '(:ignore :which-key "eval")
+	     "ef" '(geiser-eval-definition :which-key "eval definition")
+	     "ee" '(geiser-eval-last-sexp :which-key "eval last expression")
+	     "eb" '(geiser-eval-buffer :which-key "eval buffer")))
 
 (use-package eval-sexp-fu
   :ensure t
@@ -519,19 +731,42 @@ Starting points:
   (setq eval-sexp-fu-flash-face
 	'((((class color)) (:background "black" :foreground "gray" :bold t))
 	  (t (:inverse-video nil)))))
-
 ;;org
 (use-package org
   :ensure org-plus-contrib
   :config
+  (setq org-startup-indented t)
+  (add-hook 'org-mode-hook '(lambda () (org-indent-mode 1)))
+  (add-hook 'org-mode-hook 'flyspell-mode)
+  ;; in case drastic measures are required:
+  ;; (setq org-latex-pdf-process
+  ;; 	'("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+  ;; 	  "bibtex %b"
+  ;; 	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+  ;; 	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
   (add-to-list 'org-export-backends 'beamer)
+  (add-to-list 'org-export-backends 'md)
+  (setq org-confirm-babel-evaluate nil)
   (require 'ox-extra)
   (ox-extras-activate '(ignore-headlines))
-  (org-bullets-mode 1)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((lisp . t)))
+  (setq org-babel-lisp-eval-fn 'sly-eval)
+  (setq org-default-notes-file "~/Documents/TODO.org")
   :general
     (my-local-leader-def
       :keymaps 'org-mode-map
-      "e" '(org-export-dispatch :which-key "export"))
+      "e" '(org-export-dispatch :which-key "export")
+      "a" '((lambda () (interactive)
+      		    (let ((current-prefix-arg '-)) ; simulate pressing C-u
+      		      (call-interactively 'org-export-dispatch))) :which-key "repeat last export")
+      "s" '(org-edit-special :which-key "edit source code")
+      "l" '(:ignore :which-key "links")
+      "ll" '(org-insert-link :which-key "insert link")
+      "lf" '((lambda () (interactive)
+      		    (let ((current-prefix-arg '(4))) ; simulate pressing C-u
+      		      (call-interactively 'org-insert-link))) :which-key "insert link to file"))
     (general-define-key
      :states '(motion normal)
      :keymaps 'org-mode-map
@@ -548,15 +783,18 @@ Starting points:
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 
+(use-package org-bullets
+  :config
+  (add-hook 'org-mode-hook '(lambda () (org-bullets-mode 1))))
+
 (use-package org-ref
   :ensure t
   :init
   (setq org-latex-pdf-process (list "latexmk -shell-escape -f -pdf %f"))
   :config
-  (setq
-   org-ref-ivy-cite t
-   org-ref-default-bibliography '("~/HESSENBOX-DA/bibliography/bibliography.bib")
-   bibtex-completion-library-path "~/HESSENBOX-DA/bibliography/bibtex-pdfs")
+  (setq org-ref-ivy-cite t)
+  (setq org-ref-default-bibliography '("~/HESSENBOX-DA/bibliography/bibliography.bib"))
+  (setq bibtex-completion-library-path "~/HESSENBOX-DA/bibliography/bibtex-pdfs")
   :general
   (my-local-leader-def
     :keymaps 'org-mode-map
@@ -570,7 +808,10 @@ Starting points:
   :config
   (org-bullets-mode 1))
 
-(use-package ox-reveal
+(use-package org-re-reveal
+  :ensure t)
+
+(use-package ggtags
   :ensure t)
 
 ;;reduce
@@ -586,16 +827,40 @@ Starting points:
 ;; maple
 ;; (use-package maplev)
 
+(use-package wgrep
+  :ensure t)
+
 ;;c#
 (use-package omnisharp
   ;; :after company
   :ensure t
   :hook
-  ((csharp-mode-hook omnisharp-mode)
-   ;; (csharp-mode-hook company-mode)
-   ;; :config
-   ;; (add-to-list 'company-backends 'company-omnisharp)
-   ))
+  (csharp-mode-hook omnisharp-mode)
+  (csharp-mode-hook flycheck-mode)
+  ;; (csharp-mode-hook company-mode)
+  :config
+  (add-to-list 'company-backends 'company-omnisharp)
+  :general
+  (general-define-key
+   :states 'normal
+   :keymaps 'csharp-mode-map ; TODO figure out why this does not work with omnisharp-mode-map
+   "gd" '(omnisharp-go-to-definition :which-key "go to definition")
+   "gr" '(omnisharp-rename :which-key "rename"))
+  (my-local-leader-def
+    :keymaps 'csharp-mode-map ; TODO figure out why this does not work with omnisharp-mode-map
+    "b" '(:ignore :which-key "build")
+    "bd" '((lambda () (interactive) (compile "msbuild /p:Configuration=Debug")) :which-key "build debug")
+    "br" '((lambda () (interactive) (compile "msbuild /p:Configuration=Release")) :which-key "build release")
+    ))
+
+(use-package fsharp-mode
+  :ensure t
+  :general
+  (my-local-leader-def
+    :keymaps 'fsharp-mode-map
+    "ef" '(fsharp-eval-phrase :which-key "eval current phrase")
+    ))
+
 
 ;;latex (auctex)
 (use-package tex
@@ -671,7 +936,10 @@ Starting points:
     "xfc" 'latex/font-small-caps
     "xff" 'latex/font-sans-serif
     "xfr" 'latex/font-serif
-    "rr" 'reftex-toc
+    "r"   '(:ignore :which-key "reftex")
+    "rt" '(reftex-toc :which-key "table of contents")
+    "rr"   '(reftex-cleveref-cref :which-key "cref")
+    "rc"   '(reftex-citation :which-key "cite")
     "ol" '(lambda() (interactive) (find-file "definLocal.tex"))
     "og" '(lambda() (interactive) (find-file (getenv "LatexGlobalConfig")))
     "ob" '(lambda() (interactive) (find-file "bibliography.bib"))))
@@ -703,9 +971,14 @@ Starting points:
 
 ;; mail
 (unless (system-name= "lina")
+
+(use-package mu4e-conversation
+  :ensure t)
+
  (require 'mu4e)
  (setenv "GPG_AGENT_INFO" nil)
  (setq mu4e-confirm-quit nil)
+ (mu4e-conversation-mode 1)
  (defun my-mu4e-set-account ()
    "Set the account for composing a message."
    (let* ((account
@@ -811,8 +1084,8 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    :ensure t
    :config
    (evil-define-key 'evilified mu4e-main-mode-map (kbd "j") 'evil-next-line)
+   (evil-define-key 'evilified mu4e-main-mode-map (kbd "s") 'helm-mu)
    (bind-keys :map mu4e-main-mode-map
-	      ;; ("j" . evil-next-line)
 	      ("c" . mu4e-compose-new))
    :general
    (general-define-key
@@ -824,7 +1097,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
  (use-package mu4e-alert
    :ensure t
    :config
-   (mu4e-alert-enable-notifications)
+   (mu4e-alert-enable-mode-line-display)
    ;; (setq alert-default-style 'libnotify) ; not sure why this is needed
    (mu4e-alert-set-default-style 'notifications)
    (setq mu4e-alert-interesting-mail-query
@@ -847,13 +1120,49 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 (when (or (system-name= "klingenbergTablet") (system-name= "klingenbergLaptop"))
   (use-package guix :ensure t))
 
-(when (system-name= "klingenbergLaptop")
-  (async-shell-command "setxkbmap de"))
-
 ;; (use-package auto-dim-other-buffers
 ;;   :ensure t
 ;;   :config (auto-dim-other-buffers-mode t))
 
+(use-package google-translate
+  :ensure t)
+
+(use-package excorporate
+  :ensure t
+  :config
+  (general-define-key
+   :keymaps 'calendar-mode-map
+   :states 'normal
+   "e" '((lambda ()
+	   (interactive)
+	    (exco-calendar-show-day)
+	    (switch-to-buffer "diary-excorporate-transient"))
+	 :which-key "excorporate show day"))
+  (setq excorporate-configuration (cons "klingenberg@fdy.tu-darmstadt.de" "https://mail.tu-darmstadt.de/ews/exchange.asmx")))
+
+(use-package emms
+  :ensure t)
+
+(use-package sx
+  :ensure t
+  :config
+  (general-define-key
+   :keymaps 'sx-question-list-mode-map
+   :states 'normal
+   "RET" 'sx-display))
+
+(use-package md4rd
+  :ensure t
+  :config
+  (mapc
+   (lambda (elem) (add-to-list 'md4rd-subs-active elem))
+   '(linux
+     baduk)))
+
+(use-package podcaster
+  :ensure t
+  :config
+  (setq podcaster-feeds-urls "https://www.zeitsprung.fm"))
 
 (show-paren-mode 1)
 

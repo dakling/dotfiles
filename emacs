@@ -169,7 +169,7 @@
   (apply #'fdy-mount
 	 (cond ((string= location "lectures") '("misc/fdy-lectures.git" "~/git/mnt/fdy-lectures.git"))
 	       ((string= location "klausuren") '("lehre/TM1/Klausuren.git" "~/git/mnt/Klausuren.git"))
-	       ((string= location "bosss") '("bosss/users/klingenberg/root.git" "~/git/mnt/root.git"))
+	       ((string= location "bosss") '("bosss/users/klingenberg/root.git" "~/git/mnt/bosss.git"))
 	       ((string= location "publications") '("misc/fdy-publications.git" "~/git/mnt/fdy-publications.git"))
 	       ((string= location "misc") '("misc" "~/misc"))
 	       ((string= location "scratch") '("scratch" "~/scratch"))
@@ -1295,9 +1295,9 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 (show-paren-mode 1)
 
 ;;; TODO
-;; - scrolling (?)
 ;; - mail: notifications
 ;; - eshell: expand
 ;; related to https://lists.gnu.org/archive/html/bug-gnu-emacs/2012-11/msg00878.html
 ;; - el-go
+;; - perspectives
 

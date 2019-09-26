@@ -14,7 +14,7 @@
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (jenkins butler pulseaudio-control pinentry bosss emacs-bosss projectile-ripgrep dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (elfeed jenkins butler pulseaudio-control pinentry bosss emacs-bosss projectile-ripgrep dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -250,6 +250,7 @@ It only works for frames with exactly two windows.
     "ap" '(helm-system-packages :which-key "package management")
     "ao" '(sx-search :which-key "search stackoverflow")
     "ar" '(md4rd :which-key "reddit")
+    "ae" '(elfeed :which-key "open elfeed")
     "at" '(ansi-term :which-key "open ansi-term")
     "aS" '(eshell :which-key "open existing eshell")
     "as" '((lambda () (interactive) (eshell 'N)) :which-key "open new eshell")
@@ -907,7 +908,7 @@ It only works for frames with exactly two windows.
    "RET" 'jenkins-enter-job)
   (my-local-leader-def
     :keymaps 'jenkins-job-view-mode-map
-    "b" '(jenkins-job-call-build :which-key "build")
+    "b" '(jenkins--call-build-job-from-main-screen :which-key "build")
     "v" '(jenkins-visit-jenkins-web-page :which-key "view")
     "o" '(jenkins--show-console-output-from-job-screen :which-key "view")))
 
@@ -933,7 +934,7 @@ It only works for frames with exactly two windows.
   (my-local-leader-def
     :keymaps 'csharp-mode-map ; TODO figure out why this does not work with omnisharp-mode-map
     "b" '(:ignore :which-key "build")
-    "bd" '((lambda () (interactive) (compile "msbuild /p:Configuration=Debug")) :which-key "build debug")
+    "bb" '((lambda () (interactive) (compile "msbuild /p:Configuration=Debug")) :which-key "build debug")
     "br" '((lambda () (interactive) (compile "msbuild /p:Configuration=Release")) :which-key "build release")
     "ro" '(run-csharp-repl-other-frame :which-key "start repl")
     "rr" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl")))
@@ -1299,6 +1300,18 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   :ensure t
   :config
   (add-to-list 'podcaster-feeds-urls "https://www.zeitsprung.fm/podcasts/zs49"))
+
+(use-package elfeed
+  :ensure t
+  :general
+  (general-define-key
+   :keymaps 'elfeed-search-mode-map
+   :states 'normal
+   "U" 'elfeed-update)
+  :config
+  (setq elfeed-feeds
+        '("130\.83\.248\.141:8080/job/BoSSS-master-klingenberg/rssFailed"
+          "https://xkcd.com/rss.xml")))
 
 ;; (setenv "GPG_AGENT_INFO" "pinentry-emacs")
 ;; (defun pinentry-emacs (desc prompt ok error)

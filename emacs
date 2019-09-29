@@ -1280,7 +1280,8 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   :ensure t
   :config
   (emms-standard)
-  (emms-default-players))
+  (emms-default-players)
+  (setq emms-source-file-default-directory "~/Music"))
 
 (use-package sx
   :ensure t

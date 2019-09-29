@@ -14,7 +14,7 @@
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (jenkins butler pulseaudio-control pinentry bosss emacs-bosss projectile-ripgrep dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (jenkins elfeed pulseaudio-control pinentry bosss emacs-bosss projectile-ripgrep dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets omnisharp general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -1277,7 +1277,10 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   (setq excorporate-configuration (cons "klingenberg@fdy.tu-darmstadt.de" "https://mail.tu-darmstadt.de/ews/exchange.asmx")))
 
 (use-package emms
-  :ensure t)
+  :ensure t
+  :config
+  (emms-standard)
+  (emms-default-players))
 
 (use-package sx
   :ensure t
@@ -1295,10 +1298,11 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    '(linux
      baduk)))
 
-(use-package podcaster
+(use-package elfeed
   :ensure t
   :config
-  (add-to-list 'podcaster-feeds-urls "https://www.zeitsprung.fm/podcasts/zs49"))
+  (setq elfeed-feeds
+        '("https://www.zeitsprung.fm/feed/ogg/")))
 
 ;; (setenv "GPG_AGENT_INFO" "pinentry-emacs")
 ;; (defun pinentry-emacs (desc prompt ok error)

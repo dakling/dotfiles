@@ -10,6 +10,7 @@
              (gnu packages xorg)	
              (gnu packages linux)	
              (gnu packages compression)	
+             (gnu packages video)	
              (gnu packages lxde)	
              (gnu packages web-browsers)	
              (gnu packages password-utils)
@@ -97,6 +98,8 @@
          nix
          termite
          pcmanfm
+         mplayer
+         mpv
          offlineimap
          password-store
          sbcl
@@ -128,12 +131,14 @@
          ;;          (dhcpd-configuration
          ;;           (config-file (local-file "/etc/wpa_supplicant.conf"))
          ;;           (interfaces '("wlp1s0"))))
-         ;; (modify-service %desktop-services
-         ;;                 (network-manager-service-type
-         ;;                  config =>
-         ;;                  (guix-configuration
-         ;;                   (inherit config)
-         ;;                   (vpn-plugins (list openvpn)))))
+         ;; (modify-services %desktop-services
+                         ;; (network-manager-service-type
+                          ;; config =>
+                          ;; (network-manager-configuration
+                           ;; (inherit config)
+                           ;; (dns "dnsmasq")
+                           ;; (vpn-plugins (list network-manager-openconnect))))
+                         ;; )
          (service gnome-desktop-service-type)
          (set-xorg-configuration
           (xorg-configuration

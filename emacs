@@ -922,9 +922,11 @@ It only works for frames with exactly two windows.
   :hook
   (csharp-mode-hook omnisharp-mode)
   (csharp-mode-hook flycheck-mode)
+  (csharp-mode-hook subword-mode)
   ;; (csharp-mode-hook company-mode)
   :config
   (add-to-list 'company-backends 'company-omnisharp)
+  (setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
   :general
   (general-define-key
    :states 'normal
@@ -935,6 +937,7 @@ It only works for frames with exactly two windows.
     :keymaps 'csharp-mode-map ; TODO figure out why this does not work with omnisharp-mode-map
     "b" '(:ignore :which-key "build")
     "bb" '((lambda () (interactive) (compile "msbuild /p:Configuration=Debug")) :which-key "build debug")
+    "be" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " bosss-master-solution))) :which-key "build everything")
     "br" '((lambda () (interactive) (compile "msbuild /p:Configuration=Release")) :which-key "build release")
     "ro" '(run-csharp-repl-other-frame :which-key "start repl")
     "rr" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl")))

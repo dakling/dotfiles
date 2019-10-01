@@ -383,6 +383,8 @@ It only works for frames with exactly two windows.
   :ensure t
   :config
   (setq sml/theme 'atom-one-dark)
+  (setq sml/shorten-modes t)
+  (setq sml/shorten-directory t)
   (setq mode-line-format
 	'("%e"
 	  (:eval (propertize

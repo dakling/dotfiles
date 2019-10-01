@@ -34,7 +34,7 @@
 			 ("bosss" . "~/Documents/programming/elisp/emacs-bosss/")
 			 ("csharp-repl" . "~/Documents/programming/elisp/emacs-csharp-repl/")
 			 ("reduce ide" . "http://reduce-algebra.sourceforge.net/reduce-ide/packages/")))
-(package-initialize) 
+(package-initialize)
 
 ;; Bootstrap `use-package'
 (unless (package-installed-p 'use-package) ; unless it is already installed
@@ -72,6 +72,8 @@
 (async-shell-command \"yay --sudoloop -Syu\")
 
 (shell-command-to-string \"acpi -b\")
+
+(find-file \"~/BoSSS-experimental/internal/src/private-kli/RANS_Solver/RANS_Main.cs\")
 ") ; print a default message in the empty scratch buffer opened at startup
 
 ;; add my packages

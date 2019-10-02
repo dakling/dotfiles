@@ -926,13 +926,22 @@ It only works for frames with exactly two windows.
    :states 'normal
    :keymaps 'csharp-mode-map ; TODO figure out why this does not work with omnisharp-mode-map
    "gd" '(omnisharp-go-to-definition :which-key "go to definition")
-   "gr" '(omnisharp-rename :which-key "rename"))
+   "gr" '(omnisharp-rename :which-key "rename")
+   "gr" '(omnisharp-run-code-action-refactoring :which-key "refactor")
+   "gf" '(omnisharp-fix-code-issue-at-point :which-key "fix code issue at point")
+   "gF" '(omnisharp-fix-usings :which-key "fix usings")
+   "gu" '(omnisharp-find-usages :which-key "find usages")
+   "gI" '(omnisharp-find-implementations :which-key "find implementations")
+   )
   (my-local-leader-def
     :keymaps 'csharp-mode-map ; TODO figure out why this does not work with omnisharp-mode-map
     "b" '(:ignore :which-key "build")
-    "bb" '((lambda () (interactive) (compile "msbuild /p:Configuration=Debug")) :which-key "build debug")
+    "bd" '((lambda () (interactive) (compile "msbuild /p:Configuration=Debug")) :which-key "build debug")
     "be" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " bosss-master-solution))) :which-key "build everything")
     "br" '((lambda () (interactive) (compile "msbuild /p:Configuration=Release")) :which-key "build release")
+    "bb" '(recompile :which-key "recompile")
+    "t" '(omnisharp-current-type-information :which-key "current type information")
+    "T" '(omnisharp-current-type-documentation :which-key "current type documentation")
     "ro" '(run-csharp-repl-other-frame :which-key "start repl")
     "rr" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl")))
 

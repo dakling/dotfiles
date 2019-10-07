@@ -1250,12 +1250,8 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
     :ensure t
     :config
     (mu4e-alert-enable-mode-line-display)
-    ;; (setq alert-default-style 'libnotify) ; not sure why this is needed
-    (mu4e-alert-set-default-style 'notifications)
-    (setq mu4e-alert-interesting-mail-query
-	  (concat "(maildir:<fu> AND date:today..now"
-		  " OR maildir:<bar> AND date:today..now"
-		  " AND flag:unread"))
+    (mu4e-alert-enable-notifications)
+    (mu4e-alert-set-default-style 'libnotify)
     (alert-add-rule
      :category "mu4e-alert"
      :predicate (lambda (_) (string-match-p "^mu4e-" (symbol-name major-mode)))

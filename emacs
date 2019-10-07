@@ -642,7 +642,7 @@ It only works for frames with exactly two windows.
 	    ([?\s-h] . evil-window-left)
 	    ([?\s-j] . evil-window-down)
 	    ([?\s-k] . evil-window-up)
-	    ([?\s-c] . my-close-buffer
+	    ([?\s-c] . my-close-buffer)
 	    ([?\s-q] . my-get-rid-of-mouse)
 	    ([?\s-o] . my-exwm-switch-to-other-workspace)
 	    ([?\s-O] . my-exwm-move-window-to-other-workspace)

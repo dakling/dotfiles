@@ -152,6 +152,12 @@
    "" nil (concat browser
 		  url)))
 
+(defun my-close-buffer ()
+  (interactive)
+  (kill-this-buffer)
+  (when (< 1 (length (window-list)))
+    (evil-window-delete)))
+
 ;; (defmacro ! (&rest args)
 ;;   "convenient way to execute shell commands from scratch buffer"
 ;;   `(shell-command (mapcar #'write-to-string ,args)))
@@ -273,7 +279,7 @@ It only works for frames with exactly two windows.
     "b" '(:ignore t :which-key "buffer")
     "bb" '(helm-mini :which-key "switch buffer")
     "be" '(helm-exwm :which-key "switch to exwm buffer")
-    "bd" '(kill-this-buffer :which-key "kill buffer")
+    "bd" '(my-close-buffer :which-key "kill buffer")
     "w"  '(:ignore t :which-key "window management")
     "w TAB"  '(lambda () (interactive) (ivy--switch-buffer-action (buffer-name (other-buffer (current-buffer)))))
     ;; "w2"  'spacemacs/layout-double-columns
@@ -636,7 +642,7 @@ It only works for frames with exactly two windows.
 	    ([?\s-h] . evil-window-left)
 	    ([?\s-j] . evil-window-down)
 	    ([?\s-k] . evil-window-up)
-	    ([?\s-c] . kill-this-buffer)
+	    ([?\s-c] . my-close-buffer
 	    ([?\s-q] . my-get-rid-of-mouse)
 	    ([?\s-o] . my-exwm-switch-to-other-workspace)
 	    ([?\s-O] . my-exwm-move-window-to-other-workspace)

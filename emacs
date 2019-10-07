@@ -60,8 +60,8 @@
 (setq ring-bell-function 'ignore)	; silent bell when you make a mistake
 (set-language-environment "UTF-8")
 (setq sentence-end-double-space nil)	; sentence SHOULD end with only a point.
-(setq default-fill-column 80)		; toggle wrapping text at the 80th character
-(setq default-major-mode 'text-mode)
+;; (setq default-fill-column 80)		; toggle wrapping text at the 80th character
+;; (setq default-major-mode 'text-mode)
 (blink-cursor-mode -1)
 (setq revert-without-query '("*pdf")) ; automatically revert pdf-files
 (add-to-list 'default-frame-alist
@@ -113,22 +113,22 @@
     (t "firefox")))
 
 (defun find-config-file ()
-  "open emacs configuration file"
+  "Open emacs configuration file."
   (interactive)
   (find-file "~/.emacs"))
 
 (defun load-config-file ()
-  "load emacs configuration file"
+  "Load emacs configuration file."
   (interactive)
   (load-file "~/.emacs"))
 
 (defun find-dotfile-dir ()
-  "open dotfile directory"
+  "Open dotfile directory."
   (interactive)
   (find-file "~/.dotfiles/dotfiles/"))
 
 (defun find-todo ()
-  "open dotfile directory"
+  "Open dotfile directory."
   (interactive)
   (find-file "~/Documents/TODO.org")
   (calendar))
@@ -169,7 +169,7 @@
 ;;   `(shell-command (mapcar #'write-to-string ,args)))
 
 (defun fdy-mount (source target)
-  "mount a directory from fdy windows remote server"
+  "Mount a directory from fdy windows remote server."
   (async-shell-command (concat
 			"sudo /usr/bin/mount //dc1/"
 			source
@@ -178,7 +178,7 @@
 			" -t cifs -o username=klingenberg,noexec,uid=klingenberg")))
 
 (defun qmount (location)
-  "shortcuts for mounting frequent locations"
+  "Shortcuts for mounting frequent locations,"
   (interactive)
   (apply #'fdy-mount
 	 (cond ((string= location "lectures") '("misc/fdy-lectures.git" "~/git/mnt/fdy-lectures.git"))
@@ -192,7 +192,7 @@
 (defun ambrevar/toggle-window-split ()
   "Switch between vertical and horizontal split.
 It only works for frames with exactly two windows.
-(Credits go to ambrevar and his awesome blog)"
+\(Credits go to ambrevar and his awesome blog\)"
   (interactive)
   (if (= (count-windows) 2)
       (let* ((this-win-buffer (window-buffer))

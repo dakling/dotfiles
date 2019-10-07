@@ -969,6 +969,10 @@ It only works for frames with exactly two windows.
   (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Debug/BoSSSpad.exe")
   (setq bosss-path-reference "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/bin/Debug/RANS_Solver.exe")
   :config
+  (defun my-bosss-file-p ()
+    (or
+     (file-in-directory-p (buffer-file-name) "~/BoSSS/")
+     (file-in-directory-p (buffer-file-name) "~/BoSSS-experimental/")))
   (my-local-leader-def
     :keymaps 'bosss-mode-map
     "j" '(bosss-next-field :which-key "next field")

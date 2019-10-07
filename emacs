@@ -1343,12 +1343,5 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   :init
   (pinentry-start))
 
-;;; TODO
-;; - mail: notifications
-;; - eshell: expand
-;; related to https://lists.gnu.org/archive/html/bug-gnu-emacs/2012-11/msg00878.html
-;; - el-go
-;; - perspectives
-
 ;;; emacs ends here
 

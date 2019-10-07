@@ -20,7 +20,7 @@
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (jenkins elfeed pulseaudio-control pinentry bosss emacs-bosss projectile-ripgrep dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (go el-go jenkins elfeed pulseaudio-control pinentry bosss emacs-bosss projectile-ripgrep dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -39,6 +39,7 @@
 			 ("marmalade" . "http://marmalade-repo.org/packages/")
 			 ("bosss" . "~/Documents/programming/elisp/emacs-bosss/")
 			 ("csharp-repl" . "~/Documents/programming/elisp/emacs-csharp-repl/")
+			 ("el-go" . "~/Documents/programming/elisp/el-go/")
 			 ("reduce ide" . "http://reduce-algebra.sourceforge.net/reduce-ide/packages/")))
 (package-initialize)
 
@@ -266,6 +267,7 @@ It only works for frames with exactly two windows.
     "ap" '(helm-system-packages :which-key "package management")
     "ao" '(sx-search :which-key "search stackoverflow")
     "ar" '(md4rd :which-key "reddit")
+    "ag" '(go-play :which-key "play the game of go")
     "ae" '(elfeed :which-key "open elfeed")
     "at" '(ansi-term :which-key "open ansi-term")
     "aS" '(eshell :which-key "open existing eshell")
@@ -1342,6 +1344,9 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   :ensure t
   :init
   (pinentry-start))
+
+(use-package go
+  :ensure t)
 
 ;;; emacs ends here
 

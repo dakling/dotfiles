@@ -71,6 +71,8 @@
 (setq delete-by-moving-to-trash t)
 (setq-default indent-tabs-mode nil)
 
+(show-paren-mode 1)
+
 (setq
  initial-scratch-message
  "(print \"Welcome\")
@@ -1340,8 +1342,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   :ensure t
   :init
   (pinentry-start))
-
-(show-paren-mode 1)
 
 ;;; TODO
 ;; - mail: notifications

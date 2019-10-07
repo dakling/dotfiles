@@ -1,3 +1,9 @@
+;;; package  --- Summary
+;; my emacs config
+;;; Commentary:
+;; I use evil-mode everywhere, and the config is based on use-package and general
+;;; Code:
+
 ;;; auto-generated stuff
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -1347,4 +1353,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 ;; related to https://lists.gnu.org/archive/html/bug-gnu-emacs/2012-11/msg00878.html
 ;; - el-go
 ;; - perspectives
+
+;;; emacs ends here
 

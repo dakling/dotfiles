@@ -958,9 +958,9 @@ It only works for frames with exactly two windows.
   (my-local-leader-def
     :keymaps 'csharp-mode-map ; TODO figure out why this does not work with omnisharp-mode-map
     "b" '(:ignore :which-key "build")
-    "bd" '((lambda () (interactive) (compile "msbuild /p:Configuration=Debug")) :which-key "build debug")
+    "bd" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " my-bosss-project))) :which-key "build debug")
+    "br" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " my-bosss-project))) :which-key "build release")
     "be" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " bosss-master-solution))) :which-key "build everything")
-    "br" '((lambda () (interactive) (compile "msbuild /p:Configuration=Release")) :which-key "build release")
     "bb" '(recompile :which-key "recompile")
     "t" '(omnisharp-current-type-information :which-key "current type information")
     "T" '(omnisharp-current-type-documentation :which-key "current type documentation")
@@ -1174,7 +1174,7 @@ limitations under the License.
   (setq mu4e-trash-folder "/Trash")
   (setq mu4e-refile-folder "/Archive")
   (setq mu4e-get-mail-command "offlineimap -o")
-  (setq mu4e-update-interval 300)
+  (setq mu4e-update-interval 60)
   (setq mu4e-compose-signature-auto-include t)
   (setq mu4e-view-show-images t)
   (setq mu4e-enable-notifications t)

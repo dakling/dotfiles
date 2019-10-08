@@ -782,6 +782,7 @@ It only works for frames with exactly two windows.
   :config
   (lispy-mode 1)
   (add-hook 'lisp-interaction-mode-hook #'rainbow-delimiters-mode-enable)
+  (add-hook 'file-save-hooks #'my-indent-buffer nil t)
   (setq inferior-lisp-program "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")
   :general (my-local-leader-def
              :keymaps 'lisp-mode-map
@@ -797,6 +798,7 @@ It only works for frames with exactly two windows.
   :ensure t
   :config
   (add-hook 'scheme-mode-hook #'rainbow-delimiters-mode-enable)
+  (add-hook 'file-save-hooks #'my-indent-buffer nil t)
   (when (system-name= "klingenberg-tablet")
     (with-eval-after-load 'geiser-guile
       (add-to-list 'geiser-guile-load-path "~/guix-packages/guix/"))
@@ -985,6 +987,7 @@ It only works for frames with exactly two windows.
     (or
      (file-in-directory-p (buffer-file-name) "~/BoSSS/")
      (file-in-directory-p (buffer-file-name) "~/BoSSS-experimental/")))
+
   (defun my-add-header ()
     (interactive)
     (let ((header-text
@@ -1011,7 +1014,17 @@ limitations under the License.
         (when (my-bosss-file-p)
           (unless (search-forward (substring header-text 93) nil t) ;; check if header already exists, start a bit later to ignore year)
             (princ header-text (current-buffer)))))))
+
+  (defun my-indent-buffer-without-bosss-header ()
+    "Indent file, but ignore header"
+    (interactive)
+    (save-excursion
+      (goto-line 16)
+      (let ((beg (point)))
+        (evil-indent beg (point-max)))))
+
   (add-hook 'csharp-mode-hook #'my-add-header)
+  (add-hook 'write-file-hooks #'my-indent-buffer-without-bosss-header nil t)
   (my-local-leader-def
     :keymaps 'bosss-mode-map
     "j" '(bosss-next-field :which-key "next field")

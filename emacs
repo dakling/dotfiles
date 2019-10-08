@@ -89,7 +89,9 @@
 ;; (add-to-list 'load-path "~/.emacs.d/dev/")
 
 (defalias 'yes-or-no-p 'y-or-n-p) ;reduce typing effort
+
 (electric-pair-mode 1) ;close brackets
+(push '(?< . ?>) electric-pair-pairs)
 
 ;; useful functions
 (defun system-name= (&rest names)
@@ -946,6 +948,8 @@ It only works for frames with exactly two windows.
   (add-hook 'csharp-mode-hook #'subword-mode)
   (add-hook 'csharp-mode-hook #'company-mode)
   (add-hook 'csharp-mode-hook #'rainbow-delimiters-mode-enable)
+  (add-hook 'csharp-mode-hook (lambda ()
+                                (push '(?< . ("< " . " >")) evil-surround-pairs-alist)))
   (defun my-bosss-file-p ()
     (or
      (file-in-directory-p (buffer-file-name) "~/BoSSS/")
@@ -1292,11 +1296,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
     (alert-add-rule
      :category "mu4e-alert"
      :predicate (lambda (_) (string-match-p "^mu4e-" (symbol-name major-mode)))
-     :continue t)
-
-    ;; display stuff on modeline as well as notify
-    (add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
-    (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)))
+     :continue t)))
 
 (unless (or (system-name= "localhost") (system-name= "lina"))
   (my-mu4e-setup))

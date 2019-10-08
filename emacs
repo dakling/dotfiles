@@ -776,6 +776,7 @@ It only works for frames with exactly two windows.
   :ensure t
   :config
   (lispy-mode 1)
+  (add-hook 'lisp-interaction-mode-hook #'rainbow-delimiters-mode-enable)
   (setq inferior-lisp-program "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")
   :general (my-local-leader-def
 	     :keymaps 'lisp-mode-map
@@ -790,6 +791,7 @@ It only works for frames with exactly two windows.
 (use-package geiser
   :ensure t
   :config
+  (add-hook 'scheme-mode-hook #'rainbow-delimiters-mode-enable)
   (when (system-name= "klingenberg-tablet")
    (with-eval-after-load 'geiser-guile
      (add-to-list 'geiser-guile-load-path "~/guix-packages/guix/"))
@@ -935,8 +937,13 @@ It only works for frames with exactly two windows.
   (add-hook 'csharp-mode-hook #'omnisharp-mode)
   (add-hook 'csharp-mode-hook #'subword-mode)
   (add-hook 'csharp-mode-hook #'company-mode)
-  ;; (eval-after-load 'company (add-to-list 'company-backends 'company-omnisharp))
+  (add-hook 'csharp-mode-hook #'rainbow-delimiters-mode-enable)
+  (defun my-run-tests (path-to-assembly)
+    "Implement tests manually as default functions do not work"
+    (interactive)
+    (async-shell-command (concat "nunit3-console " path-to-assembly)))
   (setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
+  (setq my-bosss-project "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/RANS.csproj")
   :general
   (general-define-key
    :states 'normal
@@ -957,6 +964,7 @@ It only works for frames with exactly two windows.
     "bb" '(recompile :which-key "recompile")
     "t" '(omnisharp-current-type-information :which-key "current type information")
     "T" '(omnisharp-current-type-documentation :which-key "current type documentation")
+    "rt" '((lambda () (interactive) (my-run-tests my-bosss-project)) :which-key "run tests")
     "ro" '(run-csharp-repl-other-frame :which-key "start repl")
     "rr" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl")))
 
@@ -1274,8 +1282,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   (my-mu4e-setup))
 
 (use-package rainbow-delimiters
-  :ensure t
-  :init (rainbow-delimiters-mode 1))
+  :ensure t)
 
 (use-package dmenu
   :ensure t)

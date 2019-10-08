@@ -967,6 +967,32 @@ It only works for frames with exactly two windows.
   (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Debug/BoSSSpad.exe")
   (setq bosss-path-reference "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/bin/Debug/RANS_Solver.exe")
   :config
+  (defun my-add-header ()
+    (interactive)
+    (let ((header-text
+           (concat
+            "/* =======================================================================
+Copyright " (format-time-string "%Y") " Technische Universitaet Darmstadt, Fachgebiet fuer Stroemungsdynamik (chair of fluid dynamics)
+
+Licensed under the Apache License, Version 2.0 (the \"License\");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an \"AS IS\" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+")))
+      (save-excursion
+         (goto-line 0)
+       (unless (search-forward (substring header-text 93) nil t) ;; check if header already exists, start a bit later to ignore year
+         (princ header-text (current-buffer))))))
+  (add-hook 'csharp-mode-hook #'my-add-header)
   (my-local-leader-def
     :keymaps 'bosss-mode-map
     "j" '(bosss-next-field :which-key "next field")
@@ -979,31 +1005,6 @@ It only works for frames with exactly two windows.
     "en" '(bosss-eval-and-next-field :which-key "eval and next field")
     "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
     "in" '(bosss-create-new-field :which-key "create new input field")))
-
-;; (defun bosss-init ()
-;;   (setq bosss-path "/home/klingenberg/BoSSS-experimental/")
-;;   (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Debug/BoSSSpad.exe")
-;;   (setq bosss-path-reference "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/bin/Debug/RANS_Solver.exe")
-;;   (require 'bosss-repl)
-;;   (require 'bosss)
-;;   (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
-;;   (add-hook 'bosss-mode-hook 'bosss-config))
-
-;; (defun bosss-config ()
-;;   (my-local-leader-def
-;;     :keymaps 'bosss-mode-map
-;;     "j" '(bosss-next-field :which-key "next field")
-;;     "k" '(bosss-previous-field :which-key "previous field")
-;;     "ro" '(run-bosss-repl-other-window :which-key "start repl in other window")
-;;     "rn" '(bosss-bosss-repl-run-bosss-pad :which-key "run bossspad")
-;;     "ef" '(bosss-repl-send-current-field :which-key "send region to repl")
-;;     "ee" '(bosss-repl-send-region :which-key "send region to repl")
-;;     "eb" '(bosss-repl-send-buffer :which-key "send buffer to repl")
-;;     "en" '(bosss-eval-and-next-field :which-key "eval and next field")
-;;     "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
-;;     "in" '(bosss-create-new-field :which-key "create new input field")))
-
-;; (bosss-init)
 
 (use-package fsharp-mode
   :ensure t

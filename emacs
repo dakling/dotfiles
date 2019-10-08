@@ -20,7 +20,7 @@
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (jenkins elfeed pulseaudio-control pinentry bosss emacs-bosss projectile-ripgrep dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (go el-go jenkins elfeed pulseaudio-control pinentry bosss emacs-bosss projectile-ripgrep dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -39,6 +39,7 @@
 			 ("marmalade" . "http://marmalade-repo.org/packages/")
 			 ("bosss" . "~/Documents/programming/elisp/emacs-bosss/")
 			 ("csharp-repl" . "~/Documents/programming/elisp/emacs-csharp-repl/")
+			 ("el-go" . "~/Documents/programming/elisp/el-go/")
 			 ("reduce ide" . "http://reduce-algebra.sourceforge.net/reduce-ide/packages/")))
 (package-initialize)
 
@@ -266,6 +267,7 @@ It only works for frames with exactly two windows.
     "ap" '(helm-system-packages :which-key "package management")
     "ao" '(sx-search :which-key "search stackoverflow")
     "ar" '(md4rd :which-key "reddit")
+    "ag" '(go-play :which-key "play the game of go")
     "ae" '(elfeed :which-key "open elfeed")
     "at" '(ansi-term :which-key "open ansi-term")
     "aS" '(eshell :which-key "open existing eshell")
@@ -967,6 +969,10 @@ It only works for frames with exactly two windows.
   (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Debug/BoSSSpad.exe")
   (setq bosss-path-reference "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/bin/Debug/RANS_Solver.exe")
   :config
+  (defun my-bosss-file-p ()
+    (or
+     (file-in-directory-p (buffer-file-name) "~/BoSSS/")
+     (file-in-directory-p (buffer-file-name) "~/BoSSS-experimental/")))
   (defun my-add-header ()
     (interactive)
     (let ((header-text
@@ -990,8 +996,9 @@ limitations under the License.
 ")))
       (save-excursion
          (goto-line 0)
-       (unless (search-forward (substring header-text 93) nil t) ;; check if header already exists, start a bit later to ignore year
-         (princ header-text (current-buffer))))))
+         (when (my-bosss-file-p)
+          (unless (search-forward (substring header-text 93) nil t) ;; check if header already exists, start a bit later to ignore year)
+         (princ header-text (current-buffer)))))))
   (add-hook 'csharp-mode-hook #'my-add-header)
   (my-local-leader-def
     :keymaps 'bosss-mode-map
@@ -1344,12 +1351,8 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   :init
   (pinentry-start))
 
-;;; TODO
-;; - mail: notifications
-;; - eshell: expand
-;; related to https://lists.gnu.org/archive/html/bug-gnu-emacs/2012-11/msg00878.html
-;; - el-go
-;; - perspectives
+(use-package go
+  :ensure t)
 
 ;;; emacs ends here
 

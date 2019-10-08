@@ -775,13 +775,14 @@ It only works for frames with exactly two windows.
 ;; 	     "eb" '(slime-eval-buffer :which-key "eval buffer")))
 
 (use-package lispy
-  :ensure t)
+  :ensure t
+  :config
+  (add-hook 'lispy-mode-hook #'rainbow-delimiters-mode-enable))
 
 (use-package sly
   :ensure t
   :config
   (lispy-mode 1)
-  (add-hook 'lisp-interaction-mode-hook #'rainbow-delimiters-mode-enable)
   (add-hook 'file-save-hooks #'my-indent-buffer nil t)
   (setq inferior-lisp-program "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")
   :general (my-local-leader-def

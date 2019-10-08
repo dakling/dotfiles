@@ -947,8 +947,7 @@ It only works for frames with exactly two windows.
    "gf" '(omnisharp-fix-code-issue-at-point :which-key "fix code issue at point")
    "gF" '(omnisharp-fix-usings :which-key "fix usings")
    "gu" '(omnisharp-find-usages :which-key "find usages")
-   "gI" '(omnisharp-find-implementations :which-key "find implementations")
-   )
+   "gI" '(omnisharp-find-implementations :which-key "find implementations"))
   (my-local-leader-def
     :keymaps 'csharp-mode-map ; TODO figure out why this does not work with omnisharp-mode-map
     "b" '(:ignore :which-key "build")
@@ -1276,7 +1275,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 
 (use-package rainbow-delimiters
   :ensure t
-  :init (rainbow-delimiters-mode t))
+  :init (rainbow-delimiters-mode 1))
 
 (use-package dmenu
   :ensure t)

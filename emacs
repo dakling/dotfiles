@@ -34,13 +34,13 @@
 ;; the following lines tell emacs where on the internet to look up
 ;; for new packages.
 (setq package-archives '(("org"       . "http://orgmode.org/elpa/")
-			 ("gnu"       . "http://elpa.gnu.org/packages/")
-			 ("melpa"     . "https://melpa.org/packages/")
-			 ("marmalade" . "http://marmalade-repo.org/packages/")
-			 ("bosss" . "~/Documents/programming/elisp/emacs-bosss/")
-			 ("csharp-repl" . "~/Documents/programming/elisp/emacs-csharp-repl/")
-			 ("el-go" . "~/Documents/programming/elisp/el-go/")
-			 ("reduce ide" . "http://reduce-algebra.sourceforge.net/reduce-ide/packages/")))
+                         ("gnu"       . "http://elpa.gnu.org/packages/")
+                         ("melpa"     . "https://melpa.org/packages/")
+                         ("marmalade" . "http://marmalade-repo.org/packages/")
+                         ("bosss" . "~/Documents/programming/elisp/emacs-bosss/")
+                         ("csharp-repl" . "~/Documents/programming/elisp/emacs-csharp-repl/")
+                         ("el-go" . "~/Documents/programming/elisp/el-go/")
+                         ("reduce ide" . "http://reduce-algebra.sourceforge.net/reduce-ide/packages/")))
 (package-initialize)
 
 ;; Bootstrap `use-package'
@@ -66,7 +66,7 @@
 (blink-cursor-mode -1)
 (setq revert-without-query '("*pdf")) ; automatically revert pdf-files
 (add-to-list 'default-frame-alist
-	     '(font . "Source Code Pro"))
+             '(font . "Source Code Pro"))
 (add-hook 'focus-out-hook (lambda () (when buffer-file-name (save-buffer))))
 (recentf-mode 1)
 (setq delete-by-moving-to-trash t)
@@ -89,14 +89,16 @@
 ;; (add-to-list 'load-path "~/.emacs.d/dev/")
 
 (defalias 'yes-or-no-p 'y-or-n-p) ;reduce typing effort
+
 (electric-pair-mode 1) ;close brackets
+(push '(?< . ?>) electric-pair-pairs)
 
 ;; useful functions
 (defun system-name= (&rest names)
   (cl-some
-    (lambda (name)
-      (string-equal name (system-name)))
-    names))
+   (lambda (name)
+     (string-equal name (system-name)))
+   names))
 
 (defun shutdown ()
   (interactive)
@@ -113,7 +115,7 @@
 (defvar browser 
   (cond
    ((system-name= "klingenberg-tablet") "next")
-    (t "firefox")))
+   (t "firefox")))
 
 (defun find-config-file ()
   "Open emacs configuration file."
@@ -159,7 +161,7 @@
 (defun my-open-url (url)
   (start-process-shell-command
    "" nil (concat browser
-		  url)))
+                  url)))
 
 (defun my-close-buffer ()
   (interactive)
@@ -174,23 +176,23 @@
 (defun fdy-mount (source target)
   "Mount a directory from fdy windows remote server."
   (async-shell-command (concat
-			"sudo /usr/bin/mount //dc1/"
-			source
-			" "
-			target
-			" -t cifs -o username=klingenberg,noexec,uid=klingenberg")))
+                        "sudo /usr/bin/mount //dc1/"
+                        source
+                        " "
+                        target
+                        " -t cifs -o username=klingenberg,noexec,uid=klingenberg")))
 
 (defun qmount (location)
   "Shortcuts for mounting frequent locations,"
   (interactive)
   (apply #'fdy-mount
-	 (cond ((string= location "lectures") '("misc/fdy-lectures.git" "~/git/mnt/fdy-lectures.git"))
-	       ((string= location "klausuren") '("lehre/TM1/Klausuren.git" "~/git/mnt/Klausuren.git"))
-	       ((string= location "bosss") '("bosss/users/klingenberg/root.git" "~/git/mnt/bosss.git"))
-	       ((string= location "publications") '("misc/fdy-publications.git" "~/git/mnt/fdy-publications.git"))
-	       ((string= location "misc") '("misc" "~/misc"))
-	       ((string= location "scratch") '("scratch" "~/scratch"))
-	       ((string= location "lehre") '("lehre" "~/lehre")))))
+         (cond ((string= location "lectures") '("misc/fdy-lectures.git" "~/git/mnt/fdy-lectures.git"))
+               ((string= location "klausuren") '("lehre/TM1/Klausuren.git" "~/git/mnt/Klausuren.git"))
+               ((string= location "bosss") '("bosss/users/klingenberg/root.git" "~/git/mnt/bosss.git"))
+               ((string= location "publications") '("misc/fdy-publications.git" "~/git/mnt/fdy-publications.git"))
+               ((string= location "misc") '("misc" "~/misc"))
+               ((string= location "scratch") '("scratch" "~/scratch"))
+               ((string= location "lehre") '("lehre" "~/lehre")))))
 
 (defun ambrevar/toggle-window-split ()
   "Switch between vertical and horizontal split.
@@ -199,39 +201,44 @@ It only works for frames with exactly two windows.
   (interactive)
   (if (= (count-windows) 2)
       (let* ((this-win-buffer (window-buffer))
-	     (next-win-buffer (window-buffer (next-window)))
-	     (this-win-edges (window-edges (selected-window)))
-	     (next-win-edges (window-edges (next-window)))
-	     (this-win-2nd (not (and (<= (car this-win-edges)
-					 (car next-win-edges))
-				     (<= (cadr this-win-edges)
-					 (cadr next-win-edges)))))
-	     (splitter
-	      (if (= (car this-win-edges)
-		     (car (window-edges (next-window))))
-		  'split-window-horizontally
-		'split-window-vertically)))
-	(delete-other-windows)
-	(let ((first-win (selected-window)))
-	  (funcall splitter)
-	  (if this-win-2nd (other-window 1))
-	  (set-window-buffer (selected-window) this-win-buffer)
-	  (set-window-buffer (next-window) next-win-buffer )
-	  (select-window first-win)
-	  (if this-win-2nd (other-window 1))))))
+             (next-win-buffer (window-buffer (next-window)))
+             (this-win-edges (window-edges (selected-window)))
+             (next-win-edges (window-edges (next-window)))
+             (this-win-2nd (not (and (<= (car this-win-edges)
+                                         (car next-win-edges))
+                                     (<= (cadr this-win-edges)
+                                         (cadr next-win-edges)))))
+             (splitter
+              (if (= (car this-win-edges)
+                     (car (window-edges (next-window))))
+                  'split-window-horizontally
+                'split-window-vertically)))
+        (delete-other-windows)
+        (let ((first-win (selected-window)))
+          (funcall splitter)
+          (if this-win-2nd (other-window 1))
+          (set-window-buffer (selected-window) this-win-buffer)
+          (set-window-buffer (next-window) next-win-buffer )
+          (select-window first-win)
+          (if this-win-2nd (other-window 1))))))
 
+(defun my-indent-buffer ()
+  "Indent the entire buffer using evil-indent."
+  (interactive)
+  (save-excursion
+    (evil-indent (point-min) (point-max))))
 
 ;; packages with configuration
 (use-package general :ensure t
   :init
   (setq general-override-states '(insert
-				  emacs
-				  hybrid
-				  normal
-				  visual
-				  motion
-				  operator
-				  replace))
+                                  emacs
+                                  hybrid
+                                  normal
+                                  visual
+                                  motion
+                                  operator
+                                  replace))
   :config
   (general-evil-setup t)
   (general-auto-unbind-keys)
@@ -348,10 +355,10 @@ It only works for frames with exactly two windows.
   :ensure t
   :config
   (global-evil-surround-mode 1)
- (evil-define-key 'operator global-map "s" 'evil-surround-edit)
-    (evil-define-key 'operator global-map "S" 'evil-Surround-edit)
-    (evil-define-key 'visual global-map "s" 'evil-surround-region)
-    (evil-define-key 'visual global-map "gS" 'evil-Surround-region))
+  (evil-define-key 'operator global-map "s" 'evil-surround-edit)
+  (evil-define-key 'operator global-map "S" 'evil-Surround-edit)
+  (evil-define-key 'visual global-map "s" 'evil-surround-region)
+  (evil-define-key 'visual global-map "gS" 'evil-Surround-region))
 
 (use-package evil-snipe
   :ensure t
@@ -402,32 +409,32 @@ It only works for frames with exactly two windows.
   (setq sml/shorten-modes t)
   (setq sml/shorten-directory t)
   (setq mode-line-format
-	'("%e"
-	  (:eval (propertize
-		  (format (concat "<%s> "
-				  (unless (null (my-exwm-get-other-workspace)) "[%s] "))
-			  exwm-workspace-current-index
-			  (my-exwm-get-other-workspace))
-		  'face 'sml/numbers-separator))
-	  ;; (:eval (if (exwm-workspace--active-p exwm-workspace--current)
-	  ;; 	     (format "%s " exwm-workspace-current-index)
-	  ;; 	     (format "%s " (my-exwm-get-other-workspace)))) ;; TODO this is always true, determine the correct variable
-	  sml/pos-id-separator
-	  mode-line-mule-info
-	  mode-line-client
-	  mode-line-modified
-	  mode-line-remote
-	  mode-line-frame-identification
-	  mode-line-buffer-identification
-	  sml/pos-id-separator
-	  mode-line-front-space
-	  mode-line-position
-	  evil-mode-line-tag
-	  (vc-mode vc-mode)
-	  sml/pre-modes-separator
-	  mode-line-modes
-	  mode-line-misc-info
-	  mode-line-end-spaces))
+        '("%e"
+          (:eval (propertize
+                  (format (concat "<%s> "
+                                  (unless (null (my-exwm-get-other-workspace)) "[%s] "))
+                          exwm-workspace-current-index
+                          (my-exwm-get-other-workspace))
+                  'face 'sml/numbers-separator))
+          ;; (:eval (if (exwm-workspace--active-p exwm-workspace--current)
+          ;; 	     (format "%s " exwm-workspace-current-index)
+          ;; 	     (format "%s " (my-exwm-get-other-workspace)))) ;; TODO this is always true, determine the correct variable
+          sml/pos-id-separator
+          mode-line-mule-info
+          mode-line-client
+          mode-line-modified
+          mode-line-remote
+          mode-line-frame-identification
+          mode-line-buffer-identification
+          sml/pos-id-separator
+          mode-line-front-space
+          mode-line-position
+          evil-mode-line-tag
+          (vc-mode vc-mode)
+          sml/pre-modes-separator
+          mode-line-modes
+          mode-line-misc-info
+          mode-line-end-spaces))
   (sml/setup)
   (set-face-background 'mode-line-inactive "light")) 
 (tool-bar-mode -1)
@@ -441,7 +448,7 @@ It only works for frames with exactly two windows.
   :ensure t
   :config
   (setq eshell-highlight-prompt t
-	eshell-prompt-function 'epe-theme-lambda))
+        eshell-prompt-function 'epe-theme-lambda))
 
 (use-package ranger :ensure t
   :commands (ranger)
@@ -553,7 +560,7 @@ It only works for frames with exactly two windows.
 (use-package magit
   :ensure t
   :general (my-leader-def
-	     "gs" '(magit-status :which-key "git status")))
+             "gs" '(magit-status :which-key "git status")))
 
 (use-package evil-magit :ensure t)
 
@@ -620,7 +627,7 @@ It only works for frames with exactly two windows.
     (evil-set-initial-state 'exwm-mode 'emacs)
     (display-time-mode)
     (setq mouse-autoselect-window nil
-	  focus-follows-mouse nil))
+          focus-follows-mouse nil))
 
   (use-package exwm-input
     :after exwm-randr
@@ -628,56 +635,56 @@ It only works for frames with exactly two windows.
     :config
     (define-key exwm-mode-map (kbd "C-c") nil)
     (setq exwm-input-global-keys
-	  `(([?\s-r] . exwm-reset)
-	    ([?\s-e] . exwm-input-release-keyboard)
-	    ([?\s-F] . exwm-layout-set-fullscreen)
-	    ([?\s-w] . exwm-workspace-switch)
-	    ([?\s-W] . exwm-workspace-move-window)
-	    ,@(mapcar (lambda (i)
-			`(,(kbd (format "s-%d" i)) .
-			  (lambda () (interactive)
-			    (exwm-workspace-switch-create ,i))))
-		      (number-sequence 0 9))
-	    ;; ,@(mapcar (lambda (i)
-	    ;; 	      `(,(kbd (format "s-%s" i)) .
-	    ;; 		(lambda () (interactive)
-	    ;; 		  (exwm-workspace-move-window ,i))))
-	    ;; 	    (list '! \" § $ % & / ( ) =))
-	    ;; (number-sequence 0 9))
-	    ([?\s-d] . dmenu)
-	    ([?\s-x] . helm-M-x)
-	    ([?\s-f] . helm-find-files)
-	    ([?\s-b] . helm-mini)
-	    ([?\s-l] . evil-window-right)
-	    ([?\s-h] . evil-window-left)
-	    ([?\s-j] . evil-window-down)
-	    ([?\s-k] . evil-window-up)
-	    ([?\s-c] . my-close-buffer)
-	    ([?\s-q] . my-get-rid-of-mouse)
-	    ([?\s-o] . my-exwm-switch-to-other-workspace)
-	    ([?\s-O] . my-exwm-move-window-to-other-workspace)
-	    ([?\s-m] . delete-other-windows)
-	    ([s-f1] . (lambda () (interactive) (eshell 'N)))
-	    ([C-s-f1] . eshell)
-	    ([s-f2] . (lambda () (interactive)
-			(start-process "" nil browser)))
-	    ([s-f3] . deer)
-	    ([s-f4] . (lambda () (interactive)
-			(mu4e)))
-	    ([s-f12] . (lambda () (interactive)
-			 (start-process "" nil "/usr/bin/slock")))))
+          `(([?\s-r] . exwm-reset)
+            ([?\s-e] . exwm-input-release-keyboard)
+            ([?\s-F] . exwm-layout-set-fullscreen)
+            ([?\s-w] . exwm-workspace-switch)
+            ([?\s-W] . exwm-workspace-move-window)
+            ,@(mapcar (lambda (i)
+                        `(,(kbd (format "s-%d" i)) .
+                          (lambda () (interactive)
+                            (exwm-workspace-switch-create ,i))))
+                      (number-sequence 0 9))
+            ;; ,@(mapcar (lambda (i)
+            ;; 	      `(,(kbd (format "s-%s" i)) .
+            ;; 		(lambda () (interactive)
+            ;; 		  (exwm-workspace-move-window ,i))))
+            ;; 	    (list '! \" § $ % & / ( ) =))
+            ;; (number-sequence 0 9))
+            ([?\s-d] . dmenu)
+            ([?\s-x] . helm-M-x)
+            ([?\s-f] . helm-find-files)
+            ([?\s-b] . helm-mini)
+            ([?\s-l] . evil-window-right)
+            ([?\s-h] . evil-window-left)
+            ([?\s-j] . evil-window-down)
+            ([?\s-k] . evil-window-up)
+            ([?\s-c] . my-close-buffer)
+            ([?\s-q] . my-get-rid-of-mouse)
+            ([?\s-o] . my-exwm-switch-to-other-workspace)
+            ([?\s-O] . my-exwm-move-window-to-other-workspace)
+            ([?\s-m] . delete-other-windows)
+            ([s-f1] . (lambda () (interactive) (eshell 'N)))
+            ([C-s-f1] . eshell)
+            ([s-f2] . (lambda () (interactive)
+                        (start-process "" nil browser)))
+            ([s-f3] . deer)
+            ([s-f4] . (lambda () (interactive)
+                        (mu4e)))
+            ([s-f12] . (lambda () (interactive)
+                         (start-process "" nil "/usr/bin/slock")))))
     (push ?\s-\  exwm-input-prefix-keys)
     ;; (push ?\M-m  exwm-input-prefix-keys)
     (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
-			#'my-brightness+)
+                        #'my-brightness+)
     (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
-			#'my-brightness-)
+                        #'my-brightness-)
     (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
-			'pulseaudio-control-decrease-volume)
+                        'pulseaudio-control-decrease-volume)
     (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
-			'pulseaudio-control-increase-volume)
+                        'pulseaudio-control-increase-volume)
     (exwm-input-set-key (kbd "<XF86AudioMute>")
-			'pulseaudio-control-toggle-current-sink-mute))
+                        'pulseaudio-control-toggle-current-sink-mute))
 
   (use-package exwm-systemtray
     :after exwm
@@ -690,50 +697,50 @@ It only works for frames with exactly two windows.
     :preface
     (defun my-exwm-get-other-workspace ()
       (cond ((not (= 2 (length (seq-filter #'identity (mapcar #'exwm-workspace--active-p exwm-workspace--list))))) nil) ;currently only works for two monitors
-	    ((= exwm-workspace-current-index
-		(cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))
-	     (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
-	    ((= exwm-workspace-current-index
-		(cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
-	     (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))))
+            ((= exwm-workspace-current-index
+                (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))
+             (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
+            ((= exwm-workspace-current-index
+                (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
+             (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))))
     (defun my-exwm-switch-to-other-workspace () (interactive)
-	   (exwm-workspace-switch (my-exwm-get-other-workspace)))
+           (exwm-workspace-switch (my-exwm-get-other-workspace)))
     (defun my-exwm-move-window-to-other-workspace () (interactive)
-	   (exwm-workspace-move-window (my-exwm-get-other-workspace)))
+           (exwm-workspace-move-window (my-exwm-get-other-workspace)))
     (cond
      ((system-name= "klingenberg-tablet") (progn (set 'monitor1 "eDP-1")
-						(set 'monitor2 "HDMI-2")
-						(set 'placement "below")))
+                                                 (set 'monitor2 "HDMI-2")
+                                                 (set 'placement "below")))
      ((system-name= "klingenbergLaptop") (progn (set 'monitor1 "LVDS1")
-						(set 'monitor2 "VGA1")
-						(set 'placement "below")))
+                                                (set 'monitor2 "VGA1")
+                                                (set 'placement "below")))
      (t (progn (set 'monitor1 "VGA-1")
-	       (set 'monitor2 "HDMI-1")
-	       (set 'placement "left-of"))))
+               (set 'monitor2 "HDMI-1")
+               (set 'placement "left-of"))))
     (defun my/exwm-xrandr ()
       "Configure screen with xrandr."
       (shell-command
        (if (file-exists-p "~/.screenlayout/default.sh")
-	   "~/.screenlayout/default.sh" ; prefer saved command by arandr by default
-	 (concat "xrandr --output "
-		 monitor1
-		 " --primary --auto --"
-		 placement
-		 " "
-		 monitor2
-		 " --auto"))))
+           "~/.screenlayout/default.sh" ; prefer saved command by arandr by default
+         (concat "xrandr --output "
+                 monitor1
+                 " --primary --auto --"
+                 placement
+                 " "
+                 monitor2
+                 " --auto"))))
     :hook (exwm-randr-screen-change . my/exwm-xrandr)
     :init
     (setq exwm-randr-workspace-monitor-plist (list 0 monitor1
-						   2 monitor1
-						   4 monitor1
-						   6 monitor1
-						   8 monitor1
-						   1 monitor2
-						   3 monitor2
-						   5 monitor2
-						   7 monitor2
-						   9 monitor2))
+                                                   2 monitor1
+                                                   4 monitor1
+                                                   6 monitor1
+                                                   8 monitor1
+                                                   1 monitor2
+                                                   3 monitor2
+                                                   5 monitor2
+                                                   7 monitor2
+                                                   9 monitor2))
     :config
     (progn
       (exwm-randr-enable)))
@@ -770,7 +777,10 @@ It only works for frames with exactly two windows.
 ;; 	     "eb" '(slime-eval-buffer :which-key "eval buffer")))
 
 (use-package lispy
-  :ensure t)
+  :ensure t
+  :config
+  (add-hook 'lispy-mode-hook (lambda () (add-hook 'before-save-hook #'my-indent-buffer nil t)))
+  (add-hook 'lispy-mode-hook #'rainbow-delimiters-mode-enable))
 
 (use-package sly
   :ensure t
@@ -778,37 +788,39 @@ It only works for frames with exactly two windows.
   (lispy-mode 1)
   (setq inferior-lisp-program "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")
   :general (my-local-leader-def
-	     :keymaps 'lisp-mode-map
-	     "'" '(sly :which-key "start reps")
-	     "e" '(:ignore :which-key "eval")
-	     "ef" '(sly-eval-defun :which-key "eval function")
-	     "ee" '(sly-eval-last-expression :which-key "eval last expression")
-	     "eb" '(sly-eval-buffer :which-key "eval buffer")))
+             :keymaps 'lisp-mode-map
+             "'" '(sly :which-key "start reps")
+             "e" '(:ignore :which-key "eval")
+             "ef" '(sly-eval-defun :which-key "eval function")
+             "ee" '(sly-eval-last-expression :which-key "eval last expression")
+             "eb" '(sly-eval-buffer :which-key "eval buffer")))
 
 ;; (use-package sly-quicklisp
 ;;   :ensure t)
 (use-package geiser
   :ensure t
   :config
+  (add-hook 'scheme-mode-hook #'rainbow-delimiters-mode-enable)
+  (add-hook 'scheme-mode-hook (lambda () (add-hook 'before-save-hook #'my-indent-buffer nil t)))
   (when (system-name= "klingenberg-tablet")
-   (with-eval-after-load 'geiser-guile
-     (add-to-list 'geiser-guile-load-path "~/guix-packages/guix/"))
-   (with-eval-after-load 'yasnippet
-     (add-to-list 'yas-snippet-dirs "~/guix-packages/guix/etc/snippets")))
+    (with-eval-after-load 'geiser-guile
+      (add-to-list 'geiser-guile-load-path "~/guix-packages/guix/"))
+    (with-eval-after-load 'yasnippet
+      (add-to-list 'yas-snippet-dirs "~/guix-packages/guix/etc/snippets")))
   :general (my-local-leader-def
-	     :keymaps 'scheme-mode-map
-	     "'" '(geiser :which-key "start reps")
-	     "e" '(:ignore :which-key "eval")
-	     "ef" '(geiser-eval-definition :which-key "eval definition")
-	     "ee" '(geiser-eval-last-sexp :which-key "eval last expression")
-	     "eb" '(geiser-eval-buffer :which-key "eval buffer")))
+             :keymaps 'scheme-mode-map
+             "'" '(geiser :which-key "start reps")
+             "e" '(:ignore :which-key "eval")
+             "ef" '(geiser-eval-definition :which-key "eval definition")
+             "ee" '(geiser-eval-last-sexp :which-key "eval last expression")
+             "eb" '(geiser-eval-buffer :which-key "eval buffer")))
 
 (use-package eval-sexp-fu
   :ensure t
   :config
   (setq eval-sexp-fu-flash-face
-	'((((class color)) (:background "black" :foreground "gray" :bold t))
-	  (t (:inverse-video nil)))))
+        '((((class color)) (:background "black" :foreground "gray" :bold t))
+          (t (:inverse-video nil)))))
 ;;org
 (use-package org
   :ensure org-plus-contrib
@@ -833,22 +845,22 @@ It only works for frames with exactly two windows.
   (setq org-babel-lisp-eval-fn 'sly-eval)
   (setq org-default-notes-file "~/Documents/TODO.org")
   :general
-    (my-local-leader-def
-      :keymaps 'org-mode-map
-      "e" '(org-export-dispatch :which-key "export")
-      "a" '((lambda () (interactive)
-      		    (let ((current-prefix-arg '-)) ; simulate pressing C-u
-      		      (call-interactively 'org-export-dispatch))) :which-key "repeat last export")
-      "s" '(org-edit-special :which-key "edit source code")
-      "l" '(:ignore :which-key "links")
-      "ll" '(org-insert-link :which-key "insert link")
-      "lf" '((lambda () (interactive)
-      		    (let ((current-prefix-arg '(4))) ; simulate pressing C-u
-      		      (call-interactively 'org-insert-link))) :which-key "insert link to file"))
-    (general-define-key
-     :states '(motion normal)
-     :keymaps 'org-mode-map
-     "RET" '(org-open-at-point :which-key "open link")))
+  (my-local-leader-def
+    :keymaps 'org-mode-map
+    "e" '(org-export-dispatch :which-key "export")
+    "a" '((lambda () (interactive)
+            (let ((current-prefix-arg '-)) ; simulate pressing C-u
+              (call-interactively 'org-export-dispatch))) :which-key "repeat last export")
+    "s" '(org-edit-special :which-key "edit source code")
+    "l" '(:ignore :which-key "links")
+    "ll" '(org-insert-link :which-key "insert link")
+    "lf" '((lambda () (interactive)
+             (let ((current-prefix-arg '(4))) ; simulate pressing C-u
+               (call-interactively 'org-insert-link))) :which-key "insert link to file"))
+  (general-define-key
+   :states '(motion normal)
+   :keymaps 'org-mode-map
+   "RET" '(org-open-at-point :which-key "open link")))
 
 (use-package evil-org
   :ensure t
@@ -896,11 +908,11 @@ It only works for frames with exactly two windows.
 (use-package reduce-ide
   :defer t
   :general (my-local-leader-def
-	     :states 'normal
-	     :keymaps 'reduce-mode-map
-	     "e" '(:ignore :which-key "eval")
-	     "ee" '(reduce-eval-last-statement :which-key "eval last statement")
-	     "eb" '(reduce-run-buffer :which-key "run buffer"))
+             :states 'normal
+             :keymaps 'reduce-mode-map
+             "e" '(:ignore :which-key "eval")
+             "ee" '(reduce-eval-last-statement :which-key "eval last statement")
+             "eb" '(reduce-run-buffer :which-key "run buffer"))
   )
 ;; maple
 ;; (use-package maplev)
@@ -935,29 +947,79 @@ It only works for frames with exactly two windows.
   (add-hook 'csharp-mode-hook #'omnisharp-mode)
   (add-hook 'csharp-mode-hook #'subword-mode)
   (add-hook 'csharp-mode-hook #'company-mode)
-  ;; (eval-after-load 'company (add-to-list 'company-backends 'company-omnisharp))
+  (add-hook 'csharp-mode-hook #'rainbow-delimiters-mode-enable)
+  (add-hook 'csharp-mode-hook (lambda ()
+                                (push '(?< . ("< " . " >")) evil-surround-pairs-alist)))
+  (defun my-bosss-file-p ()
+    (or
+     (file-in-directory-p (buffer-file-name) "~/BoSSS/")
+     (file-in-directory-p (buffer-file-name) "~/BoSSS-experimental/")))
+
+  (defun my-add-header ()
+    (interactive)
+    (let ((header-text
+           (concat
+            "/* =======================================================================
+Copyright " (format-time-string "%Y") " Technische Universitaet Darmstadt, Fachgebiet fuer Stroemungsdynamik (chair of fluid dynamics)
+
+Licensed under the Apache License, Version 2.0 (the \"License\");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an \"AS IS\" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+")))
+      (save-excursion
+        (goto-line 0)
+        (when (my-bosss-file-p)
+          (unless (search-forward (substring header-text 93) nil t) ;; check if header already exists, start a bit later to ignore year)
+            (princ header-text (current-buffer)))))))
+
+  (defun my-indent-buffer-without-bosss-header ()
+    "Indent file, but ignore header"
+    (interactive)
+    (save-excursion
+      (goto-line 16)
+      (let ((beg (point)))
+        (evil-indent beg (point-max)))))
+
+  (add-hook 'csharp-mode-hook #'my-add-header)
+  (add-hook 'csharp-mode-hook (lambda ()add-hook 'before-save-hook #'my-indent-buffer-without-bosss-header nil t))
+
+  (defun my-run-tests (path-to-assembly)
+    "Implement tests manually as default functions do not work"
+    (interactive)
+    (async-shell-command (concat "nunit3-console " path-to-assembly)))
   (setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
+  (setq my-bosss-project "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/RANS.csproj")
   :general
   (general-define-key
    :states 'normal
    :keymaps 'csharp-mode-map ; TODO figure out why this does not work with omnisharp-mode-map
    "gd" '(omnisharp-go-to-definition :which-key "go to definition")
-   "gr" '(omnisharp-rename :which-key "rename")
-   "gr" '(omnisharp-run-code-action-refactoring :which-key "refactor")
-   "gf" '(omnisharp-fix-code-issue-at-point :which-key "fix code issue at point")
-   "gF" '(omnisharp-fix-usings :which-key "fix usings")
-   "gu" '(omnisharp-find-usages :which-key "find usages")
-   "gI" '(omnisharp-find-implementations :which-key "find implementations")
-   )
+   "gr" '(omnisharp-rename :which-key "rename"))
   (my-local-leader-def
     :keymaps 'csharp-mode-map ; TODO figure out why this does not work with omnisharp-mode-map
     "b" '(:ignore :which-key "build")
-    "bd" '((lambda () (interactive) (compile "msbuild /p:Configuration=Debug")) :which-key "build debug")
+    "bd" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " my-bosss-project))) :which-key "build debug")
+    "br" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " my-bosss-project))) :which-key "build release")
     "be" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " bosss-master-solution))) :which-key "build everything")
-    "br" '((lambda () (interactive) (compile "msbuild /p:Configuration=Release")) :which-key "build release")
     "bb" '(recompile :which-key "recompile")
     "t" '(omnisharp-current-type-information :which-key "current type information")
     "T" '(omnisharp-current-type-documentation :which-key "current type documentation")
+    "gr" '(omnisharp-run-code-action-refactoring :which-key "refactor")
+    "fi" '(omnisharp-find-implementations :which-key "find implementations")
+    "fu" '(omnisharp-find-usages :which-key "find usages")
+    "fI" '(omnisharp-fix-code-issue-at-point :which-key "fix code issue at point")
+    "fU" '(omnisharp-fix-usings :which-key "fix usings")
+    "rt" '((lambda () (interactive) (my-run-tests my-bosss-project)) :which-key "run tests")
     "ro" '(run-csharp-repl-other-frame :which-key "start repl")
     "rr" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl")))
 
@@ -969,10 +1031,6 @@ It only works for frames with exactly two windows.
   (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Debug/BoSSSpad.exe")
   (setq bosss-path-reference "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/bin/Debug/RANS_Solver.exe")
   :config
-  (defun my-bosss-file-p ()
-    (or
-     (file-in-directory-p (buffer-file-name) "~/BoSSS/")
-     (file-in-directory-p (buffer-file-name) "~/BoSSS-experimental/")))
   (my-local-leader-def
     :keymaps 'bosss-mode-map
     "j" '(bosss-next-field :which-key "next field")
@@ -986,31 +1044,6 @@ It only works for frames with exactly two windows.
     "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
     "in" '(bosss-create-new-field :which-key "create new input field")))
 
-;; (defun bosss-init ()
-;;   (setq bosss-path "/home/klingenberg/BoSSS-experimental/")
-;;   (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Debug/BoSSSpad.exe")
-;;   (setq bosss-path-reference "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/bin/Debug/RANS_Solver.exe")
-;;   (require 'bosss-repl)
-;;   (require 'bosss)
-;;   (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
-;;   (add-hook 'bosss-mode-hook 'bosss-config))
-
-;; (defun bosss-config ()
-;;   (my-local-leader-def
-;;     :keymaps 'bosss-mode-map
-;;     "j" '(bosss-next-field :which-key "next field")
-;;     "k" '(bosss-previous-field :which-key "previous field")
-;;     "ro" '(run-bosss-repl-other-window :which-key "start repl in other window")
-;;     "rn" '(bosss-bosss-repl-run-bosss-pad :which-key "run bossspad")
-;;     "ef" '(bosss-repl-send-current-field :which-key "send region to repl")
-;;     "ee" '(bosss-repl-send-region :which-key "send region to repl")
-;;     "eb" '(bosss-repl-send-buffer :which-key "send buffer to repl")
-;;     "en" '(bosss-eval-and-next-field :which-key "eval and next field")
-;;     "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
-;;     "in" '(bosss-create-new-field :which-key "create new input field")))
-
-;; (bosss-init)
-
 (use-package fsharp-mode
   :ensure t
   :general
@@ -1022,41 +1055,41 @@ It only works for frames with exactly two windows.
 (use-package tex
   :ensure auctex
   :init
-    (setq
-     ;; TeX-command-default 'LaTeX
-     TeX-view-program-selection '((output-pdf "PDF Tools"))
-     TeX-source-correlate-start-server t
-     TeX-auto-save t
-     TeX-parse-self t
-     TeX-syntactic-comment t
-     ;; Synctex support
-     TeX-source-correlate-start-server nil
-     ;; Don't insert line-break at inline math
-     LaTeX-math-abbrev-prefix "#"
-     LaTeX-fill-break-at-separators nil)
+  (setq
+   ;; TeX-command-default 'LaTeX
+   TeX-view-program-selection '((output-pdf "PDF Tools"))
+   TeX-source-correlate-start-server t
+   TeX-auto-save t
+   TeX-parse-self t
+   TeX-syntactic-comment t
+   ;; Synctex support
+   TeX-source-correlate-start-server nil
+   ;; Don't insert line-break at inline math
+   LaTeX-math-abbrev-prefix "#"
+   LaTeX-fill-break-at-separators nil)
   :config
-    (TeX-interactive-mode -1)
-    (TeX-source-correlate-mode -1)
-    (setq TeX-electric-math '("\\(" . "\\)"))
-    (setq TeX-electric-sub-and-superscript t)
-    (setq TeX-save-query nil)
-    (reftex-mode 1)
-    (add-hook 'TeX-after-compilation-finished-functions 'TeX-revert-document-buffer)
-    (add-hook 'LaTeX-mode-hook 'flyspell-mode)
-    (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
-    (add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
-    (add-hook 'LaTeX-mode-hook 'TeX-PDF-mode)
-    (add-hook 'LaTeX-mode-hook
-	      (lambda ()
-		(progn
-		  (push '(?d . ("\\left\( " . " \\right\)")) evil-surround-pairs-alist)
-		  (push '(?\$ . ("\\\(" . "\\\)")) evil-surround-pairs-alist))))
-    ;; (general-define-key
-    ;;  :states '(motion normal)
-    ;;  :keymaps 'LaTeX-mode-map
-    ;;  "-"  nil)
-    ;; (add-to-list 'company-backends 'company-auctex t)
-    (add-to-list 'company-backends 'company-math t)
+  (TeX-interactive-mode -1)
+  (TeX-source-correlate-mode -1)
+  (setq TeX-electric-math '("\\(" . "\\)"))
+  (setq TeX-electric-sub-and-superscript t)
+  (setq TeX-save-query nil)
+  (reftex-mode 1)
+  (add-hook 'TeX-after-compilation-finished-functions 'TeX-revert-document-buffer)
+  (add-hook 'LaTeX-mode-hook 'flyspell-mode)
+  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+  (add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
+  (add-hook 'LaTeX-mode-hook 'TeX-PDF-mode)
+  (add-hook 'LaTeX-mode-hook
+            (lambda ()
+              (progn
+                (push '(?d . ("\\left\( " . " \\right\)")) evil-surround-pairs-alist)
+                (push '(?\$ . ("\\\(" . "\\\)")) evil-surround-pairs-alist))))
+  ;; (general-define-key
+  ;;  :states '(motion normal)
+  ;;  :keymaps 'LaTeX-mode-map
+  ;;  "-"  nil)
+  ;; (add-to-list 'company-backends 'company-auctex t)
+  (add-to-list 'company-backends 'company-math t)
   :general
   (my-local-leader-def
     :keymaps 'LaTeX-mode-map
@@ -1074,13 +1107,13 @@ It only works for frames with exactly two windows.
     "cs" '(:ignore :which-key "change environment")
     "cse" '((lambda() (interactive) (LaTeX-environment 1)) :which-key "change current environment")
     "yae" '((lambda() (interactive)
-	      (progn
-		(LaTeX-mark-environment)
-		(kill-ring-save 0 0 t))) :which-key "yank current environment")
+              (progn
+                (LaTeX-mark-environment)
+                (kill-ring-save 0 0 t))) :which-key "yank current environment")
     "dae" '((lambda() (interactive)
-	      (progn 
-		(LaTeX-mark-environment)
-		(kill-region 0 0 t))) :which-key "delete current environment")
+              (progn 
+                (LaTeX-mark-environment)
+                (kill-region 0 0 t))) :which-key "delete current environment")
     ;; TeX-doc is a very slow function
     "hd"  'TeX-doc
     "xb"  'latex/font-bold
@@ -1142,21 +1175,21 @@ It only works for frames with exactly two windows.
   (defun my-mu4e-set-account ()
     "Set the account for composing a message."
     (let* ((account
-	    (if mu4e-compose-parent-message
-		(let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
-		  (string-match "/\\(.*?\\)/" maildir)
-		  (match-string 1 maildir))
-	      (completing-read (format "Compose with account: (%s) "
-				       (mapconcat #'(lambda (var) (car var))
-						  my-mu4e-account-alist "/"))
-			       (mapcar #'(lambda (var) (car var)) my-mu4e-account-alist)
-			       nil t nil nil (caar my-mu4e-account-alist))))
-	   (account-vars (cdr (assoc account my-mu4e-account-alist))))
+            (if mu4e-compose-parent-message
+                (let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
+                  (string-match "/\\(.*?\\)/" maildir)
+                  (match-string 1 maildir))
+              (completing-read (format "Compose with account: (%s) "
+                                       (mapconcat #'(lambda (var) (car var))
+                                                  my-mu4e-account-alist "/"))
+                               (mapcar #'(lambda (var) (car var)) my-mu4e-account-alist)
+                               nil t nil nil (caar my-mu4e-account-alist))))
+           (account-vars (cdr (assoc account my-mu4e-account-alist))))
       (if account-vars
-	  (mapc #'(lambda (var)
-		    (set (car var) (cadr var)))
-		account-vars)
-	(error "No email account found"))))
+          (mapc #'(lambda (var)
+                    (set (car var) (cadr var)))
+                account-vars)
+        (error "No email account found"))))
 
   ;; ask for account when composing mail
   (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
@@ -1165,7 +1198,7 @@ It only works for frames with exactly two windows.
   (setq mu4e-trash-folder "/Trash")
   (setq mu4e-refile-folder "/Archive")
   (setq mu4e-get-mail-command "offlineimap -o")
-  (setq mu4e-update-interval 300)
+  (setq mu4e-update-interval 60)
   (setq mu4e-compose-signature-auto-include t)
   (setq mu4e-view-show-images t)
   (setq mu4e-enable-notifications t)
@@ -1174,11 +1207,11 @@ It only works for frames with exactly two windows.
   (setq smtpmail-stream-type 'ssl)
   (setq mu4e-view-show-addresses t)
   (setq my-mu4e-account-alist
-	'(("FDY"
-	   (mu4e-sent-messages-behavior sent)
-	   (mu4e-compose-signature-auto-include t)
-	   (mu4e-compose-signature
-	    "Technische Universität Darmstadt
+        '(("FDY"
+           (mu4e-sent-messages-behavior sent)
+           (mu4e-compose-signature-auto-include t)
+           (mu4e-compose-signature
+            "Technische Universität Darmstadt
 Dario Klingenberg, M.Sc.
 Fachgebiet für Strömungsdynamik
 Fachbereich Maschinenbau
@@ -1190,18 +1223,18 @@ E-Mail: klingenberg@fdy.tu-darmstadt.de
 Telefon: +9 6151 16-26207
 Fax: +49 6151 16-26203
 Web: http://www.fdy.tu-darmstadt.de")
-	   (mu4e-sent-folder "/FDY/Sent Items")
-	   (mu4e-drafts-folder "/FDY/Drafts")
-	   (smtpmail-smtp-server "smtp.tu-darmstadt.de")
-	   (smtpmail-smtp-service 465)
-	   (smtpmail-stream-type ssl)
-	   (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
-	   (user-full-name "Dario Klingenberg"))
-	  ("GSC"
-	   (mu4e-sent-messages-behavior sent)
-	   (mu4e-compose-signature-auto-include t)
-	   (mu4e-compose-signature
-	    "Technische Universität Darmstadt
+           (mu4e-sent-folder "/FDY/Sent Items")
+           (mu4e-drafts-folder "/FDY/Drafts")
+           (smtpmail-smtp-server "smtp.tu-darmstadt.de")
+           (smtpmail-smtp-service 465)
+           (smtpmail-stream-type ssl)
+           (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
+           (user-full-name "Dario Klingenberg"))
+          ("GSC"
+           (mu4e-sent-messages-behavior sent)
+           (mu4e-compose-signature-auto-include t)
+           (mu4e-compose-signature
+            "Technische Universität Darmstadt
 Dario Klingenberg, M.Sc.
 Graduate School Computational Engineering
 Dolivostraße 15
@@ -1211,34 +1244,34 @@ E-Mail: klingenberg@gsc.tu-darmstadt.de
 Telefon: +49 6151 16-24381
 Fax: +49 6151 16-24404
 Web: http://www.gsc.ce.tu-darmstadt.de/")
-	   (mu4e-sent-folder "/GSC/Sent Items")
-	   (mu4e-drafts-folder "/GSC/Drafts")
-	   (smtpmail-smtp-server "smtp.gsc.ce.tu-darmstadt.de")
-	   (smtpmail-smtp-service 465)
-	   (smtpmail-stream-type ssl)
-	   (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
-	   (user-full-name "Dario Klingenberg"))
-	  ("Gmail"
-	   ;; Under each account, set the account-specific variables you want.
-	   (mu4e-sent-messages-behavior delete)
-	   (mu4e-compose-signature-auto-include nil)
-	   (mu4e-sent-folder "/Gmail/sent")
-	   (mu4e-drafts-folder "/Gmail/drafts")
-	   (user-mail-address "dario.klingenberg@gmail.com")
-	   (smtpmail-smtp-server "smtp.gmail.com")
-	   (smtpmail-smtp-service 465)
-	   (smtpmail-stream-type ssl)
-	   (user-full-name "Dario Klingenberg"))
-	  ("Web"
-	   (mu4e-sent-messages-behavior sent)
-	   (mu4e-compose-signature-auto-include nil)
-	   (mu4e-sent-folder "/Web/Sent Items")
-	   (mu4e-drafts-folder "/Web/Drafts")
-	   (smtpmail-smtp-server "smtp.web.de")
-	   (smtpmail-smtp-service 587)
-	   (smtpmail-stream-type starttls)
-	   (user-mail-address "dario.klingenberg@web.de")
-	   (user-full-name "dario"))))
+           (mu4e-sent-folder "/GSC/Sent Items")
+           (mu4e-drafts-folder "/GSC/Drafts")
+           (smtpmail-smtp-server "smtp.gsc.ce.tu-darmstadt.de")
+           (smtpmail-smtp-service 465)
+           (smtpmail-stream-type ssl)
+           (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
+           (user-full-name "Dario Klingenberg"))
+          ("Gmail"
+           ;; Under each account, set the account-specific variables you want.
+           (mu4e-sent-messages-behavior delete)
+           (mu4e-compose-signature-auto-include nil)
+           (mu4e-sent-folder "/Gmail/sent")
+           (mu4e-drafts-folder "/Gmail/drafts")
+           (user-mail-address "dario.klingenberg@gmail.com")
+           (smtpmail-smtp-server "smtp.gmail.com")
+           (smtpmail-smtp-service 465)
+           (smtpmail-stream-type ssl)
+           (user-full-name "Dario Klingenberg"))
+          ("Web"
+           (mu4e-sent-messages-behavior sent)
+           (mu4e-compose-signature-auto-include nil)
+           (mu4e-sent-folder "/Web/Sent Items")
+           (mu4e-drafts-folder "/Web/Drafts")
+           (smtpmail-smtp-server "smtp.web.de")
+           (smtpmail-smtp-service 587)
+           (smtpmail-stream-type starttls)
+           (user-mail-address "dario.klingenberg@web.de")
+           (user-full-name "dario"))))
 
   (use-package evil-mu4e
     :ensure t
@@ -1246,7 +1279,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
     (evil-define-key 'evilified mu4e-main-mode-map (kbd "j") 'evil-next-line)
     (evil-define-key 'evilified mu4e-main-mode-map (kbd "s") 'helm-mu)
     (bind-keys :map mu4e-main-mode-map
-	       ("c" . mu4e-compose-new))
+               ("c" . mu4e-compose-new))
     :general
     (general-define-key
      :states '(motion normal)
@@ -1263,18 +1296,13 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
     (alert-add-rule
      :category "mu4e-alert"
      :predicate (lambda (_) (string-match-p "^mu4e-" (symbol-name major-mode)))
-     :continue t)
-
-    ;; display stuff on modeline as well as notify
-    (add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
-    (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)))
+     :continue t)))
 
 (unless (or (system-name= "localhost") (system-name= "lina"))
   (my-mu4e-setup))
 
 (use-package rainbow-delimiters
-  :ensure t
-  :init (rainbow-delimiters-mode t))
+  :ensure t)
 
 (use-package dmenu
   :ensure t)
@@ -1293,10 +1321,10 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    :keymaps 'calendar-mode-map
    :states 'normal
    "e" '((lambda ()
-	   (interactive)
-	    (exco-calendar-show-day)
-	    (switch-to-buffer "diary-excorporate-transient"))
-	 :which-key "excorporate show day"))
+           (interactive)
+           (exco-calendar-show-day)
+           (switch-to-buffer "diary-excorporate-transient"))
+         :which-key "excorporate show day"))
   (setq excorporate-configuration (cons "klingenberg@fdy.tu-darmstadt.de" "https://mail.tu-darmstadt.de/ews/exchange.asmx")))
 
 (use-package emms

@@ -75,6 +75,10 @@
 
 (show-paren-mode 1)
 
+(display-time-mode)
+(setq display-time-24hr-format t
+      display-time-default-load-average nil)
+
 (setq
  initial-scratch-message
  "(print \"Welcome\")
@@ -449,7 +453,7 @@ It only works for frames with exactly two windows.
           mode-line-end-spaces))
   (sml/setup)
   ;; (set-face-background 'mode-line-inactive "light")
-) 
+  ) 
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (menu-bar-no-scroll-bar)
@@ -636,9 +640,6 @@ It only works for frames with exactly two windows.
     (server-start)
     :config
     (evil-set-initial-state 'exwm-mode 'emacs)
-    (display-time-mode)
-    (setq display-time-24hr-format t
-          display-time-default-load-average nil)
     (setq mouse-autoselect-window nil
           focus-follows-mouse nil)
     (exwm-enable))

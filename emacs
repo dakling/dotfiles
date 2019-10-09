@@ -83,15 +83,13 @@
 (shell-command-to-string \"acpi -b\")
 
 (find-file \"~/BoSSS-experimental/internal/src/private-kli/RANS_Solver/RANS_Main.cs\")
-") ; print a default message in the empty scratch buffer opened at startup
 
-;; add my packages
-;; (add-to-list 'load-path "~/.emacs.d/dev/")
+") ; print a default message in the empty scratch buffer opened at startup
 
 (defalias 'yes-or-no-p 'y-or-n-p) ;reduce typing effort
 
 (electric-pair-mode 1) ;close brackets
-(push '(?< . ?>) electric-pair-pairs)
+(push '(?< . ?>) electric-pair-pairs)   ;add angle brackets to electric pairs (autoclose brackets)
 
 ;; useful functions
 (defun system-name= (&rest names)
@@ -1199,6 +1197,8 @@ limitations under the License.
   (setq mu4e-refile-folder "/Archive")
   (setq mu4e-get-mail-command "offlineimap -o")
   (setq mu4e-update-interval 60)
+  (setq mu4e-hide-index-messages t)     ; do not show minibuffer messages after updates
+  (setq mu4e-index-update-error-warning nil)
   (setq mu4e-compose-signature-auto-include t)
   (setq mu4e-view-show-images t)
   (setq mu4e-enable-notifications t)

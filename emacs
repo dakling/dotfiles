@@ -13,6 +13,7 @@
  '(custom-safe-themes
    (quote
     ("bc75dfb513af404a26260b3420d1f3e4131df752c19ab2984a7c85def9a2917e" default)))
+ '(electric-indent-mode nil)
  '(evil-snipe-mode t)
  '(evil-snipe-override-mode t)
  '(global-evil-surround-mode 1)
@@ -20,7 +21,7 @@
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (go el-go jenkins elfeed pulseaudio-control pinentry bosss emacs-bosss projectile-ripgrep dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (diminish deminish go el-go jenkins elfeed pulseaudio-control pinentry bosss emacs-bosss projectile-ripgrep dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -359,6 +360,7 @@ It only works for frames with exactly two windows.
   (evil-define-key 'visual global-map "gS" 'evil-Surround-region))
 
 (use-package evil-snipe
+  :diminish evil-snipe-local-mode
   :ensure t
   :config
   (setq evil-snipe-scope 'visible)
@@ -368,6 +370,7 @@ It only works for frames with exactly two windows.
   (evil-define-key 'visual evil-snipe-local-mode-map "Z" 'evil-snipe-S))
 
 (use-package evil-commentary
+  :diminish evil-commentary-mode
   :ensure t
   :init (evil-commentary-mode))
 
@@ -399,6 +402,17 @@ It only works for frames with exactly two windows.
   :config
   (smooth-scrolling-mode 1))
 
+(use-package diminish
+  :ensure t
+  :config
+  (mapcar #'diminish '(reftex-mode
+                       auto-revert-mode
+                       undo-tree-mode
+                       eldoc-mode
+                       subword-mode
+                       flyspell-mode
+                       defining-kbd-macro)))
+
 (use-package smart-mode-line
   :after smart-mode-line-atom-one-dark-theme
   :ensure t
@@ -425,10 +439,10 @@ It only works for frames with exactly two windows.
           mode-line-frame-identification
           mode-line-buffer-identification
           sml/pos-id-separator
-          mode-line-front-space
+          ;; mode-line-front-space
           mode-line-position
           evil-mode-line-tag
-          (vc-mode vc-mode)
+          ;; (vc-mode vc-mode)
           sml/pre-modes-separator
           mode-line-modes
           mode-line-misc-info
@@ -472,6 +486,7 @@ It only works for frames with exactly two windows.
     :ensure t))
 
 (use-package helm
+  :diminish helm-mode
   :after helm-exwm
   :ensure t
   :config
@@ -524,6 +539,7 @@ It only works for frames with exactly two windows.
   :ensure t)
 
 (use-package company
+  :diminish company-mode
   :ensure t
   :config
   (setq company-dabbrev-downcase nil)
@@ -534,9 +550,10 @@ It only works for frames with exactly two windows.
 (setq abbrev-file-name             ;; tell emacs where to read abbrev
       "~/HESSENBOX-DA/programming/abbrev-snippets.el")    ;; definitions from...
 (setq save-abbrevs 'silently)
-(setq-default abbrev-mode t)
+(setq-default abbrev-mode nil)
 
 (use-package yasnippet
+  :diminish yas-minor-mode
   :ensure t
   :config
   (yas-global-mode 1))
@@ -545,6 +562,7 @@ It only works for frames with exactly two windows.
   :ensure t)
 
 (use-package projectile
+  :diminish projectile-mode
   :ensure t
   :config
   (my-leader-def
@@ -624,6 +642,8 @@ It only works for frames with exactly two windows.
     :config
     (evil-set-initial-state 'exwm-mode 'emacs)
     (display-time-mode)
+    (setq display-time-24hr-format t
+          display-time-default-load-average nil)
     (setq mouse-autoselect-window nil
           focus-follows-mouse nil))
 
@@ -753,6 +773,7 @@ It only works for frames with exactly two windows.
       (setq exwm-layout-show-all-buffers t))))
 
 (use-package flycheck
+  :diminish flycheck-mode
   :ensure t
   :init (global-flycheck-mode))
 
@@ -775,6 +796,7 @@ It only works for frames with exactly two windows.
 ;; 	     "eb" '(slime-eval-buffer :which-key "eval buffer")))
 
 (use-package lispy
+  :diminish lispy-mode
   :ensure t
   :config
   (add-hook 'lispy-mode-hook (lambda () (add-hook 'before-save-hook #'my-indent-buffer nil t)))
@@ -821,6 +843,7 @@ It only works for frames with exactly two windows.
           (t (:inverse-video nil)))))
 ;;org
 (use-package org
+  :diminish org-indent-mode
   :ensure org-plus-contrib
   :config
   (setq org-startup-indented t)
@@ -861,6 +884,7 @@ It only works for frames with exactly two windows.
    "RET" '(org-open-at-point :which-key "open link")))
 
 (use-package evil-org
+  :diminish evil-org-mode
   :ensure t
   :after org
   :config
@@ -940,6 +964,7 @@ It only works for frames with exactly two windows.
   :ensure t)
 
 (use-package omnisharp
+  :diminish omnisharp-mode
   :ensure t
   :config
   (add-hook 'csharp-mode-hook #'omnisharp-mode)

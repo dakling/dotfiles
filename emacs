@@ -21,7 +21,7 @@
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (gnus-icalendar diminish deminish go el-go jenkins elfeed pulseaudio-control pinentry bosss emacs-bosss projectile-ripgrep dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (exwm-config gnus-icalendar diminish deminish go el-go jenkins elfeed pulseaudio-control pinentry bosss emacs-bosss projectile-ripgrep dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -635,18 +635,13 @@ It only works for frames with exactly two windows.
     :init
     (server-start)
     :config
-    (exwm-enable))
-
-  (use-package exwm-config
-    :after exwm
-    :demand t
-    :config
     (evil-set-initial-state 'exwm-mode 'emacs)
     (display-time-mode)
     (setq display-time-24hr-format t
           display-time-default-load-average nil)
     (setq mouse-autoselect-window nil
-          focus-follows-mouse nil))
+          focus-follows-mouse nil)
+    (exwm-enable))
 
   (use-package exwm-input
     :after exwm-randr

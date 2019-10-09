@@ -448,7 +448,8 @@ It only works for frames with exactly two windows.
           mode-line-misc-info
           mode-line-end-spaces))
   (sml/setup)
-  (set-face-background 'mode-line-inactive "light")) 
+  ;; (set-face-background 'mode-line-inactive "light")
+) 
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (menu-bar-no-scroll-bar)
@@ -967,12 +968,6 @@ It only works for frames with exactly two windows.
   :diminish omnisharp-mode
   :ensure t
   :config
-  (add-hook 'csharp-mode-hook #'omnisharp-mode)
-  (add-hook 'csharp-mode-hook #'subword-mode)
-  (add-hook 'csharp-mode-hook #'company-mode)
-  (add-hook 'csharp-mode-hook #'rainbow-delimiters-mode-enable)
-  ;; (add-hook 'csharp-mode-hook (lambda ()
-  ;;                               (push '(?< . ("< " . " >")) evil-surround-pairs-alist)))
   (defun my-bosss-file-p ()
     (or
      (file-in-directory-p (buffer-file-name) "~/BoSSS/")
@@ -1013,23 +1008,30 @@ limitations under the License.
       (let ((beg (point)))
         (evil-indent beg (point-max)))))
 
-  (add-hook 'csharp-mode-hook #'my-add-header)
-  (add-hook 'csharp-mode-hook (lambda () (add-hook 'before-save-hook #'my-indent-buffer-without-bosss-header nil t)))
-
   (defun my-run-tests (path-to-assembly)
     "Implement tests manually as default functions do not work"
     (interactive)
     (async-shell-command (concat "nunit3-console " path-to-assembly)))
+
+  (add-hook 'csharp-mode-hook #'omnisharp-mode)
+  (add-hook 'csharp-mode-hook #'subword-mode)
+  (add-hook 'csharp-mode-hook #'company-mode)
+  (add-hook 'csharp-mode-hook #'rainbow-delimiters-mode-enable)
+  (add-hook 'csharp-mode-hook (lambda ()
+                                (push '(?< . ("< " . " >")) evil-surround-pairs-alist)))
+  (add-hook 'csharp-mode-hook #'my-add-header)
+  (add-hook 'csharp-mode-hook (lambda () 
+                                (add-hook 'before-save-hook #'my-indent-buffer-without-bosss-header nil t)))
+
   (setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
   (setq my-bosss-project "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/RANS.csproj")
-  :general
   (general-define-key
    :states 'normal
-   :keymaps 'csharp-mode-map ; TODO figure out why this does not work with omnisharp-mode-map
+   :keymaps 'csharp-mode-map
    "gd" '(omnisharp-go-to-definition :which-key "go to definition")
    "gr" '(omnisharp-rename :which-key "rename"))
   (my-local-leader-def
-    :keymaps 'csharp-mode-map ; TODO figure out why this does not work with omnisharp-mode-map
+    :keymaps 'csharp-mode-map
     "b" '(:ignore :which-key "build")
     "bd" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " my-bosss-project))) :which-key "build debug")
     "br" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " my-bosss-project))) :which-key "build release")

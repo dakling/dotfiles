@@ -21,7 +21,7 @@
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
  '(package-selected-packages
    (quote
-    (diminish deminish go el-go jenkins elfeed pulseaudio-control pinentry bosss emacs-bosss projectile-ripgrep dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+    (gnus-icalendar diminish deminish go el-go jenkins elfeed pulseaudio-control pinentry bosss emacs-bosss projectile-ripgrep dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -971,8 +971,8 @@ It only works for frames with exactly two windows.
   (add-hook 'csharp-mode-hook #'subword-mode)
   (add-hook 'csharp-mode-hook #'company-mode)
   (add-hook 'csharp-mode-hook #'rainbow-delimiters-mode-enable)
-  (add-hook 'csharp-mode-hook (lambda ()
-                                (push '(?< . ("< " . " >")) evil-surround-pairs-alist)))
+  ;; (add-hook 'csharp-mode-hook (lambda ()
+  ;;                               (push '(?< . ("< " . " >")) evil-surround-pairs-alist)))
   (defun my-bosss-file-p ()
     (or
      (file-in-directory-p (buffer-file-name) "~/BoSSS/")
@@ -1014,7 +1014,7 @@ limitations under the License.
         (evil-indent beg (point-max)))))
 
   (add-hook 'csharp-mode-hook #'my-add-header)
-  (add-hook 'csharp-mode-hook (lambda ()add-hook 'before-save-hook #'my-indent-buffer-without-bosss-header nil t))
+  (add-hook 'csharp-mode-hook (lambda () (add-hook 'before-save-hook #'my-indent-buffer-without-bosss-header nil t)))
 
   (defun my-run-tests (path-to-assembly)
     "Implement tests manually as default functions do not work"

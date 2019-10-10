@@ -273,7 +273,7 @@ It only works for frames with exactly two windows.
     "a" '(:ignore t :which-key "applications")
     "ad" '(deer :which-key "call deer")
     "ab" '(helm-eww :which-key "open browser")
-    "am" '(mu4e :which-key "open mail")
+    "am" '(mu4e-alert-view-unread-mails :which-key "open unread mail")
     "ap" '(helm-system-packages :which-key "package management")
     "ao" '(sx-search :which-key "search stackoverflow")
     "ar" '(md4rd :which-key "reddit")

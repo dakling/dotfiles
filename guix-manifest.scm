@@ -33,6 +33,6 @@
    ;; "sbcl-next" ;; install from source
    "cairo"
    "global"
-   "icecat"
+   "ungoogled-chromium"
    "arandr"
    "guile"))

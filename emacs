@@ -406,17 +406,6 @@ It only works for frames with exactly two windows.
   :config
   (smooth-scrolling-mode 1))
 
-(use-package diminish
-  :ensure t
-  :config
-  (mapcar #'diminish '(reftex-mode
-                       auto-revert-mode
-                       undo-tree-mode
-                       eldoc-mode
-                       subword-mode
-                       flyspell-mode
-                       defining-kbd-macro)))
-
 (use-package smart-mode-line
   :after smart-mode-line-atom-one-dark-theme
   :ensure t
@@ -1402,6 +1391,17 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 
 (use-package go
   :ensure t)
+
+(use-package diminish
+  :ensure t
+  :config
+  (mapcar #'diminish '(reftex-mode
+                       auto-revert-mode
+                       undo-tree-mode
+                       eldoc-mode
+                       subword-mode
+                       flyspell-mode
+                       defining-kbd-macro)))
 
 ;;; emacs ends here
 

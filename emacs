@@ -4,29 +4,11 @@
 ;; I use evil-mode everywhere, and the config is based on use-package and general
 ;;; Code:
 
-;;; auto-generated stuff
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   (quote
-    ("bc75dfb513af404a26260b3420d1f3e4131df752c19ab2984a7c85def9a2917e" default)))
- '(electric-indent-mode nil)
- '(evil-snipe-mode t)
- '(evil-snipe-override-mode t)
- '(global-evil-surround-mode 1)
- '(gud-tooltip-mode t)
- '(org-agenda-files (quote ("~/Documents/TODO.org")))
- '(package-selected-packages)
- '(scroll-bar-mode nil))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+;;; put auto-generated stuff elsewhere
+(setq custom-file "~/.emacs.d/custom.el")
+(when (file-exists-p custom-file)
+  (load custom-file))
+
 
 ;;; my emacs config
 (setq package-enable-at-startup nil) ; tells emacs not to load any packages before starting up
@@ -1353,6 +1335,9 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    :states 'normal
    "RET" 'sx-display))
 
+(use-package mediawiki
+  :ensure t)
+
 (use-package md4rd
   :ensure t
   :config
@@ -1366,18 +1351,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   :config
   (setq elfeed-feeds
         '("https://www.zeitsprung.fm/feed/ogg/")))
-
-(use-package elfeed
-  :ensure t
-  :general
-  (general-define-key
-   :keymaps 'elfeed-search-mode-map
-   :states 'normal
-   "U" 'elfeed-update)
-  :config
-  (setq elfeed-feeds
-        '("130\.83\.248\.141:8080/job/BoSSS-master-klingenberg/rssFailed"
-          "https://xkcd.com/rss.xml")))
 
 (use-package pinentry
   :ensure t

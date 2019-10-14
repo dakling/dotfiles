@@ -6,8 +6,7 @@
 
 ;;; put auto-generated stuff elsewhere
 (setq custom-file "~/.emacs.d/custom.el")
-(when (file-exists-p custom-file)
-  (load custom-file))
+(load custom-file t)
 
 
 ;;; my emacs config
@@ -74,6 +73,7 @@
 (defalias 'yes-or-no-p 'y-or-n-p) ;reduce typing effort
 
 (electric-pair-mode 1) ;close brackets
+(electric-indent-mode 1)
 (push '(?< . ?>) electric-pair-pairs)   ;add angle brackets to electric pairs (autoclose brackets)
 
 ;; useful functions
@@ -436,6 +436,26 @@ It only works for frames with exactly two windows.
   (setq eshell-highlight-prompt t
         eshell-prompt-function 'epe-theme-lambda))
 
+(use-package fish-completion
+  :ensure t)
+
+(use-package bash-completion
+  :ensure t)
+
+(use-package pcomplete-extension
+  :ensure t)
+
+(use-package pcmpl-args
+  :ensure t)
+
+(use-package pcmpl-git
+  :ensure t)
+
+(use-package esh-autosuggest
+  :ensure t
+  :hook (eshell-mode . esh-autosuggest-mode))
+
+;; ranger
 (use-package ranger :ensure t
   :commands (ranger)
   :config
@@ -510,6 +530,9 @@ It only works for frames with exactly two windows.
   :ensure t)
 
 (use-package helm-unicode
+  :ensure t)
+
+(use-package helm-flycheck
   :ensure t)
 
 (use-package company
@@ -1336,6 +1359,9 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    "RET" 'sx-display))
 
 (use-package mediawiki
+  :ensure t)
+
+(use-package debbugs
   :ensure t)
 
 (use-package md4rd

@@ -19,9 +19,7 @@
  '(global-evil-surround-mode 1)
  '(gud-tooltip-mode t)
  '(org-agenda-files (quote ("~/Documents/TODO.org")))
- '(package-selected-packages
-   (quote
-    (exwm-config gnus-icalendar diminish deminish go el-go jenkins elfeed pulseaudio-control pinentry bosss emacs-bosss projectile-ripgrep dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
+ '(package-selected-packages)
  '(scroll-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -491,8 +489,8 @@ It only works for frames with exactly two windows.
    "M-y" 'helm-ff-run-copy-file
    "M-r" 'helm-ff-run-rename-file
    "M-s" 'helm-ff-run-find-file-as-root
-   "M-o" 'helm-ff-run-switch-other-frame
-   "M-O" 'helm-ff-run-switch-other-window)
+   "M-o" 'helm-ff-run-switch-other-window
+   "M-O" 'helm-ff-run-switch-other-frame)
   (general-define-key
    :keymaps 'helm-buffer-map
    "M-d" 'helm-buffer-run-kill-persistent)
@@ -584,6 +582,7 @@ It only works for frames with exactly two windows.
     :magic ("%PDF" . pdf-view-mode)
     :config
     (add-hook 'pdf-view-mode-hook 'pdf-view-midnight-minor-mode)
+    (setq-default pdf-view-display-size 'fit-page)
     (setq pdf-view-continuous nil)
     (evil-collection-init 'pdf)
     (setq pdf-view-midnight-colors '("WhiteSmoke" . "gray16"))
@@ -1380,10 +1379,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
         '("130\.83\.248\.141:8080/job/BoSSS-master-klingenberg/rssFailed"
           "https://xkcd.com/rss.xml")))
 
-;; (setenv "GPG_AGENT_INFO" "pinentry-emacs")
-;; (defun pinentry-emacs (desc prompt ok error)
-;;   (let ((str (read-passwd (concat (replace-regexp-in-string "%22" "\"" (replace-regexp-in-string "%0A" "\n" desc)) prompt ": "))))
-;;     str))
 (use-package pinentry
   :ensure t
   :init
@@ -1404,4 +1399,3 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
                        defining-kbd-macro)))
 
 ;;; emacs ends here
-

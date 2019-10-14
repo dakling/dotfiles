@@ -4,31 +4,10 @@
 ;; I use evil-mode everywhere, and the config is based on use-package and general
 ;;; Code:
 
-;;; auto-generated stuff
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   (quote
-    ("bc75dfb513af404a26260b3420d1f3e4131df752c19ab2984a7c85def9a2917e" default)))
- '(electric-indent-mode nil)
- '(evil-snipe-mode t)
- '(evil-snipe-override-mode t)
- '(global-evil-surround-mode 1)
- '(gud-tooltip-mode t)
- '(org-agenda-files (quote ("~/Documents/TODO.org")))
- '(package-selected-packages
-   (quote
-    (exwm-config gnus-icalendar diminish deminish go el-go jenkins elfeed pulseaudio-control pinentry bosss emacs-bosss projectile-ripgrep dmenu projectile helm-firefox helm-company helm-unicode helm-tramp helm-ext helm-dictionary helm-eww helm-mu helm-exwm podcaster lispy helm-system-packages mu4e-conversation excorporate md4rd sx emms yasnippet-snippets google-translate fsharp-mode wgrep guix pdf-tools magit yasnippet company ivy mu4e-alert evil-mu4e smooth-scrolling doom-themes ggtags zenburn-theme which-key use-package smart-mode-line-atom-one-dark-theme sly ranger rainbow-delimiters ox-reveal org-ref org-re-reveal org-plus-contrib org-bullets general geiser exwm evil-surround evil-snipe evil-org evil-magit evil-commentary evil-collection eval-sexp-fu eshell-prompt-extras counsel company-reftex auctex ace-link)))
- '(scroll-bar-mode nil))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+;;; put auto-generated stuff elsewhere
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file t)
+
 
 ;;; my emacs config
 (setq package-enable-at-startup nil) ; tells emacs not to load any packages before starting up
@@ -94,6 +73,7 @@
 (defalias 'yes-or-no-p 'y-or-n-p) ;reduce typing effort
 
 (electric-pair-mode 1) ;close brackets
+(electric-indent-mode 1)
 (push '(?< . ?>) electric-pair-pairs)   ;add angle brackets to electric pairs (autoclose brackets)
 
 ;; useful functions
@@ -456,6 +436,26 @@ It only works for frames with exactly two windows.
   (setq eshell-highlight-prompt t
         eshell-prompt-function 'epe-theme-lambda))
 
+(use-package fish-completion
+  :ensure t)
+
+(use-package bash-completion
+  :ensure t)
+
+(use-package pcomplete-extension
+  :ensure t)
+
+(use-package pcmpl-args
+  :ensure t)
+
+(use-package pcmpl-git
+  :ensure t)
+
+(use-package esh-autosuggest
+  :ensure t
+  :hook (eshell-mode . esh-autosuggest-mode))
+
+;; ranger
 (use-package ranger :ensure t
   :commands (ranger)
   :config
@@ -491,8 +491,8 @@ It only works for frames with exactly two windows.
    "M-y" 'helm-ff-run-copy-file
    "M-r" 'helm-ff-run-rename-file
    "M-s" 'helm-ff-run-find-file-as-root
-   "M-o" 'helm-ff-run-switch-other-frame
-   "M-O" 'helm-ff-run-switch-other-window)
+   "M-o" 'helm-ff-run-switch-other-window
+   "M-O" 'helm-ff-run-switch-other-frame)
   (general-define-key
    :keymaps 'helm-buffer-map
    "M-d" 'helm-buffer-run-kill-persistent)
@@ -530,6 +530,9 @@ It only works for frames with exactly two windows.
   :ensure t)
 
 (use-package helm-unicode
+  :ensure t)
+
+(use-package helm-flycheck
   :ensure t)
 
 (use-package company
@@ -584,6 +587,7 @@ It only works for frames with exactly two windows.
     :magic ("%PDF" . pdf-view-mode)
     :config
     (add-hook 'pdf-view-mode-hook 'pdf-view-midnight-minor-mode)
+    (setq-default pdf-view-display-size 'fit-page)
     (setq pdf-view-continuous nil)
     (evil-collection-init 'pdf)
     (setq pdf-view-midnight-colors '("WhiteSmoke" . "gray16"))
@@ -1354,6 +1358,12 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    :states 'normal
    "RET" 'sx-display))
 
+(use-package mediawiki
+  :ensure t)
+
+(use-package debbugs
+  :ensure t)
+
 (use-package md4rd
   :ensure t
   :config
@@ -1368,22 +1378,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   (setq elfeed-feeds
         '("https://www.zeitsprung.fm/feed/ogg/")))
 
-(use-package elfeed
-  :ensure t
-  :general
-  (general-define-key
-   :keymaps 'elfeed-search-mode-map
-   :states 'normal
-   "U" 'elfeed-update)
-  :config
-  (setq elfeed-feeds
-        '("130\.83\.248\.141:8080/job/BoSSS-master-klingenberg/rssFailed"
-          "https://xkcd.com/rss.xml")))
-
-;; (setenv "GPG_AGENT_INFO" "pinentry-emacs")
-;; (defun pinentry-emacs (desc prompt ok error)
-;;   (let ((str (read-passwd (concat (replace-regexp-in-string "%22" "\"" (replace-regexp-in-string "%0A" "\n" desc)) prompt ": "))))
-;;     str))
 (use-package pinentry
   :ensure t
   :init
@@ -1404,4 +1398,3 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
                        defining-kbd-macro)))
 
 ;;; emacs ends here
-

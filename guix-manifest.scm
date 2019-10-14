@@ -30,9 +30,10 @@
    "sqlite"
    "sbcl-cl-sqlite"
    "libfixposix"
-   ;; "sbcl-next" ;; install from source
+   "sbcl-next" 
    "cairo"
    "global"
+   "pavucontrol"
    "ungoogled-chromium"
    "arandr"
    "guile"))

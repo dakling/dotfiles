@@ -311,6 +311,7 @@ It only works for frames with exactly two windows.
     "ee"  'eval-last-sexp
     "ef"  'eval-defun
     "ep"  'eval-print-last-sexp
+    "er"  'eval-expression
     "i"   '(:ignore :which-key "internet")
     "id"  '((lambda () (interactive) (my-open-url "https://www.dazn.com")) :which-key "dazn")
     "ig"  '((lambda () (interactive) (my-open-url "https://www.dragongoserver.net/status.php")) :which-key "dgs")
@@ -834,6 +835,7 @@ It only works for frames with exactly two windows.
 ;;org
 (use-package org
   :diminish org-indent-mode
+  :diminish org-beamer-mode
   :ensure org-plus-contrib
   :config
   (setq org-startup-indented t)

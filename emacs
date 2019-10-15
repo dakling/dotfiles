@@ -212,7 +212,8 @@ It only works for frames with exactly two windows.
     (evil-indent (point-min) (point-max))))
 
 ;; packages with configuration
-(use-package general :ensure t
+(use-package general
+  :ensure t
   :init
   (setq general-override-states '(insert
                                   emacs
@@ -330,6 +331,7 @@ It only works for frames with exactly two windows.
 (use-package evil-collection
   :after (evil helm) 
   :ensure t
+  :defer t
   :init
   (setq evil-collection-setup-minibuffer t)
   :config
@@ -337,6 +339,7 @@ It only works for frames with exactly two windows.
 
 (use-package evil-surround
   :ensure t
+  :defer t
   :config
   (global-evil-surround-mode 1)
   (evil-define-key 'operator global-map "s" 'evil-surround-edit)
@@ -347,6 +350,7 @@ It only works for frames with exactly two windows.
 (use-package evil-snipe
   :diminish evil-snipe-local-mode
   :ensure t
+  :defer t
   :config
   (setq evil-snipe-scope 'visible)
   (evil-snipe-mode 1)
@@ -357,10 +361,12 @@ It only works for frames with exactly two windows.
 (use-package evil-commentary
   :diminish evil-commentary-mode
   :ensure t
+  :defer t
   :init (evil-commentary-mode))
 
 (use-package which-key
   :ensure t
+  :defer t
   :init (which-key-mode)
   :diminish which-key-mode)
 
@@ -433,6 +439,7 @@ It only works for frames with exactly two windows.
 
 (use-package eshell-prompt-extras
   :ensure t
+  :defer t
   :config
   (setq eshell-highlight-prompt t
         eshell-prompt-function 'epe-theme-lambda))
@@ -482,6 +489,7 @@ It only works for frames with exactly two windows.
 
 (use-package helm
   :diminish helm-mode
+  :defer t
   :after helm-exwm
   :ensure t
   :config
@@ -557,10 +565,12 @@ It only works for frames with exactly two windows.
   (yas-global-mode 1))
 
 (use-package yasnippet-snippets
-  :ensure t)
+  :ensure t
+  :after yasnippet)
 
 (use-package projectile
   :diminish projectile-mode
+  :defer t
   :ensure t
   :config
   (my-leader-def
@@ -573,6 +583,7 @@ It only works for frames with exactly two windows.
 
 (use-package magit
   :ensure t
+  :defer t
   :general (my-leader-def
              "gs" '(magit-status :which-key "git status")))
 
@@ -583,6 +594,7 @@ It only works for frames with exactly two windows.
 (unless (system-name= "localhost" "lina")
   (use-package pdf-tools
     :ensure t
+    :defer t
     :init
     (pdf-tools-install)
     :magic ("%PDF" . pdf-view-mode)
@@ -765,6 +777,7 @@ It only works for frames with exactly two windows.
 
 (use-package flycheck
   :diminish flycheck-mode
+  :defer t
   :ensure t
   :init (global-flycheck-mode))
 
@@ -789,12 +802,14 @@ It only works for frames with exactly two windows.
 (use-package lispy
   :diminish lispy-mode
   :ensure t
+  :defer t
   :config
   (add-hook 'lispy-mode-hook (lambda () (add-hook 'before-save-hook #'my-indent-buffer nil t)))
   (add-hook 'lispy-mode-hook #'rainbow-delimiters-mode-enable))
 
 (use-package sly
   :ensure t
+  :defer t
   :config
   (lispy-mode 1)
   (setq inferior-lisp-program "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")
@@ -810,6 +825,7 @@ It only works for frames with exactly two windows.
 ;;   :ensure t)
 (use-package geiser
   :ensure t
+  :defer t
   :config
   (add-hook 'scheme-mode-hook #'rainbow-delimiters-mode-enable)
   (add-hook 'scheme-mode-hook (lambda () (add-hook 'before-save-hook #'my-indent-buffer nil t)))
@@ -837,6 +853,7 @@ It only works for frames with exactly two windows.
   :diminish org-indent-mode
   :diminish org-beamer-mode
   :ensure org-plus-contrib
+  :defer t
   :config
   (setq org-startup-indented t)
   (add-hook 'org-mode-hook '(lambda () (org-indent-mode 1)))
@@ -888,11 +905,13 @@ It only works for frames with exactly two windows.
   (evil-org-agenda-set-keys))
 
 (use-package org-bullets
+  :ensure t
   :config
   (add-hook 'org-mode-hook '(lambda () (org-bullets-mode 1))))
 
 (use-package org-ref
   :ensure t
+  :defer t
   :init
   (setq org-latex-pdf-process (list "latexmk -shell-escape -f -pdf %f"))
   :config
@@ -905,12 +924,6 @@ It only works for frames with exactly two windows.
     "r" '(:ignore :which-key "references")
     "rc" '(org-ref-helm-insert-cite-link :which-key "insert citation")
     "rr" '(org-ref-insert-ref-link :which-key "insert reference")))
-
-(use-package org-bullets
-  :ensure t
-  :after org
-  :config
-  (org-bullets-mode 1))
 
 (use-package org-re-reveal
   :ensure t)
@@ -936,6 +949,7 @@ It only works for frames with exactly two windows.
 
 (use-package jenkins
   :ensure t
+  :defer t
   :config
   (setq jenkins-api-token "115e5da14d9018ef2d51d040fefc48eeb4")
   (setq jenkins-url "http://130.83.248.141:8080/")
@@ -958,6 +972,7 @@ It only works for frames with exactly two windows.
 (use-package omnisharp
   :diminish omnisharp-mode
   :ensure t
+  :defer t
   :config
   (defun my-bosss-file-p ()
     (or
@@ -1042,6 +1057,7 @@ limitations under the License.
 ;; bosss
 (use-package bosss
   :ensure t
+  :defer t
   :init
   (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
   (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Debug/BoSSSpad.exe")
@@ -1062,6 +1078,7 @@ limitations under the License.
 
 (use-package fsharp-mode
   :ensure t
+  :defer t
   :general
   (my-local-leader-def
     :keymaps 'fsharp-mode-map
@@ -1070,6 +1087,7 @@ limitations under the License.
 ;;latex (auctex)
 (use-package tex
   :ensure auctex
+  :defer t
   :init
   (setq
    ;; TeX-command-default 'LaTeX
@@ -1159,6 +1177,7 @@ limitations under the License.
 
 (use-package company-reftex
   :ensure t
+  :defer t
   :config
   (add-to-list 'company-backends 'company-reftex-labels t)
   (add-to-list 'company-backends 'company-reftex-citations t))
@@ -1330,10 +1349,12 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 ;;   :config (auto-dim-other-buffers-mode t))
 
 (use-package google-translate
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package excorporate
   :ensure t
+  :defer t
   :config
   (general-define-key
    :keymaps 'calendar-mode-map
@@ -1347,6 +1368,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 
 (use-package emms
   :ensure t
+  :defer t
   :config
   (emms-standard)
   (emms-default-players)
@@ -1354,6 +1376,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 
 (use-package sx
   :ensure t
+  :defer t
   :config
   (general-define-key
    :keymaps 'sx-question-list-mode-map
@@ -1361,13 +1384,16 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    "RET" 'sx-display))
 
 (use-package mediawiki
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package debbugs
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package md4rd
   :ensure t
+  :defer t
   :config
   (mapc
    (lambda (elem) (add-to-list 'md4rd-subs-active elem))
@@ -1376,6 +1402,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 
 (use-package elfeed
   :ensure t
+  :defer t
   :config
   (setq elfeed-feeds
         '("https://www.zeitsprung.fm/feed/ogg/")))

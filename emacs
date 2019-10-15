@@ -798,6 +798,25 @@ It only works for frames with exactly two windows.
 ;; 	     "ef" '(slime-eval-function :which-key "eval function")
 ;; 	     "ee" '(slime-eval-last-expression :which-key "eval last expression")
 ;; 	     "eb" '(slime-eval-buffer :which-key "eval buffer")))
+(use-package lsp-mode
+  :ensure t
+  :hook (csharp-mode . lsp)
+  :commands lsp)
+
+;; optionally
+(use-package lsp-ui 
+  :ensure t
+  :commands lsp-ui-mode)
+(use-package company-lsp
+  :ensure t
+  :commands company-lsp)
+(use-package helm-lsp
+  :ensure t
+  :commands helm-lsp-workspace-symbol)
+;; optionally if you want to use debugger
+(use-package dap-mode
+  :ensure t)
+;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 
 (use-package lispy
   :diminish lispy-mode
@@ -806,6 +825,14 @@ It only works for frames with exactly two windows.
   :config
   (add-hook 'lispy-mode-hook (lambda () (add-hook 'before-save-hook #'my-indent-buffer nil t)))
   (add-hook 'lispy-mode-hook #'rainbow-delimiters-mode-enable))
+
+(use-package lispyville
+  :ensure t
+  :diminish lispyville-mode
+  :init
+  (general-add-hook '(emacs-lisp-mode-hook lisp-mode-hook) #'lispyville-mode)
+  :config
+  (lispyville-set-key-theme '(operators c-w additional)))
 
 (use-package sly
   :ensure t

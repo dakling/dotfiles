@@ -52,8 +52,6 @@
 (setq delete-by-moving-to-trash t)
 (setq-default indent-tabs-mode nil)
 
-(show-paren-mode 1)
-
 (display-time-mode)
 (setq display-time-24hr-format t
       display-time-default-load-average nil)
@@ -73,7 +71,11 @@
 (defalias 'yes-or-no-p 'y-or-n-p) ;reduce typing effort
 
 (electric-pair-mode 1) ;close brackets
-(electric-indent-mode 1)
+
+(electric-indent-mode)
+
+(show-paren-mode 1)
+
 (push '(?< . ?>) electric-pair-pairs)   ;add angle brackets to electric pairs (autoclose brackets)
 
 ;; useful functions
@@ -331,7 +333,6 @@ It only works for frames with exactly two windows.
 (use-package evil-collection
   :after (evil helm) 
   :ensure t
-  :defer t
   :init
   (setq evil-collection-setup-minibuffer t)
   :config
@@ -339,7 +340,6 @@ It only works for frames with exactly two windows.
 
 (use-package evil-surround
   :ensure t
-  :defer t
   :config
   (global-evil-surround-mode 1)
   (evil-define-key 'operator global-map "s" 'evil-surround-edit)
@@ -350,7 +350,6 @@ It only works for frames with exactly two windows.
 (use-package evil-snipe
   :diminish evil-snipe-local-mode
   :ensure t
-  :defer t
   :config
   (setq evil-snipe-scope 'visible)
   (evil-snipe-mode 1)
@@ -361,7 +360,6 @@ It only works for frames with exactly two windows.
 (use-package evil-commentary
   :diminish evil-commentary-mode
   :ensure t
-  :defer t
   :init (evil-commentary-mode))
 
 (use-package which-key
@@ -439,7 +437,7 @@ It only works for frames with exactly two windows.
 
 (use-package eshell-prompt-extras
   :ensure t
-  :defer t
+  :commands eshell
   :config
   (setq eshell-highlight-prompt t
         eshell-prompt-function 'epe-theme-lambda))
@@ -465,7 +463,7 @@ It only works for frames with exactly two windows.
 
 ;; ranger
 (use-package ranger :ensure t
-  :commands (ranger)
+  :commands ranger
   :config
   (general-define-key
    :keymaps 'ranger-normal-mode-map
@@ -583,7 +581,7 @@ It only works for frames with exactly two windows.
 
 (use-package magit
   :ensure t
-  :defer t
+  :commands magit-status
   :general (my-leader-def
              "gs" '(magit-status :which-key "git status")))
 
@@ -818,6 +816,9 @@ It only works for frames with exactly two windows.
   :ensure t)
 ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 
+(add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))
+(add-hook 'lisp-mode-hook (lambda () (lispy-mode 1)))
+
 (use-package lispy
   :diminish lispy-mode
   :ensure t
@@ -829,6 +830,7 @@ It only works for frames with exactly two windows.
 (use-package lispyville
   :ensure t
   :diminish lispyville-mode
+  :after lispy
   :init
   (general-add-hook '(emacs-lisp-mode-hook lisp-mode-hook) #'lispyville-mode)
   :config
@@ -838,7 +840,6 @@ It only works for frames with exactly two windows.
   :ensure t
   :defer t
   :config
-  (lispy-mode 1)
   (setq inferior-lisp-program "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")
   :general (my-local-leader-def
              :keymaps 'lisp-mode-map
@@ -1452,5 +1453,8 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
                        subword-mode
                        flyspell-mode
                        defining-kbd-macro)))
+
+;; profiling
+
 
 ;;; emacs ends here

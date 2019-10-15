@@ -103,12 +103,12 @@
 (defun find-config-file ()
   "Open emacs configuration file."
   (interactive)
-  (find-file "~/.emacs"))
+  (find-file "~/.emacs.d/init.el"))
 
 (defun load-config-file ()
   "Load emacs configuration file."
   (interactive)
-  (load-file "~/.emacs"))
+  (load-file "~/.emacs.d/init.el"))
 
 (defun find-dotfile-dir ()
   "Open dotfile directory."

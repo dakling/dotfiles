@@ -1454,6 +1454,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
                          auto-revert-mode
                          undo-tree-mode
                          eldoc-mode
+                         pdf-view-midnight-minor-mode
                          subword-mode
                          flyspell-mode
                          defining-kbd-macro))))

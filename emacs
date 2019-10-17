@@ -1118,7 +1118,6 @@ limitations under the License.
   ;;latex (auctex)
   (use-package tex
     :ensure auctex
-    :defer t
     :init
     (setq
      ;; TeX-command-default 'LaTeX
@@ -1155,7 +1154,6 @@ limitations under the License.
     ;;  "-"  nil)
     ;; (add-to-list 'company-backends 'company-auctex t)
     (add-to-list 'company-backends 'company-math t)
-    :general
     (my-local-leader-def
       :keymaps 'LaTeX-mode-map
       "-"   'TeX-recenter-output-buffer         

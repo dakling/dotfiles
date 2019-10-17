@@ -586,6 +586,17 @@ It only works for frames with exactly two windows.
 
   (use-package ediff :ensure t)
 
+  (use-package doc-view
+    :ensure t
+    :config
+    (general-define-key
+     :states 'normal
+     :keymaps 'doc-view-mode-map
+     "j" 'doc-view-next-page
+     "k" 'doc-view-previous-page
+     "<down>" 'doc-view-next-page
+     "<up>" 'doc-view-previous-page))
+
   (unless (system-name= "localhost" "lina")
     (use-package pdf-tools
       :ensure t
@@ -608,6 +619,8 @@ It only works for frames with exactly two windows.
        "-"  nil ;TODO where to put this globally?
        "j"  '(pdf-view-scroll-up-or-next-page :which-key "scroll down")
        "k"  '(pdf-view-scroll-down-or-previous-page :which-key "scroll up")
+       "<down>" 'pdf-view-scroll-up-or-next-page
+       "<up>" 'pdf-view-scroll-down-or-previous-page
        ;; "j"  '(pdf-view-next-line-or-next-page :which-key "scroll down")
        ;; "k"  '(pdf-view-previous-line-or-previous-page :which-key "scroll up")
        "L"  '(image-forward-hscroll :which-key "scroll right")
@@ -1155,7 +1168,7 @@ limitations under the License.
     ;; (add-to-list 'company-backends 'company-auctex t)
     (add-to-list 'company-backends 'company-math t)
     (my-local-leader-def
-      :keymaps 'LaTeX-mode-map
+      :keymaps '(TeX-mode-map LaTeX-mode-map)
       "-"   'TeX-recenter-output-buffer         
       "."   'LaTeX-mark-environment
       "*"   'LaTeX-mark-section

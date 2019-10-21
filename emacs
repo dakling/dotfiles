@@ -571,8 +571,16 @@ It only works for frames with exactly two windows.
     (my-leader-def
       :states 'normal
       "p" 'projectile-command-map)
-    (projectile-mode 1))
+    (projectile-mode 1)
+    (use-package helm-projectile
+      :ensure t))
 
+  (use-package helm-projectile
+    :ensure t
+    :after projectile
+    :config
+    (helm-projectile-on))
+  
   (use-package projectile-ripgrep
     :ensure t)
 

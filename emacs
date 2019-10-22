@@ -1112,6 +1112,7 @@ limitations under the License.
    :states 'normal
    :keymaps 'csharp-mode-map
    "gd" '(omnisharp-go-to-definition :which-key "go to definition")
+   "<f12>" '(omnisharp-go-to-definition :which-key "go to definition for Florian")
    "gr" '(omnisharp-rename :which-key "rename"))
   (my-local-leader-def
     :keymaps 'csharp-mode-map

@@ -81,7 +81,7 @@
 
 (setq
  initial-scratch-message
- "(print \"Welcome\") \n \n (async-shell-command \"yay --sudoloop -Syu\") \n \n (shell-command-to-string \"acpi -b\") \n \n (find-file \"~/BoSSS-experimental/internal/src/private-kli/RANS_Solver/RANS_Main.cs\")") ; print a default message in the empty scratch buffer opened at startup
+ "(print \"Welcome\") \n \n(async-shell-command \"yay --sudoloop -Syu\") \n \n(shell-command-to-string \"acpi -b\") \n \n(find-file \"~/BoSSS-experimental/internal/src/private-kli/RANS_Solver/RANS_Main.cs\")") ; print a default message in the empty scratch buffer opened at startup
 
 (defalias 'yes-or-no-p 'y-or-n-p) ;reduce typing effort
 
@@ -458,7 +458,6 @@ It only works for frames with exactly two windows.
 
 (use-package eshell-prompt-extras
   :ensure t
-  :commands eshell
   :config
   (setq eshell-highlight-prompt t
         eshell-prompt-function 'epe-theme-lambda))

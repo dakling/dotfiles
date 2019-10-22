@@ -4,6 +4,8 @@
 ;; I use evil-mode everywhere, and the config is based on use-package and general
 ;;; Code:
 
+;;; my emacs config
+;;; 
 ;;; speed up startup using Ambrevar's suggestions:
 ;;; Temporarily reduce garbage collection during startup. Inspect `gcs-done'.
 (defun ambrevar/reset-gc-cons-threshold ()
@@ -21,10 +23,6 @@
   (cl-delete-duplicates file-name-handler-alist :test 'equal))
 (add-hook 'after-init-hook #'ambrevar/reset-file-name-handler-alist)
 
-;;; 
-(setq custom-file "~/.emacs.d/custom.el")
-(load custom-file t)
-
 (defun my-minibuffer-setup-hook ()
   (setq gc-cons-threshold most-positive-fixnum))
 
@@ -33,7 +31,11 @@
 
 (add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
 (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
-;;; my emacs config
+
+;;; 
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file t)
+
 (setq package-enable-at-startup nil) ; tells emacs not to load any packages before starting up
 ;; the following lines tell emacs where on the internet to look up
 ;; for new packages.
@@ -836,27 +838,28 @@ It only works for frames with exactly two windows.
 ;; 	     "ef" '(slime-eval-function :which-key "eval function")
 ;; 	     "ee" '(slime-eval-last-expression :which-key "eval last expression")
 ;; 	     "eb" '(slime-eval-buffer :which-key "eval buffer")))
-(use-package lsp-mode
-  :ensure t
-  :hook (csharp-mode . lsp)
-  :commands lsp)
 
-;; optionally
-(use-package lsp-ui 
-  :ensure t
-  :commands lsp-ui-mode)
+;; (use-package lsp-mode
+;;   :ensure t
+;;   :hook (csharp-mode . lsp)
+;;   :commands lsp)
 
-(use-package company-lsp
-  :ensure t
-  :commands company-lsp)
+;; ;; optionally
+;; (use-package lsp-ui 
+;;   :ensure t
+;;   :commands lsp-ui-mode)
 
-(use-package helm-lsp
-  :ensure t
-  :commands helm-lsp-workspace-symbol)
+;; (use-package company-lsp
+;;   :ensure t
+;;   :commands company-lsp)
 
-;; optionally if you want to use debugger
-(use-package dap-mode
-  :ensure t)
+;; (use-package helm-lsp
+;;   :ensure t
+;;   :commands helm-lsp-workspace-symbol)
+
+;; ;; optionally if you want to use debugger
+;; (use-package dap-mode
+;;   :ensure t)
 
 ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 

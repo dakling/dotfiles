@@ -954,6 +954,7 @@ It only works for frames with exactly two windows.
             (let ((current-prefix-arg '-)) ; simulate pressing C-u
               (call-interactively 'org-export-dispatch))) :which-key "repeat last export")
     "s" '(org-edit-special :which-key "edit source code")
+    "t" 'org-todo
     "l" '(:ignore :which-key "links")
     "ll" '(org-insert-link :which-key "insert link")
     "lf" '((lambda () (interactive)

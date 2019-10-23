@@ -377,6 +377,22 @@ It only works for frames with exactly two windows.
   :ensure t
   :init (evil-commentary-mode))
 
+(use-package evil-args
+  :ensure t
+  :config
+  ;; bind evil-args text objects
+  (define-key evil-inner-text-objects-map "a" 'evil-inner-arg)
+  (define-key evil-outer-text-objects-map "a" 'evil-outer-arg)
+  (general-define-key
+   :keymaps 'override
+   :states 'normal
+   "gl" 'evil-forward-arg
+   "gh" 'evil-backward-arg
+   "gK" 'evil-jump-out-args))
+
+(use-package evil-iedit-state
+  :ensure t)
+
 (use-package evil-mc
   :diminish evil-mc-mode
   :ensure t

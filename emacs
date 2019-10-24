@@ -1065,7 +1065,6 @@ It only works for frames with exactly two windows.
 (use-package omnisharp
   :diminish omnisharp-mode
   :ensure t
-  :defer t
   :config
   (defun my-bosss-file-p ()
     (or

@@ -965,6 +965,11 @@ It only works for frames with exactly two windows.
    '((lisp . t)))
   (setq org-babel-lisp-eval-fn 'sly-eval)
   (setq org-default-notes-file "~/Documents/TODO.org")
+  (setq org-capture-templates
+        '(("t" "todo with link" entry (file+headline org-default-notes-file "Tasks")
+           "* TODO %i%? \n:PROPERTIES: \n:CREATED: %U \n:END: \n %a\n")
+          ("p" "Process" entry (file+headline org-default-notes-file "Tasks")
+           "* TODO [#A] Process mail from %:fromname on %:subject\nSCHEDULED:%t\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+2d\"))\n:PROPERTIES:\n:CREATED: %U\n:END:\n %a" :immediate-finish t :prepend t)))
   :general
   (my-local-leader-def
     :keymaps 'org-mode-map
@@ -1326,7 +1331,7 @@ limitations under the License.
   (setq mu4e-refile-folder "/Archive")
   (setq mu4e-get-mail-command "offlineimap -o")
   (setq mu4e-update-interval 60)
-  (setq mu4e-hide-index-messages t)     ; do not show minibuffer messages after updates
+  (setq mu4e-hide-index-messages t) ; do not show minibuffer messages after updates
   (setq mu4e-index-update-error-warning nil)
   (setq mu4e-compose-signature-auto-include t)
   (setq mu4e-view-show-images t)

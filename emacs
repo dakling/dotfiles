@@ -966,7 +966,9 @@ It only works for frames with exactly two windows.
   (setq org-babel-lisp-eval-fn 'sly-eval)
   (setq org-default-notes-file "~/Documents/TODO.org")
   (setq org-capture-templates
-        '(("t" "todo with link" entry (file+headline org-default-notes-file "Tasks")
+        '(("t" "todo" entry (file+headline org-default-notes-file "Tasks")
+           "* TODO %i%? \n:PROPERTIES: \n:CREATED: %U \n:END: \n ")
+          ("l" "todo with link" entry (file+headline org-default-notes-file "Tasks")
            "* TODO %i%? \n:PROPERTIES: \n:CREATED: %U \n:END: \n %a\n")
           ("p" "Process" entry (file+headline org-default-notes-file "Tasks")
            "* TODO [#A] Process mail from %:fromname on %:subject\nSCHEDULED:%t\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+2d\"))\n:PROPERTIES:\n:CREATED: %U\n:END:\n %a" :immediate-finish t :prepend t)))

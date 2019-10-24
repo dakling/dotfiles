@@ -139,8 +139,9 @@
   (calendar))
 
 (defun my-get-rid-of-mouse ()
+  "Move the mouse to the bottom right corner of the screen"
   (interactive)
-  (shell-command "xdotool mousemove 0 0"))
+  (shell-command "xdotool mousemove 100000 100000")) ; extremely high numbers to ensure the cursor goes to the bottom right regardless of display size
 
 (defun my--convert-to-pdf (filename)
   (shell-command (concat "unoconv " filename)))

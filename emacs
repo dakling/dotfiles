@@ -298,7 +298,7 @@ It only works for frames with exactly two windows.
     "b" '(:ignore t :which-key "buffer")
     "bb" '(helm-mini :which-key "switch buffer")
     "be" '(helm-exwm :which-key "switch to exwm buffer")
-    "bd" '(my-close-buffer :which-key "kill buffer")
+    "bd" '(kill-this-buffer :which-key "kill buffer")
     "w"  '(:ignore t :which-key "window management")
     "w TAB"  '(lambda () (interactive) (ivy--switch-buffer-action (buffer-name (other-buffer (current-buffer)))))
     ;; "w2"  'spacemacs/layout-double-columns

@@ -118,12 +118,12 @@
    (t "firefox")))
 
 (defun find-config-file ()
-  "Open emacs configuration file."
+  "Open Emacs configuration file."
   (interactive)
   (find-file "~/.emacs.d/init.el"))
 
 (defun load-config-file ()
-  "Load emacs configuration file."
+  "Load Emacs configuration file."
   (interactive)
   (load-file "~/.emacs.d/init.el"))
 
@@ -965,6 +965,7 @@ It only works for frames with exactly two windows.
    '((lisp . t)))
   (setq org-babel-lisp-eval-fn 'sly-eval)
   (setq org-default-notes-file "~/Documents/TODO.org")
+  (setq org-agenda-contributing-files (list org-default-notes-file))
   (setq org-capture-templates
         '(("t" "todo" entry (file+headline org-default-notes-file "Tasks")
            "* TODO %i%? \n:PROPERTIES: \n:CREATED: %U \n:END: \n ")

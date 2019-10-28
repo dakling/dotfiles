@@ -892,7 +892,8 @@ It only works for frames with exactly two windows.
 ;; (use-package dap-mode
 ;;   :ensure t)
 
-;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+;; (use-package dap-csharp
+;;   :ensure t) ; to load the dap adapter for your language
 
 (add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))
 (add-hook 'lisp-mode-hook (lambda () (lispy-mode 1)))

@@ -471,6 +471,21 @@ It only works for frames with exactly two windows.
 (menu-bar-no-scroll-bar)
 
 ;; eshell
+(defun my-eshell-delete-line ()
+  (interactive)
+  (eshell-bol)
+  (kill-line))
+
+(defun my-eshell-change-line ()
+  (interactive)
+  (my-eshell-delete-line)
+  (evil-insert 1))
+
+;; (my-local-leader-def
+;;   :keymaps 'eshell-mode-map ; mode map not defined
+;;   "dd" 'my-eshell-delete-line
+;;   "cc" 'my-eshell-change-line)
+
 (setq eshell-cmpl-ignore-case t)
 
 (use-package eshell-prompt-extras

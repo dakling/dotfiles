@@ -392,7 +392,12 @@ It only works for frames with exactly two windows.
    "gK" 'evil-jump-out-args))
 
 (use-package evil-iedit-state
-  :ensure t)
+  :ensure t
+  :config
+  (general-define-key
+   :keymaps 'override
+   :states 'normal
+   "C-s" 'iedit))
 
 (use-package evil-mc
   :diminish evil-mc-mode

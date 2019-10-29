@@ -1359,12 +1359,23 @@ limitations under the License.
   (setq message-send-mail-function 'smtpmail-send-it)
   (setq smtpmail-stream-type 'ssl)
   (setq mu4e-view-show-addresses t)
-  (load "~/.emacs-signatures.el" t)
   (setq my-mu4e-account-alist
         '(("FDY"
            (mu4e-sent-messages-behavior sent)
            (mu4e-compose-signature-auto-include t)
-           (mu4e-compose-signature fdy-signature)
+           (mu4e-compose-signature
+            "Technische Universität Darmstadt
+Dario Klingenberg, M.Sc.
+Fachgebiet für Strömungsdynamik
+Fachbereich Maschinenbau
+Fachgebiet für Strömungsdynamik (FDY)
+Otto-Berndt-Straße 2 (L1|01 322)
+64287 Darmstadt
+
+E-Mail: klingenberg@fdy.tu-darmstadt.de
+Telefon: +9 6151 16-26207
+Fax: +49 6151 16-26203
+Web: http://www.fdy.tu-darmstadt.de")
            (mu4e-sent-folder "/FDY/Sent Items")
            (mu4e-drafts-folder "/FDY/Drafts")
            (smtpmail-smtp-server "smtp.tu-darmstadt.de")
@@ -1375,7 +1386,17 @@ limitations under the License.
           ("GSC"
            (mu4e-sent-messages-behavior sent)
            (mu4e-compose-signature-auto-include t)
-           (mu4e-compose-signature gsc-signature)
+           (mu4e-compose-signature
+            "Technische Universität Darmstadt
+Dario Klingenberg, M.Sc.
+Graduate School Computational Engineering
+Dolivostraße 15
+64293 Darmstadt
+
+E-Mail: klingenberg@gsc.tu-darmstadt.de
+Telefon: +49 6151 16-24381
+Fax: +49 6151 16-24404
+Web: http://www.gsc.ce.tu-darmstadt.de/")
            (mu4e-sent-folder "/GSC/Sent Items")
            (mu4e-drafts-folder "/GSC/Drafts")
            (smtpmail-smtp-server "smtp.gsc.ce.tu-darmstadt.de")

@@ -875,27 +875,52 @@ It only works for frames with exactly two windows.
 ;; 	     "ee" '(slime-eval-last-expression :which-key "eval last expression")
 ;; 	     "eb" '(slime-eval-buffer :which-key "eval buffer")))
 
-;; (use-package lsp-mode
-;;   :ensure t
-;;   :hook (csharp-mode . lsp)
-;;   :commands lsp)
+(use-package lsp-mode
+  :ensure t
+  :hook (csharp-mode . lsp)
+  :commands lsp
+  :config
+  (general-define-key
+   :states 'normal
+   :keymaps 'lsp-mode-map
+   "gd" '(lsp-find-definition :which-key "go to definition")
+   "<f12>" '(lsp-find-definition :which-key "go to definition for Florian")
+   "gr" '(lsp-rename :which-key "rename"))
+  (my-local-leader-def
+    :keymaps 'lsp-mode-map
+    "b" '(:ignore :which-key "build")
+    "bd" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " my-bosss-project))) :which-key "build debug")
+    "br" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " my-bosss-project))) :which-key "build release")
+    "be" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " bosss-master-solution))) :which-key "build everything")
+    "bb" '(recompile :which-key "recompile")
+    ;; "t" '(omnisharp-current-type-information :which-key "current type information")
+    ;; "T" '(omnisharp-current-type-documentation :which-key "current type documentation")
+    ;; "gr" '(omnisharp-run-code-action-refactoring :which-key "refactor")
+    "fi" '(lsp-find-implementation :which-key "find implementations")
+    ;; "fu" '(omnisharp-find-usages :which-key "find usages")
+    ;; "fI" '(omnisharp-fix-code-issue-at-point :which-key "fix code issue at point")
+    ;; "fU" '(omnisharp-fix-usings :which-key "fix usings")
+    ;; "rt" '((lambda () (interactive) (my-run-tests my-bosss-project)) :which-key "run tests")
+    ;; "ro" '(run-csharp-repl-other-frame :which-key "start repl")
+    ;; "rr" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl")
+    ))
 
-;; ;; optionally
-;; (use-package lsp-ui 
-;;   :ensure t
-;;   :commands lsp-ui-mode)
+;; optionally
+(use-package lsp-ui 
+  :ensure t
+  :commands lsp-ui-mode)
 
-;; (use-package company-lsp
-;;   :ensure t
-;;   :commands company-lsp)
+(use-package company-lsp
+  :ensure t
+  :commands company-lsp)
 
-;; (use-package helm-lsp
-;;   :ensure t
-;;   :commands helm-lsp-workspace-symbol)
+(use-package helm-lsp
+  :ensure t
+  :commands helm-lsp-workspace-symbol)
 
-;; ;; optionally if you want to use debugger
-;; (use-package dap-mode
-;;   :ensure t)
+;; optionally if you want to use debugger
+(use-package dap-mode
+  :ensure t)
 
 ;; (use-package dap-csharp
 ;;   :ensure t) ; to load the dap adapter for your language
@@ -1087,14 +1112,12 @@ It only works for frames with exactly two windows.
     "o" '(jenkins--show-console-output-from-job-screen :which-key "view")))
 
 ;;c#
-(use-package csharp-repl
-  :load-path "~/Documents/programming/elisp/emacs-csharp-repl/"
-  :ensure t)
+(defun my-setup-csharp-and-bosss ()
+  "Setup stuff specific to bosss and csharp."
+  (use-package csharp-repl
+    :load-path "~/Documents/programming/elisp/emacs-csharp-repl/"
+    :ensure t)
 
-(use-package omnisharp
-  :diminish omnisharp-mode
-  :ensure t
-  :config
   (defun my-bosss-file-p ()
     (or
      (file-in-directory-p (buffer-file-name) "~/BoSSS/")
@@ -1152,12 +1175,7 @@ limitations under the License.
 
   (setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
   (setq my-bosss-project "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/RANS.csproj")
-  (general-define-key
-   :states 'normal
-   :keymaps 'csharp-mode-map
-   "gd" '(omnisharp-go-to-definition :which-key "go to definition")
-   "<f12>" '(omnisharp-go-to-definition :which-key "go to definition for Florian")
-   "gr" '(omnisharp-rename :which-key "rename"))
+
   (my-local-leader-def
     :keymaps 'csharp-mode-map
     "b" '(:ignore :which-key "build")
@@ -1165,39 +1183,120 @@ limitations under the License.
     "br" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " my-bosss-project))) :which-key "build release")
     "be" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " bosss-master-solution))) :which-key "build everything")
     "bb" '(recompile :which-key "recompile")
-    "t" '(omnisharp-current-type-information :which-key "current type information")
-    "T" '(omnisharp-current-type-documentation :which-key "current type documentation")
-    "gr" '(omnisharp-run-code-action-refactoring :which-key "refactor")
-    "fi" '(omnisharp-find-implementations :which-key "find implementations")
-    "fu" '(omnisharp-find-usages :which-key "find usages")
-    "fI" '(omnisharp-fix-code-issue-at-point :which-key "fix code issue at point")
-    "fU" '(omnisharp-fix-usings :which-key "fix usings")
     "rt" '((lambda () (interactive) (my-run-tests my-bosss-project)) :which-key "run tests")
     "ro" '(run-csharp-repl-other-frame :which-key "start repl")
-    "rr" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl")))
+    "rr" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl"))
 
-;; bosss
-(use-package bosss
-  :load-path "~/Documents/programming/elisp/emacs-bosss/"
-  :ensure t
-  :defer t
-  :init
-  (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
-  (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Debug/BoSSSpad.exe")
-  (setq bosss-path-reference "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/bin/Debug/RANS_Solver.exe")
-  :config
-  (my-local-leader-def
-    :keymaps 'bosss-mode-map
-    "j" '(bosss-next-field :which-key "next field")
-    "k" '(bosss-previous-field :which-key "previous field")
-    "ro" '(run-bosss-repl-other-window :which-key "start repl in other window")
-    "rn" '(bosss-bosss-repl-run-bosss-pad :which-key "run bossspad")
-    "ef" '(bosss-repl-send-current-field :which-key "send region to repl")
-    "ee" '(bosss-repl-send-region :which-key "send region to repl")
-    "eb" '(bosss-repl-send-buffer :which-key "send buffer to repl")
-    "en" '(bosss-eval-and-next-field :which-key "eval and next field")
-    "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
-    "in" '(bosss-create-new-field :which-key "create new input field")))
+  ;; bosss
+  (use-package bosss
+    :load-path "~/Documents/programming/elisp/emacs-bosss/"
+    :ensure t
+    :defer t
+    :init
+    (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
+    (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Debug/BoSSSpad.exe")
+    (setq bosss-path-reference "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/bin/Debug/RANS_Solver.exe")
+    :config
+    (my-local-leader-def
+      :keymaps 'bosss-mode-map
+      "j" '(bosss-next-field :which-key "next field")
+      "k" '(bosss-previous-field :which-key "previous field")
+      "ro" '(run-bosss-repl-other-window :which-key "start repl in other window")
+      "rn" '(bosss-bosss-repl-run-bosss-pad :which-key "run bossspad")
+      "ef" '(bosss-repl-send-current-field :which-key "send region to repl")
+      "ee" '(bosss-repl-send-region :which-key "send region to repl")
+      "eb" '(bosss-repl-send-buffer :which-key "send buffer to repl")
+      "en" '(bosss-eval-and-next-field :which-key "eval and next field")
+      "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
+      "in" '(bosss-create-new-field :which-key "create new input field"))))
+
+(add-hook 'csharp-mode-hook 'my-setup-csharp-and-bosss)
+
+;; (use-package omnisharp
+;;   :diminish omnisharp-mode
+;;   :ensure t
+;;   :config
+;;   (defun my-bosss-file-p ()
+;;     (or
+;;      (file-in-directory-p (buffer-file-name) "~/BoSSS/")
+;;      (file-in-directory-p (buffer-file-name) "~/BoSSS-experimental/")))
+
+;;   (defun my-add-header ()
+;;     (interactive)
+;;     (let ((header-text
+;;            (concat
+;;             "/* =======================================================================
+;; Copyright " (format-time-string "%Y") " Technische Universitaet Darmstadt, Fachgebiet fuer Stroemungsdynamik (chair of fluid dynamics)
+
+;; Licensed under the Apache License, Version 2.0 (the \"License\");
+;; you may not use this file except in compliance with the License.
+;; You may obtain a copy of the License at
+
+;;     http://www.apache.org/licenses/LICENSE-2.0
+
+;; Unless required by applicable law or agreed to in writing, software
+;; distributed under the License is distributed on an \"AS IS\" BASIS,
+;; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+;; See the License for the specific language governing permissions and
+;; limitations under the License.
+;; */
+
+;; ")))
+;;       (save-excursion
+;;         (goto-line 0)
+;;         (when (my-bosss-file-p)
+;;           (unless (search-forward (substring header-text 93) nil t) ;; check if header already exists, start a bit later to ignore year)
+;;             (princ header-text (current-buffer)))))))
+
+;;   (defun my-indent-buffer-without-bosss-header ()
+;;     "Indent file, but ignore header"
+;;     (interactive)
+;;     (save-excursion
+;;       (goto-line 16)
+;;       (let ((beg (point)))
+;;         (evil-indent beg (point-max)))))
+
+;;   (defun my-run-tests (path-to-assembly)
+;;     "Implement tests manually as default functions do not work"
+;;     (interactive)
+;;     (async-shell-command (concat "nunit3-console " path-to-assembly)))
+
+;;   (add-hook 'csharp-mode-hook #'omnisharp-mode)
+;;   (add-hook 'csharp-mode-hook #'subword-mode)
+;;   (add-hook 'csharp-mode-hook #'company-mode)
+;;   (add-hook 'csharp-mode-hook #'rainbow-delimiters-mode-enable)
+;;   (add-hook 'csharp-mode-hook (lambda ()
+;;                                 (push '(?< . ("< " . " >")) evil-surround-pairs-alist)))
+;;   (add-hook 'csharp-mode-hook #'my-add-header)
+;;   (add-hook 'csharp-mode-hook (lambda () 
+;;                                 (add-hook 'before-save-hook #'my-indent-buffer-without-bosss-header nil t)))
+
+;;   (setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
+;;   (setq my-bosss-project "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/RANS.csproj")
+;;   ;; (general-define-key
+;;   ;;  :states 'normal
+;;   ;;  :keymaps 'csharp-mode-map
+;;   ;;  "gd" '(omnisharp-go-to-definition :which-key "go to definition")
+;;   ;;  "<f12>" '(omnisharp-go-to-definition :which-key "go to definition for Florian")
+;;   ;;  "gr" '(omnisharp-rename :which-key "rename"))
+;;   ;; (my-local-leader-def
+;;   ;;   :keymaps 'csharp-mode-map
+;;   ;;   "b" '(:ignore :which-key "build")
+;;   ;;   "bd" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " my-bosss-project))) :which-key "build debug")
+;;   ;;   "br" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " my-bosss-project))) :which-key "build release")
+;;   ;;   "be" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " bosss-master-solution))) :which-key "build everything")
+;;   ;;   "bb" '(recompile :which-key "recompile")
+;;   ;;   "t" '(omnisharp-current-type-information :which-key "current type information")
+;;   ;;   "T" '(omnisharp-current-type-documentation :which-key "current type documentation")
+;;   ;;   "gr" '(omnisharp-run-code-action-refactoring :which-key "refactor")
+;;   ;;   "fi" '(omnisharp-find-implementations :which-key "find implementations")
+;;   ;;   "fu" '(omnisharp-find-usages :which-key "find usages")
+;;   ;;   "fI" '(omnisharp-fix-code-issue-at-point :which-key "fix code issue at point")
+;;   ;;   "fU" '(omnisharp-fix-usings :which-key "fix usings")
+;;   ;;   "rt" '((lambda () (interactive) (my-run-tests my-bosss-project)) :which-key "run tests")
+;;   ;;   "ro" '(run-csharp-repl-other-frame :which-key "start repl")
+;;   ;;   "rr" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl")
+;;   )
 
 (use-package fsharp-mode
   :ensure t

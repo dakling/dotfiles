@@ -1163,7 +1163,6 @@ limitations under the License.
     (interactive)
     (async-shell-command (concat "nunit3-console " path-to-assembly)))
 
-  (add-hook 'csharp-mode-hook #'omnisharp-mode)
   (add-hook 'csharp-mode-hook #'subword-mode)
   (add-hook 'csharp-mode-hook #'company-mode)
   (add-hook 'csharp-mode-hook #'rainbow-delimiters-mode-enable)
@@ -1208,95 +1207,24 @@ limitations under the License.
       "eb" '(bosss-repl-send-buffer :which-key "send buffer to repl")
       "en" '(bosss-eval-and-next-field :which-key "eval and next field")
       "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
-      "in" '(bosss-create-new-field :which-key "create new input field"))))
+      "in" '(bosss-create-new-field :which-key "create new input field")))
+  ;; (use-package omnisharp
+  ;;   :diminish omnisharp-mode
+  ;;   :ensure t
+  ;;   :config
+  ;;   (add-hook 'csharp-mode-hook #'omnisharp-mode)
+  ;;   (my-local-leader-def
+  ;;     :keymaps 'csharp-mode-map
+  ;;     "t" '(omnisharp-current-type-information :which-key "current type information")
+  ;;     "T" '(omnisharp-current-type-documentation :which-key "current type documentation")
+  ;;     "gr" '(omnisharp-run-code-action-refactoring :which-key "refactor")
+  ;;     "fi" '(omnisharp-find-implementations :which-key "find implementations")
+  ;;     "fu" '(omnisharp-find-usages :which-key "find usages")
+  ;;     "fI" '(omnisharp-fix-code-issue-at-point :which-key "fix code issue at point")
+  ;;     "fU" '(omnisharp-fix-usings :which-key "fix usings")))
+  )
 
 (add-hook 'csharp-mode-hook 'my-setup-csharp-and-bosss)
-
-;; (use-package omnisharp
-;;   :diminish omnisharp-mode
-;;   :ensure t
-;;   :config
-;;   (defun my-bosss-file-p ()
-;;     (or
-;;      (file-in-directory-p (buffer-file-name) "~/BoSSS/")
-;;      (file-in-directory-p (buffer-file-name) "~/BoSSS-experimental/")))
-
-;;   (defun my-add-header ()
-;;     (interactive)
-;;     (let ((header-text
-;;            (concat
-;;             "/* =======================================================================
-;; Copyright " (format-time-string "%Y") " Technische Universitaet Darmstadt, Fachgebiet fuer Stroemungsdynamik (chair of fluid dynamics)
-
-;; Licensed under the Apache License, Version 2.0 (the \"License\");
-;; you may not use this file except in compliance with the License.
-;; You may obtain a copy of the License at
-
-;;     http://www.apache.org/licenses/LICENSE-2.0
-
-;; Unless required by applicable law or agreed to in writing, software
-;; distributed under the License is distributed on an \"AS IS\" BASIS,
-;; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-;; See the License for the specific language governing permissions and
-;; limitations under the License.
-;; */
-
-;; ")))
-;;       (save-excursion
-;;         (goto-line 0)
-;;         (when (my-bosss-file-p)
-;;           (unless (search-forward (substring header-text 93) nil t) ;; check if header already exists, start a bit later to ignore year)
-;;             (princ header-text (current-buffer)))))))
-
-;;   (defun my-indent-buffer-without-bosss-header ()
-;;     "Indent file, but ignore header"
-;;     (interactive)
-;;     (save-excursion
-;;       (goto-line 16)
-;;       (let ((beg (point)))
-;;         (evil-indent beg (point-max)))))
-
-;;   (defun my-run-tests (path-to-assembly)
-;;     "Implement tests manually as default functions do not work"
-;;     (interactive)
-;;     (async-shell-command (concat "nunit3-console " path-to-assembly)))
-
-;;   (add-hook 'csharp-mode-hook #'omnisharp-mode)
-;;   (add-hook 'csharp-mode-hook #'subword-mode)
-;;   (add-hook 'csharp-mode-hook #'company-mode)
-;;   (add-hook 'csharp-mode-hook #'rainbow-delimiters-mode-enable)
-;;   (add-hook 'csharp-mode-hook (lambda ()
-;;                                 (push '(?< . ("< " . " >")) evil-surround-pairs-alist)))
-;;   (add-hook 'csharp-mode-hook #'my-add-header)
-;;   (add-hook 'csharp-mode-hook (lambda () 
-;;                                 (add-hook 'before-save-hook #'my-indent-buffer-without-bosss-header nil t)))
-
-;;   (setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
-;;   (setq my-bosss-project "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/RANS.csproj")
-;;   ;; (general-define-key
-;;   ;;  :states 'normal
-;;   ;;  :keymaps 'csharp-mode-map
-;;   ;;  "gd" '(omnisharp-go-to-definition :which-key "go to definition")
-;;   ;;  "<f12>" '(omnisharp-go-to-definition :which-key "go to definition for Florian")
-;;   ;;  "gr" '(omnisharp-rename :which-key "rename"))
-;;   ;; (my-local-leader-def
-;;   ;;   :keymaps 'csharp-mode-map
-;;   ;;   "b" '(:ignore :which-key "build")
-;;   ;;   "bd" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " my-bosss-project))) :which-key "build debug")
-;;   ;;   "br" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " my-bosss-project))) :which-key "build release")
-;;   ;;   "be" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " bosss-master-solution))) :which-key "build everything")
-;;   ;;   "bb" '(recompile :which-key "recompile")
-;;   ;;   "t" '(omnisharp-current-type-information :which-key "current type information")
-;;   ;;   "T" '(omnisharp-current-type-documentation :which-key "current type documentation")
-;;   ;;   "gr" '(omnisharp-run-code-action-refactoring :which-key "refactor")
-;;   ;;   "fi" '(omnisharp-find-implementations :which-key "find implementations")
-;;   ;;   "fu" '(omnisharp-find-usages :which-key "find usages")
-;;   ;;   "fI" '(omnisharp-fix-code-issue-at-point :which-key "fix code issue at point")
-;;   ;;   "fU" '(omnisharp-fix-usings :which-key "fix usings")
-;;   ;;   "rt" '((lambda () (interactive) (my-run-tests my-bosss-project)) :which-key "run tests")
-;;   ;;   "ro" '(run-csharp-repl-other-frame :which-key "start repl")
-;;   ;;   "rr" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl")
-;;   )
 
 (use-package fsharp-mode
   :ensure t

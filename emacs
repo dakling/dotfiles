@@ -875,35 +875,36 @@ It only works for frames with exactly two windows.
 ;; 	     "ee" '(slime-eval-last-expression :which-key "eval last expression")
 ;; 	     "eb" '(slime-eval-buffer :which-key "eval buffer")))
 
-(use-package lsp-mode
-  :ensure t
-  :hook (csharp-mode . lsp)
-  :commands lsp
-  :config
-  (general-define-key
-   :states 'normal
-   :keymaps 'lsp-mode-map
-   "gd" '(lsp-find-definition :which-key "go to definition")
-   "<f12>" '(lsp-find-definition :which-key "go to definition for Florian")
-   "gr" '(lsp-rename :which-key "rename"))
-  (my-local-leader-def
-    :keymaps 'lsp-mode-map
-    "b" '(:ignore :which-key "build")
-    "bd" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " my-bosss-project))) :which-key "build debug")
-    "br" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " my-bosss-project))) :which-key "build release")
-    "be" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " bosss-master-solution))) :which-key "build everything")
-    "bb" '(recompile :which-key "recompile")
-    ;; "t" '(omnisharp-current-type-information :which-key "current type information")
-    ;; "T" '(omnisharp-current-type-documentation :which-key "current type documentation")
-    ;; "gr" '(omnisharp-run-code-action-refactoring :which-key "refactor")
-    "fi" '(lsp-find-implementation :which-key "find implementations")
-    ;; "fu" '(omnisharp-find-usages :which-key "find usages")
-    ;; "fI" '(omnisharp-fix-code-issue-at-point :which-key "fix code issue at point")
-    ;; "fU" '(omnisharp-fix-usings :which-key "fix usings")
-    ;; "rt" '((lambda () (interactive) (my-run-tests my-bosss-project)) :which-key "run tests")
-    ;; "ro" '(run-csharp-repl-other-frame :which-key "start repl")
-    ;; "rr" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl")
-    ))
+;; (use-package lsp-mode
+;;   :ensure t
+;;   :hook ((csharp-mode tex-mode latex-mode) . lsp)
+;;   :commands lsp
+;;   :config
+;;   (general-define-key
+;;    :states 'normal
+;;    :keymaps 'lsp-mode-map
+;;    "gd" '(lsp-find-definition :which-key "go to definition")
+;;    "<f12>" '(lsp-find-definition :which-key "go to definition for Florian")
+;;    "gr" '(lsp-rename :which-key "rename"))
+;;   (my-local-leader-def
+;;     :keymaps 'lsp-mode-map
+;;     "b" '(:ignore :which-key "build")
+;;     "bd" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " my-bosss-project))) :which-key "build debug")
+;;     "br" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " my-bosss-project))) :which-key "build release")
+;;     "be" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " bosss-master-solution))) :which-key "build everything")
+;;     "bb" '(recompile :which-key "recompile")
+;;     "rt" '(lsp-ui-imenu :which-key "imenu")
+;;     ;; "t" '(omnisharp-current-type-information :which-key "current type information")
+;;     ;; "T" '(omnisharp-current-type-documentation :which-key "current type documentation")
+;;     ;; "gr" '(omnisharp-run-code-action-refactoring :which-key "refactor")
+;;     "fi" '(lsp-find-implementation :which-key "find implementations")
+;;     ;; "fu" '(omnisharp-find-usages :which-key "find usages")
+;;     ;; "fI" '(omnisharp-fix-code-issue-at-point :which-key "fix code issue at point")
+;;     ;; "fU" '(omnisharp-fix-usings :which-key "fix usings")
+;;     ;; "rt" '((lambda () (interactive) (my-run-tests my-bosss-project)) :which-key "run tests")
+;;     ;; "ro" '(run-csharp-repl-other-frame :which-key "start repl")
+;;     ;; "rr" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl")
+;;     ))
 
 ;; optionally
 (use-package lsp-ui 
@@ -924,6 +925,15 @@ It only works for frames with exactly two windows.
 
 ;; (use-package dap-csharp
 ;;   :ensure t) ; to load the dap adapter for your language
+
+;; (use-package eglot
+;;   :ensure t
+;;   :commands (eglot eglot-ensure)
+;;   :hook ((csharp-mode . eglot-ensure))
+;;   :config
+;;   (progn
+;;     (add-to-list 'eglot-server-programs
+;;                  `(csharp-mode . ("~/.omnisharp/omnisharp/omnisharp/OmniSharp.exe" "-lsp")))))
 
 (add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))
 (add-hook 'lisp-mode-hook (lambda () (lispy-mode 1)))
@@ -1182,9 +1192,9 @@ limitations under the License.
     "br" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " my-bosss-project))) :which-key "build release")
     "be" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " bosss-master-solution))) :which-key "build everything")
     "bb" '(recompile :which-key "recompile")
-    "rt" '((lambda () (interactive) (my-run-tests my-bosss-project)) :which-key "run tests")
-    "ro" '(run-csharp-repl-other-frame :which-key "start repl")
-    "rr" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl"))
+    "et" '((lambda () (interactive) (my-run-tests my-bosss-project)) :which-key "run tests")
+    "eo" '(run-csharp-repl-other-frame :which-key "start repl")
+    "er" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl"))
 
   ;; bosss
   (use-package bosss
@@ -1208,21 +1218,26 @@ limitations under the License.
       "en" '(bosss-eval-and-next-field :which-key "eval and next field")
       "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
       "in" '(bosss-create-new-field :which-key "create new input field")))
-  ;; (use-package omnisharp
-  ;;   :diminish omnisharp-mode
-  ;;   :ensure t
-  ;;   :config
-  ;;   (add-hook 'csharp-mode-hook #'omnisharp-mode)
-  ;;   (my-local-leader-def
-  ;;     :keymaps 'csharp-mode-map
-  ;;     "t" '(omnisharp-current-type-information :which-key "current type information")
-  ;;     "T" '(omnisharp-current-type-documentation :which-key "current type documentation")
-  ;;     "gr" '(omnisharp-run-code-action-refactoring :which-key "refactor")
-  ;;     "fi" '(omnisharp-find-implementations :which-key "find implementations")
-  ;;     "fu" '(omnisharp-find-usages :which-key "find usages")
-  ;;     "fI" '(omnisharp-fix-code-issue-at-point :which-key "fix code issue at point")
-  ;;     "fU" '(omnisharp-fix-usings :which-key "fix usings")))
-  )
+  (use-package omnisharp
+    :diminish omnisharp-mode
+    :ensure t
+    :config
+    (add-hook 'csharp-mode-hook #'omnisharp-mode)
+    (general-define-key
+     :states 'normal
+     :keymaps 'csharp-mode-map
+     "gd" '(omnisharp-go-to-definition :which-key "go to definition")
+     "<f12>" '(omnisharp-go-to-definition :which-key "go to definition for Florian")
+     "gr" '(omnisharp-rename :which-key "rename"))
+    (my-local-leader-def
+      :keymaps 'csharp-mode-map
+      "t" '(omnisharp-current-type-information :which-key "current type information")
+      "T" '(omnisharp-current-type-documentation :which-key "current type documentation")
+      "gr" '(omnisharp-run-code-action-refactoring :which-key "refactor")
+      "fi" '(omnisharp-find-implementations :which-key "find implementations")
+      "fu" '(omnisharp-find-usages :which-key "find usages")
+      "fI" '(omnisharp-fix-code-issue-at-point :which-key "fix code issue at point")
+      "fU" '(omnisharp-fix-usings :which-key "fix usings"))))
 
 (add-hook 'csharp-mode-hook 'my-setup-csharp-and-bosss)
 

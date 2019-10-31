@@ -1420,7 +1420,7 @@ Otto-Berndt-Straße 2 (L1|01 322)
 64287 Darmstadt
 
 E-Mail: klingenberg@fdy.tu-darmstadt.de
-Telefon: +9 6151 16-26207
+Telefon: +49 6151 16-26207
 Fax: +49 6151 16-26203
 Web: http://www.fdy.tu-darmstadt.de")
            (mu4e-sent-folder "/FDY/Sent Items")

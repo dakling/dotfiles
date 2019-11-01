@@ -405,6 +405,22 @@ It only works for frames with exactly two windows.
   :config
   (global-evil-mc-mode 1))
 
+(use-package vdiff
+  :ensure t
+  :config
+  (evil-define-key 'normal vdiff-mode-map "," vdiff-mode-prefix-map))
+
+(use-package vdiff-magit
+  :ensure t
+  :config
+  (define-key magit-mode-map "e" 'vdiff-magit-dwim)
+  (define-key magit-mode-map "E" 'vdiff-magit)
+  (transient-suffix-put 'magit-dispatch "e" :description "vdiff (dwim)")
+  (transient-suffix-put 'magit-dispatch "e" :command 'vdiff-magit-dwim)
+  (transient-suffix-put 'magit-dispatch "E" :description "vdiff")
+  (transient-suffix-put 'magit-dispatch "E" :command 'vdiff-magit))
+
+
 (use-package which-key
   :ensure t
   :defer t
@@ -1218,6 +1234,7 @@ limitations under the License.
       "en" '(bosss-eval-and-next-field :which-key "eval and next field")
       "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
       "in" '(bosss-create-new-field :which-key "create new input field")))
+
   (use-package omnisharp
     :diminish omnisharp-mode
     :ensure t

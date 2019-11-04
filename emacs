@@ -420,6 +420,18 @@ It only works for frames with exactly two windows.
   (transient-suffix-put 'magit-dispatch "E" :description "vdiff")
   (transient-suffix-put 'magit-dispatch "E" :command 'vdiff-magit))
 
+;; (use-package windower
+;;   :ensure t
+;;   :config
+;;   (global-set-key (kbd "s-M-h") 'windower-move-border-left)
+;;   (global-set-key (kbd "s-M-j") 'windower-move-border-below)
+;;   (global-set-key (kbd "s-M-k") 'windower-move-border-above)
+;;   (global-set-key (kbd "s-M-l") 'windower-move-border-right)
+
+;;   (global-set-key (kbd "s-H") 'windower-swap-left)
+;;   (global-set-key (kbd "s-J") 'windower-swap-below)
+;;   (global-set-key (kbd "s-K") 'windower-swap-above)
+;;   (global-set-key (kbd "s-L") 'windower-swap-right))
 
 (use-package which-key
   :ensure t

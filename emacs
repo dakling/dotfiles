@@ -1201,6 +1201,13 @@ limitations under the License.
       (let ((beg (point)))
         (evil-indent beg (point-max)))))
 
+  (defun my-run-bosss-control-file (solver control-file &optional debug)
+    "Run SOLVER with CONTROL-FILE, optionally using sbd to DEBUB"
+    (async-shell-command
+     (if debug
+         (concat "sdb \"args -c " control-file "\" \"run " solver "\"")
+       (concat "mono " solver " -c " control-file))))
+
   (defun my-run-tests (path-to-assembly)
     "Implement tests manually as default functions do not work"
     (interactive)

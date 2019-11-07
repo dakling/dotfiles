@@ -1117,6 +1117,11 @@ It only works for frames with exactly two windows.
 (use-package org-re-reveal
   :ensure t)
 
+(use-package csv-mode
+  :ensure t
+  :config
+  (add-hook 'csv-mode-hook 'csv-align-mode))
+
 (use-package ggtags
   :ensure t)
 

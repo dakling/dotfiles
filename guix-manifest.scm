@@ -36,6 +36,6 @@
    "cairo"
    "global"
    "pavucontrol"
-   "ungoogled-chromium"
+   "icecat"
    "arandr"
    "guile"))

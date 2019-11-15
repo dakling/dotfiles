@@ -1,3 +1,4 @@
+[[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
 [ -r /etc/profile.d/cnf.sh ] && . /etc/profile.d/cnf.sh
 
 

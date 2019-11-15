@@ -702,6 +702,7 @@ It only works for frames with exactly two windows.
     :magic ("%PDF" . pdf-view-mode)
     :config
     (add-hook 'pdf-view-mode-hook 'pdf-view-midnight-minor-mode)
+    (add-hook 'pdf-view-mode-hook 'auto-revert-mode)
     (setq-default pdf-view-display-size 'fit-page)
     (setq pdf-view-continuous nil)
     (evil-collection-init 'pdf)

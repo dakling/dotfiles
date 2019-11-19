@@ -755,6 +755,14 @@ It only works for frames with exactly two windows.
     :init
     (server-start)
     :config
+    (defun my-autostart ()
+      (if (system-name= "klingenberg-tablet")
+          (setenv "PATH" (concat
+                          "~/.nix-profile/bin/"
+                          (getenv "PATH"))))
+
+      (start-process "syncthing"))
+    (my-autostart)
     (evil-set-initial-state 'exwm-mode 'emacs)
     (setq mouse-autoselect-window nil
           focus-follows-mouse nil)
@@ -1637,6 +1645,5 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
                        subword-mode
                        flyspell-mode
                        defining-kbd-macro)))
-
 
 ;;; emacs ends here

@@ -4,6 +4,7 @@
    "openconnect"
    "cifs-utils"
    "nfs-utils"
+   "sshfs"
    "samba"
    "freerdp"
    "gnugo"
@@ -36,6 +37,7 @@
    "cairo"
    "global"
    "pavucontrol"
-   "ungoogled-chromium"
+   "icecat"
    "arandr"
+   "ghc-tldr"
    "guile"))

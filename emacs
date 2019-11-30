@@ -415,6 +415,7 @@ It only works for frames with exactly two windows.
 
 (use-package evil-owl
   :ensure t
+  :diminish evil-owl-mode
   :config
   (evil-owl-mode))
 

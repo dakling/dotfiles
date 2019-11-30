@@ -114,7 +114,7 @@
 
 (defvar browser 
   (cond
-   ((system-name= "klingenberg-tablet") "next")
+   ;; ((system-name= "klingenberg-tablet") "next")
    (t "firefox")))
 
 (defun find-config-file ()
@@ -169,6 +169,14 @@
   (kill-this-buffer)
   (when (< 1 (length (window-list)))
     (evil-window-delete)))
+
+(defun my-add-to-path (path)
+  "Add path to PATH."
+  (setenv "PATH" (concat
+                  path
+                  ":"
+                  (getenv "PATH")))
+  (add-to-list 'exec-path path))
 
 ;; (defmacro ! (&rest args)
 ;;   "convenient way to execute shell commands from scratch buffer"
@@ -757,11 +765,9 @@ It only works for frames with exactly two windows.
     :config
     (defun my-autostart ()
       (if (system-name= "klingenberg-tablet")
-          (setenv "PATH" (concat
-                          "~/.nix-profile/bin/"
-                          (getenv "PATH"))))
-
-      (start-process "syncthing"))
+          (my-add-to-path
+           "/home/klingenberg/.nix-profile/bin/"))
+      (start-process "synchting" "*synchting*" "syncthing"))
     (my-autostart)
     (evil-set-initial-state 'exwm-mode 'emacs)
     (setq mouse-autoselect-window nil

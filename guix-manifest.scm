@@ -9,6 +9,7 @@
    "freerdp"
    "gnugo"
    "emacs-gnugo"
+   "mpv"
    ;; "guile-emacs"
    "lua"
    "syncthing"
@@ -38,6 +39,7 @@
    "global"
    "pavucontrol"
    "icecat"
+   "pdfpc"
    "arandr"
    "ghc-tldr"
    "guile"))

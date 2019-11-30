@@ -413,6 +413,17 @@ It only works for frames with exactly two windows.
   :config
   (global-evil-mc-mode 1))
 
+(use-package evil-owl
+  :ensure t
+  :config
+  (evil-owl-mode))
+
+(use-package evil-exchange
+  :ensure t
+  :config
+  
+  (evil-exchange-install))
+
 (use-package vdiff
   :ensure t
   :config

@@ -776,15 +776,17 @@ It only works for frames with exactly two windows.
     (server-start)
     :config
     (defun my-autostart ()
-      (if (system-name= "klingenberg-tablet")
-          (my-add-to-path
-           "/home/klingenberg/.nix-profile/bin/"))
+      (when (system-name= "klingenberg-tablet")
+        (my-add-to-path
+         "/home/klingenberg/.nix-profile/bin/")
+        ;; (start-process "gnome-session" "*gnome-session*" "gnome-session")
+        )
       (start-process "synchting" "*synchting*" "syncthing"))
-    (my-autostart)
     (evil-set-initial-state 'exwm-mode 'emacs)
     (setq mouse-autoselect-window nil
           focus-follows-mouse nil)
-    (exwm-enable))
+    (exwm-enable)
+    (my-autostart))
 
   (use-package exwm-input
     :after exwm-randr

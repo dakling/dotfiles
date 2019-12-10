@@ -44,5 +44,6 @@
    "icecat"
    "pdfpc"
    "arandr"
+   "tensorflow"
    "ghc-tldr"
    "guile"))

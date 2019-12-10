@@ -950,11 +950,6 @@ It only works for frames with exactly two windows.
    "gr" '(lsp-rename :which-key "rename"))
   (my-local-leader-def
     :keymaps 'lsp-mode-map
-    "b" '(:ignore :which-key "build")
-    "bd" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " my-bosss-project))) :which-key "build debug")
-    "br" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " my-bosss-project))) :which-key "build release")
-    "be" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " bosss-master-solution))) :which-key "build everything")
-    "bb" '(recompile :which-key "recompile")
     "rt" '(lsp-ui-imenu :which-key "imenu")
     ;; "t" '(omnisharp-current-type-information :which-key "current type information")
     ;; "T" '(omnisharp-current-type-documentation :which-key "current type documentation")

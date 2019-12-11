@@ -286,7 +286,7 @@ It only works for frames with exactly two windows.
     "ar" '(md4rd :which-key "reddit")
     "ag" '(go-play :which-key "play the game of go")
     "ae" '(elfeed :which-key "open elfeed")
-    "at" '(ansi-term :which-key "open ansi-term")
+    "at" '(shell :which-key "open shell")
     "aS" '(eshell :which-key "open existing eshell")
     "as" '((lambda () (interactive) (eshell 'N)) :which-key "open new eshell")
     "g"  '(:ignore t :which-key "git")
@@ -939,7 +939,9 @@ It only works for frames with exactly two windows.
 
 (use-package lsp-mode
   :ensure t
-  :hook ((csharp-mode tex-mode latex-mode) . lsp)
+  :hook ((
+          ;; csharp-mode
+          tex-mode latex-mode) . lsp)
   :commands lsp
   :config
   (general-define-key
@@ -1288,26 +1290,26 @@ limitations under the License.
       "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
       "in" '(bosss-create-new-field :which-key "create new input field")))
 
-  ;; (use-package omnisharp
-  ;;   :diminish omnisharp-mode
-  ;;   :ensure t
-  ;;   :config
-  ;;   (add-hook 'csharp-mode-hook #'omnisharp-mode)
-  ;;   (general-define-key
-  ;;    :states 'normal
-  ;;    :keymaps 'csharp-mode-map
-  ;;    "gd" '(omnisharp-go-to-definition :which-key "go to definition")
-  ;;    "<f12>" '(omnisharp-go-to-definition :which-key "go to definition for Florian")
-  ;;    "gr" '(omnisharp-rename :which-key "rename"))
-  ;;   (my-local-leader-def
-  ;;     :keymaps 'csharp-mode-map
-  ;;     "t" '(omnisharp-current-type-information :which-key "current type information")
-  ;;     "T" '(omnisharp-current-type-documentation :which-key "current type documentation")
-  ;;     "gr" '(omnisharp-run-code-action-refactoring :which-key "refactor")
-  ;;     "fi" '(omnisharp-find-implementations :which-key "find implementations")
-  ;;     "fu" '(omnisharp-find-usages :which-key "find usages")
-  ;;     "fI" '(omnisharp-fix-code-issue-at-point :which-key "fix code issue at point")
-  ;;     "fU" '(omnisharp-fix-usings :which-key "fix usings")))
+  (use-package omnisharp
+    :diminish omnisharp-mode
+    :ensure t
+    :config
+    (add-hook 'csharp-mode-hook #'omnisharp-mode)
+    (general-define-key
+     :states 'normal
+     :keymaps 'csharp-mode-map
+     "gd" '(omnisharp-go-to-definition :which-key "go to definition")
+     "<f12>" '(omnisharp-go-to-definition :which-key "go to definition for Florian")
+     "gr" '(omnisharp-rename :which-key "rename"))
+    (my-local-leader-def
+      :keymaps 'csharp-mode-map
+      "t" '(omnisharp-current-type-information :which-key "current type information")
+      "T" '(omnisharp-current-type-documentation :which-key "current type documentation")
+      "gr" '(omnisharp-run-code-action-refactoring :which-key "refactor")
+      "fi" '(omnisharp-find-implementations :which-key "find implementations")
+      "fu" '(omnisharp-find-usages :which-key "find usages")
+      "fI" '(omnisharp-fix-code-issue-at-point :which-key "fix code issue at point")
+      "fU" '(omnisharp-fix-usings :which-key "fix usings")))
   )
 
 (add-hook 'csharp-mode-hook 'my-setup-csharp-and-bosss)

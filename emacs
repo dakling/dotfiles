@@ -705,6 +705,22 @@ It only works for frames with exactly two windows.
 (use-package doc-view
   :ensure t
   :config
+  ;; open docx as text
+  (define-derived-mode
+    pandoc-view-mode
+    markdown-mode
+    "pandoc-view-mode"
+    "View pandoc processing of docx file using markdown mode."
+    (erase-buffer)
+    (let* ((pandoc (executable-find "pandoc")))
+      (insert (shell-command-to-string
+               (concat pandoc " --wrap=none " (shell-quote-argument (buffer-file-name)) " -t markdown"))))
+    (not-modified)
+    (read-only-mode t))
+  ;; (add-to-list 'auto-mode-alist '("\\.docx\\'" . pandoc-view-mode))
+  (my-local-leader-def
+    "p" 'pandoc-view-mode
+    "d" 'doc-view-mode)
   (general-define-key
    :states 'normal
    :keymaps 'doc-view-mode-map

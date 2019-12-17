@@ -719,7 +719,7 @@ It only works for frames with exactly two windows.
     (read-only-mode t))
   ;; (add-to-list 'auto-mode-alist '("\\.docx\\'" . pandoc-view-mode))
   (my-local-leader-def
-    "p" 'pandoc-view-mode
+    "p" 'pandoc-view-mode ; TODO create toggle function
     "d" 'doc-view-mode)
   (general-define-key
    :states 'normal

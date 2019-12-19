@@ -608,6 +608,8 @@ It only works for frames with exactly two windows.
   (general-define-key
    :keymaps 'helm-buffer-map
    "M-d" 'helm-buffer-run-kill-persistent)
+  (setq completion-styles `(basic partial-completion emacs22 initials
+                                  ,(if (version<= emacs-version "27.0") 'helm-flex 'flex)))
   (setq helm-mode-fuzzy-match t)
   (setq helm-completion-in-region-fuzzy-match t)
   (setq helm-M-x-fuzzy-match t)

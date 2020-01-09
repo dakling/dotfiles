@@ -7,11 +7,11 @@
 ;;       (format nil "~a/common-lisp/next/ports/gtk-webkit/next-gtk-webkit"
 ;; 	      (uiop:getenv "HOME")))
 
-(setf (get-default 'remote-interface 'open-external-link-in-new-window-p) t)
+;; (setf (get-default 'remote-interface 'open-external-link-in-new-window-p) t)
 
-(define-key :scheme :vi-normal
-  "h" 'history-backwards
-  "l" 'history-forwards)
+;; (define-key :scheme :vi-normal
+;;   "h" 'history-backwards
+;;   "l" 'history-forwards)
 
 
 (setf (get-default 'buffer 'box-style)

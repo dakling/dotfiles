@@ -15,6 +15,7 @@
              (gnu packages web-browsers)	
              (gnu packages password-utils)
              (gnu packages fonts)	
+             (gnu packages display-managers)	
              (gnu packages syncthing)	
              (gnu packages gnuzilla)	
              (nongnu packages linux)
@@ -83,44 +84,30 @@
  (packages
   (append
    (list (specification->package "nss-certs")
+         ;; slim
          emacs
          emacs-guix
          emacs-exwm
          emacs-pdf-tools
          emacs-pulseaudio-control
-         gnome
-         pavucontrol
-         acpi
          font-adobe-source-code-pro
+         gnome
+         acpi
          mu
          zip
          unzip
          nix
-         termite
-         pcmanfm
-         mplayer
-         mpv
-         offlineimap
          password-store
          sbcl
-         sbcl-next
          gcc
          gsl
-         icecat
-         pdfpc
-         evince
          arandr
-         ;; mono ;; TODO create package for current version
          xrandr
-         syncthing
          pinentry-emacs
          gnupg
          openvpn
-         ;; adwaita-icon-theme
          mate-icon-theme-faenza
-         texlive
          curl
-         xdotool
          gvfs
          git)
    %base-packages))
@@ -132,13 +119,13 @@
          ;;           (config-file (local-file "/etc/wpa_supplicant.conf"))
          ;;           (interfaces '("wlp1s0"))))
          ;; (modify-services %desktop-services
-                         ;; (network-manager-service-type
-                          ;; config =>
-                          ;; (network-manager-configuration
-                           ;; (inherit config)
-                           ;; (dns "dnsmasq")
-                           ;; (vpn-plugins (list network-manager-openconnect))))
-                         ;; )
+         ;; (network-manager-service-type
+         ;; config =>
+         ;; (network-manager-configuration
+         ;; (inherit config)
+         ;; (dns "dnsmasq")
+         ;; (vpn-plugins (list network-manager-openconnect))))
+         ;; )
          (service gnome-desktop-service-type)
          (set-xorg-configuration
           (xorg-configuration

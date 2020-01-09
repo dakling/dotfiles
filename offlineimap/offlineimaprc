@@ -1,5 +1,5 @@
 [general]
-accounts = gmail, web, fdy, gsc
+accounts = gmail, web, fdy
 pythonfile = ~/.offlineimap.py
 
 [Account gmail]

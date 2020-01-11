@@ -34,3 +34,17 @@
      (list "youtube-dl" url))))
 
 ;; (define-key *global-map* (key ". d") 'youtube-dl-current-page)
+
+(defvar *my-keymap* (make-keymap)
+  "Keymap for `my-mode'.")
+
+(define-mode my-mode ()
+  "Dummy mode for the custom key bindings in `*my-keymap*'."
+  ((keymap-schemes :initform (list :emacs *my-keymap*
+                                   :vi-normal *my-keymap*))))
+
+(defclass my-buffer (buffer)
+  ((default-modes :initform
+       (cons 'vi-normal-mode (get-default 'buffer 'default-modes)))))
+
+(setf *buffer-class* 'my-buffer)

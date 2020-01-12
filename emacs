@@ -101,7 +101,7 @@
 (defun shutdown ()
   (interactive)
   (cond
-   ((system-name= "klingenberg-tablet") (async-shell-command "sudo shutdown"))
+   ((system-name= "klingenberg-tablet" "klingenberg-laptop") (async-shell-command "sudo shutdown"))
    (t (shell-command "shutdown now"))))
 
 (defun reboot ()

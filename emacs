@@ -1683,5 +1683,17 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
                        subword-mode
                        flyspell-mode
                        defining-kbd-macro)))
+(use-package eaf
+  :load-path "~/.emacs.d/site-lisp/emacs-application-framework"
+  :custom
+  (eaf-find-alternate-file-in-dired t)
+  :config
+  (eaf-bind-key scroll_up "j" eaf-browser-keybinding)
+  (eaf-bind-key scroll_down "j" eaf-browser-keybinding)
+  (setq eaf-browser-default-search-engine 'duckduckgo)
+  (eaf-setq eaf-browse-blank-page-url "https://duckduckgo.com")
+  (eaf-bind-key take_photo "p" eaf-camera-keybinding)
+  (setq browse-url-browser-function 'eaf-open-browser)
+  (defalias 'browse-web #'eaf-open-browser))
 
 ;;; emacs ends here

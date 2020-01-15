@@ -1215,7 +1215,7 @@ It only works for frames with exactly two windows.
   (defun my-bosss-file-p ()
     (or
      (file-in-directory-p (buffer-file-name) "~/BoSSS/")
-     (file-in-directory-p (buffer-file-name) "~/BoSSS-experimental/")))
+     (file-in-directory-p (buffer-file-name) "~/BoSSS-experimental/internal/src/private-kli/")))
 
   (defun my-add-header ()
     (interactive)

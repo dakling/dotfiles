@@ -798,7 +798,7 @@ It only works for frames with exactly two windows.
         (start-process "/home/klingenberg/.autostart.sh" "*/home/klingenberg/.autostart.sh*" "/home/klingenberg/.autostart.sh")
         ;; (start-process "gnome-session" "*gnome-session*" "gnome-session")
         )
-      (start-process "synchting" "*synchting*" "syncthing"))
+      (start-process "synchting" "*synchting*" "syncthing" "-no-browser"))
     (evil-set-initial-state 'exwm-mode 'emacs)
     (setq mouse-autoselect-window nil
           focus-follows-mouse nil)

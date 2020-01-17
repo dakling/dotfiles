@@ -262,6 +262,11 @@ It only works for frames with exactly two windows.
     :prefix "-"
     :states '(motion normal))
 
+  (general-create-definer my-local-insert-leader-def
+    :keymaps 'override
+    :prefix "C-c"
+    :states '(motion normal emacs))
+
   (general-nmap "Y" "y$")
 
   (general-define-key "ESC" 'keyboard-quit :which-key "abort command")
@@ -699,6 +704,11 @@ It only works for frames with exactly two windows.
              "gs" '(magit-status :which-key "git status")))
 
 (use-package evil-magit :ensure t)
+
+(use-package vc-msg
+  :ensure t
+  :general (my-leader-def
+             "gb" '(vc-msg-show :which-key "git blame")))
 
 (use-package ediff :ensure t)
 
@@ -1421,7 +1431,13 @@ limitations under the License.
     "rc"   '(reftex-citation :which-key "cite")
     "ol" '(lambda() (interactive) (find-file "definLocal.tex"))
     "og" '(lambda() (interactive) (find-file (getenv "LatexGlobalConfig")))
-    "ob" '(lambda() (interactive) (find-file "bibliography.bib"))))
+    "ob" '(lambda() (interactive) (find-file "bibliography.bib")))
+  (my-local-insert-leader-def
+    :keymaps '(TeX-mode-map LaTeX-mode-map)
+    "r"   '(:ignore :which-key "reftex")
+    "rt" '(reftex-toc :which-key "table of contents")
+    "rr"   '(reftex-cleveref-cref :which-key "cref")
+    "rc"   '(reftex-citation :which-key "cite")))
 
 ;; (use-package auctex-latexmk
 ;;   :ensure t

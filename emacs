@@ -905,7 +905,7 @@ It only works for frames with exactly two windows.
                                                  (set 'placement "below")))
      (t (progn (set 'monitor1 "VGA-1")
                (set 'monitor2 "HDMI-1")
-               (set 'placement "left-of"))))
+               (set 'placement "right-of"))))
     (defun my/exwm-xrandr ()
       "Configure screen with xrandr."
       (shell-command

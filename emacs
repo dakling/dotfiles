@@ -903,9 +903,9 @@ It only works for frames with exactly two windows.
      ((system-name= "klingenberg-laptop") (progn (set 'monitor1 "LVDS1")
                                                  (set 'monitor2 "VGA1")
                                                  (set 'placement "below")))
-     (t (progn (set 'monitor1 "VGA-1")
-               (set 'monitor2 "HDMI-1")
-               (set 'placement "right-of"))))
+     (t (progn (set 'monitor2 "VGA-1")
+               (set 'monitor1 "HDMI-1")
+               (set 'placement "left-of"))))
     (defun my/exwm-xrandr ()
       "Configure screen with xrandr."
       (shell-command

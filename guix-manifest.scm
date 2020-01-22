@@ -10,7 +10,7 @@
    "gnugo"
    "emacs-gnugo"
    "mpv"
-   ;; "guile-emacs"
+   "guile-emacs"
    "lua"
    "syncthing"
    "texlive"

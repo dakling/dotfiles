@@ -825,8 +825,9 @@ It only works for frames with exactly two windows.
           `(([?\s-r] . exwm-reset)
             ([?\s-e] . exwm-input-release-keyboard)
             ([?\s-F] . exwm-layout-set-fullscreen)
-            ([?\s-w] . exwm-workspace-switch)
-            ([?\s-W] . exwm-workspace-move-window)
+            ([?\s-a] . exwm-workspace-switch)
+            ([?\s-A] . exwm-workspace-move-window)
+            ([?\s-w] . other-window)
             ,@(mapcar (lambda (i)
                         `(,(kbd (format "s-%d" i)) .
                           (lambda () (interactive)

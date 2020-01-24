@@ -842,6 +842,7 @@ It only works for frames with exactly two windows.
             ([?\s-d] . dmenu)
             ([?\s-x] . helm-M-x)
             ([?\s-f] . helm-find-files)
+            ([?\s-p] . helm-projetile)
             ([?\s-b] . helm-mini)
             ([?\s-l] . evil-window-right)
             ([?\s-h] . evil-window-left)

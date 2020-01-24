@@ -465,14 +465,14 @@ It only works for frames with exactly two windows.
 
 ;;appearance
 ;; (use-package zenburn-theme :ensure t)
-;; ;; (use-package cyberpunk-theme :ensure t)
+;; (use-package cyberpunk-theme :ensure t)
 (use-package doom-themes
   :ensure t
   :config
-  (load-theme 'doom-vibrant t))
+  (load-theme 'doom-dark+ t))
 
-(use-package smart-mode-line-atom-one-dark-theme
-  :ensure t)
+;; (use-package smart-mode-line-atom-one-dark-theme
+;;   :ensure t)
 
 ;; (use-package doom-modeline
 ;;   :ensure t

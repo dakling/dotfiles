@@ -471,8 +471,8 @@ It only works for frames with exactly two windows.
   :config
   (load-theme 'doom-dark+ t))
 
-;; (use-package smart-mode-line-atom-one-dark-theme
-;;   :ensure t)
+(use-package smart-mode-line-atom-one-dark-theme
+  :ensure t)
 
 ;; (use-package doom-modeline
 ;;   :ensure t

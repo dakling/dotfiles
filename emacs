@@ -351,6 +351,38 @@ It only works for frames with exactly two windows.
     "sr"  'reboot
     "sl"  (lambda () (interactive) (shell-command "/usr/bin/slock"))))
 
+(defun my-create-super-bindings ()
+  "Create bindings starting with super for use outside exwm."
+  (general-define-key
+   :keymaps 'override
+   :states '(insert emacs hybrid normal visual motion operator replace)
+   "s-w" '(other-window :which-key "other window")
+   "s-d" 'dmenu
+   "s-x" 'helm-M-x
+   "s-f" 'helm-find-files
+   "s-p" 'helm-projectile
+   "s-b" 'helm-mini
+   "s-l" 'evil-window-right
+   "s-h" 'evil-window-left
+   "s-j" 'evil-window-down
+   "s-k" 'evil-window-up
+   "s-v" 'split-window-right
+   "s-s" 'split-window-below
+   "s-c" 'my-close-buffer
+   "s-q" 'my-get-rid-of-mouse
+   "s-m" 'delete-other-windows
+   "s-<f1>" '(lambda () (interactive) (eshell 'N))
+   "C-s-<f1>" 'eshell
+   "s-<f2>" '(lambda () (interactive)
+               (start-process "" nil browser))
+   "s-<f3>" 'deer
+   "s-<f4>" '(lambda () (interactive)
+               (mu4e))
+   "s-<f12>" '(lambda () (interactive)
+                (start-process "" nil "/usr/bin/slock"))))
+
+(my-create-super-bindings)
+
 (use-package evil
   :ensure t
   :init
@@ -685,9 +717,7 @@ It only works for frames with exactly two windows.
   (my-leader-def
     :states 'normal
     "p" 'projectile-command-map)
-  (projectile-mode 1)
-  (use-package helm-projectile
-    :ensure t))
+  (projectile-mode 1))
 
 (use-package helm-projectile
   :ensure t
@@ -795,10 +825,11 @@ It only works for frames with exactly two windows.
       "R"  '(pdf-view-reset-slice :which-key "reset slice")
       "zr" '(pdf-view-scale-reset :which-key "zoom reset"))))
 
+
 ;;exwm
 (unless (system-name= "lina")
   (use-package exwm 
-    :ensure t
+    :ensure nil
     :init
     (server-start)
     :config
@@ -818,16 +849,18 @@ It only works for frames with exactly two windows.
 
   (use-package exwm-input
     :after exwm-randr
-    :demand t
+    :ensure nil
     :config
     (define-key exwm-mode-map (kbd "C-c") nil)
     (setq exwm-input-global-keys
-          `(([?\s-r] . exwm-reset)
+          `(
+            ([?\s-r] . exwm-reset)
             ([?\s-e] . exwm-input-release-keyboard)
             ([?\s-F] . exwm-layout-set-fullscreen)
             ([?\s-a] . exwm-workspace-switch)
             ([?\s-A] . exwm-workspace-move-window)
-            ([?\s-w] . other-window)
+            ([?\s-o] . my-exwm-switch-to-other-workspace)
+            ([?\s-O] . my-exwm-move-window-to-other-workspace)
             ,@(mapcar (lambda (i)
                         `(,(kbd (format "s-%d" i)) .
                           (lambda () (interactive)
@@ -839,52 +872,27 @@ It only works for frames with exactly two windows.
             ;; 		  (exwm-workspace-move-window ,i))))
             ;; 	    (list '! \" § $ % & / ( ) =))
             ;; (number-sequence 0 9))
-            ([?\s-d] . dmenu)
-            ([?\s-x] . helm-M-x)
-            ([?\s-f] . helm-find-files)
-            ([?\s-p] . helm-projetile)
-            ([?\s-b] . helm-mini)
-            ([?\s-l] . evil-window-right)
-            ([?\s-h] . evil-window-left)
-            ([?\s-j] . evil-window-down)
-            ([?\s-k] . evil-window-up)
-            ([?\s-v] . split-window-right)
-            ([?\s-s] . split-window-below)
-            ([?\s-c] . my-close-buffer)
-            ([?\s-q] . my-get-rid-of-mouse)
-            ([?\s-o] . my-exwm-switch-to-other-workspace)
-            ([?\s-O] . my-exwm-move-window-to-other-workspace)
-            ([?\s-m] . delete-other-windows)
-            ([s-f1] . (lambda () (interactive) (eshell 'N)))
-            ([C-s-f1] . eshell)
-            ([s-f2] . (lambda () (interactive)
-                        (start-process "" nil browser)))
-            ([s-f3] . deer)
-            ([s-f4] . (lambda () (interactive)
-                        (mu4e)))
-            ([s-f12] . (lambda () (interactive)
-                         (start-process "" nil "/usr/bin/slock")))))
-    (push ?\s-\  exwm-input-prefix-keys)
-    ;; (push ?\M-m  exwm-input-prefix-keys)
-    (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
-                        #'my-brightness+)
-    (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
-                        #'my-brightness-)
-    (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
-                        'pulseaudio-control-decrease-volume)
-    (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
-                        'pulseaudio-control-increase-volume)
-    (exwm-input-set-key (kbd "<XF86AudioMute>")
-                        'pulseaudio-control-toggle-current-sink-mute))
+            (push ?\s-\  exwm-input-prefix-keys)
+            ;; (push ?\M-m  exwm-input-prefix-keys)
+            (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
+                                #'my-brightness+)
+            (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
+                                #'my-brightness-)
+            (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
+                                'pulseaudio-control-decrease-volume)
+            (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
+                                'pulseaudio-control-increase-volume)
+            (exwm-input-set-key (kbd "<XF86AudioMute>")
+                                'pulseaudio-control-toggle-current-sink-mute))))
 
   (use-package exwm-systemtray
     :after exwm
-    :demand t
+    :ensure nil
     :config (exwm-systemtray-enable))
 
   (use-package exwm-randr
     :after exwm
-    :demand t
+    :ensure nil
     :preface
     (defun my-exwm-get-other-workspace ()
       (cond ((not (= 2 (length (seq-filter #'identity (mapcar #'exwm-workspace--active-p exwm-workspace--list))))) nil) ;currently only works for two monitors
@@ -941,7 +949,7 @@ It only works for frames with exactly two windows.
 
   (use-package exwm-workspace
     :after exwm
-    :demand t
+    :ensure nil
     :init
     (progn
       (setq exwm-workspace-number 10)

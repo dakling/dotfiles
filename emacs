@@ -1482,12 +1482,25 @@ limitations under the License.
 (use-package eww
   :ensure t
   :config
+  (defun my-eww-open-league-table ()
+    "Do an internet search for soccer league table."
+    (interactive)
+    (let* ((country-search-string-table
+            '(("germany" "german bundesliga tabelle")
+              ("spain" "la liga tabelle")
+              ("italy" "seria a tabelle")
+              ("france" "league 1 tabelle")
+              ("england" "premier league tabelle")))
+           (country (completing-read "which country?" (mapcar #'car country-search-string-table))))
+      (eww (cadr (assoc country country-search-string-table)))))
   (my-local-leader-def
     :keymaps 'eww-mode-map
     "o" 'helm-eww)
   (general-define-key
    :states '(override motion normal)
    :keymaps 'eww-mode-map
+   "M-h" 'eww-back-url
+   "M-l" 'eww-forward-url
    "f" 'ace-link-eww))
 
 (use-package ace-link

@@ -382,7 +382,7 @@ It only works for frames with exactly two windows.
    "s-<f12>" '(lambda () (interactive)
                 (start-process "" nil "/usr/bin/slock"))))
 
-;; (my-create-super-bindings)
+(my-create-super-bindings)
 
 (use-package evil
   :ensure t
@@ -830,7 +830,7 @@ It only works for frames with exactly two windows.
 ;;exwm
 (unless (system-name= "lina")
   (use-package exwm 
-    :ensure nil
+    :ensure t
     :init
     (server-start)
     :config
@@ -850,7 +850,7 @@ It only works for frames with exactly two windows.
 
   (use-package exwm-input
     :after exwm-randr
-    :ensure nil
+    :demand t
     :config
     (define-key exwm-mode-map (kbd "C-c") nil)
     (setq exwm-input-global-keys
@@ -859,8 +859,6 @@ It only works for frames with exactly two windows.
             ([?\s-F] . exwm-layout-set-fullscreen)
             ([?\s-a] . exwm-workspace-switch)
             ([?\s-A] . exwm-workspace-move-window)
-            ([?\s-o] . my-exwm-switch-to-other-workspace)
-            ([?\s-O] . my-exwm-move-window-to-other-workspace)
             ,@(mapcar (lambda (i)
                         `(,(kbd (format "s-%d" i)) .
                           (lambda () (interactive)
@@ -872,27 +870,29 @@ It only works for frames with exactly two windows.
             ;; 		  (exwm-workspace-move-window ,i))))
             ;; 	    (list '! \" § $ % & / ( ) =))
             ;; (number-sequence 0 9))
-            (push ?\s-\  exwm-input-prefix-keys)
-            ;; (push ?\M-m  exwm-input-prefix-keys)
-            (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
-                                #'my-brightness+)
-            (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
-                                #'my-brightness-)
-            (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
-                                'pulseaudio-control-decrease-volume)
-            (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
-                                'pulseaudio-control-increase-volume)
-            (exwm-input-set-key (kbd "<XF86AudioMute>")
-                                'pulseaudio-control-toggle-current-sink-mute))))
+            ([?\s-o] . my-exwm-switch-to-other-workspace)
+            ([?\s-O] . my-exwm-move-window-to-other-workspace)))
+    (push ?\s-\  exwm-input-prefix-keys)
+    ;; (push ?\M-m  exwm-input-prefix-keys)
+    (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
+                        #'my-brightness+)
+    (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
+                        #'my-brightness-)
+    (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
+                        'pulseaudio-control-decrease-volume)
+    (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
+                        'pulseaudio-control-increase-volume)
+    (exwm-input-set-key (kbd "<XF86AudioMute>")
+                        'pulseaudio-control-toggle-current-sink-mute))
 
   (use-package exwm-systemtray
     :after exwm
-    :ensure nil
+    :demand t
     :config (exwm-systemtray-enable))
 
   (use-package exwm-randr
     :after exwm
-    :ensure nil
+    :demand t
     :preface
     (defun my-exwm-get-other-workspace ()
       (cond ((not (= 2 (length (seq-filter #'identity (mapcar #'exwm-workspace--active-p exwm-workspace--list))))) nil) ;currently only works for two monitors
@@ -949,7 +949,7 @@ It only works for frames with exactly two windows.
 
   (use-package exwm-workspace
     :after exwm
-    :ensure nil
+    :demand t
     :init
     (progn
       (setq exwm-workspace-number 10)

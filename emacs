@@ -1489,9 +1489,9 @@ limitations under the License.
             '(("germany" "german bundesliga tabelle")
               ("spain" "la liga tabelle")
               ("italy" "seria a tabelle")
-              ("france" "league 1 tabelle")
+              ("france" "ligue 1 tabelle")
               ("england" "premier league tabelle")))
-           (country (completing-read "which country?" (mapcar #'car country-search-string-table))))
+           (country (completing-read "which country? " (mapcar #'car country-search-string-table))))
       (eww (cadr (assoc country country-search-string-table)))))
   (my-local-leader-def
     :keymaps 'eww-mode-map

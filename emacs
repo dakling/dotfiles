@@ -113,6 +113,7 @@
 (defvar browser 
   (cond
    ;; ((system-name= "klingenberg-tablet") "next")
+   ((system-name= "klingenberg-laptop") "epiphany")
    (t "firefox")))
 
 (defun find-config-file ()
@@ -381,7 +382,7 @@ It only works for frames with exactly two windows.
    "s-<f12>" '(lambda () (interactive)
                 (start-process "" nil "/usr/bin/slock"))))
 
-(my-create-super-bindings)
+;; (my-create-super-bindings)
 
 (use-package evil
   :ensure t
@@ -853,8 +854,7 @@ It only works for frames with exactly two windows.
     :config
     (define-key exwm-mode-map (kbd "C-c") nil)
     (setq exwm-input-global-keys
-          `(
-            ([?\s-r] . exwm-reset)
+          `(([?\s-r] . exwm-reset)
             ([?\s-e] . exwm-input-release-keyboard)
             ([?\s-F] . exwm-layout-set-fullscreen)
             ([?\s-a] . exwm-workspace-switch)

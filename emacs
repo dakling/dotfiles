@@ -34,6 +34,7 @@
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file t)
 
+;; TODO change for 27
 (setq package-enable-at-startup nil) ; tells emacs not to load any packages before starting up
 ;; the following lines tell emacs where on the internet to look up
 ;; for new packages.
@@ -42,6 +43,7 @@
                          ("melpa"     . "https://melpa.org/packages/")
                          ("marmalade" . "http://marmalade-repo.org/packages/")
                          ("reduce ide" . "http://reduce-algebra.sourceforge.net/reduce-ide/packages/")))
+;; TODO change for 27
 (package-initialize)
 
 ;; Bootstrap `use-package'
@@ -283,7 +285,7 @@ It only works for frames with exactly two windows.
     "SPC" '(helm-M-x :which-key "M-x")
     "a" '(:ignore t :which-key "applications")
     "ad" '(deer :which-key "call deer")
-    "ab" '(helm-eww :which-key "open browser")
+    "ab" '(eww :which-key "open browser")
     "am" '(mu4e-alert-view-unread-mails :which-key "open unread mail")
     "ap" '(helm-system-packages :which-key "package management")
     "ao" '(sx-search :which-key "search stackoverflow")
@@ -1479,10 +1481,14 @@ limitations under the License.
 ;; browser
 (use-package eww
   :ensure t
-  ;; :general
-  ;; (general-define-key
-  ;;  "f" 'ace-link)
-  )
+  :config
+  (my-local-leader-def
+    :keymaps 'eww-mode-map
+    "o" 'helm-eww)
+  (general-define-key
+   :states '(override motion normal)
+   :keymaps 'eww-mode-map
+   "f" 'ace-link-eww))
 
 (use-package ace-link
   :ensure t)

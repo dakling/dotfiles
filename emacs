@@ -801,193 +801,189 @@ It only works for frames with exactly two windows.
 ;;exwm
 (if (not (system-name= "lina"))
     (progn
-     (use-package exwm 
-       :ensure t
-       :init
-       (server-start)
-       :config
-       (defun my-autostart ()
-         (when (system-name= "klingenberg-tablet")
-           (my-add-to-path
-            "/home/klingenberg/.nix-profile/bin/")
-           (start-process "/home/klingenberg/.autostart.sh" "*/home/klingenberg/.autostart.sh*" "/home/klingenberg/.autostart.sh")
-           ;; (start-process "gnome-session" "*gnome-session*" "gnome-session")
-           )
-         (start-process "synchting" "*synchting*" "syncthing" "-no-browser"))
-       (evil-set-initial-state 'exwm-mode 'emacs)
-       (setq mouse-autoselect-window nil
-             focus-follows-mouse nil)
-       (exwm-enable)
-       (my-autostart))
+      (use-package exwm 
+        :ensure t
+        :init
+        (server-start)
+        :config
+        (defun my-autostart ()
+          (when (system-name= "klingenberg-tablet")
+            (my-add-to-path
+             "/home/klingenberg/.nix-profile/bin/")
+            (start-process "/home/klingenberg/.autostart.sh" "*/home/klingenberg/.autostart.sh*" "/home/klingenberg/.autostart.sh")
+            ;; (start-process "gnome-session" "*gnome-session*" "gnome-session")
+            )
+          (start-process "synchting" "*synchting*" "syncthing" "-no-browser"))
+        (evil-set-initial-state 'exwm-mode 'emacs)
+        (setq mouse-autoselect-window nil
+              focus-follows-mouse nil)
+        (exwm-enable)
+        (my-autostart))
 
-     (use-package exwm-input
-       :after exwm-randr
-       :demand t
-       :config
-       (define-key exwm-mode-map (kbd "C-c") nil)
-       (setq exwm-input-global-keys
-             `(([?\s-r] . exwm-reset)
-               ([?\s-e] . exwm-input-release-keyboard)
-               ([?\s-F] . exwm-layout-set-fullscreen)
-               ([?\s-a] . exwm-workspace-switch)
-               ([?\s-A] . exwm-workspace-move-window)
-               ,@(mapcar (lambda (i)
-                           `(,(kbd (format "s-%d" i)) .
-                             (lambda () (interactive)
-                               (exwm-workspace-switch-create ,i))))
-                         (number-sequence 0 9))
-               ;; ,@(mapcar (lambda (i)
-               ;; 	      `(,(kbd (format "s-%s" i)) .
-               ;; 		(lambda () (interactive)
-               ;; 		  (exwm-workspace-move-window ,i))))
-               ;; 	    (list '! \" § $ % & / ( ) =))
-               ;; (number-sequence 0 9))
-               ([?\s-o] . my-exwm-switch-to-other-workspace)
-               ([?\s-O] . my-exwm-move-window-to-other-workspace)
-               ([?\s-w] . other-window)
-               ([?\s-d] . dmenu)
-               ([?\s-x] . helm-M-x)
-               ([?\s-f] . helm-find-files)
-               ([?\s-p] . helm-projectile)
-               ([?\s-b] . helm-mini)
-               ([?\s-l] . evil-window-right)
-               ([?\s-h] . evil-window-left)
-               ([?\s-j] . evil-window-down)
-               ([?\s-k] . evil-window-up)
-               ([?\s-v] . split-window-right)
-               ([?\s-s] . split-window-below)
-               ([?\s-c] . my-close-buffer)
-               ([?\s-q] . my-get-rid-of-mouse)
-               ([?\s-m] . delete-other-windows)
-               ([\s-f1] . (lambda () (interactive) (eshell 'N)))
-               ([C-s-f1] . eshell)
-               ([\s-f2] . (lambda () (interactive) (start-process "" nil browser)))
-               ([\s-f3] . deer)
-               ([\s-f4] . (lambda () (interactive) (mu4e)))
-               ([\s-f12] . (lambda () (interactive) (start-process "" nil "/usr/bin/slock")))
-               (push ?\s-\  exwm-input-prefix-keys)
-               ;; (push ?\M-m  exwm-input-prefix-keys)
-               (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
-                                   #'my-brightness+)
-               (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
-                                   #'my-brightness-)
-               (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
-                                   'pulseaudio-control-decrease-volume)
-               (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
-                                   'pulseaudio-control-increase-volume)
-               (exwm-input-set-key (kbd "<XF86AudioMute>")
-                                   'pulseaudio-control-toggle-current-sink-mute)
-               )))
-     
-     (use-package exwm-systemtray
-       :after exwm
-       :demand t
-       :config (exwm-systemtray-enable))
+      (use-package exwm-input
+        :after exwm-randr
+        :demand t
+        :config
+        (define-key exwm-mode-map (kbd "C-c") nil)
+        (setq exwm-input-global-keys
+              `(([?\s-r] . exwm-reset)
+                ([?\s-e] . exwm-input-release-keyboard)
+                ([?\s-F] . exwm-layout-set-fullscreen)
+                ([?\s-a] . exwm-workspace-switch)
+                ([?\s-A] . exwm-workspace-move-window)
+                ,@(mapcar (lambda (i)
+                            `(,(kbd (format "s-%d" i)) .
+                              (lambda () (interactive)
+                                (exwm-workspace-switch-create ,i))))
+                          (number-sequence 0 9))
+                ;; ,@(mapcar (lambda (i)
+                ;; 	      `(,(kbd (format "s-%s" i)) .
+                ;; 		(lambda () (interactive)
+                ;; 		  (exwm-workspace-move-window ,i))))
+                ;; 	    (list '! \" § $ % & / ( ) =))
+                ;; (number-sequence 0 9))
+                ([?\s-o] . my-exwm-switch-to-other-workspace)
+                ([?\s-O] . my-exwm-move-window-to-other-workspace)
+                ([?\s-w] . other-window)
+                ([?\s-d] . dmenu)
+                ([?\s-x] . helm-M-x)
+                ([?\s-f] . helm-find-files)
+                ([?\s-p] . helm-projectile)
+                ([?\s-b] . helm-mini)
+                ([?\s-l] . evil-window-right)
+                ([?\s-h] . evil-window-left)
+                ([?\s-j] . evil-window-down)
+                ([?\s-k] . evil-window-up)
+                ([?\s-v] . split-window-right)
+                ([?\s-s] . split-window-below)
+                ([?\s-c] . my-close-buffer)
+                ([?\s-q] . my-get-rid-of-mouse)
+                ([?\s-m] . delete-other-windows)
+                ([s-f1] . (lambda () (interactive) (eshell 'N)))
+                ([C-s-f1] . eshell)
+                ([s-f2] . (lambda () (interactive) (start-process "" nil browser)))
+                ([s-f3] . deer)
+                ([s-f4] . (lambda () (interactive) (mu4e)))
+                ([s-f12] . (lambda () (interactive) (start-process "" nil "/usr/bin/slock")))))
+        (push ?\s-\  exwm-input-prefix-keys)
+        ;; (push ?\M-m  exwm-input-prefix-keys)
+        (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
+                            #'my-brightness+)
+        (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
+                            #'my-brightness-)
+        (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
+                            'pulseaudio-control-decrease-volume)
+        (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
+                            'pulseaudio-control-increase-volume)
+        (exwm-input-set-key (kbd "<XF86AudioMute>")
+                            'pulseaudio-control-toggle-current-sink-mute))
+      
+      (use-package exwm-systemtray
+        :after exwm
+        :demand t
+        :config (exwm-systemtray-enable))
 
-     (use-package exwm-randr
-       :after exwm
-       :demand t
-       :preface
-       (defun my-exwm-get-other-workspace ()
-         (cond ((not (= 2 (length (seq-filter #'identity (mapcar #'exwm-workspace--active-p exwm-workspace--list))))) nil) ;currently only works for two monitors
-               ((= exwm-workspace-current-index
-                   (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))
-                (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
-               ((= exwm-workspace-current-index
-                   (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
-                (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))))
-       (defun my-exwm-switch-to-other-workspace () (interactive)
-              (exwm-workspace-switch (my-exwm-get-other-workspace)))
-       (defun my-exwm-move-window-to-other-workspace () (interactive)
-              (exwm-workspace-move-window (my-exwm-get-other-workspace)))
-       (cond
-        ((system-name= "klingenberg-tablet") (progn (set 'monitor1 "eDP-1")
-                                                    (set 'monitor2 "HDMI-2")
-                                                    (set 'placement "below")))
-        ((system-name= "klingenbergLaptop") (progn (set 'monitor1 "LVDS1")
-                                                   (set 'monitor2 "VGA1")
-                                                   (set 'placement "below")))
-        ((system-name= "klingenberg-laptop") (progn (set 'monitor1 "LVDS1")
+      (use-package exwm-randr
+        :after exwm
+        :demand t
+        :preface
+        (defun my-exwm-get-other-workspace ()
+          (cond ((not (= 2 (length (seq-filter #'identity (mapcar #'exwm-workspace--active-p exwm-workspace--list))))) nil) ;currently only works for two monitors
+                ((= exwm-workspace-current-index
+                    (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))
+                 (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
+                ((= exwm-workspace-current-index
+                    (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
+                 (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))))
+        (defun my-exwm-switch-to-other-workspace () (interactive)
+               (exwm-workspace-switch (my-exwm-get-other-workspace)))
+        (defun my-exwm-move-window-to-other-workspace () (interactive)
+               (exwm-workspace-move-window (my-exwm-get-other-workspace)))
+        (cond
+         ((system-name= "klingenberg-tablet") (progn (set 'monitor1 "eDP-1")
+                                                     (set 'monitor2 "HDMI-2")
+                                                     (set 'placement "below")))
+         ((system-name= "klingenbergLaptop") (progn (set 'monitor1 "LVDS1")
                                                     (set 'monitor2 "VGA1")
                                                     (set 'placement "below")))
-        (t (progn (set 'monitor2 "VGA-1")
-                  (set 'monitor1 "HDMI-1")
-                  (set 'placement "left-of"))))
-       (defun my/exwm-xrandr ()
-         "Configure screen with xrandr."
-         (shell-command
-          (if (file-exists-p "~/.screenlayout/default.sh")
-              "~/.screenlayout/default.sh" ; prefer saved command by arandr by default
-            (concat "xrandr --output "
-                    monitor1
-                    " --primary --auto --"
-                    placement
-                    " "
-                    monitor2
-                    " --auto"))))
-       :hook (exwm-randr-screen-change . my/exwm-xrandr)
-       :init
-       (setq exwm-randr-workspace-monitor-plist (list 0 monitor1
-                                                      2 monitor1
-                                                      4 monitor1
-                                                      6 monitor1
-                                                      8 monitor1
-                                                      1 monitor2
-                                                      3 monitor2
-                                                      5 monitor2
-                                                      7 monitor2
-                                                      9 monitor2))
-       :config
-       (progn
-         (exwm-randr-enable)))
+         ((system-name= "klingenberg-laptop") (progn (set 'monitor1 "LVDS1")
+                                                     (set 'monitor2 "VGA1")
+                                                     (set 'placement "below")))
+         (t (progn (set 'monitor2 "VGA-1")
+                   (set 'monitor1 "HDMI-1")
+                   (set 'placement "left-of"))))
+        (defun my/exwm-xrandr ()
+          "Configure screen with xrandr."
+          (shell-command
+           (if (file-exists-p "~/.screenlayout/default.sh")
+               "~/.screenlayout/default.sh" ; prefer saved command by arandr by default
+             (concat "xrandr --output "
+                     monitor1
+                     " --primary --auto --"
+                     placement
+                     " "
+                     monitor2
+                     " --auto"))))
+        :hook (exwm-randr-screen-change . my/exwm-xrandr)
+        :init
+        (setq exwm-randr-workspace-monitor-plist (list 0 monitor1
+                                                       2 monitor1
+                                                       4 monitor1
+                                                       6 monitor1
+                                                       8 monitor1
+                                                       1 monitor2
+                                                       3 monitor2
+                                                       5 monitor2
+                                                       7 monitor2
+                                                       9 monitor2))
+        :config
+        (progn
+          (exwm-randr-enable)))
 
-     (use-package exwm-workspace
-       :after exwm
-       :demand t
-       :init
-       (progn
-         (setq exwm-workspace-number 10)
-         (setq exwm-workspace-show-all-buffers t)
-         (setq exwm-layout-show-all-buffers t)))
+      (use-package exwm-workspace
+        :after exwm
+        :demand t
+        :init
+        (progn
+          (setq exwm-workspace-number 10)
+          (setq exwm-workspace-show-all-buffers t)
+          (setq exwm-layout-show-all-buffers t)))
 
-     ;; (require 'exwmx-xfce)
-     ;; (exwmx-xfce-enable)
-     )
+      ;; (require 'exwmx-xfce)
+      ;; (exwmx-xfce-enable)
+      )
   (progn
-(defun my-create-super-bindings ()
-  "Create bindings starting with super for use outside exwm."
-  (general-define-key
-   :keymaps 'override
-   :states '(insert emacs hybrid normal visual motion operator replace)
-   "s-w" '(other-window :which-key "other window")
-   "s-d" 'dmenu
-   "s-x" 'helm-M-x
-   "s-f" 'helm-find-files
-   "s-p" 'helm-projectile
-   "s-b" 'helm-mini
-   "s-l" 'evil-window-right
-   "s-h" 'evil-window-left
-   "s-j" 'evil-window-down
-   "s-k" 'evil-window-up
-   "s-v" 'split-window-right
-   "s-s" 'split-window-below
-   "s-c" 'my-close-buffer
-   "s-q" 'my-get-rid-of-mouse
-   "s-m" 'delete-other-windows
-   "s-<f1>" '(lambda () (interactive) (eshell 'N))
-   "C-s-<f1>" 'eshell
-   "s-<f2>" '(lambda () (interactive)
-               (start-process "" nil browser))
-   "s-<f3>" 'deer
-   "s-<f4>" '(lambda () (interactive)
-               (mu4e))
-   "s-<f12>" '(lambda () (interactive)
-                (start-process "" nil "/usr/bin/slock"))))
+    (defun my-create-super-bindings ()
+      "Create bindings starting with super for use outside exwm."
+      (general-define-key
+       :keymaps 'override
+       :states '(insert emacs hybrid normal visual motion operator replace)
+       "s-w" '(other-window :which-key "other window")
+       "s-d" 'dmenu
+       "s-x" 'helm-M-x
+       "s-f" 'helm-find-files
+       "s-p" 'helm-projectile
+       "s-b" 'helm-mini
+       "s-l" 'evil-window-right
+       "s-h" 'evil-window-left
+       "s-j" 'evil-window-down
+       "s-k" 'evil-window-up
+       "s-v" 'split-window-right
+       "s-s" 'split-window-below
+       "s-c" 'my-close-buffer
+       "s-q" 'my-get-rid-of-mouse
+       "s-m" 'delete-other-windows
+       "s-<f1>" '(lambda () (interactive) (eshell 'N))
+       "C-s-<f1>" 'eshell
+       "s-<f2>" '(lambda () (interactive)
+                   (start-process "" nil browser))
+       "s-<f3>" 'deer
+       "s-<f4>" '(lambda () (interactive)
+                   (mu4e))
+       "s-<f12>" '(lambda () (interactive)
+                    (start-process "" nil "/usr/bin/slock"))))
 
-(my-create-super-bindings)
-    )
-  )
-
+    (my-create-super-bindings)))
 
 (use-package flycheck
   :diminish flycheck-mode

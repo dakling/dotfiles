@@ -830,7 +830,7 @@ It only works for frames with exactly two windows.
 
 
 ;;exwm
-(unless (system-name= "lina")
+(unless (system-name= "lina" "klingenberg-laptop")
   (use-package exwm 
     :ensure t
     :init

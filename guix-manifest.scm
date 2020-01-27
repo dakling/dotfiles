@@ -11,7 +11,7 @@
    "emacs-gnugo"
    "mpv"
    ;; "guile-emacs"
-   "emacs-next"
+   ;; "emacs-next"
    "lua"
    "syncthing"
    "texlive"

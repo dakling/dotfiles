@@ -137,6 +137,7 @@ xset r rate 400 20
 
 # # Start Emacs
 # exec /home/klingenberg/HESSENBOX-DA/programming/guix-vm/run.sh 
+# exec emacs-27.0.50
 exec emacs
 # exec xfce4-session
 # exec xmonad

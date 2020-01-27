@@ -481,9 +481,11 @@ It only works for frames with exactly two windows.
 (use-package perspective
   :ensure t
   :config
-  (my-leader-def
-    "n" 'persp-switch)
-  (persp-mode t)
+  (setq persp-mode-prefix-key (kbd "C-x x"))
+  (setq persp-show-modestring nil)
+  (define-key key-translation-map (kbd "SPC x") (kbd "C-x x"))
+  (define-key key-translation-map (kbd "s-SPC x") (kbd "C-x x"))
+  (persp-mode 1)
   (setq display-buffer-alist
         '(("\\*compilation\\*"
            (display-buffer-reuse-window display-buffer-same-window))

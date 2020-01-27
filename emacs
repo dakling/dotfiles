@@ -478,6 +478,23 @@ It only works for frames with exactly two windows.
 (use-package smart-mode-line-atom-one-dark-theme
   :ensure t)
 
+(use-package perspective
+  :ensure t
+  :config
+  (my-leader-def
+    "n" 'persp-switch)
+  (persp-mode t)
+  (setq display-buffer-alist
+        '(("\\*compilation\\*"
+           (display-buffer-reuse-window display-buffer-same-window))
+          ;; default
+          (".*"
+           (display-buffer-same-window)))))
+
+(setq display-buffer-reuse-frames t)         ; reuse windows in other frames
+(setq pop-up-windows nil)                    ; display-buffer: avoid splitting
+(setq even-window-heights nil)               ; display-buffer: avoid resizing
+
 ;; (use-package doom-modeline
 ;;   :ensure t
 ;;   :hook (after-init . doom-modeline-mode)
@@ -500,10 +517,10 @@ It only works for frames with exactly two windows.
   (setq mode-line-format
         '("%e"
           (:eval (propertize
-                  (format (concat "<%s> "
-                                  (unless (null (my-exwm-get-other-workspace)) "[%s] "))
-                          exwm-workspace-current-index
-                          (my-exwm-get-other-workspace))
+                  ;; (format (concat "<%s> "
+                  ;;                 (unless (null (my-exwm-get-other-workspace)) "[%s] "))
+                  ;;         exwm-workspace-current-index
+                  ;;         (my-exwm-get-other-workspace))
                   'face 'sml/numbers-separator))
           ;; (:eval (if (exwm-workspace--active-p exwm-workspace--current)
           ;; 	     (format "%s " exwm-workspace-current-index)
@@ -831,11 +848,11 @@ It only works for frames with exactly two windows.
                 ([?\s-F] . exwm-layout-set-fullscreen)
                 ([?\s-a] . exwm-workspace-switch)
                 ([?\s-A] . exwm-workspace-move-window)
-                ,@(mapcar (lambda (i)
-                            `(,(kbd (format "s-%d" i)) .
-                              (lambda () (interactive)
-                                (exwm-workspace-switch-create ,i))))
-                          (number-sequence 0 9))
+                ;; ,@(mapcar (lambda (i)
+                ;;             `(,(kbd (format "s-%d" i)) .
+                ;;               (lambda () (interactive)
+                ;;                 (exwm-workspace-switch-create ,i))))
+                ;;           (number-sequence 0 9))
                 ;; ,@(mapcar (lambda (i)
                 ;; 	      `(,(kbd (format "s-%s" i)) .
                 ;; 		(lambda () (interactive)
@@ -940,14 +957,14 @@ It only works for frames with exactly two windows.
         (progn
           (exwm-randr-enable)))
 
-      (use-package exwm-workspace
-        :after exwm
-        :demand t
-        :init
-        (progn
-          (setq exwm-workspace-number 10)
-          (setq exwm-workspace-show-all-buffers t)
-          (setq exwm-layout-show-all-buffers t)))
+      ;; (use-package exwm-workspace
+      ;;   :after exwm
+      ;;   :demand t
+      ;;   :init
+      ;;   (progn
+      ;;     (setq exwm-workspace-number 10)
+      ;;     (setq exwm-workspace-show-all-buffers t)
+      ;;     (setq exwm-layout-show-all-buffers t)))
 
       ;; (require 'exwmx-xfce)
       ;; (exwmx-xfce-enable)

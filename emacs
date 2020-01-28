@@ -959,14 +959,14 @@ It only works for frames with exactly two windows.
         (progn
           (exwm-randr-enable)))
 
-      ;; (use-package exwm-workspace
-      ;;   :after exwm
-      ;;   :demand t
-      ;;   :init
-      ;;   (progn
-      ;;     (setq exwm-workspace-number 10)
-      ;;     (setq exwm-workspace-show-all-buffers t)
-      ;;     (setq exwm-layout-show-all-buffers t)))
+      (use-package exwm-workspace
+        :after exwm
+        :demand t
+        :init
+        (progn
+          (setq exwm-workspace-number 2)
+          (setq exwm-workspace-show-all-buffers t)
+          (setq exwm-layout-show-all-buffers t)))
 
       ;; (require 'exwmx-xfce)
       ;; (exwmx-xfce-enable)

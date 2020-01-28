@@ -1735,10 +1735,11 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   :ensure t
   :defer t
   :config
-  (mapc
-   (lambda (elem) (add-to-list 'md4rd-subs-active elem))
-   '(linux
-     baduk)))
+  (setq md4rd-subs-active 
+        '(linux
+          emacs
+          lisp
+          baduk)))
 
 (use-package elfeed
   :ensure t

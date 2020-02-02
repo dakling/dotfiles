@@ -461,7 +461,9 @@ It only works for frames with exactly two windows.
   :config
   (load-theme 'doom-dark+ t))
 
-(use-package eziam-theme)
+;; (use-package eziam-theme
+;;   :config
+;;   (load-theme 'eziam-dark t))
 
 (use-package smart-mode-line-atom-one-dark-theme)
 
@@ -478,7 +480,8 @@ It only works for frames with exactly two windows.
 (use-package smart-mode-line
   :after smart-mode-line-atom-one-dark-theme
   :config
-  (setq sml/theme 'atom-one-dark)
+  ;; (setq sml/theme 'atom-one-dark)
+  (setq sml/theme 'respectful)
   (setq sml/shorten-modes t)
   (setq sml/shorten-directory t)
   (setq mode-line-format
@@ -779,6 +782,7 @@ It only works for frames with exactly two windows.
 
       (use-package exwm-input
         :after exwm-randr
+        :ensure nil
         :demand t
         :config
         (define-key exwm-mode-map (kbd "C-c") nil)
@@ -836,11 +840,13 @@ It only works for frames with exactly two windows.
                             'pulseaudio-control-toggle-current-sink-mute))
       
       (use-package exwm-systemtray
+        :ensure nil
         :after exwm
         :demand t
         :config (exwm-systemtray-enable))
 
       (use-package exwm-randr
+        :ensure nil
         :after exwm
         :demand t
         :preface
@@ -898,6 +904,7 @@ It only works for frames with exactly two windows.
           (exwm-randr-enable)))
 
       (use-package exwm-workspace
+        :ensure nil
         :after exwm
         :demand t
         :init
@@ -1199,6 +1206,7 @@ It only works for frames with exactly two windows.
 (defun my-setup-csharp-and-bosss ()
   "Setup stuff specific to bosss and csharp."
   (use-package csharp-repl
+    :ensure nil
     :load-path "~/Documents/programming/elisp/emacs-csharp-repl/")
   
   (defun my-bosss-file-p ()
@@ -1278,6 +1286,7 @@ limitations under the License.
 
   ;; bosss
   (use-package bosss
+    :ensure nil
     :load-path "~/Documents/programming/elisp/emacs-bosss/"
     :defer t
     :init
@@ -1671,6 +1680,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   (pinentry-start))
 
 (use-package go
+  :ensure nil
   :load-path "~/Documents/programming/elisp/el-go/")
 
 (use-package diminish
@@ -1684,6 +1694,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
                        flyspell-mode
                        defining-kbd-macro)))
 (use-package eaf
+  :ensure nil
   :load-path "~/.emacs.d/site-lisp/emacs-application-framework"
   :custom
   (eaf-find-alternate-file-in-dired t)

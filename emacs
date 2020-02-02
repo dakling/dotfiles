@@ -457,15 +457,14 @@ It only works for frames with exactly two windows.
 ;;appearance
 ;; (use-package zenburn-theme :ensure t)
 ;; (use-package cyberpunk-theme :ensure t)
-(use-package doom-themes
-  :config
-  (load-theme 'doom-dark+ t))
-
-;; (use-package eziam-theme
+;; (use-package doom-themes
 ;;   :config
-;;   (load-theme 'eziam-dark t))
+;;   (load-theme 'doom-dark+ t))
 
-(use-package smart-mode-line-atom-one-dark-theme)
+(use-package eziam-dusk-theme  
+  :ensure eziam-theme)  
+
+;; (use-package smart-mode-line-atom-one-dark-theme)
 
 ;; (use-package doom-modeline
 ;;   :hook (after-init . doom-modeline-mode)
@@ -477,43 +476,98 @@ It only works for frames with exactly two windows.
   :config
   (smooth-scrolling-mode 1))
 
-(use-package smart-mode-line
-  :after smart-mode-line-atom-one-dark-theme
+(use-package powerline
   :config
-  ;; (setq sml/theme 'atom-one-dark)
-  (setq sml/theme 'respectful)
-  (setq sml/shorten-modes t)
-  (setq sml/shorten-directory t)
   (setq mode-line-format
         '("%e"
-          (:eval (propertize
-                  (format (concat "<%s> "
-                                  (unless (null (my-exwm-get-other-workspace)) "[%s] "))
-                          exwm-workspace-current-index
-                          (my-exwm-get-other-workspace))
-                  'face 'sml/numbers-separator))
-          ;; (:eval (if (exwm-workspace--active-p exwm-workspace--current)
-          ;; 	     (format "%s " exwm-workspace-current-index)
-          ;; 	     (format "%s " (my-exwm-get-other-workspace)))) ;; TODO this is always true, determine the correct variable
-          sml/pos-id-separator
-          mode-line-mule-info
-          mode-line-client
-          mode-line-modified
-          mode-line-remote
-          mode-line-frame-identification
-          mode-line-buffer-identification
-          sml/pos-id-separator
-          ;; mode-line-front-space
-          mode-line-position
-          evil-mode-line-tag
-          ;; (vc-mode vc-mode)
-          sml/pre-modes-separator
-          mode-line-modes
-          mode-line-misc-info
-          mode-line-end-spaces))
-  (sml/setup)
-  ;; (set-face-background 'mode-line-inactive "light")
-  ) 
+          (:eval
+           (let* ((active (powerline-selected-window-active))
+                  (mode-line-buffer-id (if active (quote mode-line-buffer-id) (quote mode-line-buffer-id-inactive)))
+                  (mode-line (if active (quote mode-line) (quote mode-line-inactive)))
+                  (face0 (if active (quote powerline-active0) (quote powerline-inactive0)))
+                  (face1 (if active (quote powerline-active1) (quote powerline-inactive1)))
+                  (face2 (if active (quote powerline-active2) (quote powerline-inactive2)))
+                  (separator-left (intern (format "powerline-%s-%s" (powerline-current-separator) (car powerline-default-separator-dir))))
+                  (separator-right (intern (format "powerline-%s-%s" (powerline-current-separator) (cdr powerline-default-separator-dir))))
+                  (lhs (list
+                        (powerline-raw "%*" face0 (quote l))
+                        (format (concat "<%s> "
+                                        (unless (null (my-exwm-get-other-workspace)) "[%s] "))
+                                exwm-workspace-current-index
+                                (my-exwm-get-other-workspace))
+                        (when powerline-display-buffer-size (powerline-buffer-size face0 (quote l)))
+                        (when powerline-display-mule-info (powerline-raw mode-line-mule-info face0 (quote l)))
+                        (powerline-buffer-id (\` (mode-line-buffer-id (\, face0))) (quote l))
+                        (when (and (boundp (quote which-func-mode)) which-func-mode) (powerline-raw which-func-format face0 (quote l)))
+                        (powerline-raw " " face0)
+                        (funcall separator-left face0 face1)
+                        (when (and (boundp (quote erc-track-minor-mode)) erc-track-minor-mode) (powerline-raw erc-modified-channels-object face1 (quote l)))
+                        (powerline-major-mode face1 (quote l))
+                        (powerline-process face1)
+                        (powerline-minor-modes face1 (quote l))
+                        (powerline-narrow face1 (quote l))
+                        (powerline-raw " " face1)
+                        (funcall separator-left face1 face2)
+                        (powerline-vc face2 (quote r))
+                        (when (bound-and-true-p nyan-mode) (powerline-raw (list (nyan-create)) face2 (quote l)))
+                        ))
+                  (rhs (list
+                        (powerline-raw global-mode-string face2 (quote r))
+                        (funcall separator-right face2 face1)
+                        (unless window-system (powerline-raw (char-to-string 57505) face1 (quote l)))
+                        (powerline-raw "%4l" face1 (quote l))
+                        (powerline-raw ":" face1 (quote l))
+                        (powerline-raw "%3c" face1 (quote r))
+                        (funcall separator-right face1 face0)
+                        (powerline-raw " " face0)
+                        (powerline-raw "%6p" face0 (quote r))
+                        (when powerline-display-hud (powerline-hud face0 face2))
+                        (powerline-fill face0 0))))
+             (concat
+              (powerline-render lhs)
+              (powerline-fill face2 (powerline-width rhs))
+              (powerline-render rhs))))))
+  (powerline-default-theme))
+
+;; (use-package smart-mode-line
+;;   :after smart-mode-line-atom-one-dark-theme
+;;   :config
+;;   ;; (setq sml/theme 'atom-one-dark)
+;;   (setq sml/theme 'respectful)
+;;   (setq sml/shorten-modes t)
+;;   (setq sml/shorten-directory t)
+;;   (setq mode-line-format
+;;         '("%e"
+;;           (:eval (propertize
+;;                   (format (concat "<%s> "
+;;                                   (unless (null (my-exwm-get-other-workspace)) "[%s] "))
+;;                           exwm-workspace-current-index
+;;                           (my-exwm-get-other-workspace))
+;;                   'face 'sml/numbers-separator))
+;;           ;; (:eval (if (exwm-workspace--active-p exwm-workspace--current)
+;;           ;; 	     (format "%s " exwm-workspace-current-index)
+;;           ;; 	     (format "%s " (my-exwm-get-other-workspace)))) ;; TODO this is always true, determine the correct variable
+;;           sml/pos-id-separator
+;;           mode-line-mule-info
+;;           mode-line-client
+;;           mode-line-modified
+;;           mode-line-remote
+;;           mode-line-frame-identification
+;;           mode-line-buffer-identification
+;;           sml/pos-id-separator
+;;           ;; mode-line-front-space
+;;           mode-line-position
+;;           evil-mode-line-tag
+;;           ;; (vc-mode vc-mode)
+;;           sml/pre-modes-separator
+;;           mode-line-modes
+;;           mode-line-misc-info
+;;           mode-line-end-spaces))
+;;   (sml/setup)
+;;   ;; (set-face-background 'mode-line-inactive "light")
+
+;;   )
+
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (menu-bar-no-scroll-bar)
@@ -1032,7 +1086,8 @@ It only works for frames with exactly two windows.
   :defer t
   :config
   (add-hook 'lispy-mode-hook (lambda () (add-hook 'before-save-hook #'my-indent-buffer nil t)))
-  (add-hook 'lispy-mode-hook #'rainbow-delimiters-mode-enable))
+  ;; (add-hook 'lispy-mode-hook #'rainbow-delimiters-mode-enable)
+  )
 
 (use-package lispyville
   :diminish lispyville-mode
@@ -1059,7 +1114,7 @@ It only works for frames with exactly two windows.
 (use-package geiser
   :defer t
   :config
-  (add-hook 'scheme-mode-hook #'rainbow-delimiters-mode-enable)
+  ;; (add-hook 'scheme-mode-hook #'rainbow-delimiters-mode-enable)
   (add-hook 'scheme-mode-hook (lambda () (add-hook 'before-save-hook #'my-indent-buffer nil t)))
   (when (system-name= "klingenberg-tablet")
     (with-eval-after-load 'geiser-guile
@@ -1263,7 +1318,7 @@ limitations under the License.
 
   (add-hook 'csharp-mode-hook #'subword-mode)
   (add-hook 'csharp-mode-hook #'company-mode)
-  (add-hook 'csharp-mode-hook #'rainbow-delimiters-mode-enable)
+  ;; (add-hook 'csharp-mode-hook #'rainbow-delimiters-mode-enable)
   (add-hook 'csharp-mode-hook (lambda ()
                                 (push '(?< . ("< " . " >")) evil-surround-pairs-alist)))
   (add-hook 'csharp-mode-hook #'my-add-header)

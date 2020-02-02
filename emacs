@@ -464,14 +464,6 @@ It only works for frames with exactly two windows.
 (use-package eziam-dusk-theme  
   :ensure eziam-theme)  
 
-;; (use-package smart-mode-line-atom-one-dark-theme)
-
-;; (use-package doom-modeline
-;;   :hook (after-init . doom-modeline-mode)
-;;   :config
-;;   (setq doom-modeline-height 25)
-;;   )
-
 (use-package smooth-scrolling
   :config
   (smooth-scrolling-mode 1))
@@ -527,6 +519,7 @@ It only works for frames with exactly two windows.
               (powerline-render lhs)
               (powerline-fill face2 (powerline-width rhs))
               (powerline-render rhs))))))
+  (setq powerline-default-separator nil)
   (powerline-default-theme))
 
 ;; (use-package smart-mode-line

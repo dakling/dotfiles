@@ -470,7 +470,7 @@ It only works for frames with exactly two windows.
 
 (use-package powerline
   :config
-  (setq powerline-default-separator nil)
+  ;; (setq powerline-default-separator nil)
   (defun my-powerline-theme ()
     "Setup my mode-line."
     ;; (interactive)

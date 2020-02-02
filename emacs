@@ -1573,7 +1573,7 @@ limitations under the License.
   (setq mu4e-trash-folder "/Trash")
   (setq mu4e-refile-folder "/Archive")
   (setq mu4e-get-mail-command "offlineimap -o")
-  (setq mu4e-update-interval 60)
+  (setq mu4e-update-interval 120)
   (setq mu4e-hide-index-messages t) ; do not show minibuffer messages after updates
   (setq mu4e-index-update-error-warning nil)
   (setq mu4e-compose-signature-auto-include t)
@@ -1649,6 +1649,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
            (smtpmail-stream-type starttls)
            (user-mail-address "dario.klingenberg@web.de")
            (user-full-name "dario"))))
+  (run-at-time t mu4e-update-interval #'(lambda () (mu4e-update-mail-and-index t))) ; this should not be needed, but it is
 
   (use-package evil-mu4e
     :ensure t

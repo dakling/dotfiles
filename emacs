@@ -53,6 +53,8 @@
 
 (require 'use-package)
 
+(setq use-package-always-ensure t)
+
 ;; defaults suggested by blog and extended by me
 (setq delete-old-versions -1)		; delete excess backup versions silently
 (setq version-control t)		; use version control
@@ -240,7 +242,6 @@ It only works for frames with exactly two windows.
 
 ;; packages with configuration
 (use-package general
-  :ensure t
   :init
   (setq general-override-states '(insert
                                   emacs
@@ -356,7 +357,6 @@ It only works for frames with exactly two windows.
 
 
 (use-package evil
-  :ensure t
   :init
   (setq evil-want-keybinding nil)
   (setq evil-want-integration t)
@@ -364,14 +364,12 @@ It only works for frames with exactly two windows.
 
 (use-package evil-collection
   :after (evil helm) 
-  :ensure t
   :init
   (setq evil-collection-setup-minibuffer t)
   :config
   (evil-collection-init))
 
 (use-package evil-surround
-  :ensure t
   :config
   (global-evil-surround-mode 1)
   (evil-define-key 'operator global-map "s" 'evil-surround-edit)
@@ -381,7 +379,6 @@ It only works for frames with exactly two windows.
 
 (use-package evil-snipe
   :diminish evil-snipe-local-mode
-  :ensure t
   :config
   (setq evil-snipe-scope 'visible)
   (evil-snipe-mode 1)
@@ -391,11 +388,9 @@ It only works for frames with exactly two windows.
 
 (use-package evil-commentary
   :diminish evil-commentary-mode
-  :ensure t
   :init (evil-commentary-mode))
 
 (use-package evil-args
-  :ensure t
   :config
   ;; bind evil-args text objects
   (define-key evil-inner-text-objects-map "a" 'evil-inner-arg)
@@ -408,7 +403,6 @@ It only works for frames with exactly two windows.
    "gK" 'evil-jump-out-args))
 
 (use-package evil-iedit-state
-  :ensure t
   :config
   (general-define-key
    :keymaps 'override
@@ -417,29 +411,24 @@ It only works for frames with exactly two windows.
 
 (use-package evil-mc
   :diminish evil-mc-mode
-  :ensure t
   :config
   (global-evil-mc-mode 1))
 
 (use-package evil-owl
-  :ensure t
   :diminish evil-owl-mode
   :config
   (evil-owl-mode))
 
 (use-package evil-exchange
-  :ensure t
   :config
   
   (evil-exchange-install))
 
 (use-package vdiff
-  :ensure t
   :config
   (evil-define-key 'normal vdiff-mode-map "," vdiff-mode-prefix-map))
 
 (use-package vdiff-magit
-  :ensure t
   :config
   (define-key magit-mode-map "e" 'vdiff-magit-dwim)
   (define-key magit-mode-map "E" 'vdiff-magit)
@@ -449,7 +438,6 @@ It only works for frames with exactly two windows.
   (transient-suffix-put 'magit-dispatch "E" :command 'vdiff-magit))
 
 ;; (use-package windower
-;;   :ensure t
 ;;   :config
 ;;   (global-set-key (kbd "s-M-h") 'windower-move-border-left)
 ;;   (global-set-key (kbd "s-M-j") 'windower-move-border-below)
@@ -462,7 +450,6 @@ It only works for frames with exactly two windows.
 ;;   (global-set-key (kbd "s-L") 'windower-swap-right))
 
 (use-package which-key
-  :ensure t
   :defer t
   :init (which-key-mode)
   :diminish which-key-mode)
@@ -471,28 +458,25 @@ It only works for frames with exactly two windows.
 ;; (use-package zenburn-theme :ensure t)
 ;; (use-package cyberpunk-theme :ensure t)
 (use-package doom-themes
-  :ensure t
   :config
   (load-theme 'doom-dark+ t))
 
-(use-package smart-mode-line-atom-one-dark-theme
-  :ensure t)
+(use-package eziam-theme)
+
+(use-package smart-mode-line-atom-one-dark-theme)
 
 ;; (use-package doom-modeline
-;;   :ensure t
 ;;   :hook (after-init . doom-modeline-mode)
 ;;   :config
 ;;   (setq doom-modeline-height 25)
 ;;   )
 
 (use-package smooth-scrolling
-  :ensure t
   :config
   (smooth-scrolling-mode 1))
 
 (use-package smart-mode-line
   :after smart-mode-line-atom-one-dark-theme
-  :ensure t
   :config
   (setq sml/theme 'atom-one-dark)
   (setq sml/shorten-modes t)
@@ -550,32 +534,25 @@ It only works for frames with exactly two windows.
 (setq eshell-cmpl-ignore-case t)
 
 (use-package eshell-prompt-extras
-  :ensure t
   :config
   (setq eshell-highlight-prompt t
         eshell-prompt-function 'epe-theme-lambda))
 
-(use-package fish-completion
-  :ensure t)
+(use-package fish-completion)
 
-(use-package bash-completion
-  :ensure t)
+(use-package bash-completion)
 
-(use-package pcomplete-extension
-  :ensure t)
+(use-package pcomplete-extension)
 
-(use-package pcmpl-args
-  :ensure t)
+(use-package pcmpl-args)
 
-(use-package pcmpl-git
-  :ensure t)
+(use-package pcmpl-git)
 
 (use-package esh-autosuggest
-  :ensure t
   :hook (eshell-mode . esh-autosuggest-mode))
 
 ;; ranger
-(use-package ranger :ensure t
+(use-package ranger
   :commands ranger
   :config
   (general-define-key
@@ -595,14 +572,12 @@ It only works for frames with exactly two windows.
 ;;   )
 
 (unless (system-name= "klingenberg-tablet")
-  (use-package pulseaudio-control
-    :ensure t))
+  (use-package pulseaudio-control))
 
 (use-package helm
   :diminish helm-mode
   :defer t
   :after helm-exwm
-  :ensure t
   :config
   (general-define-key
    :keymaps 'helm-find-files-map
@@ -636,30 +611,22 @@ It only works for frames with exactly two windows.
                                     helm-source-recentf))
   (helm-mode 1))
 
-(use-package helm-system-packages
-  :ensure t)
+(use-package helm-system-packages)
 
-(use-package helm-exwm
-  :ensure t)
+(use-package helm-exwm)
 
-(use-package helm-eww
-  :ensure t)
+(use-package helm-eww)
 
-(use-package helm-dictionary
-  :ensure t)
+(use-package helm-dictionary)
 
-(use-package helm-tramp
-  :ensure t)
+(use-package helm-tramp)
 
-(use-package helm-unicode
-  :ensure t)
+(use-package helm-unicode)
 
-(use-package helm-flycheck
-  :ensure t)
+(use-package helm-flycheck)
 
 (use-package company
   :diminish company-mode
-  :ensure t
   :config
   (setq company-dabbrev-downcase nil)
   (setq read-file-name-completion-ignore-case t)
@@ -673,18 +640,15 @@ It only works for frames with exactly two windows.
 
 (use-package yasnippet
   :diminish yas-minor-mode
-  :ensure t
   :config
   (yas-global-mode 1))
 
 (use-package yasnippet-snippets
-  :ensure t
   :after yasnippet)
 
 (use-package projectile
   :diminish projectile-mode
   :defer t
-  :ensure t
   :config
   (my-leader-def
     :states 'normal
@@ -692,31 +656,26 @@ It only works for frames with exactly two windows.
   (projectile-mode 1))
 
 (use-package helm-projectile
-  :ensure t
   :after projectile
   :config
   (helm-projectile-on))
 
-(use-package projectile-ripgrep
-  :ensure t)
+(use-package projectile-ripgrep)
 
 (use-package magit
-  :ensure t
   :commands magit-status
   :general (my-leader-def
              "gs" '(magit-status :which-key "git status")))
 
-(use-package evil-magit :ensure t)
+(use-package evil-magit)
 
 (use-package vc-msg
-  :ensure t
   :general (my-leader-def
              "gb" '(vc-msg-show :which-key "git blame")))
 
-(use-package ediff :ensure t)
+(use-package ediff)
 
 (use-package doc-view
-  :ensure t
   :config
   ;; open docx as text
   (define-derived-mode
@@ -744,7 +703,6 @@ It only works for frames with exactly two windows.
 
 (unless (system-name= "localhost" "lina")
   (use-package pdf-tools
-    :ensure t
     :defer t
     :init
     (pdf-tools-install)
@@ -802,7 +760,6 @@ It only works for frames with exactly two windows.
 (if (not (system-name= "lina"))
     (progn
       (use-package exwm 
-        :ensure t
         :init
         (server-start)
         :config
@@ -988,7 +945,6 @@ It only works for frames with exactly two windows.
 (use-package flycheck
   :diminish flycheck-mode
   :defer t
-  :ensure t
   :init (global-flycheck-mode))
 
 ;;;programming languages
@@ -1010,7 +966,6 @@ It only works for frames with exactly two windows.
 ;; 	     "eb" '(slime-eval-buffer :which-key "eval buffer")))
 
 (use-package lsp-mode
-  :ensure t
   :hook ((
           ;; csharp-mode
           tex-mode latex-mode) . lsp)
@@ -1039,20 +994,16 @@ It only works for frames with exactly two windows.
 
 ;; optionally
 (use-package lsp-ui 
-  :ensure t
   :commands lsp-ui-mode)
 
 (use-package company-lsp
-  :ensure t
   :commands company-lsp)
 
 (use-package helm-lsp
-  :ensure t
   :commands helm-lsp-workspace-symbol)
 
 ;; optionally if you want to use debugger
-(use-package dap-mode
-  :ensure t)
+(use-package dap-mode)
 
 ;; (use-package dap-csharp
 ;;   :ensure t) ; to load the dap adapter for your language
@@ -1071,14 +1022,12 @@ It only works for frames with exactly two windows.
 
 (use-package lispy
   :diminish lispy-mode
-  :ensure t
   :defer t
   :config
   (add-hook 'lispy-mode-hook (lambda () (add-hook 'before-save-hook #'my-indent-buffer nil t)))
   (add-hook 'lispy-mode-hook #'rainbow-delimiters-mode-enable))
 
 (use-package lispyville
-  :ensure t
   :diminish lispyville-mode
   :after lispy
   :init
@@ -1087,7 +1036,6 @@ It only works for frames with exactly two windows.
   (lispyville-set-key-theme '(operators c-w additional)))
 
 (use-package sly
-  :ensure t
   :defer t
   :config
   (setq inferior-lisp-program "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")
@@ -1102,7 +1050,6 @@ It only works for frames with exactly two windows.
 ;; (use-package sly-quicklisp
 ;;   :ensure t)
 (use-package geiser
-  :ensure t
   :defer t
   :config
   (add-hook 'scheme-mode-hook #'rainbow-delimiters-mode-enable)
@@ -1121,7 +1068,6 @@ It only works for frames with exactly two windows.
              "eb" '(geiser-eval-buffer :which-key "eval buffer")))
 
 (use-package eval-sexp-fu
-  :ensure t
   :config
   (setq eval-sexp-fu-flash-face
         '((((class color)) (:background "black" :foreground "gray" :bold t))
@@ -1181,7 +1127,6 @@ It only works for frames with exactly two windows.
 
 (use-package evil-org
   :diminish evil-org-mode
-  :ensure t
   :after org
   :config
   (add-hook 'org-mode-hook 'evil-org-mode)
@@ -1192,12 +1137,10 @@ It only works for frames with exactly two windows.
   (evil-org-agenda-set-keys))
 
 (use-package org-bullets
-  :ensure t
   :config
   (add-hook 'org-mode-hook '(lambda () (org-bullets-mode 1))))
 
 (use-package org-ref
-  :ensure t
   :defer t
   :init
   (setq org-latex-pdf-process (list "latexmk -shell-escape -f -pdf %f"))
@@ -1212,16 +1155,13 @@ It only works for frames with exactly two windows.
     "rc" '(org-ref-helm-insert-cite-link :which-key "insert citation")
     "rr" '(org-ref-insert-ref-link :which-key "insert reference")))
 
-(use-package org-re-reveal
-  :ensure t)
+(use-package org-re-reveal)
 
 (use-package csv-mode
-  :ensure t
   :config
   (add-hook 'csv-mode-hook 'csv-align-mode))
 
-(use-package ggtags
-  :ensure t)
+(use-package ggtags)
 
 ;;reduce
 (use-package reduce-ide
@@ -1236,11 +1176,9 @@ It only works for frames with exactly two windows.
 ;; maple
 ;; (use-package maplev)
 
-(use-package wgrep
-  :ensure t)
+(use-package wgrep)
 
 (use-package jenkins
-  :ensure t
   :defer t
   :config
   (setq jenkins-api-token "115e5da14d9018ef2d51d040fefc48eeb4")
@@ -1261,9 +1199,8 @@ It only works for frames with exactly two windows.
 (defun my-setup-csharp-and-bosss ()
   "Setup stuff specific to bosss and csharp."
   (use-package csharp-repl
-    :load-path "~/Documents/programming/elisp/emacs-csharp-repl/"
-    :ensure t)
-
+    :load-path "~/Documents/programming/elisp/emacs-csharp-repl/")
+  
   (defun my-bosss-file-p ()
     (or
      (file-in-directory-p (buffer-file-name) "~/BoSSS/")
@@ -1342,7 +1279,6 @@ limitations under the License.
   ;; bosss
   (use-package bosss
     :load-path "~/Documents/programming/elisp/emacs-bosss/"
-    :ensure t
     :defer t
     :init
     (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
@@ -1364,7 +1300,6 @@ limitations under the License.
 
   (use-package omnisharp
     :diminish omnisharp-mode
-    :ensure t
     :config
     (add-hook 'csharp-mode-hook #'omnisharp-mode)
     (general-define-key
@@ -1396,7 +1331,6 @@ limitations under the License.
 (add-hook 'csharp-mode-hook 'my-setup-csharp-and-bosss)
 
 (use-package fsharp-mode
-  :ensure t
   :defer t
   :general
   (my-local-leader-def
@@ -1491,7 +1425,6 @@ limitations under the License.
     "rc"   '(reftex-citation :which-key "cite")))
 
 ;; (use-package auctex-latexmk
-;;   :ensure t
 ;;   :defer t
 ;;   :init
 ;;   (progn
@@ -1499,7 +1432,6 @@ limitations under the License.
 ;;     (setq auctex-latexmk-inherit-TeX-PDF-mode t)))
 
 (use-package company-reftex
-  :ensure t
   :defer t
   :config
   (add-to-list 'company-backends 'company-reftex-labels t)
@@ -1507,7 +1439,6 @@ limitations under the License.
 
 ;; browser
 (use-package eww
-  :ensure t
   :config
   (defun my-eww-open-league-table ()
     "Do an internet search for soccer league table."
@@ -1530,16 +1461,14 @@ limitations under the License.
    "M-l" 'eww-forward-url
    "f" 'ace-link-eww))
 
-(use-package ace-link
-  :ensure t)
+(use-package ace-link)
 
 ;; mail
 
 (defun my-mu4e-setup ()
 
-  (use-package helm-mu
-    :ensure t)
-
+  (use-package helm-mu)
+  
   ;; (use-package mu4e-conversation
   ;;   :ensure t)
 
@@ -1652,7 +1581,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   (run-at-time t mu4e-update-interval #'(lambda () (mu4e-update-mail-and-index t))) ; this should not be needed, but it is
 
   (use-package evil-mu4e
-    :ensure t
     :config
     (evil-define-key 'evilified mu4e-main-mode-map (kbd "j") 'evil-next-line)
     (evil-define-key 'evilified mu4e-main-mode-map (kbd "s") 'helm-mu)
@@ -1666,7 +1594,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 
   ;; taken from reddit
   (use-package mu4e-alert
-    :ensure t
     :config
     (mu4e-alert-enable-mode-line-display)
     (mu4e-alert-enable-notifications)
@@ -1679,22 +1606,18 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 (unless (or (system-name= "localhost") (system-name= "lina"))
   (my-mu4e-setup))
 
-(use-package rainbow-delimiters
-  :ensure t)
+(use-package rainbow-delimiters)
 
-(use-package dmenu
-  :ensure t)
+(use-package dmenu)
 
 ;; (use-package auto-dim-other-buffers
 ;;   :ensure t
 ;;   :config (auto-dim-other-buffers-mode t))
 
 (use-package google-translate
-  :ensure t
   :defer t)
 
 (use-package excorporate
-  :ensure t
   :defer t
   :config
   (general-define-key
@@ -1708,7 +1631,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   (setq excorporate-configuration (cons "klingenberg@fdy.tu-darmstadt.de" "https://mail.tu-darmstadt.de/ews/exchange.asmx")))
 
 (use-package emms
-  :ensure t
   :defer t
   :config
   (emms-standard)
@@ -1716,7 +1638,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   (setq emms-source-file-default-directory "~/Music"))
 
 (use-package sx
-  :ensure t
   :defer t
   :config
   (general-define-key
@@ -1725,15 +1646,12 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    "RET" 'sx-display))
 
 (use-package mediawiki
-  :ensure t
   :defer t)
 
 (use-package debbugs
-  :ensure t
   :defer t)
 
 (use-package md4rd
-  :ensure t
   :defer t
   :config
   (setq md4rd-subs-active 
@@ -1743,23 +1661,19 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
           baduk)))
 
 (use-package elfeed
-  :ensure t
   :defer t
   :config
   (setq elfeed-feeds
         '("https://www.zeitsprung.fm/feed/ogg/")))
 
 (use-package pinentry
-  :ensure t
   :init
   (pinentry-start))
 
 (use-package go
-  :load-path "~/Documents/programming/elisp/el-go/"
-  :ensure t)
+  :load-path "~/Documents/programming/elisp/el-go/")
 
 (use-package diminish
-  :ensure t
   :config
   (mapcar #'diminish '(reftex-mode
                        auto-revert-mode

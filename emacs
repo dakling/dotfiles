@@ -1084,24 +1084,33 @@ It only works for frames with exactly two windows.
 ;;     (add-to-list 'eglot-server-programs
 ;;                  `(csharp-mode . ("~/.omnisharp/omnisharp/omnisharp/OmniSharp.exe" "-lsp")))))
 
-(add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))
-(add-hook 'lisp-mode-hook (lambda () (lispy-mode 1)))
+;; (add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))
+;; (add-hook 'lisp-mode-hook (lambda () (lispy-mode 1)))
 
-(use-package lispy
-  :diminish lispy-mode
-  :defer t
-  :config
-  (add-hook 'lispy-mode-hook (lambda () (add-hook 'before-save-hook #'my-indent-buffer nil t)))
-  ;; (add-hook 'lispy-mode-hook #'rainbow-delimiters-mode-enable)
-  )
+;; (use-package lispy
+;;   :diminish lispy-mode
+;;   :defer t
+;;   :config
+;;   (add-hook 'lispy-mode-hook (lambda () (add-hook 'before-save-hook #'my-indent-buffer nil t)))
+;;   ;; (add-hook 'lispy-mode-hook #'rainbow-delimiters-mode-enable)
+;;   )
 
-(use-package lispyville
-  :diminish lispyville-mode
-  :after lispy
-  :init
-  (general-add-hook '(emacs-lisp-mode-hook lisp-mode-hook) #'lispyville-mode)
+;; (use-package lispyville
+;;   :diminish lispyville-mode
+;;   :after lispy
+;;   :init
+;;   (general-add-hook '(emacs-lisp-mode-hook lisp-mode-hook) #'lispyville-mode)
+;;   :config
+;;   (lispyville-set-key-theme '(operators c-w additional)))
+
+(use-package evil-smartparens
   :config
-  (lispyville-set-key-theme '(operators c-w additional)))
+  (my-leader-def
+    "j" 'sp-forward-barf-sexp
+    "k" 'sp-backward-barf-sexp) ;; TODO
+  (add-hook 'emacs-lisp-mode-hook (lambda () (evil-smartparens-mode 1)))
+  (add-hook 'lisp-mode-hook (lambda () (evil-smartparens-mode 1)))
+  (add-hook 'csharp-mode-hook (lambda () (evil-smartparens-mode 1))))
 
 (use-package sly
   :defer t

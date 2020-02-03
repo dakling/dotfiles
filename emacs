@@ -1105,9 +1105,6 @@ It only works for frames with exactly two windows.
 
 (use-package evil-smartparens
   :config
-  (my-leader-def
-    "j" 'sp-forward-barf-sexp
-    "k" 'sp-backward-barf-sexp) ;; TODO
   (add-hook 'emacs-lisp-mode-hook (lambda () (evil-smartparens-mode 1)))
   (add-hook 'lisp-mode-hook (lambda () (evil-smartparens-mode 1)))
   (add-hook 'csharp-mode-hook (lambda () (evil-smartparens-mode 1))))

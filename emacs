@@ -470,7 +470,7 @@ It only works for frames with exactly two windows.
 
 (use-package powerline
   :config
-  ;; (setq powerline-default-separator nil)
+  (setq powerline-default-separator nil)
   (defun my-powerline-theme ()
     "Setup my mode-line."
     ;; (interactive)
@@ -531,7 +531,9 @@ It only works for frames with exactly two windows.
                        (concat (powerline-render lhs)
                                (powerline-fill face2 (powerline-width rhs))
                                (powerline-render rhs)))))))
-  (my-powerline-theme))
+  (my-powerline-theme)
+  ;; (powerline-default-theme)
+  )
 
 ;; (use-package smart-mode-line
 ;;   :after smart-mode-line-atom-one-dark-theme

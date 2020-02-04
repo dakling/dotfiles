@@ -457,12 +457,12 @@ It only works for frames with exactly two windows.
 ;;appearance
 ;; (use-package zenburn-theme :ensure t)
 ;; (use-package cyberpunk-theme :ensure t)
-;; (use-package doom-themes
-;;   :config
-;;   (load-theme 'doom-dark+ t))
+(use-package doom-themes
+  :config
+  (load-theme 'doom-dark+ t))
 
-(use-package eziam-dusk-theme  
-  :ensure eziam-theme)  
+;; (use-package eziam-dusk-theme  
+;;   :ensure eziam-theme)  
 
 (use-package smooth-scrolling
   :config
@@ -490,10 +490,12 @@ It only works for frames with exactly two windows.
                                                              (powerline-current-separator)
                                                              (cdr powerline-default-separator-dir))))
                             (lhs (list (powerline-raw "%*" face0 'l)
-                                       (format (concat "<%s> "
-                                                       (unless (null (my-exwm-get-other-workspace)) "[%s] "))
-                                               exwm-workspace-current-index
-                                               (my-exwm-get-other-workspace))
+                                       (powerline-raw (format (concat "<%s> "
+                                                                      (unless (null (my-exwm-get-other-workspace)) "[%s] "))
+                                                              exwm-workspace-current-index
+                                                              (my-exwm-get-other-workspace))
+                                                      face0
+                                                      'l)
                                        (when powerline-display-buffer-size
                                          (powerline-buffer-size face0 'l))
                                        (when powerline-display-mule-info

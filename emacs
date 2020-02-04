@@ -1710,7 +1710,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   (defalias 'browse-web #'eaf-open-browser))
 (use-package powerline
   :config
-  (setq powerline-default-separator nil)
+  ;; (setq powerline-default-separator nil)
   (defun my-powerline-theme ()
     "Setup my mode-line."
     ;; (interactive)

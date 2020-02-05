@@ -316,7 +316,7 @@ It only works for frames with exactly two windows.
     "bd" '(kill-this-buffer :which-key "kill buffer")
     "m"  '(imenu t :which-key "imenu")
     "w"  '(:ignore t :which-key "window management")
-    "w TAB"  '(lambda () (interactive) (ivy--switch-buffer-action (buffer-name (other-buffer (current-buffer)))))
+    "w TAB"  '(evil-switch-to-windows-last-buffer)
     ;; "w2"  'spacemacs/layout-double-columns
     ;; "w3"  'spacemacs/layout-triple-columns
     ;; "wb"  'spacemacs/switch-to-minibuffer-window

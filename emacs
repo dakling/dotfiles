@@ -470,6 +470,9 @@ It only works for frames with exactly two windows.
 
 (use-package feebleline
   :config
+  (defun my-feebleline-mail ()
+    "Show unread mails."
+    (when (> (string-to-number (shell-command-to-string "mu find flag:new | wc -l")) 0) (format "unread mail")))
   (defun my-feebleline-time ()
     "Show time as string."
     (format-time-string "%k:%M" (current-time)))
@@ -479,8 +482,9 @@ It only works for frames with exactly two windows.
             exwm-workspace-current-index
             (my-exwm-get-other-workspace)))
   (setq feebleline-msg-functions
-        '((my-feebleline-exwm-workspace)
+        '(;(my-feebleline-exwm-workspace)
           (my-feebleline-time)
+          ;(my-feebleline-mail)
           (feebleline-line-number         :post "" :fmt "%5s")
           (feebleline-column-number       :pre ":" :fmt "%-2s")
           (feebleline-file-directory      :face feebleline-dir-face :post "")
@@ -489,6 +493,10 @@ It only works for frames with exactly two windows.
           (feebleline-git-branch          :face feebleline-git-face :pre " : ")
           (feebleline-project-name        :align right)))
   (feebleline-mode 1))
+
+(use-package auto-dim-other-buffers
+  :config
+  (auto-dim-other-buffers-mode 1))
 
 (tool-bar-mode -1)
 (menu-bar-mode -1)
@@ -1592,6 +1600,10 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 
 (unless (or (system-name= "localhost") (system-name= "lina"))
   (my-mu4e-setup))
+
+(mu4e-headers-search mu4e-alert-interesting-mail-query)
+
+(mu4e-alert-interesting-mail-query)
 
 (use-package rainbow-delimiters)
 

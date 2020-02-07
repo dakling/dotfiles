@@ -1586,9 +1586,10 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
     "Count unread mails."
     (setq my-mu4e-unread-mail (string-to-number (shell-command-to-string "mu find flag:new | wc -l"))))
   (add-hook 'mu4e-index-updated-hook #'my-number-of-unread-mail)
+  (add-hook 'mu4e-view-mode-hook #'my-number-of-unread-mail)
   (run-at-time t mu4e-update-interval #'(lambda ()
                                           (progn
-                                           (mu4e-update-mail-and-index t)))); this should not be needed, but it is
+                                            (mu4e-update-mail-and-index t)))); this should not be needed, but it is
   
   (use-package evil-mu4e
     :config

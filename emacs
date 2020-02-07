@@ -468,46 +468,27 @@ It only works for frames with exactly two windows.
   :config
   (smooth-scrolling-mode 1))
 
-
-
-;; (use-package smart-mode-line
-;;   :after smart-mode-line-atom-one-dark-theme
-;;   :config
-;;   ;; (setq sml/theme 'atom-one-dark)
-;;   (setq sml/theme 'respectful)
-;;   (setq sml/shorten-modes t)
-;;   (setq sml/shorten-directory t)
-;;   (setq mode-line-format
-;;         '("%e"
-;;           (:eval (propertize
-;;                   (format (concat "<%s> "
-;;                                   (unless (null (my-exwm-get-other-workspace)) "[%s] "))
-;;                           exwm-workspace-current-index
-;;                           (my-exwm-get-other-workspace))
-;;                   'face 'sml/numbers-separator))
-;;           ;; (:eval (if (exwm-workspace--active-p exwm-workspace--current)
-;;           ;; 	     (format "%s " exwm-workspace-current-index)
-;;           ;; 	     (format "%s " (my-exwm-get-other-workspace)))) ;; TODO this is always true, determine the correct variable
-;;           sml/pos-id-separator
-;;           mode-line-mule-info
-;;           mode-line-client
-;;           mode-line-modified
-;;           mode-line-remote
-;;           mode-line-frame-identification
-;;           mode-line-buffer-identification
-;;           sml/pos-id-separator
-;;           ;; mode-line-front-space
-;;           mode-line-position
-;;           evil-mode-line-tag
-;;           ;; (vc-mode vc-mode)
-;;           sml/pre-modes-separator
-;;           mode-line-modes
-;;           mode-line-misc-info
-;;           mode-line-end-spaces))
-;;   (sml/setup)
-;;   ;; (set-face-background 'mode-line-inactive "light")
-
-;;   )
+(use-package feebleline
+  :config
+  (defun my-feebleline-time ()
+    "Show time as string."
+    (format-time-string "%k:%M" (current-time)))
+  (defun my-feebleline-exwm-workspace ()
+    "Exwm workspaces as string."
+    (format (concat "<%s> " (unless (null (my-exwm-get-other-workspace)) "[%s] "))
+            exwm-workspace-current-index
+            (my-exwm-get-other-workspace)))
+  (setq feebleline-msg-functions
+        '((my-feebleline-exwm-workspace)
+          (my-feebleline-time)
+          (feebleline-line-number         :post "" :fmt "%5s")
+          (feebleline-column-number       :pre ":" :fmt "%-2s")
+          (feebleline-file-directory      :face feebleline-dir-face :post "")
+          (feebleline-file-or-buffer-name :face font-lock-keyword-face :post "")
+          (feebleline-file-modified-star  :face font-lock-warning-face :post "")
+          (feebleline-git-branch          :face feebleline-git-face :pre " : ")
+          (feebleline-project-name        :align right)))
+  (feebleline-mode 1))
 
 (tool-bar-mode -1)
 (menu-bar-mode -1)
@@ -523,11 +504,6 @@ It only works for frames with exactly two windows.
   (interactive)
   (my-eshell-delete-line)
   (evil-insert 1))
-
-;; (my-local-leader-def
-;;   :keymaps 'eshell-mode-map ; mode map not defined
-;;   "dd" 'my-eshell-delete-line
-;;   "cc" 'my-eshell-change-line)
 
 (setq eshell-cmpl-ignore-case t)
 
@@ -1708,72 +1684,73 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   (eaf-bind-key take_photo "p" eaf-camera-keybinding)
   (setq browse-url-browser-function 'eaf-open-browser)
   (defalias 'browse-web #'eaf-open-browser))
-(use-package powerline
-  :config
-  ;; (setq powerline-default-separator nil)
-  (defun my-powerline-theme ()
-    "Setup my mode-line."
-    ;; (interactive)
-    (setq-default mode-line-format
-                  '("%e"
-                    (:eval
-                     (let* ((active (powerline-selected-window-active))
-                            (mode-line-buffer-id (if active 'mode-line-buffer-id 'mode-line-buffer-id-inactive))
-                            (mode-line (if active 'mode-line 'mode-line-inactive))
-                            (face0 (if active 'powerline-active0 'powerline-inactive0))
-                            (face1 (if active 'powerline-active1 'powerline-inactive1))
-                            (face2 (if active 'powerline-active2 'powerline-inactive2))
-                            (separator-left (intern (format "powerline-%s-%s"
-                                                            (powerline-current-separator)
-                                                            (car powerline-default-separator-dir))))
-                            (separator-right (intern (format "powerline-%s-%s"
-                                                             (powerline-current-separator)
-                                                             (cdr powerline-default-separator-dir))))
-                            (lhs (list (powerline-raw "%*" face0 'l)
-                                       (powerline-raw (format (concat "<%s> "
-                                                                      (unless (null (my-exwm-get-other-workspace)) "[%s] "))
-                                                              exwm-workspace-current-index
-                                                              (my-exwm-get-other-workspace))
-                                                      face0
-                                                      'l)
-                                       (when powerline-display-buffer-size
-                                         (powerline-buffer-size face0 'l))
-                                       (when powerline-display-mule-info
-                                         (powerline-raw mode-line-mule-info face0 'l))
-                                       (powerline-buffer-id `(mode-line-buffer-id ,face0) 'l)
-                                       (when (and (boundp 'which-func-mode) which-func-mode)
-                                         (powerline-raw which-func-format face0 'l))
-                                       (powerline-raw " " face0)
-                                       (funcall separator-left face0 face1)
-                                       (when (and (boundp 'erc-track-minor-mode) erc-track-minor-mode)
-                                         (powerline-raw erc-modified-channels-object face1 'l))
-                                       (powerline-major-mode face1 'l)
-                                       (powerline-process face1)
-                                       (powerline-minor-modes face1 'l)
-                                       (powerline-narrow face1 'l)
-                                       (powerline-raw " " face1)
-                                       (funcall separator-left face1 face2)
-                                       (powerline-vc face2 'r)
-                                       (when (bound-and-true-p nyan-mode)
-                                         (powerline-raw (list (nyan-create)) face2 'l))))
-                            (rhs (list (powerline-raw global-mode-string face2 'r)
-                                       (funcall separator-right face2 face1)
-                                       (unless window-system
-                                         (powerline-raw (char-to-string #xe0a1) face1 'l))
-                                       (powerline-raw "%4l" face1 'l)
-                                       (powerline-raw ":" face1 'l)
-                                       (powerline-raw "%3c" face1 'r)
-                                       (funcall separator-right face1 face0)
-                                       (powerline-raw " " face0)
-                                       (powerline-raw "%6p" face0 'r)
-                                       (when powerline-display-hud
-                                         (powerline-hud face0 face2))
-                                       (powerline-fill face0 0)
-                                       )))
-                       (concat (powerline-render lhs)
-                               (powerline-fill face2 (powerline-width rhs))
-                               (powerline-render rhs)))))))
-  (my-powerline-theme)
-  ;; (powerline-default-theme)
-  )
+
+;; (use-package powerline
+;;   :config
+;;   ;; (setq powerline-default-separator nil)
+;;   (defun my-powerline-theme ()
+;;     "Setup my mode-line."
+;;     ;; (interactive)
+;;     (setq-default mode-line-format
+;;                   '("%e"
+;;                     (:eval
+;;                      (let* ((active (powerline-selected-window-active))
+;;                             (mode-line-buffer-id (if active 'mode-line-buffer-id 'mode-line-buffer-id-inactive))
+;;                             (mode-line (if active 'mode-line 'mode-line-inactive))
+;;                             (face0 (if active 'powerline-active0 'powerline-inactive0))
+;;                             (face1 (if active 'powerline-active1 'powerline-inactive1))
+;;                             (face2 (if active 'powerline-active2 'powerline-inactive2))
+;;                             (separator-left (intern (format "powerline-%s-%s"
+;;                                                             (powerline-current-separator)
+;;                                                             (car powerline-default-separator-dir))))
+;;                             (separator-right (intern (format "powerline-%s-%s"
+;;                                                              (powerline-current-separator)
+;;                                                              (cdr powerline-default-separator-dir))))
+;;                             (lhs (list (powerline-raw "%*" face0 'l)
+;;                                        (powerline-raw (format (concat "<%s> "
+;;                                                                       (unless (null (my-exwm-get-other-workspace)) "[%s] "))
+;;                                                               exwm-workspace-current-index
+;;                                                               (my-exwm-get-other-workspace))
+;;                                                       face0
+;;                                                       'l)
+;;                                        (when powerline-display-buffer-size
+;;                                          (powerline-buffer-size face0 'l))
+;;                                        (when powerline-display-mule-info
+;;                                          (powerline-raw mode-line-mule-info face0 'l))
+;;                                        (powerline-buffer-id `(mode-line-buffer-id ,face0) 'l)
+;;                                        (when (and (boundp 'which-func-mode) which-func-mode)
+;;                                          (powerline-raw which-func-format face0 'l))
+;;                                        (powerline-raw " " face0)
+;;                                        (funcall separator-left face0 face1)
+;;                                        (when (and (boundp 'erc-track-minor-mode) erc-track-minor-mode)
+;;                                          (powerline-raw erc-modified-channels-object face1 'l))
+;;                                        (powerline-major-mode face1 'l)
+;;                                        (powerline-process face1)
+;;                                        (powerline-minor-modes face1 'l)
+;;                                        (powerline-narrow face1 'l)
+;;                                        (powerline-raw " " face1)
+;;                                        (funcall separator-left face1 face2)
+;;                                        (powerline-vc face2 'r)
+;;                                        (when (bound-and-true-p nyan-mode)
+;;                                          (powerline-raw (list (nyan-create)) face2 'l))))
+;;                             (rhs (list (powerline-raw global-mode-string face2 'r)
+;;                                        (funcall separator-right face2 face1)
+;;                                        (unless window-system
+;;                                          (powerline-raw (char-to-string #xe0a1) face1 'l))
+;;                                        (powerline-raw "%4l" face1 'l)
+;;                                        (powerline-raw ":" face1 'l)
+;;                                        (powerline-raw "%3c" face1 'r)
+;;                                        (funcall separator-right face1 face0)
+;;                                        (powerline-raw " " face0)
+;;                                        (powerline-raw "%6p" face0 'r)
+;;                                        (when powerline-display-hud
+;;                                          (powerline-hud face0 face2))
+;;                                        (powerline-fill face0 0)
+;;                                        )))
+;;                        (concat (powerline-render lhs)
+;;                                (powerline-fill face2 (powerline-width rhs))
+;;                                (powerline-render rhs)))))))
+;;   (my-powerline-theme)
+;;   ;; (powerline-default-theme)
+;;   )
 ;;; emacs ends here

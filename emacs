@@ -1627,8 +1627,13 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 ;;   :ensure t
 ;;   :config (auto-dim-other-buffers-mode t))
 
-(use-package google-translate
-  :defer t)
+(use-package google-translate-smooth-ui
+  :ensure google-translate
+  :config
+  (setq google-translate-enable-ido-completion t)
+  (setq google-translate-translation-directions-alist '(("en" . "de") ("de" . "en")))
+  (my-leader-def
+    "t" '(google-translate-smooth-translate :which-key "translate")))
 
 (use-package excorporate
   :defer t

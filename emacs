@@ -490,7 +490,7 @@ It only works for frames with exactly two windows.
             (my-exwm-get-other-workspace)))
   (setq feebleline-timer-interval 10)
   (setq feebleline-msg-functions
-        '(;(my-feebleline-exwm-workspace)
+        '((my-feebleline-exwm-workspace)
           (feebleline-line-number         :post "" :fmt "%5s")
           (feebleline-column-number       :pre ":" :fmt "%-2s")
           (feebleline-file-directory      :face feebleline-dir-face :post "")

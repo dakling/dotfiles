@@ -1585,7 +1585,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   (defun my-number-of-unread-mail ()
     "Count unread mails."
     (setq my-mu4e-unread-mail (string-to-number (shell-command-to-string "mu find flag:new | wc -l"))))
-  (setq mu4e-update-pre-hook #'my-number-of-unread-mail)
+  (add-hook 'mu4e-index-updated-hook #'my-number-of-unread-mail)
   (run-at-time t mu4e-update-interval #'(lambda ()
                                           (progn
                                            (mu4e-update-mail-and-index t)))); this should not be needed, but it is
@@ -1615,10 +1615,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 
 (unless (or (system-name= "localhost") (system-name= "lina"))
   (my-mu4e-setup))
-
-(mu4e-headers-search mu4e-alert-interesting-mail-query)
-
-(mu4e-alert-interesting-mail-query)
 
 (use-package rainbow-delimiters)
 

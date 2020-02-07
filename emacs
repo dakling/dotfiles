@@ -488,11 +488,11 @@ It only works for frames with exactly two windows.
     (format (concat "<%s> " (unless (null (my-exwm-get-other-workspace)) "[%s] "))
             exwm-workspace-current-index
             (my-exwm-get-other-workspace)))
-  (setq feebleline-timer-interval 1)
+  (setq feebleline-timer-interval 2)
   (setq feebleline-msg-functions
         '((my-feebleline-exwm-workspace)
-          (feebleline-line-number         :post "" :fmt "%5s")
-          (feebleline-column-number       :pre ":" :fmt "%-2s")
+          ;; (feebleline-line-number         :post "" :fmt "%5s")
+          ;; (feebleline-column-number       :pre ":" :fmt "%-2s")
           (feebleline-file-directory      :face feebleline-dir-face :post "")
           (feebleline-file-or-buffer-name :face font-lock-keyword-face :post "")
           (feebleline-file-modified-star  :face font-lock-warning-face :post "")

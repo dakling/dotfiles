@@ -1585,10 +1585,11 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   (defun my-number-of-unread-mail ()
     "Count unread mails."
     (setq my-mu4e-unread-mail (string-to-number (shell-command-to-string "mu find flag:new | wc -l"))))
+  (setq mu4e-update-pre-hook #'my-number-of-unread-mail)
   (run-at-time t mu4e-update-interval #'(lambda ()
-                                          (mu4e-update-mail-and-index t) ; this should not be needed, but it is
-                                          (my-number-of-unread-mail)))
-
+                                          (progn
+                                           (mu4e-update-mail-and-index t)))); this should not be needed, but it is
+  
   (use-package evil-mu4e
     :config
     (evil-define-key 'evilified mu4e-main-mode-map (kbd "j") 'evil-next-line)

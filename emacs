@@ -83,7 +83,8 @@
 
 (setq
  initial-scratch-message
- "(print \"Welcome\") \n \n(async-shell-command \"yay --sudoloop -Syu\") \n \n(shell-command-to-string \"acpi -b\") \n \n(find-file \"~/BoSSS-experimental/internal/src/private-kli/RANS_Solver/RANS_Main.cs\")") ; print a default message in the empty scratch buffer opened at startup
+ "(print \"Welcome\") \n \n(async-shell-command \"yay --sudoloop -Syu\") \n \n(shell-command-to-string \"acpi -b\") \n")
+                                        ; print a default message in the empty scratch buffer opened at startup
 
 (defalias 'yes-or-no-p 'y-or-n-p) ;reduce typing effort
 
@@ -454,6 +455,11 @@ It only works for frames with exactly two windows.
   :init (which-key-mode)
   :diminish which-key-mode)
 
+(my-leader-def
+  "l" '(:ignore :which-key "bookmarks")
+  "lm" '(bookmark-set :which-key "set bookmark")
+  "ll" '(bookmark-jump :which-key "jump to bookmark"))
+
 ;;appearance
 ;; (use-package zenburn-theme :ensure t)
 ;; (use-package cyberpunk-theme :ensure t)
@@ -470,9 +476,10 @@ It only works for frames with exactly two windows.
 
 (use-package feebleline
   :config
+  (defvar my-mu4e-unread-mail)
   (defun my-feebleline-mail ()
     "Show unread mails."
-    (when (> (string-to-number (shell-command-to-string "mu find flag:new | wc -l")) 0) (format "unread mail")))
+    (when (> my-mu4e-unread-mail 0) (format "You have mail!")))
   (defun my-feebleline-time ()
     "Show time as string."
     (format-time-string "%k:%M" (current-time)))
@@ -481,21 +488,23 @@ It only works for frames with exactly two windows.
     (format (concat "<%s> " (unless (null (my-exwm-get-other-workspace)) "[%s] "))
             exwm-workspace-current-index
             (my-exwm-get-other-workspace)))
+  (setq feebleline-timer-interval 10)
   (setq feebleline-msg-functions
-        '(;(my-feebleline-exwm-workspace)
-          (my-feebleline-time)
-          ;(my-feebleline-mail)
+        '((my-feebleline-exwm-workspace)
           (feebleline-line-number         :post "" :fmt "%5s")
           (feebleline-column-number       :pre ":" :fmt "%-2s")
           (feebleline-file-directory      :face feebleline-dir-face :post "")
           (feebleline-file-or-buffer-name :face font-lock-keyword-face :post "")
           (feebleline-file-modified-star  :face font-lock-warning-face :post "")
           (feebleline-git-branch          :face feebleline-git-face :pre " : ")
-          (feebleline-project-name        :align right)))
+          (my-feebleline-mail             :face alert-high-face :align right :post "  ")
+          (feebleline-project-name        :align right)
+          (my-feebleline-time             :post "       " :align right))) ; small hack to leave space for exwm-systemtray
   (feebleline-mode 1))
 
 (use-package auto-dim-other-buffers
   :config
+  (setq auto-dim-other-buffers-face nil)
   (auto-dim-other-buffers-mode 1))
 
 (tool-bar-mode -1)
@@ -1573,7 +1582,12 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
            (smtpmail-stream-type starttls)
            (user-mail-address "dario.klingenberg@web.de")
            (user-full-name "dario"))))
-  (run-at-time t mu4e-update-interval #'(lambda () (mu4e-update-mail-and-index t))) ; this should not be needed, but it is
+  (defun my-number-of-unread-mail ()
+    "Count unread mails."
+    (setq my-mu4e-unread-mail (string-to-number (shell-command-to-string "mu find flag:new | wc -l")) 0 (format "unread mail")))
+  (run-at-time t mu4e-update-interval #'(lambda ()
+                                          (mu4e-update-mail-and-index t) ; this should not be needed, but it is
+                                          (my-number-of-unread-mail)))
 
   (use-package evil-mu4e
     :config
@@ -1590,7 +1604,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   ;; taken from reddit
   (use-package mu4e-alert
     :config
-    (mu4e-alert-enable-mode-line-display)
+    ;; (mu4e-alert-enable-mode-line-display)
     (mu4e-alert-enable-notifications)
     (mu4e-alert-set-default-style 'libnotify)
     (alert-add-rule

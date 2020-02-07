@@ -476,7 +476,7 @@ It only works for frames with exactly two windows.
 
 (use-package feebleline
   :config
-  (defvar my-mu4e-unread-mail)
+  (defvar my-mu4e-unread-mail 0)
   (defun my-feebleline-mail ()
     "Show unread mails."
     (when (> my-mu4e-unread-mail 0) (format "You have mail!")))
@@ -490,7 +490,7 @@ It only works for frames with exactly two windows.
             (my-exwm-get-other-workspace)))
   (setq feebleline-timer-interval 10)
   (setq feebleline-msg-functions
-        '((my-feebleline-exwm-workspace)
+        '(;(my-feebleline-exwm-workspace)
           (feebleline-line-number         :post "" :fmt "%5s")
           (feebleline-column-number       :pre ":" :fmt "%-2s")
           (feebleline-file-directory      :face feebleline-dir-face :post "")
@@ -1584,7 +1584,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
            (user-full-name "dario"))))
   (defun my-number-of-unread-mail ()
     "Count unread mails."
-    (setq my-mu4e-unread-mail (string-to-number (shell-command-to-string "mu find flag:new | wc -l")) 0 (format "unread mail")))
+    (setq my-mu4e-unread-mail (string-to-number (shell-command-to-string "mu find flag:new | wc -l"))))
   (run-at-time t mu4e-update-interval #'(lambda ()
                                           (mu4e-update-mail-and-index t) ; this should not be needed, but it is
                                           (my-number-of-unread-mail)))

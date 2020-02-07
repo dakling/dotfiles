@@ -479,7 +479,7 @@ It only works for frames with exactly two windows.
   (defvar my-mu4e-unread-mail 0)
   (defun my-feebleline-mail ()
     "Show unread mails."
-    (when (> my-mu4e-unread-mail 0) (format "You have mail!")))
+    (when (> my-mu4e-unread-mail 0) (format "You have %s unread mail(s)!" my-mu4e-unread-mail)))
   (defun my-feebleline-time ()
     "Show time as string."
     (format-time-string "%k:%M" (current-time)))
@@ -1584,7 +1584,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
            (user-full-name "dario"))))
   (defun my-number-of-unread-mail ()
     "Count unread mails."
-    (setq my-mu4e-unread-mail (string-to-number (shell-command-to-string "mu find flag:new | wc -l"))))
+    (setq my-mu4e-unread-mail (string-to-number (shell-command-to-string (concat "mu find -u " mu4e-alert-interesting-mail-query " | wc -l")))))
   (add-hook 'mu4e-index-updated-hook #'my-number-of-unread-mail)
   (add-hook 'mu4e-view-mode-hook #'my-number-of-unread-mail)
   (run-at-time t mu4e-update-interval #'(lambda ()
@@ -1606,6 +1606,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   ;; taken from reddit
   (use-package mu4e-alert
     :config
+    (setq mu4e-alert-interesting-mail-query "flag:unread AND NOT flag:trashed AND NOT maildir:/Web/INBOX/")
     ;; (mu4e-alert-enable-mode-line-display)
     (mu4e-alert-enable-notifications)
     (mu4e-alert-set-default-style 'libnotify)

@@ -474,34 +474,6 @@ It only works for frames with exactly two windows.
   :config
   (smooth-scrolling-mode 1))
 
-(use-package feebleline
-  :config
-  (defvar my-mu4e-unread-mail 0)
-  (defun my-feebleline-mail ()
-    "Show unread mails."
-    (when (> my-mu4e-unread-mail 0) (format "You have %s unread mail(s)!" my-mu4e-unread-mail)))
-  (defun my-feebleline-time ()
-    "Show time as string."
-    (format-time-string "%k:%M" (current-time)))
-  (defun my-feebleline-exwm-workspace ()
-    "Exwm workspaces as string."
-    (format (concat "<%s> " (unless (null (my-exwm-get-other-workspace)) "[%s] "))
-            exwm-workspace-current-index
-            (my-exwm-get-other-workspace)))
-  (setq feebleline-timer-interval 2)
-  (setq feebleline-msg-functions
-        '((my-feebleline-exwm-workspace)
-          ;; (feebleline-line-number         :post "" :fmt "%5s")
-          ;; (feebleline-column-number       :pre ":" :fmt "%-2s")
-          (feebleline-file-directory      :face feebleline-dir-face :post "")
-          (feebleline-file-or-buffer-name :face font-lock-keyword-face :post "")
-          (feebleline-file-modified-star  :face font-lock-warning-face :post "")
-          (feebleline-git-branch          :face feebleline-git-face :pre " : ")
-          (my-feebleline-mail             :face alert-high-face :align right :post "  ")
-          (feebleline-project-name        :align right)
-          (my-feebleline-time             :post "       " :align right))) ; small hack to leave space for exwm-systemtray
-  (feebleline-mode 1))
-
 (use-package auto-dim-other-buffers
   :config
   (setq auto-dim-other-buffers-face nil)
@@ -1582,11 +1554,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
            (smtpmail-stream-type starttls)
            (user-mail-address "dario.klingenberg@web.de")
            (user-full-name "dario"))))
-  (defun my-number-of-unread-mail ()
-    "Count unread mails."
-    (setq my-mu4e-unread-mail (string-to-number (shell-command-to-string (concat "mu find -u " mu4e-alert-interesting-mail-query " | wc -l")))))
-  (add-hook 'mu4e-index-updated-hook #'my-number-of-unread-mail)
-  (add-hook 'mu4e-view-mode-hook #'my-number-of-unread-mail)
   (run-at-time t mu4e-update-interval #'(lambda ()
                                           (progn
                                             (mu4e-update-mail-and-index t)))); this should not be needed, but it is
@@ -1607,7 +1574,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   (use-package mu4e-alert
     :config
     (setq mu4e-alert-interesting-mail-query "flag:unread AND NOT flag:trashed AND NOT maildir:/Web/INBOX/")
-    ;; (mu4e-alert-enable-mode-line-display)
+    (mu4e-alert-enable-mode-line-display)
     (mu4e-alert-enable-notifications)
     (mu4e-alert-set-default-style 'libnotify)
     (alert-add-rule
@@ -1621,10 +1588,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 (use-package rainbow-delimiters)
 
 (use-package dmenu)
-
-;; (use-package auto-dim-other-buffers
-;;   :ensure t
-;;   :config (auto-dim-other-buffers-mode t))
 
 (use-package google-translate-smooth-ui
   :ensure google-translate
@@ -1701,86 +1664,43 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
                        subword-mode
                        flyspell-mode
                        defining-kbd-macro)))
-(use-package eaf
-  :ensure nil
-  :load-path "~/.emacs.d/site-lisp/emacs-application-framework"
-  :custom
-  (eaf-find-alternate-file-in-dired t)
-  :config
-  (eaf-bind-key scroll_up "j" eaf-browser-keybinding)
-  (eaf-bind-key scroll_down "j" eaf-browser-keybinding)
-  (setq eaf-browser-default-search-engine 'duckduckgo)
-  (eaf-setq eaf-browse-blank-page-url "https://duckduckgo.com")
-  (eaf-bind-key take_photo "p" eaf-camera-keybinding)
-  (setq browse-url-browser-function 'eaf-open-browser)
-  (defalias 'browse-web #'eaf-open-browser))
-
-;; (use-package powerline
+;; (use-package eaf
+;;   :ensure nil
+;;   :load-path "~/.emacs.d/site-lisp/emacs-application-framework"
+;;   :custom
+;;   (eaf-find-alternate-file-in-dired t)
 ;;   :config
-;;   ;; (setq powerline-default-separator nil)
-;;   (defun my-powerline-theme ()
-;;     "Setup my mode-line."
-;;     ;; (interactive)
-;;     (setq-default mode-line-format
-;;                   '("%e"
-;;                     (:eval
-;;                      (let* ((active (powerline-selected-window-active))
-;;                             (mode-line-buffer-id (if active 'mode-line-buffer-id 'mode-line-buffer-id-inactive))
-;;                             (mode-line (if active 'mode-line 'mode-line-inactive))
-;;                             (face0 (if active 'powerline-active0 'powerline-inactive0))
-;;                             (face1 (if active 'powerline-active1 'powerline-inactive1))
-;;                             (face2 (if active 'powerline-active2 'powerline-inactive2))
-;;                             (separator-left (intern (format "powerline-%s-%s"
-;;                                                             (powerline-current-separator)
-;;                                                             (car powerline-default-separator-dir))))
-;;                             (separator-right (intern (format "powerline-%s-%s"
-;;                                                              (powerline-current-separator)
-;;                                                              (cdr powerline-default-separator-dir))))
-;;                             (lhs (list (powerline-raw "%*" face0 'l)
-;;                                        (powerline-raw (format (concat "<%s> "
-;;                                                                       (unless (null (my-exwm-get-other-workspace)) "[%s] "))
-;;                                                               exwm-workspace-current-index
-;;                                                               (my-exwm-get-other-workspace))
-;;                                                       face0
-;;                                                       'l)
-;;                                        (when powerline-display-buffer-size
-;;                                          (powerline-buffer-size face0 'l))
-;;                                        (when powerline-display-mule-info
-;;                                          (powerline-raw mode-line-mule-info face0 'l))
-;;                                        (powerline-buffer-id `(mode-line-buffer-id ,face0) 'l)
-;;                                        (when (and (boundp 'which-func-mode) which-func-mode)
-;;                                          (powerline-raw which-func-format face0 'l))
-;;                                        (powerline-raw " " face0)
-;;                                        (funcall separator-left face0 face1)
-;;                                        (when (and (boundp 'erc-track-minor-mode) erc-track-minor-mode)
-;;                                          (powerline-raw erc-modified-channels-object face1 'l))
-;;                                        (powerline-major-mode face1 'l)
-;;                                        (powerline-process face1)
-;;                                        (powerline-minor-modes face1 'l)
-;;                                        (powerline-narrow face1 'l)
-;;                                        (powerline-raw " " face1)
-;;                                        (funcall separator-left face1 face2)
-;;                                        (powerline-vc face2 'r)
-;;                                        (when (bound-and-true-p nyan-mode)
-;;                                          (powerline-raw (list (nyan-create)) face2 'l))))
-;;                             (rhs (list (powerline-raw global-mode-string face2 'r)
-;;                                        (funcall separator-right face2 face1)
-;;                                        (unless window-system
-;;                                          (powerline-raw (char-to-string #xe0a1) face1 'l))
-;;                                        (powerline-raw "%4l" face1 'l)
-;;                                        (powerline-raw ":" face1 'l)
-;;                                        (powerline-raw "%3c" face1 'r)
-;;                                        (funcall separator-right face1 face0)
-;;                                        (powerline-raw " " face0)
-;;                                        (powerline-raw "%6p" face0 'r)
-;;                                        (when powerline-display-hud
-;;                                          (powerline-hud face0 face2))
-;;                                        (powerline-fill face0 0)
-;;                                        )))
-;;                        (concat (powerline-render lhs)
-;;                                (powerline-fill face2 (powerline-width rhs))
-;;                                (powerline-render rhs)))))))
-;;   (my-powerline-theme)
-;;   ;; (powerline-default-theme)
-;;   )
+;;   (eaf-bind-key scroll_up "j" eaf-browser-keybinding)
+;;   (eaf-bind-key scroll_down "j" eaf-browser-keybinding)
+;;   (setq eaf-browser-default-search-engine 'duckduckgo)
+;;   (eaf-setq eaf-browse-blank-page-url "https://duckduckgo.com")
+;;   (eaf-bind-key take_photo "p" eaf-camera-keybinding)
+;;   (setq browse-url-browser-function 'eaf-open-browser)
+;;   (defalias 'browse-web #'eaf-open-browser))
+
+(use-package mini-modeline
+  :config
+  (setq display-time-default-load-average nil)
+  (setq mini-modeline-r-format
+        '("%e" mode-line-front-space
+          ;; mode-line-mule-info
+          ;; mode-line-client
+          ;; mode-line-modified
+          ;; mode-line-remote
+          ;; mode-line-frame-identification
+          mode-line-buffer-identification
+          vc-mode
+          " " mode-line-position " "
+          ;; evil-mode-line-tag
+          ;; mode-line-modes
+          mode-name
+          " "
+          mode-line-misc-info
+          (:eval (format (concat "<%s> "
+                                 (unless (null (my-exwm-get-other-workspace)) "[%s] "))
+                         exwm-workspace-current-index
+                         (my-exwm-get-other-workspace)))
+          mode-line-end-spaces))
+  (mini-modeline-mode 1))
+
 ;;; emacs ends here

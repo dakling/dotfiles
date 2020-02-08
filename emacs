@@ -1681,6 +1681,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 (use-package mini-modeline
   :config
   (setq display-time-default-load-average nil)
+  (setq display-time-load-average-threshold 10000000)
   (setq mini-modeline-r-format
         '("%e" mode-line-front-space
           ;; mode-line-mule-info

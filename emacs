@@ -1644,7 +1644,8 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   :defer t
   :config
   (setq elfeed-feeds
-        '("https://www.zeitsprung.fm/feed/ogg/")))
+        '("https://www.zeitsprung.fm/feed/ogg/"
+          "https://kickermeetsdazn.podigee.io/feed/mp3")))
 
 (use-package pinentry
   :init

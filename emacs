@@ -1,12 +1,4 @@
-;;; package  --- Summary
-;; my emacs config
-;;; Commentary:
-;; I use evil-mode everywhere, and the config is based on use-package and general
-;;; Code:
-
-;;; speed up startup using Ambrevar's suggestions:
-;;; Temporarily reduce garbage collection during startup. Inspect `gcs-done'.
-(defun ambrevar/reset-gc-cons-threshold ()
+old ()
   (setq gc-cons-threshold (car (get 'gc-cons-threshold 'standard-value))))
 (setq gc-cons-threshold (* 64 1024 1024))
 (add-hook 'after-init-hook #'ambrevar/reset-gc-cons-threshold)
@@ -1217,7 +1209,7 @@ limitations under the License.
         (evil-indent beg (point-max)))))
 
   (defun my-add-file-to-project (file project)
-    "Add file to project"
+    "Add FILE to PROJECT."
      (find-file project)
      (goto-line 0)
      (search-forward "<Compile Include=")
@@ -1235,6 +1227,23 @@ limitations under the License.
     "Add current file to my project."
     (interactive)
     (my-add-file-to-project (buffer-file-name) my-bosss-project))
+
+  (defun my-remove-file-from-project (file project)
+    "Remove FILE from PROJECT."
+    (find-file project)
+    (goto-line 0)
+    (search-forward "<Compile Include=")
+    (search-forward (file-name-nondirectory file))
+    (kill-whole-line)
+    (save-buffer)
+    (delete-file file)
+    (magit-stage-file file)
+    (kill-buffer (current-buffer)))
+
+  (defun my-remove-current-file-from-project ()
+    "Remove current file to my project."
+    (interactive)
+    (my-remove-file-from-project (buffer-file-name) my-bosss-project))
   
   (defun my-run-bosss-control-file (solver control-file &optional debug)
     "Run SOLVER with CONTROL-FILE, optionally using sbd to DEBUB"

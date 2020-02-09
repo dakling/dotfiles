@@ -1216,6 +1216,26 @@ limitations under the License.
       (let ((beg (point)))
         (evil-indent beg (point-max)))))
 
+  (defun my-add-file-to-project (file project)
+    "Add file to project"
+     (find-file project)
+     (goto-line 0)
+     (search-forward "<Compile Include=")
+     (evil-open-above 1)
+     (princ (concat "<Compile Include=\""
+                    (file-relative-name file
+                                        (file-name-directory project))
+                    "\"/>")
+            (current-buffer))
+     (save-buffer)
+     (magit-stage-file file)
+     (kill-buffer (current-buffer)))
+
+  (defun my-add-current-file-to-project ()
+    "Add current file to my project."
+    (interactive)
+    (my-add-file-to-project (buffer-file-name) my-bosss-project))
+  
   (defun my-run-bosss-control-file (solver control-file &optional debug)
     "Run SOLVER with CONTROL-FILE, optionally using sbd to DEBUB"
     (async-shell-command

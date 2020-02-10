@@ -34,17 +34,15 @@
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file t)
 
-;; TODO change for 27
-(setq package-enable-at-startup nil) ; tells emacs not to load any packages before starting up
+;; todo change for 27
+;; (setq package-enable-at-startup nil) ; tells emacs not to load any packages before starting up
 ;; the following lines tell emacs where on the internet to look up
 ;; for new packages.
 (setq package-archives '(("org"       . "http://orgmode.org/elpa/")
                          ("gnu"       . "http://elpa.gnu.org/packages/")
-                         ("melpa"     . "https://melpa.org/packages/")
-                         ("marmalade" . "http://marmalade-repo.org/packages/")
-                         ("reduce ide" . "http://reduce-algebra.sourceforge.net/reduce-ide/packages/")))
-;; TODO change for 27
-(package-initialize)
+                         ("melpa"     . "https://melpa.org/packages/")))
+;; todo change for 27
+;; (package-initialize)
 
 ;; Bootstrap `use-package'
 (unless (package-installed-p 'use-package) ; unless it is already installed
@@ -124,12 +122,12 @@
 (defun find-config-file ()
   "Open Emacs configuration file."
   (interactive)
-  (find-file "~/.emacs.d/init.el"))
+  (find-file "~/.config/emacs/init.el"))
 
 (defun load-config-file ()
   "Load Emacs configuration file."
   (interactive)
-  (load-file "~/.emacs.d/init.el"))
+  (load-file "~/.config/emacs/init.el"))
 
 (defun find-dotfile-dir ()
   "Open dotfile directory."
@@ -479,10 +477,6 @@ It only works for frames with exactly two windows.
   (setq auto-dim-other-buffers-face nil)
   (auto-dim-other-buffers-mode 1))
 
-(tool-bar-mode -1)
-(menu-bar-mode -1)
-(menu-bar-no-scroll-bar)
-
 ;; eshell
 (defun my-eshell-delete-line ()
   (interactive)
@@ -578,8 +572,6 @@ It only works for frames with exactly two windows.
 
 (use-package helm-exwm)
 
-(use-package helm-eww)
-
 (use-package helm-dictionary)
 
 (use-package helm-tramp)
@@ -636,10 +628,7 @@ It only works for frames with exactly two windows.
   :general (my-leader-def
              "gb" '(vc-msg-show :which-key "git blame")))
 
-(use-package ediff)
-
-(use-package doc-view
-  :config
+(defun doc-view-setup ()
   ;; open docx as text
   (define-derived-mode
     pandoc-view-mode
@@ -663,6 +652,8 @@ It only works for frames with exactly two windows.
    "k" 'doc-view-previous-page
    "<down>" 'doc-view-next-page
    "<up>" 'doc-view-previous-page))
+
+(doc-view-setup)
 
 (unless (system-name= "localhost" "lina")
   (use-package pdf-tools
@@ -1137,19 +1128,6 @@ It only works for frames with exactly two windows.
 
 (use-package ggtags)
 
-;;reduce
-(use-package reduce-ide
-  :defer t
-  :general (my-local-leader-def
-             :states 'normal
-             :keymaps 'reduce-mode-map
-             "e" '(:ignore :which-key "eval")
-             "ee" '(reduce-eval-last-statement :which-key "eval last statement")
-             "eb" '(reduce-run-buffer :which-key "run buffer"))
-  )
-;; maple
-;; (use-package maplev)
-
 (use-package wgrep)
 
 (use-package jenkins
@@ -1451,13 +1429,14 @@ limitations under the License.
   (add-to-list 'company-backends 'company-reftex-citations t))
 
 ;; browser
-(use-package eww
+(use-package helm-eww
+  :ensure eww
   :config
   (defun my-eww-open-league-table ()
     "Do an internet search for soccer league table."
     (interactive)
     (let* ((country-search-string-table
-            '(("germany" "german bundesliga tabelle")
+            '(("germany" "bundesliga tabelle")
               ("spain" "la liga tabelle")
               ("italy" "seria a tabelle")
               ("france" "ligue 1 tabelle")
@@ -1687,10 +1666,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 (use-package pinentry
   :init
   (pinentry-start))
-
-(use-package go
-  :ensure nil
-  :load-path "~/Documents/programming/elisp/el-go/")
 
 (use-package diminish
   :config

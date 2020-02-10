@@ -1,3 +1,16 @@
+;;; package  --- Summary
+;; my emacs config
+;;; Commentary:
+;; I use evil-mode everywhere, and the config is based on use-package and general
+;;; Code:
+
+;;; speed up startup using Ambrevar's suggestions:
+;;; Temporarily reduce garbage collection during startup. Inspect `gcs-done'.
+(defun ambrevar/reset-gc-cons-threshold ()
+  (setq gc-cons-threshold (car (get 'gc-cons-threshold 'standard-value))))
+(setq gc-cons-threshold (* 64 1024 1024))
+(add-hook 'after-init-hook #'ambrevar/reset-gc-cons-threshold)
+
 ;;; Temporarily disable the file name handler.
 (setq default-file-name-handler-alist file-name-handler-alist)
 (setq file-name-handler-alist nil)

@@ -1714,6 +1714,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
                                  (unless (null (my-exwm-get-other-workspace)) "[%s] "))
                          exwm-workspace-current-index
                          (my-exwm-get-other-workspace)))
+          "|"
           mode-line-end-spaces))
   (mini-modeline-mode 1))
 

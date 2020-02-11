@@ -1463,6 +1463,8 @@ limitations under the License.
   (add-to-list 'company-backends 'company-reftex-labels t)
   (add-to-list 'company-backends 'company-reftex-citations t))
 
+(use-package latex-pretty-symbols)
+
 ;; browser
 (use-package helm-eww
   :ensure eww

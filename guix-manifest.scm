@@ -1,6 +1,7 @@
 (specifications->manifest
  '("fontconfig"
    "font-adobe-source-code-pro"
+   "font-google-noto"
    "openconnect"
    "cifs-utils"
    "nfs-utils"

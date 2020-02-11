@@ -69,7 +69,7 @@
 (blink-cursor-mode -1)
 (setq revert-without-query '("*pdf")) ; automatically revert pdf-files
 (add-to-list 'default-frame-alist
-             '(font . "Source Code Pro"))
+             '(font . "Deja Vu Sans Mono"))
 (add-hook 'focus-out-hook (lambda () (when buffer-file-name (save-buffer))))
 (recentf-mode 1)
 (setq delete-by-moving-to-trash t)
@@ -709,6 +709,18 @@ It only works for frames with exactly two windows.
       "R"  '(pdf-view-reset-slice :which-key "reset slice")
       "zr" '(pdf-view-scale-reset :which-key "zoom reset"))))
 
+;; prettify stuff
+(use-package pretty-mode
+  :config
+  (global-prettify-symbols-mode +1)
+  (setq prettify-symbols-alist '(("lambda" . 955)
+                                 ("*" . 215) 
+                                 ("/" . 247) 
+                                 ("<=" . ?≤)
+                                 (">=" . ?≥)))
+  (global-pretty-mode 1)
+  (pretty-activate-groups
+   '(:sub-and-superscripts :greek :arithmetic-nary :equality :ordering :ordering-double :ordering-triple :arrows :arrows-twoheaded :punctuation :logic :sets)))
 
 ;;exwm
 (if (not (system-name= "lina"))
@@ -1243,6 +1255,26 @@ limitations under the License.
     (interactive)
     (async-shell-command (concat "nunit3-console " path-to-assembly)))
 
+  (defun my-csharp-setup-pretty-symbols ()
+    (prettify-symbols-mode 1)
+    (mapc #'(lambda (pair) (push pair prettify-symbols-alist))
+            '(
+              ("!=" . 8800) 
+              ("=" . 8592) 
+              ("int" . #x2124)
+              ("double" . #x211d)
+              ("string" . #x1d54a)
+              ("List" . #x2112)
+              ("public" . #x3d5)
+              ("protected" . #x3a0)
+              ("foreach" . #x2200)
+              ("in" . #x2208)
+              ("var" .  #x3bd)
+              ("delegate" . 955)
+              ("null" . #x2205)
+              ("true" . 10003)
+              ("false" . 10007))))
+  (add-hook 'csharp-mode-hook #'my-csharp-setup-pretty-symbols)
   (add-hook 'csharp-mode-hook #'subword-mode)
   (add-hook 'csharp-mode-hook #'company-mode)
   ;; (add-hook 'csharp-mode-hook #'rainbow-delimiters-mode-enable)
@@ -1293,6 +1325,9 @@ limitations under the License.
     :diminish omnisharp-mode
     :config
     (add-hook 'csharp-mode-hook #'omnisharp-mode)
+    ;; (add-hook 'csharp-mode-hook
+    ;;           (lambda ()
+    ;;             (push \\='(\"<=\" . ?≤) prettify-symbols-alist)))
     (general-define-key
      :states 'normal
      :keymaps 'csharp-mode-map
@@ -1714,7 +1749,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
                                  (unless (null (my-exwm-get-other-workspace)) "[%s] "))
                          exwm-workspace-current-index
                          (my-exwm-get-other-workspace)))
-          "|"
+          "  |"
           mode-line-end-spaces))
   (mini-modeline-mode 1))
 

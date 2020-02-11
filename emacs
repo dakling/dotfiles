@@ -69,7 +69,7 @@
 (blink-cursor-mode -1)
 (setq revert-without-query '("*pdf")) ; automatically revert pdf-files
 (add-to-list 'default-frame-alist
-             '(font . "Deja Vu Sans Mono"))
+             '(font . "Source Code Pro"))
 (add-hook 'focus-out-hook (lambda () (when buffer-file-name (save-buffer))))
 (recentf-mode 1)
 (setq delete-by-moving-to-trash t)

@@ -1321,7 +1321,8 @@ limitations under the License.
                 ((my-find-csproj-file dir) (expand-file-name
                                             (car (my-find-csproj-file dir))
                                             dir))
-                (t (iter (concat dir "/.." ))))))
+                ((string-equal "/" (expand-file-name dir)) nil)
+                (t (iter (concat dir "/../" ))))))
       (iter (file-name-directory (buffer-file-name)))))
 
   (my-local-leader-def

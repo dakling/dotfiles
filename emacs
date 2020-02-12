@@ -31,7 +31,7 @@
 (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
 
 ;;; 
-(setq custom-file "~/.emacs.d/custom.el")
+(setq custom-file "~/.config/emacs/custom.el")
 (load custom-file t)
 
 ;; todo change for 27

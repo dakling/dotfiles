@@ -725,7 +725,7 @@ It only works for frames with exactly two windows.
 
 (defun my-lisp-setup-pretty-symbols ()
   (my-setup-pretty-symbols
-   '(("defun" . #x2131))))
+   '(("defun" . 8518))))
 
 (add-hook 'lisp-mode-hook #'my-lisp-setup-pretty-symbols)
 
@@ -743,10 +743,10 @@ It only works for frames with exactly two windows.
            ("new" . #x2605)
            ("this" . #x3c4)
            ("List" . #x2112)
-           ("[]" . #x2a02)
-           ("Dictionary" . #x1d507)
-           ("public" . #x3d5)
-           ("protected" . 128737)
+           ;; ("[]" . #x2a02)
+           ;; ("Dictionary" . #x1d507)
+           ("public" . 8511)
+           ("protected" . 8508)
            ("not" .      #x2757)
            ("for" .      #x2200)
            ("foreach" . #x2200)
@@ -1003,7 +1003,7 @@ It only works for frames with exactly two windows.
     ;; "fu" '(omnisharp-find-usages :which-key "find usages")
     ;; "fI" '(omnisharp-fix-code-issue-at-point :which-key "fix code issue at point")
     ;; "fU" '(omnisharp-fix-usings :which-key "fix usings")
-    ;; "rt" '((lambda () (interactive) (my-run-tests my-bosss-project)) :which-key "run tests")
+    ;; "rt" '((lambda () (interactive) (my-run-tests (my-get-csharp-project))) :which-key "run tests")
     ;; "ro" '(run-csharp-repl-other-frame :which-key "start repl")
     ;; "rr" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl")
     ))
@@ -1311,16 +1311,27 @@ limitations under the License.
                                 (add-hook 'before-save-hook #'my-indent-buffer-without-bosss-header nil t)))
 
   (setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
-  (setq my-bosss-project "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/RANS.csproj")
+  (defun my-get-csharp-project ()
+    "Find the closest csproj file relative to the current directory."
+    (labels
+        ((my-find-csproj-file (dir)
+                              (directory-files dir nil ".*csproj"))
+         (iter (dir)
+               (cond
+                ((my-find-csproj-file dir) (expand-file-name
+                                            (car (my-find-csproj-file dir))
+                                            dir))
+                (t (iter (concat dir "/.." ))))))
+      (iter (file-name-directory (buffer-file-name)))))
 
   (my-local-leader-def
     :keymaps 'csharp-mode-map
     "b" '(:ignore :which-key "build")
-    "bd" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " my-bosss-project))) :which-key "build debug")
-    "br" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " my-bosss-project))) :which-key "build release")
+    "bd" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " (my-get-csharp-project)))) :which-key "build debug")
+    "br" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " (my-get-csharp-project)))) :which-key "build release")
     "be" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " bosss-master-solution))) :which-key "build everything")
     "bb" '(recompile :which-key "recompile")
-    "et" '((lambda () (interactive) (my-run-tests my-bosss-project)) :which-key "run tests")
+    "et" '((lambda () (interactive) (my-run-tests (my-get-csharp-project))) :which-key "run tests")
     "eo" '(run-csharp-repl-other-frame :which-key "start repl")
     "er" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl"))
 
@@ -1493,7 +1504,6 @@ limitations under the License.
 
 ;; browser
 (use-package helm-eww
-  :ensure eww
   :config
   (defun my-eww-open-league-table ()
     "Do an internet search for soccer league table."

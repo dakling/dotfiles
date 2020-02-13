@@ -1105,12 +1105,6 @@ It only works for frames with exactly two windows.
   (setq org-startup-indented t)
   (add-hook 'org-mode-hook '(lambda () (org-indent-mode 1)))
   (add-hook 'org-mode-hook 'flyspell-mode)
-  ;; in case drastic measures are required:
-  ;; (setq org-latex-pdf-process
-  ;; 	'("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-  ;; 	  "bibtex %b"
-  ;; 	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-  ;; 	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
   (add-to-list 'org-export-backends 'beamer)
   (add-to-list 'org-export-backends 'md)
   (setq org-confirm-babel-evaluate nil)
@@ -1120,8 +1114,11 @@ It only works for frames with exactly two windows.
    'org-babel-load-languages
    '((lisp . t)))
   (setq org-babel-lisp-eval-fn 'sly-eval)
+  (setq org-todo-keywords
+        '((sequence "TODO" "WAIT-FOR" "REVISIT" "DELEGATED" "DONE"))
+        org-fontify-done-headline t)
   (setq org-default-notes-file "~/Documents/TODO.org")
-  (setq org-agenda-contributing-files (list org-default-notes-file))
+  (setq org-agenda-files (list org-default-notes-file))
   (setq org-capture-templates
         '(("t" "todo" entry (file+headline org-default-notes-file "Tasks")
            "* TODO %i%? \n:PROPERTIES: \n:CREATED: %U \n:END: \n ")
@@ -1138,6 +1135,7 @@ It only works for frames with exactly two windows.
               (call-interactively 'org-export-dispatch))) :which-key "repeat last export")
     "s" '(org-edit-special :which-key "edit source code")
     "t" 'org-todo
+    "n" 'org-agenda
     "l" '(:ignore :which-key "links")
     "ll" '(org-insert-link :which-key "insert link")
     "lf" '((lambda () (interactive)
@@ -1323,7 +1321,7 @@ limitations under the License.
                                             dir))
                 (t (iter (concat dir "/.." ))))))
       (iter (file-name-directory (buffer-file-name)))))
-
+ 
   (my-local-leader-def
     :keymaps 'csharp-mode-map
     "b" '(:ignore :which-key "build")

@@ -5,11 +5,19 @@
 ;;; Code:
 
 ;;; speed up startup using Ambrevar's suggestions:
-;;; Temporarily reduce garbage collection during startup. Inspect `gcs-done'.
 (defun ambrevar-reset-gc-cons-threshold ()
-  (setq gc-cons-threshold (car (get 'gc-cons-threshold 'standard-value))))
-(setq gc-cons-threshold (* 64 1024 1024))
+  "Reset garbage collection later."
+  (setq gc-cons-threshold (car (get 'gc-cons-threshold 'standard-value))
+        gc-cons-percentage 0.1))
+(defun my-defer-garbage-collection ()
+  "Temporarily reduce garbage collection during startup. Inspect `gcs-done'."
+ (setq gc-cons-threshold (* 64 1024 1024)
+       gc-cons-percentage 0.6))
 (add-hook 'after-init-hook #'ambrevar-reset-gc-cons-threshold)
+
+;; Also do this when entering and exiting the minibuffer
+(add-hook 'minibuffer-setup-hook #'doom-defer-garbage-collection-h)
+(add-hook 'minibuffer-exit-hook #'doom-restore-garbage-collection-h)
 
 ;;; Temporarily disable the file name handler.
 (setq default-file-name-handler-alist file-name-handler-alist)

@@ -1700,7 +1700,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
     "t" '(google-translate-smooth-translate :which-key "translate")))
 
 (use-package excorporate
-  :defer t
   :config
   (general-define-key
    :keymaps 'calendar-mode-map

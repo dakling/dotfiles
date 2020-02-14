@@ -6,20 +6,20 @@
 
 ;;; speed up startup using Ambrevar's suggestions:
 ;;; Temporarily reduce garbage collection during startup. Inspect `gcs-done'.
-(defun ambrevar/reset-gc-cons-threshold ()
+(defun ambrevar-reset-gc-cons-threshold ()
   (setq gc-cons-threshold (car (get 'gc-cons-threshold 'standard-value))))
 (setq gc-cons-threshold (* 64 1024 1024))
-(add-hook 'after-init-hook #'ambrevar/reset-gc-cons-threshold)
+(add-hook 'after-init-hook #'ambrevar-reset-gc-cons-threshold)
 
 ;;; Temporarily disable the file name handler.
 (setq default-file-name-handler-alist file-name-handler-alist)
 (setq file-name-handler-alist nil)
-(defun ambrevar/reset-file-name-handler-alist ()
+(defun ambrevar-reset-file-name-handler-alist ()
   (setq file-name-handler-alist
         (append default-file-name-handler-alist
                 file-name-handler-alist))
   (cl-delete-duplicates file-name-handler-alist :test 'equal))
-(add-hook 'after-init-hook #'ambrevar/reset-file-name-handler-alist)
+(add-hook 'after-init-hook #'ambrevar-reset-file-name-handler-alist)
 
 (defun my-minibuffer-setup-hook ()
   (setq gc-cons-threshold most-positive-fixnum))
@@ -31,7 +31,7 @@
 (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
 
 ;;; 
-(setq custom-file "~/.emacs.d/custom.el")
+(setq custom-file "~/.config/emacs/custom.el")
 (load custom-file t)
 
 ;; todo change for 27
@@ -205,7 +205,7 @@
                ((string= location "scratch") '("scratch" "~/scratch"))
                ((string= location "lehre") '("lehre" "~/lehre")))))
 
-(defun ambrevar/toggle-window-split ()
+(defun ambrevar-toggle-window-split ()
   "Switch between vertical and horizontal split.
 It only works for frames with exactly two windows.
 \(Credits go to ambrevar and his awesome blog\)"
@@ -340,7 +340,7 @@ It only works for frames with exactly two windows.
     "w="  'balance-windows
     "r"   '(:ignore t :which-key "recent-files")
     "rr"  'helm-recentf
-    "w+"  '(ambrevar/toggle-window-split :which-key "toggle window split")
+    "w+"  '(ambrevar-toggle-window-split :which-key "toggle window split")
     "e"  '(:ignore t :which-key "eval elisp")
     "ee"  'eval-last-sexp
     "ef"  'eval-defun
@@ -884,7 +884,7 @@ It only works for frames with exactly two windows.
          (t (progn (set 'monitor2 "VGA-1")
                    (set 'monitor1 "HDMI-1")
                    (set 'placement "left-of"))))
-        (defun my/exwm-xrandr ()
+        (defun my-exwm-xrandr ()
           "Configure screen with xrandr."
           (shell-command
            (if (file-exists-p "~/.screenlayout/default.sh")
@@ -896,7 +896,7 @@ It only works for frames with exactly two windows.
                      " "
                      monitor2
                      " --auto"))))
-        :hook (exwm-randr-screen-change . my/exwm-xrandr)
+        :hook (exwm-randr-screen-change . my-exwm-xrandr)
         :init
         (setq exwm-randr-workspace-monitor-plist (list 0 monitor1
                                                        2 monitor1
@@ -1003,7 +1003,7 @@ It only works for frames with exactly two windows.
     ;; "fu" '(omnisharp-find-usages :which-key "find usages")
     ;; "fI" '(omnisharp-fix-code-issue-at-point :which-key "fix code issue at point")
     ;; "fU" '(omnisharp-fix-usings :which-key "fix usings")
-    ;; "rt" '((lambda () (interactive) (my-run-tests (my-get-csharp-project))) :which-key "run tests")
+    ;; "rt" '((lambda () (interactive) (my-run-tests (my-csharp-find-current-project))) :which-key "run tests")
     ;; "ro" '(run-csharp-repl-other-frame :which-key "start repl")
     ;; "rr" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl")
     ))
@@ -1268,7 +1268,7 @@ limitations under the License.
   (defun my-add-current-file-to-project ()
     "Add current file to my project."
     (interactive)
-    (my-add-file-to-project (buffer-file-name) my-bosss-project))
+    (my-add-file-to-project (buffer-file-name) (my-csharp-find-current-project)))
 
   (defun my-remove-file-from-project (file project)
     "Remove FILE from PROJECT."
@@ -1285,7 +1285,7 @@ limitations under the License.
   (defun my-remove-current-file-from-project ()
     "Remove current file to my project."
     (interactive)
-    (my-remove-file-from-project (buffer-file-name) my-bosss-project))
+    (my-remove-file-from-project (buffer-file-name) (my-csharp-find-current-project)))
   
   (defun my-run-bosss-control-file (solver control-file &optional debug)
     "Run SOLVER with CONTROL-FILE, optionally using sbd to DEBUB"
@@ -1309,27 +1309,28 @@ limitations under the License.
                                 (add-hook 'before-save-hook #'my-indent-buffer-without-bosss-header nil t)))
 
   (setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
-  (defun my-get-csharp-project ()
+  (defun my-csharp-find-current-project ()
     "Find the closest csproj file relative to the current directory."
     (labels
-        ((my-find-csproj-file (dir)
-                              (directory-files dir nil ".*csproj"))
+        ((find-csproj-file (dir)
+                           (directory-files dir nil ".*csproj"))
          (iter (dir)
                (cond
-                ((my-find-csproj-file dir) (expand-file-name
-                                            (car (my-find-csproj-file dir))
-                                            dir))
-                (t (iter (concat dir "/.." ))))))
+                ((find-csproj-file dir) (expand-file-name
+                                         (car (find-csproj-file dir))
+                                         dir)) ; if a .csproj file is found in the current directory, return its absolute path
+                ((string-equal "/" (expand-file-name dir)) nil) ; prevent infinite loops
+                (t (iter (concat dir "/../" )))))) ; if there is no .csproj file, look one directory higher
       (iter (file-name-directory (buffer-file-name)))))
  
   (my-local-leader-def
     :keymaps 'csharp-mode-map
     "b" '(:ignore :which-key "build")
-    "bd" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " (my-get-csharp-project)))) :which-key "build debug")
-    "br" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " (my-get-csharp-project)))) :which-key "build release")
+    "bd" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " (my-csharp-find-current-project)))) :which-key "build debug")
+    "br" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " (my-csharp-find-current-project)))) :which-key "build release")
     "be" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " bosss-master-solution))) :which-key "build everything")
     "bb" '(recompile :which-key "recompile")
-    "et" '((lambda () (interactive) (my-run-tests (my-get-csharp-project))) :which-key "run tests")
+    "et" '((lambda () (interactive) (my-run-tests (my-csharp-find-current-project))) :which-key "run tests")
     "eo" '(run-csharp-repl-other-frame :which-key "start repl")
     "er" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl"))
 
@@ -1337,11 +1338,10 @@ limitations under the License.
   (use-package bosss
     :ensure nil
     :load-path "~/Documents/programming/elisp/emacs-bosss/"
-    :defer t
     :init
     (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
     (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Debug/BoSSSpad.exe")
-    (setq bosss-path-reference "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/RANS_Solver/bin/Debug/RANS_Solver.exe")
+    (setq bosss-path-reference "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/KOmegaModelSolver/bin/Debug/KOmegaSolver.exe")
     :config
     (my-local-leader-def
       :keymaps 'bosss-mode-map

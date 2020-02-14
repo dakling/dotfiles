@@ -54,6 +54,8 @@
 (setq use-package-always-ensure t)
 
 ;; defaults suggested by blog and extended by me
+(setq frame-inhibit-implied-resize t) ; reddit suggestion by hlissner
+;; (setq initial-major-mode 'fundamental-mode) ; s.a.
 (setq delete-old-versions -1)		; delete excess backup versions silently
 (setq version-control t)		; use version control
 (setq vc-make-backup-files t)		; make backups file even when in version controlled dir
@@ -583,6 +585,7 @@ It only works for frames with exactly two windows.
 (use-package company
   :diminish company-mode
   :config
+  (add-to-list 'company-backends 'company-omnisharp)
   (setq company-dabbrev-downcase nil)
   (setq read-file-name-completion-ignore-case t)
   (global-company-mode 1))
@@ -1311,7 +1314,7 @@ limitations under the License.
   (setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
   (defun my-csharp-find-current-project ()
     "Find the closest csproj file relative to the current directory."
-    (labels
+    (cl-labels
         ((find-csproj-file (dir)
                            (directory-files dir nil ".*csproj"))
          (iter (dir)
@@ -1389,7 +1392,7 @@ limitations under the License.
       "fU" '(omnisharp-fix-usings :which-key "fix usings")))
   )
 
-(add-hook 'csharp-mode-hook 'my-setup-csharp-and-bosss)
+(add-hook 'csharp-mode-hook #'my-setup-csharp-and-bosss)
 
 (use-package fsharp-mode
   :defer t

@@ -141,3 +141,5 @@ xset r rate 400 20
 exec emacs
 # exec xfce4-session
 # exec xmonad
+# emacs --daemon -f exwm-enable
+# exec emacsclient -c

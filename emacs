@@ -250,6 +250,10 @@ It only works for frames with exactly two windows.
     (evil-indent (point-min) (point-max))))
 
 ;; packages with configuration
+(use-package gcmh
+  :config
+  (gcmh-mode 1))
+
 (use-package general
   :init
   (setq general-override-states '(insert

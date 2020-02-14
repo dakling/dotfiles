@@ -16,8 +16,8 @@
 (add-hook 'after-init-hook #'ambrevar-reset-gc-cons-threshold)
 
 ;; Also do this when entering and exiting the minibuffer
-(add-hook 'minibuffer-setup-hook #'doom-defer-garbage-collection-h)
-(add-hook 'minibuffer-exit-hook #'doom-restore-garbage-collection-h)
+(add-hook 'minibuffer-setup-hook #'my-defer-garbage-collection)
+(add-hook 'minibuffer-exit-hook #'ambrevar-reset-gc-cons-threshold)
 
 ;;; Temporarily disable the file name handler.
 (setq default-file-name-handler-alist file-name-handler-alist)

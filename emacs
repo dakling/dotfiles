@@ -4,20 +4,9 @@
 ;; I use evil-mode everywhere, and the config is based on use-package and general
 ;;; Code:
 
-;;; speed up startup using Ambrevar's suggestions:
-(defun ambrevar-reset-gc-cons-threshold ()
-  "Reset garbage collection later."
-  (setq gc-cons-threshold (car (get 'gc-cons-threshold 'standard-value))
-        gc-cons-percentage 0.1))
-(defun my-defer-garbage-collection ()
-  "Temporarily reduce garbage collection during startup. Inspect `gcs-done'."
+;;; speed up startup using Ambrevar's suggestions: (reset later by loading gcmh)
  (setq gc-cons-threshold (* 64 1024 1024)
-       gc-cons-percentage 0.6))
-(add-hook 'after-init-hook #'ambrevar-reset-gc-cons-threshold)
-
-;; Also do this when entering and exiting the minibuffer
-(add-hook 'minibuffer-setup-hook #'my-defer-garbage-collection)
-(add-hook 'minibuffer-exit-hook #'ambrevar-reset-gc-cons-threshold)
+       gc-cons-percentage 0.6)
 
 ;;; Temporarily disable the file name handler.
 (setq default-file-name-handler-alist file-name-handler-alist)
@@ -28,15 +17,6 @@
                 file-name-handler-alist))
   (cl-delete-duplicates file-name-handler-alist :test 'equal))
 (add-hook 'after-init-hook #'ambrevar-reset-file-name-handler-alist)
-
-(defun my-minibuffer-setup-hook ()
-  (setq gc-cons-threshold most-positive-fixnum))
-
-(defun my-minibuffer-exit-hook ()
-  (setq gc-cons-threshold 800000))
-
-(add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
-(add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
 
 ;;; 
 (setq custom-file "~/.config/emacs/custom.el")

@@ -193,6 +193,7 @@
                ((string= location "publications") '("misc/fdy-publications.git" "~/git/mnt/fdy-publications.git"))
                ((string= location "misc") '("misc" "~/misc"))
                ((string= location "scratch") '("scratch" "~/scratch"))
+               ((string= location "backup") '("backup" "~/backup"))
                ((string= location "lehre") '("lehre" "~/lehre")))))
 
 (defun ambrevar-toggle-window-split ()
@@ -1090,6 +1091,14 @@ It only works for frames with exactly two windows.
   (setq eval-sexp-fu-flash-face
         '((((class color)) (:background "black" :foreground "gray" :bold t))
           (t (:inverse-video nil)))))
+
+(use-package maplev
+  :ensure nil
+  :load-path "~/emacs-packages/maplev/lisp/"
+  :config
+  (add-to-list 'auto-mode-alist '("\\.mpl\\'" . maplev-mode)))
+
+
 ;;org
 (use-package org
   :diminish org-indent-mode

@@ -380,6 +380,10 @@ It only works for frames with exactly two windows.
   (evil-define-key 'visual evil-snipe-local-mode-map "z" 'evil-snipe-s)
   (evil-define-key 'visual evil-snipe-local-mode-map "Z" 'evil-snipe-S))
 
+(use-package evil-easymotion
+  :config
+  (evilem-default-keybindings "z"))
+
 (use-package evil-commentary
   :diminish evil-commentary-mode
   :init (evil-commentary-mode))

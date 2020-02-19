@@ -1129,9 +1129,9 @@ It only works for frames with exactly two windows.
   (setq org-agenda-files (list org-default-notes-file))
   (setq org-capture-templates
         '(("t" "todo" entry (file+headline org-default-notes-file "Tasks")
-           "* TODO %i%? \n:PROPERTIES: \n:CREATED: %U \n:END: \n ")
+           "* TODO %i%? \n:PROPERTIES: \n:CREATED: %U \n:END: \n " :prepend t)
           ("l" "todo with link" entry (file+headline org-default-notes-file "Tasks")
-           "* TODO %i%? \n:PROPERTIES: \n:CREATED: %U \n:END: \n %a\n")
+           "* TODO %A \n:PROPERTIES: \n:CREATED: %U \n:END: \n" :prepend t)
           ("p" "Process" entry (file+headline org-default-notes-file "Tasks")
            "* TODO [#A] Process mail from %:fromname on %:subject\nSCHEDULED:%t\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+2d\"))\n:PROPERTIES:\n:CREATED: %U\n:END:\n %a" :immediate-finish t :prepend t)))
   :general

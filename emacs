@@ -1741,6 +1741,10 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
         '("https://www.zeitsprung.fm/feed/ogg/"
           "https://kickermeetsdazn.podigee.io/feed/mp3")))
 
+(use-package telega
+  :config
+  (telega-notifications-mode 1))
+
 (use-package pinentry
   :init
   (pinentry-start))

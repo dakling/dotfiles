@@ -13,6 +13,7 @@
    "mpv"
    ;; "guile-emacs"
    "emacs-next"
+   "emacs-telega"
    "lua"
    "syncthing"
    "texlive"

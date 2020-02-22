@@ -2,6 +2,7 @@
  '("fontconfig"
    "font-adobe-source-code-pro"
    "xset"
+   "font-google-noto"
    "openconnect"
    "python"
    "cifs-utils"
@@ -13,6 +14,8 @@
    "emacs-gnugo"
    "mpv"
    ;; "guile-emacs"
+   "emacs-next"
+   "emacs-telega"
    "lua"
    "syncthing"
    "texlive"
@@ -48,4 +51,5 @@
    "arandr"
    "tensorflow"
    "ghc-tldr"
+   "apl"
    "guile"))

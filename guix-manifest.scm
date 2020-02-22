@@ -1,7 +1,9 @@
 (specifications->manifest
  '("fontconfig"
    "font-adobe-source-code-pro"
+   "xset"
    "openconnect"
+   "python"
    "cifs-utils"
    "nfs-utils"
    "sshfs"

@@ -848,11 +848,11 @@ It only works for frames with exactly two windows.
         (exwm-input-set-key (kbd "<XF86AudioMute>")
                             'pulseaudio-control-toggle-current-sink-mute))
       
-      (use-package exwm-systemtray
-        :ensure nil
-        :after exwm
-        :demand t
-        :config (exwm-systemtray-enable))
+      ;; (use-package exwm-systemtray
+      ;;   :ensure nil
+      ;;   :after exwm
+      ;;   :demand t
+      ;;   :config (exwm-systemtray-enable))
 
       (use-package exwm-randr
         :ensure nil

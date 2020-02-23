@@ -47,9 +47,9 @@
 (setq delete-old-versions -1)		; delete excess backup versions silently
 (setq version-control t)		; use version control
 (setq vc-make-backup-files t)		; make backups file even when in version controlled dir
-(setq backup-directory-alist `(("." . "~/.emacs.d/backups"))) ; which directory to put backups file
+(setq backup-directory-alist `(("." . "~/.config/emacs/backups"))) ; which directory to put backups file
 (setq vc-follow-symlinks t)				       ; don't ask for confirmation when opening symlinked file
-(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t))) ;transform backups file name
+(setq auto-save-file-name-transforms '((".*" "~/.config/emacs/auto-save-list/" t))) ;transform backups file name
 (setq inhibit-startup-screen t)	; inhibit startup screen
 (setq ring-bell-function 'ignore)	; silent bell when you make a mistake
 (set-language-environment "UTF-8")
@@ -925,38 +925,38 @@ It only works for frames with exactly two windows.
       ;; (require 'exwmx-xfce)
       ;; (exwmx-xfce-enable)
       )
-  (progn
-    (defun my-create-super-bindings ()
-      "Create bindings starting with super for use outside exwm."
-      (general-define-key
-       :keymaps 'override
-       :states '(insert emacs hybrid normal visual motion operator replace)
-       "s-w" '(other-window :which-key "other window")
-       "s-d" 'dmenu
-       "s-x" 'helm-M-x
-       "s-f" 'helm-find-files
-       "s-p" 'helm-projectile
-       "s-b" 'helm-mini
-       "s-l" 'evil-window-right
-       "s-h" 'evil-window-left
-       "s-j" 'evil-window-down
-       "s-k" 'evil-window-up
-       "s-v" 'split-window-right
-       "s-s" 'split-window-below
-       "s-c" 'my-close-buffer
-       "s-q" 'my-get-rid-of-mouse
-       "s-m" 'delete-other-windows
-       "s-<f1>" '(lambda () (interactive) (eshell 'N))
-       "C-s-<f1>" 'eshell
-       "s-<f2>" '(lambda () (interactive)
-                   (start-process "" nil browser))
-       "s-<f3>" 'deer
-       "s-<f4>" '(lambda () (interactive)
-                   (mu4e))
-       "s-<f12>" '(lambda () (interactive)
-                    (start-process "" nil "/usr/bin/slock"))))
+  )
+(defun my-create-super-bindings ()
+  "Create bindings starting with super for use outside exwm."
+  (general-define-key
+   :keymaps 'override
+   :states '(insert emacs hybrid normal visual motion operator replace)
+   "s-w" '(other-window :which-key "other window")
+   "s-d" 'dmenu
+   "s-x" 'helm-M-x
+   "s-f" 'helm-find-files
+   "s-p" 'helm-projectile
+   "s-b" 'helm-mini
+   "s-l" 'evil-window-right
+   "s-h" 'evil-window-left
+   "s-j" 'evil-window-down
+   "s-k" 'evil-window-up
+   "s-v" 'split-window-right
+   "s-s" 'split-window-below
+   "s-c" 'my-close-buffer
+   "s-q" 'my-get-rid-of-mouse
+   "s-m" 'delete-other-windows
+   "s-<f1>" '(lambda () (interactive) (eshell 'N))
+   "C-s-<f1>" 'eshell
+   "s-<f2>" '(lambda () (interactive)
+               (start-process "" nil browser))
+   "s-<f3>" 'deer
+   "s-<f4>" '(lambda () (interactive)
+               (mu4e))
+   "s-<f12>" '(lambda () (interactive)
+                (start-process "" nil "/usr/bin/slock"))))
 
-    (my-create-super-bindings)))
+(my-create-super-bindings)
 
 (use-package flycheck
   :diminish flycheck-mode

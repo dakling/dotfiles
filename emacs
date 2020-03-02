@@ -32,12 +32,26 @@
 ;; todo change for 27
 ;; (package-initialize)
 
-;; Bootstrap `use-package'
-(unless (package-installed-p 'use-package) ; unless it is already installed
-  (package-refresh-contents) ; updage packages archive
-  (package-install 'use-package)) ; and install the most recent version of use-package
+;; Bootstrap quelpa
+(unless (package-installed-p 'quelpa)
+    (with-temp-buffer
+      (url-insert-file-contents "https://github.com/quelpa/quelpa/raw/master/quelpa.el")
+      (eval-buffer)
+      (quelpa-self-upgrade)))
 
-(require 'use-package)
+(quelpa
+ '(quelpa-use-package
+   :fetcher git
+   :url "https://github.com/quelpa/quelpa-use-package.git"))
+(require 'quelpa-use-package)
+
+;; not needed if using quelpa
+;; ;; Bootstrap `use-package'
+;; (unless (package-installed-p 'use-package) ; unless it is already installed
+;;   (package-refresh-contents) ; updage packages archive
+;;   (package-install 'use-package)) ; and install the most recent version of use-package
+
+;; (require 'use-package)
 
 (setq use-package-always-ensure t)
 
@@ -419,7 +433,6 @@ It only works for frames with exactly two windows.
 
 (use-package evil-exchange
   :config
-  
   (evil-exchange-install))
 
 (use-package vdiff
@@ -456,6 +469,12 @@ It only works for frames with exactly two windows.
   "l" '(:ignore :which-key "bookmarks")
   "lm" '(bookmark-set :which-key "set bookmark")
   "ll" '(bookmark-jump :which-key "jump to bookmark"))
+
+;; (use-package bufler
+;;   :quelpa (bufler :fetcher github :repo "alphapapa/bufler.el")
+;;   :config
+;;   (require 'helm-bufler)
+;;   (bufler-mode))
 
 ;;appearance
 ;; (use-package zenburn-theme :ensure t)

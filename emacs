@@ -1543,7 +1543,10 @@ limitations under the License.
   ;; (use-package mu4e-conversation
   ;;   :ensure t)
 
-  (require 'mu4e)
+  (use-package mu4e
+    :ensure nil
+    :load-path "/usr/share/emacs/site-lisp/mu4e/")
+
   (setenv "GPG_AGENT_INFO" nil)
   (setq mu4e-confirm-quit nil)
   ;; (global-mu4e-conversation-mode)

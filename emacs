@@ -1367,14 +1367,17 @@ limitations under the License.
     :init
     (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
     (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Debug/BoSSSpad.exe")
-    (setq bosss-path-reference "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/KOmegaModelSolver/bin/Debug/KOmegaSolver.exe")
+    (setq bosss-path-reference (mapcar #'(lambda (proj) (concat "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/" proj))
+                                       '("RANSCommon/bin/Debug/RANS_Solver.dll"
+                                         "KOmegaModelSolver/bin/Debug/KOmegaSolver.exe"
+                                         "KOmegaStatSymmModelSolver/bin/Debug/KOmegaSSSolver.exe")))
     :config
     (my-local-leader-def
       :keymaps 'bosss-mode-map
       "j" '(bosss-next-field :which-key "next field")
       "k" '(bosss-previous-field :which-key "previous field")
       "ro" '(run-bosss-repl-other-window :which-key "start repl in other window")
-      "rn" '(bosss-bosss-repl-run-bosss-pad :which-key "run bossspad")
+      "rn" '(bosss-repl-run-bosss-pad :which-key "run bossspad")
       "ef" '(bosss-repl-send-current-field :which-key "send region to repl")
       "ee" '(bosss-repl-send-region :which-key "send region to repl")
       "eb" '(bosss-repl-send-buffer :which-key "send buffer to repl")

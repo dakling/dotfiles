@@ -779,11 +779,10 @@ It only works for frames with exactly two windows.
            ("true" . 10003)
            ("false" . 10007))))
 
-(add-hook 'csharp-mode-hook #'my-csharp-setup-pretty-symbols)
+;; (add-hook 'csharp-mode-hook #'my-csharp-setup-pretty-symbols)
 
 (use-package pretty-mode
   :config
-  (global-pretty-mode 1)
   (pretty-activate-groups
    '(:sub-and-superscripts :greek :arithmetic-nary :equality :ordering :ordering-double :ordering-triple :arrows :arrows-twoheaded :punctuation :logic :sets)))
 

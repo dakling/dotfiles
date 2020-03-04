@@ -419,7 +419,7 @@ It only works for frames with exactly two windows.
   (general-define-key
    :keymaps 'override
    :states 'normal
-   "C-s" 'iedit))
+   "C-s" 'iedit-mode))
 
 (use-package evil-mc
   :diminish evil-mc-mode
@@ -1325,7 +1325,7 @@ limitations under the License.
     (interactive)
     (async-shell-command (concat "nunit3-console " path-to-assembly)))
 
-  (add-hook 'csharp-mode-hook #'subword-mode)
+  ;; (add-hook 'csharp-mode-hook #'subword-mode)
   (add-hook 'csharp-mode-hook #'company-mode)
   ;; (add-hook 'csharp-mode-hook #'rainbow-delimiters-mode-enable)
   (add-hook 'csharp-mode-hook (lambda ()
@@ -1353,7 +1353,7 @@ limitations under the License.
     :keymaps 'csharp-mode-map
     "b" '(:ignore :which-key "build")
     "bd" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " (my-csharp-find-current-project)))) :which-key "build debug")
-    "br" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " (my-csharp-find-current-project)))) :which-key "build release")
+    "br" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " bosss-master-solution))) :which-key "build release")
     "be" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " bosss-master-solution))) :which-key "build everything")
     "bb" '(recompile :which-key "recompile")
     "et" '((lambda () (interactive) (my-run-tests (my-csharp-find-current-project))) :which-key "run tests")

@@ -1094,7 +1094,7 @@ It only works for frames with exactly two windows.
   :defer t
   :config
   ;; (add-hook 'scheme-mode-hook #'rainbow-delimiters-mode-enable)
-  (add-hook 'scheme-mode-hook (lambda () (add-hook 'before-save-hook #'my-indent-buffer nil t)))
+  ;; (add-hook 'scheme-mode-hook (lambda () (add-hook 'before-save-hook #'my-indent-buffer nil t)))
   (when (system-name= "klingenberg-tablet")
     (with-eval-after-load 'geiser-guile
       (add-to-list 'geiser-guile-load-path "~/guix-packages/guix/"))
@@ -1331,8 +1331,8 @@ limitations under the License.
   (add-hook 'csharp-mode-hook (lambda ()
                                 (push '(?< . ("< " . " >")) evil-surround-pairs-alist)))
   (add-hook 'csharp-mode-hook #'my-add-header)
-  (add-hook 'csharp-mode-hook (lambda () 
-                                (add-hook 'before-save-hook #'my-indent-buffer-without-bosss-header nil t)))
+  ;; (add-hook 'csharp-mode-hook (lambda () 
+  ;;                               (add-hook 'before-save-hook #'my-indent-buffer-without-bosss-header nil t)))
 
   (setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
   (defun my-csharp-find-current-project ()
@@ -1356,6 +1356,7 @@ limitations under the License.
     "br" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " bosss-master-solution))) :which-key "build release")
     "be" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " bosss-master-solution))) :which-key "build everything")
     "bb" '(recompile :which-key "recompile")
+    "=" '(my-indent-buffer-without-bosss-header :which-key "indent buffer")
     "et" '((lambda () (interactive) (my-run-tests (my-csharp-find-current-project))) :which-key "run tests")
     "eo" '(run-csharp-repl-other-frame :which-key "start repl")
     "er" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl"))

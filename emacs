@@ -144,39 +144,39 @@
   (find-file "~/Documents/TODO.org")
   (calendar))
 
-(defun my-get-rid-of-mouse ()
+(defun my/get-rid-of-mouse ()
   "Move the mouse to the bottom right corner of the screen"
   (interactive)
   (shell-command "xdotool mousemove 100000 100000")) ; extremely high numbers to ensure the cursor goes to the bottom right regardless of display size
 
-(defun my--convert-to-pdf (filename)
+(defun my/-convert-to-pdf (filename)
   (shell-command (concat "unoconv " filename)))
 
-(defun my-dired-convert-to-pdf ()
+(defun my/dired-convert-to-pdf ()
   (interactive)
   (mapc #'my--convert-to-pdf (dired-get-marked-files))
   (ranger-refresh))
 
-(defun my-brightness+ ()
+(defun my/brightness+ ()
   (interactive)
   (shell-command "xbacklight -inc 10"))
 
-(defun my-brightness- ()
+(defun my/brightness- ()
   (interactive)
   (shell-command "xbacklight -dec 10"))
 
-(defun my-open-url (url)
+(defun my/open-url (url)
   (start-process-shell-command
    "" nil (concat browser
                   url)))
 
-(defun my-close-buffer ()
+(defun my/close-buffer ()
   (interactive)
   (kill-this-buffer)
   (when (< 1 (length (window-list)))
     (evil-window-delete)))
 
-(defun my-add-to-path (path)
+(defun my/add-to-path (path)
   "Add path to PATH."
   (setenv "PATH" (concat
                   path
@@ -238,7 +238,7 @@ It only works for frames with exactly two windows.
           (select-window first-win)
           (if this-win-2nd (other-window 1))))))
 
-(defun my-indent-buffer ()
+(defun my/indent-buffer ()
   "Indent the entire buffer using evil-indent."
   (interactive)
   (save-excursion
@@ -263,18 +263,18 @@ It only works for frames with exactly two windows.
   (general-evil-setup t)
   (general-auto-unbind-keys)
 
-  (general-create-definer my-leader-def
+  (general-create-definer my/leader-def
     :keymaps 'override
     :prefix "SPC"
     :global-prefix "s-SPC"
     :states '(motion normal emacs))
 
-  (general-create-definer my-local-leader-def
+  (general-create-definer my/local-leader-def
     :keymaps 'override
     :prefix "-"
     :states '(motion normal))
 
-  (general-create-definer my-local-insert-leader-def
+  (general-create-definer my/local-insert-leader-def
     :keymaps 'override
     :prefix "C-c"
     :states '(motion normal emacs))
@@ -496,12 +496,12 @@ It only works for frames with exactly two windows.
   (auto-dim-other-buffers-mode 1))
 
 ;; eshell
-(defun my-eshell-delete-line ()
+(defun my/eshell-delete-line ()
   (interactive)
   (eshell-bol)
   (kill-line))
 
-(defun my-eshell-change-line ()
+(defun my/eshell-change-line ()
   (interactive)
   (my-eshell-delete-line)
   (evil-insert 1))
@@ -736,19 +736,19 @@ It only works for frames with exactly two windows.
                                         ("/" . 247) 
                                         ("<=" . ?≤)
                                         (">=" . ?≥)))
-(defun my-setup-pretty-symbols (list)
+(defun my/setup-pretty-symbols (list)
   (mapc #'(lambda (pair) (push pair prettify-symbols-alist))
         (append
          global-prettify-symbols-alist
          list)))
 
-(defun my-lisp-setup-pretty-symbols ()
+(defun my/lisp-setup-pretty-symbols ()
   (my-setup-pretty-symbols
    '(("defun" . 8518))))
 
 (add-hook 'lisp-mode-hook #'my-lisp-setup-pretty-symbols)
 
-(defun my-csharp-setup-pretty-symbols ()
+(defun my/csharp-setup-pretty-symbols ()
   (my-setup-pretty-symbols
          '(("!=" . 8800) 
            ("==" . #xff1d) 
@@ -793,7 +793,7 @@ It only works for frames with exactly two windows.
         :init
         (server-start)
         :config
-        (defun my-autostart ()
+        (defun my/autostart ()
           (when (system-name= "klingenberg-tablet")
             (my-add-to-path
              "/home/klingenberg/.nix-profile/bin/")
@@ -830,8 +830,8 @@ It only works for frames with exactly two windows.
                 ;; 		  (exwm-workspace-move-window ,i))))
                 ;; 	    (list '! \" § $ % & / ( ) =))
                 ;; (number-sequence 0 9))
-                ([?\s-o] . my-exwm-switch-to-other-workspace)
-                ([?\s-O] . my-exwm-move-window-to-other-workspace)
+                ([?\s-o] . my/exwm-switch-to-other-workspace)
+                ([?\s-O] . my/exwm-move-window-to-other-workspace)
                 ([?\s-w] . other-window)
                 ([?\s-d] . dmenu)
                 ([?\s-x] . helm-M-x)
@@ -844,8 +844,8 @@ It only works for frames with exactly two windows.
                 ([?\s-k] . evil-window-up)
                 ([?\s-v] . split-window-right)
                 ([?\s-s] . split-window-below)
-                ([?\s-c] . my-close-buffer)
-                ([?\s-q] . my-get-rid-of-mouse)
+                ([?\s-c] . my/close-buffer)
+                ([?\s-q] . my/get-rid-of-mouse)
                 ([?\s-m] . delete-other-windows)
                 ([s-f1] . (lambda () (interactive) (eshell 'N)))
                 ([C-s-f1] . eshell)
@@ -877,7 +877,7 @@ It only works for frames with exactly two windows.
         :after exwm
         :demand t
         :preface
-        (defun my-exwm-get-other-workspace ()
+        (defun my/exwm-get-other-workspace ()
           (cond ((not (= 2 (length (seq-filter #'identity (mapcar #'exwm-workspace--active-p exwm-workspace--list))))) nil) ;currently only works for two monitors
                 ((= exwm-workspace-current-index
                     (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))
@@ -885,9 +885,9 @@ It only works for frames with exactly two windows.
                 ((= exwm-workspace-current-index
                     (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
                  (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))))
-        (defun my-exwm-switch-to-other-workspace () (interactive)
+        (defun my/exwm-switch-to-other-workspace () (interactive)
                (exwm-workspace-switch (my-exwm-get-other-workspace)))
-        (defun my-exwm-move-window-to-other-workspace () (interactive)
+        (defun my/exwm-move-window-to-other-workspace () (interactive)
                (exwm-workspace-move-window (my-exwm-get-other-workspace)))
         (cond
          ((system-name= "klingenberg-tablet") (progn (set 'monitor1 "eDP-1")
@@ -902,7 +902,7 @@ It only works for frames with exactly two windows.
          (t (progn (set 'monitor2 "VGA-1")
                    (set 'monitor1 "HDMI-1")
                    (set 'placement "left-of"))))
-        (defun my-exwm-xrandr ()
+        (defun my/exwm-xrandr ()
           "Configure screen with xrandr."
           (shell-command
            (if (file-exists-p "~/.screenlayout/default.sh")
@@ -914,7 +914,7 @@ It only works for frames with exactly two windows.
                      " "
                      monitor2
                      " --auto"))))
-        :hook (exwm-randr-screen-change . my-exwm-xrandr)
+        :hook (exwm-randr-screen-change . my/exwm-xrandr)
         :init
         (setq exwm-randr-workspace-monitor-plist (list 0 monitor1
                                                        2 monitor1
@@ -944,7 +944,7 @@ It only works for frames with exactly two windows.
       ;; (exwmx-xfce-enable)
       )
   )
-(defun my-create-super-bindings ()
+(defun my/create-super-bindings ()
   "Create bindings starting with super for use outside exwm."
   (general-define-key
    :keymaps 'override
@@ -1230,18 +1230,18 @@ It only works for frames with exactly two windows.
     "o" '(jenkins--show-console-output-from-job-screen :which-key "view")))
 
 ;;c#
-(defun my-setup-csharp-and-bosss ()
+(defun my/setup-csharp-and-bosss ()
   "Setup stuff specific to bosss and csharp."
   (use-package csharp-repl
     :ensure nil
     :load-path "~/Documents/programming/elisp/emacs-csharp-repl/")
   
-  (defun my-bosss-file-p ()
+  (defun my/bosss-file-p ()
     (or
      (file-in-directory-p (buffer-file-name) "~/BoSSS/")
      (file-in-directory-p (buffer-file-name) "~/BoSSS-experimental/internal/src/private-kli/")))
 
-  (defun my-add-header ()
+  (defun my/add-header ()
     (interactive)
     (let ((header-text
            (concat
@@ -1291,12 +1291,12 @@ limitations under the License.
      (magit-stage-file file)
      (kill-buffer (current-buffer)))
 
-  (defun my-add-current-file-to-project ()
+  (defun my/add-current-file-to-project ()
     "Add current file to my project."
     (interactive)
     (my-add-file-to-project (buffer-file-name) (my-csharp-find-current-project)))
 
-  (defun my-remove-file-from-project (file project)
+  (defun my/remove-file-from-project (file project)
     "Remove FILE from PROJECT."
     (find-file project)
     (goto-line 0)
@@ -1308,19 +1308,19 @@ limitations under the License.
     (magit-stage-file file)
     (kill-buffer (current-buffer)))
 
-  (defun my-remove-current-file-from-project ()
+  (defun my/remove-current-file-from-project ()
     "Remove current file to my project."
     (interactive)
     (my-remove-file-from-project (buffer-file-name) (my-csharp-find-current-project)))
   
-  (defun my-run-bosss-control-file (solver control-file &optional debug)
+  (defun my/run-bosss-control-file (solver control-file &optional debug)
     "Run SOLVER with CONTROL-FILE, optionally using sbd to DEBUB"
     (async-shell-command
      (if debug
          (concat "sdb \"args -c " control-file "\" \"run " solver "\"")
        (concat "mono " solver " -c " control-file))))
 
-  (defun my-run-tests (path-to-assembly)
+  (defun my/run-tests (path-to-assembly)
     "Implement tests manually as default functions do not work"
     (interactive)
     (async-shell-command (concat "nunit3-console " path-to-assembly)))
@@ -1335,7 +1335,7 @@ limitations under the License.
   ;;                               (add-hook 'before-save-hook #'my-indent-buffer-without-bosss-header nil t)))
 
   (setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
-  (defun my-csharp-find-current-project ()
+  (defun my/csharp-find-current-project ()
     "Find the closest csproj file relative to the current directory."
     (cl-labels
         ((find-csproj-file (dir)
@@ -1533,7 +1533,7 @@ limitations under the License.
 ;; browser
 (use-package helm-eww
   :config
-  (defun my-eww-open-league-table ()
+  (defun my/eww-open-league-table ()
     "Do an internet search for soccer league table."
     (interactive)
     (let* ((country-search-string-table
@@ -1558,7 +1558,7 @@ limitations under the License.
 
 ;; mail
 
-(defun my-mu4e-setup ()
+(defun my/mu4e-setup ()
 
   (use-package helm-mu)
   
@@ -1572,7 +1572,7 @@ limitations under the License.
   (setenv "GPG_AGENT_INFO" nil)
   (setq mu4e-confirm-quit nil)
   ;; (global-mu4e-conversation-mode)
-  (defun my-mu4e-set-account ()
+  (defun my/mu4e-set-account ()
     "Set the account for composing a message."
     (let* ((account
             (if mu4e-compose-parent-message
@@ -1581,10 +1581,10 @@ limitations under the License.
                   (match-string 1 maildir))
               (completing-read (format "Compose with account: (%s) "
                                        (mapconcat #'(lambda (var) (car var))
-                                                  my-mu4e-account-alist "/"))
-                               (mapcar #'(lambda (var) (car var)) my-mu4e-account-alist)
-                               nil t nil nil (caar my-mu4e-account-alist))))
-           (account-vars (cdr (assoc account my-mu4e-account-alist))))
+                                                  my/mu4e-account-alist "/"))
+                               (mapcar #'(lambda (var) (car var)) my/mu4e-account-alist)
+                               nil t nil nil (caar my/mu4e-account-alist))))
+           (account-vars (cdr (assoc account my/mu4e-account-alist))))
       (if account-vars
           (mapc #'(lambda (var)
                     (set (car var) (cadr var)))
@@ -1608,7 +1608,7 @@ limitations under the License.
   (setq message-send-mail-function 'smtpmail-send-it)
   (setq smtpmail-stream-type 'ssl)
   (setq mu4e-view-show-addresses t)
-  (setq my-mu4e-account-alist
+  (setq my/mu4e-account-alist
         '(("FDY"
            (mu4e-sent-messages-behavior sent)
            (mu4e-compose-signature-auto-include t)

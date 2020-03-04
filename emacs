@@ -184,6 +184,15 @@
                   (getenv "PATH")))
   (add-to-list 'exec-path path))
 
+(defun my/remove-hook-interactively ()
+  "Remove hook interactively."
+  (interactive)
+  (let* ((hook (intern (completing-read "hook: "
+                                        obarray
+                                        #'(lambda (symbol) (string-suffix-p "hook" (format "%s" symbol))))))
+         (fun (intern (completing-read "fun: " (eval hook)))))
+    (remove-hook hook fun)))
+
 ;; (defmacro ! (&rest args)
 ;;   "convenient way to execute shell commands from scratch buffer"
 ;;   `(shell-command (mapcar #'write-to-string ,args)))

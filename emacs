@@ -1533,6 +1533,13 @@ limitations under the License.
     "rr"   '(reftex-cleveref-cref :which-key "cref")
     "rc"   '(reftex-citation :which-key "cite")))
 
+(use-package latex-extra
+  :config
+  (add-hook 'LaTeX-mode-hook #'latex-extra-mode)
+  (my/local-leader-def
+    "j" 'latex/forward-environment
+    "k" 'latex/backward-environment))
+
 ;; (use-package auctex-latexmk
 ;;   :defer t
 ;;   :init

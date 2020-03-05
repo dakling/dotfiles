@@ -299,7 +299,7 @@ It only works for frames with exactly two windows.
    "gb" '(pop-tag-mark :which-key "go back"))
 
   ;; many spacemacs bindings go here
-  (my-leader-def
+  (my/leader-def
     "SPC" '(helm-M-x :which-key "M-x")
     "a" '(:ignore t :which-key "applications")
     "ad" '(deer :which-key "call deer")
@@ -365,9 +365,9 @@ It only works for frames with exactly two windows.
     "ep"  'eval-print-last-sexp
     "er"  'eval-expression
     "i"   '(:ignore :which-key "internet")
-    "id"  '((lambda () (interactive) (my-open-url "https://www.dazn.com")) :which-key "dazn")
-    "ig"  '((lambda () (interactive) (my-open-url "https://www.dragongoserver.net/status.php")) :which-key "dgs")
-    "iy"  '((lambda () (interactive) (my-open-url "https://www.youtube.com/")) :which-key "youtube")
+    "id"  '((lambda () (interactive) (my/open-url "https://www.dazn.com")) :which-key "dazn")
+    "ig"  '((lambda () (interactive) (my/open-url "https://www.dragongoserver.net/status.php")) :which-key "dgs")
+    "iy"  '((lambda () (interactive) (my/open-url "https://www.youtube.com/")) :which-key "youtube")
     "ss"  'shutdown
     "sr"  'reboot
     "sl"  (lambda () (interactive) (shell-command "/usr/bin/slock"))))
@@ -474,7 +474,7 @@ It only works for frames with exactly two windows.
   :init (which-key-mode)
   :diminish which-key-mode)
 
-(my-leader-def
+(my/leader-def
   "l" '(:ignore :which-key "bookmarks")
   "lm" '(bookmark-set :which-key "set bookmark")
   "ll" '(bookmark-jump :which-key "jump to bookmark"))
@@ -512,7 +512,7 @@ It only works for frames with exactly two windows.
 
 (defun my/eshell-change-line ()
   (interactive)
-  (my-eshell-delete-line)
+  (my/eshell-delete-line)
   (evil-insert 1))
 
 (setq eshell-cmpl-ignore-case t)
@@ -541,7 +541,7 @@ It only works for frames with exactly two windows.
   :config
   (general-define-key
    :keymaps 'ranger-normal-mode-map
-   "cp" '(my-dired-convert-to-pdf :which-key "convert to pdf")
+   "cp" '(my/dired-convert-to-pdf :which-key "convert to pdf")
    "gr" '(ranger-refresh :which-key "refresh"))
   (setq ranger-cleanup-eagerly t)
   (ranger-override-dired-mode t))
@@ -633,7 +633,7 @@ It only works for frames with exactly two windows.
   :diminish projectile-mode
   :defer t
   :config
-  (my-leader-def
+  (my/leader-def
     :states 'normal
     "p" 'projectile-command-map)
   (projectile-mode 1))
@@ -647,13 +647,13 @@ It only works for frames with exactly two windows.
 
 (use-package magit
   :commands magit-status
-  :general (my-leader-def
+  :general (my/leader-def
              "gs" '(magit-status :which-key "git status")))
 
 (use-package evil-magit)
 
 (use-package vc-msg
-  :general (my-leader-def
+  :general (my/leader-def
              "gb" '(vc-msg-show :which-key "git blame")))
 
 (defun doc-view-setup ()
@@ -670,7 +670,7 @@ It only works for frames with exactly two windows.
     (not-modified)
     (read-only-mode t))
   ;; (add-to-list 'auto-mode-alist '("\\.docx\\'" . pandoc-view-mode))
-  (my-local-leader-def
+  (my/local-leader-def
     "p" 'pandoc-view-mode ; TODO create toggle function
     "d" 'doc-view-mode)
   (general-define-key
@@ -719,7 +719,7 @@ It only works for frames with exactly two windows.
      "?"  '(isearch-backward :which-key search backward)
      "0"  '(image-bol :which-key "go left")
      "$"  '(image-eol :which-key "go right"))
-    (my-local-leader-def
+    (my/local-leader-def
       ;; :states 'normal
       :keymaps 'pdf-view-mode-map
       ;; Scale/Fit
@@ -752,13 +752,13 @@ It only works for frames with exactly two windows.
          list)))
 
 (defun my/lisp-setup-pretty-symbols ()
-  (my-setup-pretty-symbols
+  (my/setup-pretty-symbols
    '(("defun" . 8518))))
 
-(add-hook 'lisp-mode-hook #'my-lisp-setup-pretty-symbols)
+(add-hook 'lisp-mode-hook #'my/lisp-setup-pretty-symbols)
 
 (defun my/csharp-setup-pretty-symbols ()
-  (my-setup-pretty-symbols
+  (my/setup-pretty-symbols
          '(("!=" . 8800) 
            ("==" . #xff1d) 
            ("=" . 8592) 
@@ -788,7 +788,7 @@ It only works for frames with exactly two windows.
            ("true" . 10003)
            ("false" . 10007))))
 
-;; (add-hook 'csharp-mode-hook #'my-csharp-setup-pretty-symbols)
+;; (add-hook 'csharp-mode-hook #'my/csharp-setup-pretty-symbols)
 
 (use-package pretty-mode
   :config
@@ -804,7 +804,7 @@ It only works for frames with exactly two windows.
         :config
         (defun my/autostart ()
           (when (system-name= "klingenberg-tablet")
-            (my-add-to-path
+            (my/add-to-path
              "/home/klingenberg/.nix-profile/bin/")
             (start-process "/home/klingenberg/.autostart.sh" "*/home/klingenberg/.autostart.sh*" "/home/klingenberg/.autostart.sh")
             ;; (start-process "gnome-session" "*gnome-session*" "gnome-session")
@@ -814,7 +814,7 @@ It only works for frames with exactly two windows.
         (setq mouse-autoselect-window nil
               focus-follows-mouse nil)
         (exwm-enable)
-        (my-autostart))
+        (my/autostart))
 
       (use-package exwm-input
         :after exwm-randr
@@ -865,9 +865,9 @@ It only works for frames with exactly two windows.
         (push ?\s-\  exwm-input-prefix-keys)
         ;; (push ?\M-m  exwm-input-prefix-keys)
         (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
-                            #'my-brightness+)
+                            #'my/brightness+)
         (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
-                            #'my-brightness-)
+                            #'my/brightness-)
         (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
                             'pulseaudio-control-decrease-volume)
         (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
@@ -895,9 +895,9 @@ It only works for frames with exactly two windows.
                     (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
                  (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))))
         (defun my/exwm-switch-to-other-workspace () (interactive)
-               (exwm-workspace-switch (my-exwm-get-other-workspace)))
+               (exwm-workspace-switch (my/exwm-get-other-workspace)))
         (defun my/exwm-move-window-to-other-workspace () (interactive)
-               (exwm-workspace-move-window (my-exwm-get-other-workspace)))
+               (exwm-workspace-move-window (my/exwm-get-other-workspace)))
         (cond
          ((system-name= "klingenberg-tablet") (progn (set 'monitor1 "eDP-1")
                                                      (set 'monitor2 "HDMI-2")
@@ -970,8 +970,8 @@ It only works for frames with exactly two windows.
    "s-k" 'evil-window-up
    "s-v" 'split-window-right
    "s-s" 'split-window-below
-   "s-c" 'my-close-buffer
-   "s-q" 'my-get-rid-of-mouse
+   "s-c" 'my/close-buffer
+   "s-q" 'my/get-rid-of-mouse
    "s-m" 'delete-other-windows
    "s-<f1>" '(lambda () (interactive) (eshell 'N))
    "C-s-<f1>" 'eshell
@@ -983,7 +983,7 @@ It only works for frames with exactly two windows.
    "s-<f12>" '(lambda () (interactive)
                 (start-process "" nil "/usr/bin/slock"))))
 
-(my-create-super-bindings)
+(my/create-super-bindings)
 
 (use-package flycheck
   :diminish flycheck-mode
@@ -1000,7 +1000,7 @@ It only works for frames with exactly two windows.
 ;; 	     "--core" "/home/klingenberg/.sbcl.core")
 ;; 	    :env ("SBCL_HOME=/home/klingenberg/"))
 ;;   ;;:init (setenv 'SBCL-HOME " ") ;;TODO
-;;   :general (my-local-leader-def
+;;   :general (my/local-leader-def
 ;; 	     :keymaps 'lisp-mode-map
 ;; 	     "'" '(slime :which-key "start slime")
 ;; 	     "e" '(:ignore :which-key "slime eval")
@@ -1020,7 +1020,7 @@ It only works for frames with exactly two windows.
    "gd" '(lsp-find-definition :which-key "go to definition")
    "<f12>" '(lsp-find-definition :which-key "go to definition for Florian")
    "gr" '(lsp-rename :which-key "rename"))
-  (my-local-leader-def
+  (my/local-leader-def
     :keymaps 'lsp-mode-map
     "rt" '(lsp-ui-imenu :which-key "imenu")
     ;; "t" '(omnisharp-current-type-information :which-key "current type information")
@@ -1030,7 +1030,7 @@ It only works for frames with exactly two windows.
     ;; "fu" '(omnisharp-find-usages :which-key "find usages")
     ;; "fI" '(omnisharp-fix-code-issue-at-point :which-key "fix code issue at point")
     ;; "fU" '(omnisharp-fix-usings :which-key "fix usings")
-    ;; "rt" '((lambda () (interactive) (my-run-tests (my-csharp-find-current-project))) :which-key "run tests")
+    ;; "rt" '((lambda () (interactive) (my/run-tests (my/csharp-find-current-project))) :which-key "run tests")
     ;; "ro" '(run-csharp-repl-other-frame :which-key "start repl")
     ;; "rr" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl")
     ))
@@ -1067,7 +1067,7 @@ It only works for frames with exactly two windows.
 ;;   :diminish lispy-mode
 ;;   :defer t
 ;;   :config
-;;   (add-hook 'lispy-mode-hook (lambda () (add-hook 'before-save-hook #'my-indent-buffer nil t)))
+;;   (add-hook 'lispy-mode-hook (lambda () (add-hook 'before-save-hook #'my/indent-buffer nil t)))
 ;;   ;; (add-hook 'lispy-mode-hook #'rainbow-delimiters-mode-enable)
 ;;   )
 
@@ -1089,7 +1089,7 @@ It only works for frames with exactly two windows.
   :defer t
   :config
   (setq inferior-lisp-program "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")
-  :general (my-local-leader-def
+  :general (my/local-leader-def
              :keymaps 'lisp-mode-map
              "'" '(sly :which-key "start reps")
              "e" '(:ignore :which-key "eval")
@@ -1103,13 +1103,13 @@ It only works for frames with exactly two windows.
   :defer t
   :config
   ;; (add-hook 'scheme-mode-hook #'rainbow-delimiters-mode-enable)
-  ;; (add-hook 'scheme-mode-hook (lambda () (add-hook 'before-save-hook #'my-indent-buffer nil t)))
+  ;; (add-hook 'scheme-mode-hook (lambda () (add-hook 'before-save-hook #'my/indent-buffer nil t)))
   (when (system-name= "klingenberg-tablet")
     (with-eval-after-load 'geiser-guile
       (add-to-list 'geiser-guile-load-path "~/guix-packages/guix/"))
     (with-eval-after-load 'yasnippet
       (add-to-list 'yas-snippet-dirs "~/guix-packages/guix/etc/snippets")))
-  :general (my-local-leader-def
+  :general (my/local-leader-def
              :keymaps 'scheme-mode-map
              "'" '(geiser :which-key "start reps")
              "e" '(:ignore :which-key "eval")
@@ -1162,7 +1162,7 @@ It only works for frames with exactly two windows.
           ("p" "Process" entry (file+headline org-default-notes-file "Tasks")
            "* TODO [#A] Process mail from %:fromname on %:subject\nSCHEDULED:%t\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+2d\"))\n:PROPERTIES:\n:CREATED: %U\n:END:\n %a" :immediate-finish t :prepend t)))
   :general
-  (my-local-leader-def
+  (my/local-leader-def
     :keymaps 'org-mode-map
     "e" '(org-export-dispatch :which-key "export")
     "a" '((lambda () (interactive)
@@ -1205,7 +1205,7 @@ It only works for frames with exactly two windows.
   (setq org-ref-default-bibliography '("~/HESSENBOX-DA/bibliography/bibliography.bib"))
   (setq bibtex-completion-library-path "~/HESSENBOX-DA/bibliography/bibtex-pdfs")
   :general
-  (my-local-leader-def
+  (my/local-leader-def
     :keymaps 'org-mode-map
     "r" '(:ignore :which-key "references")
     "rc" '(org-ref-helm-insert-cite-link :which-key "insert citation")
@@ -1232,7 +1232,7 @@ It only works for frames with exactly two windows.
    :states 'normal
    :keymaps 'jenkins-mode-map
    "RET" 'jenkins-enter-job)
-  (my-local-leader-def
+  (my/local-leader-def
     :keymaps 'jenkins-job-view-mode-map
     "b" '(jenkins--call-build-job-from-main-screen :which-key "build")
     "v" '(jenkins-visit-jenkins-web-page :which-key "view")
@@ -1273,11 +1273,11 @@ limitations under the License.
 ")))
       (save-excursion
         (goto-line 0)
-        (when (my-bosss-file-p)
+        (when (my/bosss-file-p)
           (unless (search-forward (substring header-text 93) nil t) ;; check if header already exists, start a bit later to ignore year)
             (princ header-text (current-buffer)))))))
 
-  (defun my-indent-buffer-without-bosss-header ()
+  (defun my/indent-buffer-without-bosss-header ()
     "Indent file, but ignore header"
     (interactive)
     (save-excursion
@@ -1285,7 +1285,7 @@ limitations under the License.
       (let ((beg (point)))
         (evil-indent beg (point-max)))))
 
-  (defun my-add-file-to-project (file project)
+  (defun my/add-file-to-project (file project)
     "Add FILE to PROJECT."
      (find-file project)
      (goto-line 0)
@@ -1303,7 +1303,7 @@ limitations under the License.
   (defun my/add-current-file-to-project ()
     "Add current file to my project."
     (interactive)
-    (my-add-file-to-project (buffer-file-name) (my-csharp-find-current-project)))
+    (my/add-file-to-project (buffer-file-name) (my/csharp-find-current-project)))
 
   (defun my/remove-file-from-project (file project)
     "Remove FILE from PROJECT."
@@ -1320,7 +1320,7 @@ limitations under the License.
   (defun my/remove-current-file-from-project ()
     "Remove current file to my project."
     (interactive)
-    (my-remove-file-from-project (buffer-file-name) (my-csharp-find-current-project)))
+    (my/remove-file-from-project (buffer-file-name) (my/csharp-find-current-project)))
   
   (defun my/run-bosss-control-file (solver control-file &optional debug)
     "Run SOLVER with CONTROL-FILE, optionally using sbd to DEBUB"
@@ -1339,9 +1339,9 @@ limitations under the License.
   ;; (add-hook 'csharp-mode-hook #'rainbow-delimiters-mode-enable)
   (add-hook 'csharp-mode-hook (lambda ()
                                 (push '(?< . ("< " . " >")) evil-surround-pairs-alist)))
-  (add-hook 'csharp-mode-hook #'my-add-header)
+  (add-hook 'csharp-mode-hook #'my/add-header)
   ;; (add-hook 'csharp-mode-hook (lambda () 
-  ;;                               (add-hook 'before-save-hook #'my-indent-buffer-without-bosss-header nil t)))
+  ;;                               (add-hook 'before-save-hook #'my/indent-buffer-without-bosss-header nil t)))
 
   (setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
   (defun my/csharp-find-current-project ()
@@ -1358,15 +1358,15 @@ limitations under the License.
                 (t (iter (concat dir "/../" )))))) ; if there is no .csproj file, look one directory higher
       (iter (file-name-directory (buffer-file-name)))))
  
-  (my-local-leader-def
+  (my/local-leader-def
     :keymaps 'csharp-mode-map
     "b" '(:ignore :which-key "build")
-    "bd" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " (my-csharp-find-current-project)))) :which-key "build debug")
+    "bd" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " (my/csharp-find-current-project)))) :which-key "build debug")
     "br" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " bosss-master-solution))) :which-key "build release")
     "be" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " bosss-master-solution))) :which-key "build everything")
     "bb" '(recompile :which-key "recompile")
-    "=" '(my-indent-buffer-without-bosss-header :which-key "indent buffer")
-    "et" '((lambda () (interactive) (my-run-tests (my-csharp-find-current-project))) :which-key "run tests")
+    "=" '(my/indent-buffer-without-bosss-header :which-key "indent buffer")
+    "et" '((lambda () (interactive) (my/run-tests (my/csharp-find-current-project))) :which-key "run tests")
     "eo" '(run-csharp-repl-other-frame :which-key "start repl")
     "er" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl"))
 
@@ -1382,7 +1382,7 @@ limitations under the License.
                                          "KOmegaModelSolver/bin/Debug/KOmegaSolver.exe"
                                          "KOmegaStatSymmModelSolver/bin/Debug/KOmegaSSSolver.exe")))
     :config
-    (my-local-leader-def
+    (my/local-leader-def
       :keymaps 'bosss-mode-map
       "j" '(bosss-next-field :which-key "next field")
       "k" '(bosss-previous-field :which-key "previous field")
@@ -1392,7 +1392,7 @@ limitations under the License.
       "ee" '(bosss-repl-send-region :which-key "send region to repl")
       "eb" '(bosss-repl-send-buffer :which-key "send buffer to repl")
       "en" '(bosss-eval-and-next-field :which-key "eval and next field")
-      "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
+      "lp" '(bosss-repl-load-my/assembly :which-key "load my assembly")
       "in" '(bosss-create-new-field :which-key "create new input field")))
 
   (use-package omnisharp
@@ -1408,7 +1408,7 @@ limitations under the License.
      "gd" '(omnisharp-go-to-definition :which-key "go to definition")
      "<f12>" '(omnisharp-go-to-definition :which-key "go to definition for Florian")
      "gr" '(omnisharp-rename :which-key "rename"))
-    (my-local-leader-def
+    (my/local-leader-def
       :keymaps 'csharp-mode-map
       "t" '(omnisharp-current-type-information :which-key "current type information")
       "T" '(omnisharp-current-type-documentation :which-key "current type documentation")
@@ -1428,12 +1428,12 @@ limitations under the License.
       "fU" '(omnisharp-fix-usings :which-key "fix usings")))
   )
 
-(add-hook 'csharp-mode-hook #'my-setup-csharp-and-bosss)
+(add-hook 'csharp-mode-hook #'my/setup-csharp-and-bosss)
 
 (use-package fsharp-mode
   :defer t
   :general
-  (my-local-leader-def
+  (my/local-leader-def
     :keymaps 'fsharp-mode-map
     "ef" '(fsharp-eval-phrase :which-key "eval current phrase")))
 
@@ -1476,7 +1476,7 @@ limitations under the License.
   ;;  "-"  nil)
   ;; (add-to-list 'company-backends 'company-auctex t)
   (add-to-list 'company-backends 'company-math t)
-  (my-local-leader-def
+  (my/local-leader-def
     :keymaps '(TeX-mode-map LaTeX-mode-map)
     "-"   'TeX-recenter-output-buffer         
     "."   'LaTeX-mark-environment
@@ -1517,7 +1517,7 @@ limitations under the License.
     "ol" '(lambda() (interactive) (find-file "definLocal.tex"))
     "og" '(lambda() (interactive) (find-file (getenv "LatexGlobalConfig")))
     "ob" '(lambda() (interactive) (find-file "bibliography.bib")))
-  (my-local-insert-leader-def
+  (my/local-insert-leader-def
     :keymaps '(TeX-mode-map LaTeX-mode-map)
     "r"   '(:ignore :which-key "reftex")
     "rt" '(reftex-toc :which-key "table of contents")
@@ -1553,7 +1553,7 @@ limitations under the License.
               ("england" "premier league tabelle")))
            (country (completing-read "which country? " (mapcar #'car country-search-string-table))))
       (eww (cadr (assoc country country-search-string-table)))))
-  (my-local-leader-def
+  (my/local-leader-def
     :keymaps 'eww-mode-map
     "o" 'helm-eww)
   (general-define-key
@@ -1601,7 +1601,7 @@ limitations under the License.
         (error "No email account found"))))
 
   ;; ask for account when composing mail
-  (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
+  (add-hook 'mu4e-compose-pre-hook 'my/mu4e-set-account)
   (setq mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e")
   (setq mu4e-maildir "~/Mail")
   (setq mu4e-trash-folder "/Trash")
@@ -1712,7 +1712,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
      :continue t)))
 
 (unless (or (system-name= "localhost") (system-name= "lina"))
-  (my-mu4e-setup))
+  (my/mu4e-setup))
 
 (use-package rainbow-delimiters)
 
@@ -1723,7 +1723,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   :config
   (setq google-translate-enable-ido-completion t)
   (setq google-translate-translation-directions-alist '(("en" . "de") ("de" . "en")))
-  (my-leader-def
+  (my/leader-def
     "t" '(google-translate-smooth-translate :which-key "translate")))
 
 (use-package excorporate
@@ -1827,9 +1827,9 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
           " "
           mode-line-misc-info
           (:eval (format (concat "<%s> "
-                                 (unless (null (my-exwm-get-other-workspace)) "[%s] "))
+                                 (unless (null (my/exwm-get-other-workspace)) "[%s] "))
                          exwm-workspace-current-index
-                         (my-exwm-get-other-workspace)))
+                         (my/exwm-get-other-workspace)))
           "  |"
           mode-line-end-spaces))
   (mini-modeline-mode 1))

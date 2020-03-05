@@ -444,6 +444,15 @@ It only works for frames with exactly two windows.
   :config
   (evil-exchange-install))
 
+(use-package expand-region
+  :custom
+  expand-region-contract-fast-key "X"
+  :config
+  (general-define-key
+   :keymaps 'override
+   :states 'visual
+   "x" 'er/expand-region))
+
 (use-package vdiff
   :config
   (evil-define-key 'normal vdiff-mode-map "," vdiff-mode-prefix-map))
@@ -1392,7 +1401,7 @@ limitations under the License.
       "ee" '(bosss-repl-send-region :which-key "send region to repl")
       "eb" '(bosss-repl-send-buffer :which-key "send buffer to repl")
       "en" '(bosss-eval-and-next-field :which-key "eval and next field")
-      "lp" '(bosss-repl-load-my/assembly :which-key "load my assembly")
+      "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
       "in" '(bosss-create-new-field :which-key "create new input field")))
 
   (use-package omnisharp

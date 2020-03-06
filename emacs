@@ -1537,6 +1537,7 @@ limitations under the License.
   :config
   (add-hook 'LaTeX-mode-hook #'latex-extra-mode)
   (my/local-leader-def
+    :keymaps 'LaTeX-mode-map
     "j" 'latex/forward-environment
     "k" 'latex/backward-environment))
 

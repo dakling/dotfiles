@@ -90,6 +90,8 @@
 
 (defalias 'yes-or-no-p 'y-or-n-p) ;reduce typing effort
 
+(customize-set-variable 'compilation-scroll-output t)
+
 (electric-pair-mode 1) ;close brackets
 
 (electric-indent-mode)
@@ -435,10 +437,10 @@ It only works for frames with exactly two windows.
   :config
   (global-evil-mc-mode 1))
 
-(use-package evil-owl
-  :diminish evil-owl-mode
-  :config
-  (evil-owl-mode))
+;; (use-package evil-owl
+;;   :diminish evil-owl-mode
+;;   :config
+;;   (evil-owl-mode))
 
 (use-package evil-exchange
   :config
@@ -1283,7 +1285,8 @@ limitations under the License.
       (save-excursion
         (goto-line 0)
         (when (my/bosss-file-p)
-          (unless (search-forward (substring header-text 93) nil t) ;; check if header already exists, start a bit later to ignore year)
+          (unless (or (search-forward (substring header-text 93) nil t) ; check if header already exists, start a bit later to ignore year
+                      (derived-mode-p #'bosss-mode)) ; check if this is just a worksheet 
             (princ header-text (current-buffer)))))))
 
   (defun my/indent-buffer-without-bosss-header ()

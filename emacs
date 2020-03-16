@@ -100,6 +100,14 @@
 
 (push '(?< . ?>) electric-pair-pairs)   ;add angle brackets to electric pairs (autoclose brackets)
 
+;; howard abrams yt video
+(defadvice transpose-words
+    (before my/transpose-words)
+  (when (looking-at "$")
+      (backward-word 1)))
+
+(ad-activate 'transpose-words)
+
 ;; useful functions
 (defun system-name= (&rest names)
   (cl-some
@@ -299,6 +307,11 @@ It only works for frames with exactly two windows.
    :keymaps 'override
    :states 'normal
    "gb" '(pop-tag-mark :which-key "go back"))
+
+  (general-define-key
+   :keymaps 'override
+   :states 'insert
+   "M-t" '(transpose-words :which-key "transpose-words"))
 
   ;; many spacemacs bindings go here
   (my/leader-def
@@ -1133,6 +1146,10 @@ It only works for frames with exactly two windows.
   (setq eval-sexp-fu-flash-face
         '((((class color)) (:background "black" :foreground "gray" :bold t))
           (t (:inverse-video nil)))))
+
+(use-package piper
+  :quelpa (piper :fetcher gitlab :repo "howardabrams/emacs-piper")
+  )
 
 (use-package maplev
   :ensure nil

@@ -31,6 +31,7 @@
    "sbcl"
    "xdotool"
    "webkitgtk"
+   "flatpak"
    "glib-networking"
    "gsettings-desktop-schemas"
    "gstreamer"

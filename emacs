@@ -5,7 +5,7 @@
 ;;; Code:
 
 ;;; speed up startup using Ambrevar's suggestions: (reset later by loading gcmh)
- (setq gc-cons-threshold (* 64 1024 1024)
+(setq gc-cons-threshold (* 64 1024 1024)
        gc-cons-percentage 0.6)
 
 ;;; Temporarily disable the file name handler.
@@ -387,6 +387,32 @@ It only works for frames with exactly two windows.
     "sr"  'reboot
     "sl"  (lambda () (interactive) (shell-command "/usr/bin/slock"))))
 
+(use-package mini-modeline
+  :config
+  (setq display-time-default-load-average nil)
+  (setq display-time-load-average-threshold 10000000)
+  (setq mini-modeline-r-format
+        '("%e" mode-line-front-space
+          ;; mode-line-mule-info
+          ;; mode-line-client
+          ;; mode-line-modified
+          ;; mode-line-remote
+          ;; mode-line-frame-identification
+          mode-line-buffer-identification
+          vc-mode
+          " " mode-line-position " "
+          ;; evil-mode-line-tag
+          ;; mode-line-modes
+          mode-name
+          " "
+          mode-line-misc-info
+          (:eval (format (concat "<%s> "
+                                 (unless (null (my/exwm-get-other-workspace)) "[%s] "))
+                         exwm-workspace-current-index
+                         (my/exwm-get-other-workspace)))
+          "  |"
+          mode-line-end-spaces))
+  (mini-modeline-mode 1))
 
 (use-package evil
   :init
@@ -579,8 +605,7 @@ It only works for frames with exactly two windows.
 ;;   (setq ivy-count-format "(%d/%d) ") ; count format, from the ivy help page
 ;;   )
 
-(unless (system-name= "klingenberg-tablet")
-  (use-package pulseaudio-control))
+(use-package pulseaudio-control)
 
 (use-package helm
   :diminish helm-mode
@@ -826,19 +851,10 @@ It only works for frames with exactly two windows.
         :init
         (server-start)
         :config
-        (defun my/autostart ()
-          (when (system-name= "klingenberg-tablet")
-            (my/add-to-path
-             "/home/klingenberg/.nix-profile/bin/")
-            (start-process "/home/klingenberg/.autostart.sh" "*/home/klingenberg/.autostart.sh*" "/home/klingenberg/.autostart.sh")
-            ;; (start-process "gnome-session" "*gnome-session*" "gnome-session")
-            )
-          (start-process "synchting" "*synchting*" "syncthing" "-no-browser"))
         (evil-set-initial-state 'exwm-mode 'emacs)
         (setq mouse-autoselect-window nil
               focus-follows-mouse nil)
-        (exwm-enable)
-        (my/autostart))
+        (exwm-enable))
 
       (use-package exwm-input
         :after exwm-randr
@@ -899,11 +915,11 @@ It only works for frames with exactly two windows.
         (exwm-input-set-key (kbd "<XF86AudioMute>")
                             'pulseaudio-control-toggle-current-sink-mute))
       
-      ;; (use-package exwm-systemtray
-      ;;   :ensure nil
-      ;;   :after exwm
-      ;;   :demand t
-      ;;   :config (exwm-systemtray-enable))
+      (use-package exwm-systemtray
+        :ensure nil
+        :after exwm
+        :demand t
+        :config (exwm-systemtray-enable))
 
       (use-package exwm-randr
         :ensure nil
@@ -923,8 +939,8 @@ It only works for frames with exactly two windows.
         (defun my/exwm-move-window-to-other-workspace () (interactive)
                (exwm-workspace-move-window (my/exwm-get-other-workspace)))
         (cond
-         ((system-name= "klingenberg-tablet") (progn (set 'monitor1 "eDP-1")
-                                                     (set 'monitor2 "HDMI-2")
+         ((system-name= "klingenberg-tablet") (progn (set 'monitor1 "eDP1")
+                                                     (set 'monitor2 "HDMI2")
                                                      (set 'placement "below")))
          ((system-name= "klingenbergLaptop") (progn (set 'monitor1 "LVDS1")
                                                     (set 'monitor2 "VGA1")
@@ -975,8 +991,8 @@ It only works for frames with exactly two windows.
 
       ;; (require 'exwmx-xfce)
       ;; (exwmx-xfce-enable)
-      )
-  )
+      ))
+
 (defun my/create-super-bindings ()
   "Create bindings starting with super for use outside exwm."
   (general-define-key
@@ -1148,14 +1164,13 @@ It only works for frames with exactly two windows.
           (t (:inverse-video nil)))))
 
 (use-package piper
-  :quelpa (piper :fetcher gitlab :repo "howardabrams/emacs-piper")
-  )
+  :quelpa (piper :fetcher gitlab :repo "howardabrams/emacs-piper"))
 
-(use-package maplev
-  :ensure nil
-  :load-path "~/emacs-packages/maplev/lisp/"
-  :config
-  (add-to-list 'auto-mode-alist '("\\.mpl\\'" . maplev-mode)))
+;; (use-package maplev
+;;   :ensure nil
+;;   :load-path "~/emacs-packages/maplev/lisp/"
+;;   :config
+;;   (add-to-list 'auto-mode-alist '("\\.mpl\\'" . maplev-mode)))
 
 
 ;;org
@@ -1405,11 +1420,11 @@ limitations under the License.
     :load-path "~/Documents/programming/elisp/emacs-bosss/"
     :init
     (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
-    (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Debug/BoSSSpad.exe")
+    (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Release/BoSSSpad.exe")
     (setq bosss-path-reference (mapcar #'(lambda (proj) (concat "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/" proj))
-                                       '("RANSCommon/bin/Debug/RANS_Solver.dll"
-                                         "KOmegaModelSolver/bin/Debug/KOmegaSolver.exe"
-                                         "KOmegaStatSymmModelSolver/bin/Debug/KOmegaSSSolver.exe")))
+                                       '("RANSCommon/bin/Release/RANS_Solver.dll"
+                                         "KOmegaModelSolver/bin/Release/KOmegaSolver.exe"
+                                         "KOmegaStatSymmModelSolver/bin/Release/KOmegaSSSolver.exe")))
     :config
     (my/local-leader-def
       :keymaps 'bosss-mode-map
@@ -1601,6 +1616,30 @@ limitations under the License.
    "f" 'ace-link-eww))
 
 (use-package ace-link)
+
+(use-package system-packages
+  :config
+  (add-to-list 'system-packages-supported-package-managers
+               '(yay .
+                        ((default-sudo . nil)
+                         (install . "yay -S")
+                         (search . "yay -Ss")
+                         (uninstall . "yay -Rs")
+                         (update . "yay -Syu")
+                         (clean-cache . "yay -Sc")
+                         (log . "cat /var/log/pacman.log")
+                         (get-info . "yay -Qi")
+                         (get-info-remote . "yay -Si")
+                         (list-files-provided-by . "yay -Ql")
+                         (verify-all-packages . "yay -Qkk")
+                         (verify-all-dependencies . "yay -Dk")
+                         (remove-orphaned . "yay -Rns $(pacman -Qtdq)")
+                         (list-installed-packages . "yay -Qe")
+                         (list-installed-packages-all . "yay -Q")
+                         (list-dependencies-of . "yay -Qi")
+                         (noconfirm . "--noconfirm"))))
+  (setq system-packages-use-sudo nil)
+  (setq system-packages-package-manager 'yay))
 
 ;; mail
 
@@ -1844,31 +1883,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 ;;   (setq browse-url-browser-function 'eaf-open-browser)
 ;;   (defalias 'browse-web #'eaf-open-browser))
 
-(use-package mini-modeline
-  :config
-  (setq display-time-default-load-average nil)
-  (setq display-time-load-average-threshold 10000000)
-  (setq mini-modeline-r-format
-        '("%e" mode-line-front-space
-          ;; mode-line-mule-info
-          ;; mode-line-client
-          ;; mode-line-modified
-          ;; mode-line-remote
-          ;; mode-line-frame-identification
-          mode-line-buffer-identification
-          vc-mode
-          " " mode-line-position " "
-          ;; evil-mode-line-tag
-          ;; mode-line-modes
-          mode-name
-          " "
-          mode-line-misc-info
-          (:eval (format (concat "<%s> "
-                                 (unless (null (my/exwm-get-other-workspace)) "[%s] "))
-                         exwm-workspace-current-index
-                         (my/exwm-get-other-workspace)))
-          "  |"
-          mode-line-end-spaces))
-  (mini-modeline-mode 1))
+
 
 ;;; emacs ends here

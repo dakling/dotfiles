@@ -388,6 +388,8 @@ It only works for frames with exactly two windows.
     "sl"  (lambda () (interactive) (shell-command "/usr/bin/slock"))))
 
 (use-package mini-modeline
+  :custom
+  mini-modeline-enhance-visual nil
   :config
   (setq display-time-default-load-average nil)
   (setq display-time-load-average-threshold 10000000)
@@ -536,7 +538,9 @@ It only works for frames with exactly two windows.
 ;;   (bufler-mode))
 
 ;;appearance
-;; (use-package zenburn-theme :ensure t)
+;; (use-package zenburn-theme
+;;   :config
+;;   (load-theme 'zenburn t))
 ;; (use-package cyberpunk-theme :ensure t)
 (use-package doom-themes
   :config

@@ -118,14 +118,12 @@
 (defun shutdown ()
   (interactive)
   (cond
-   ((system-name= "klingenberg-tablet" "klingenberg-laptop") (async-shell-command "sudo shutdown"))
+   ((system-name= "klingenberg-laptop") (async-shell-command "sudo shutdown"))
    (t (shell-command "shutdown now"))))
 
 (defun reboot ()
   (interactive)
-  (cond
-   ((system-name= "klingenberg-tablet") (async-shell-command "sudo reboot"))
-   (t (shell-command "reboot now"))))
+   (shell-command "reboot now"))
 
 (defvar browser 
   (cond
@@ -1135,7 +1133,7 @@ It only works for frames with exactly two windows.
   (setq inferior-lisp-program "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")
   :general (my/local-leader-def
              :keymaps 'lisp-mode-map
-             "'" '(sly :which-key "start reps")
+             "'" '(sly :which-key "start repl")
              "e" '(:ignore :which-key "eval")
              "ef" '(sly-eval-defun :which-key "eval function")
              "ee" '(sly-eval-last-expression :which-key "eval last expression")
@@ -1148,7 +1146,7 @@ It only works for frames with exactly two windows.
   :config
   ;; (add-hook 'scheme-mode-hook #'rainbow-delimiters-mode-enable)
   ;; (add-hook 'scheme-mode-hook (lambda () (add-hook 'before-save-hook #'my/indent-buffer nil t)))
-  (when (system-name= "klingenberg-tablet")
+  (when (system-name= "klingenberg-laptop")
     (with-eval-after-load 'geiser-guile
       (add-to-list 'geiser-guile-load-path "~/guix-packages/guix/"))
     (with-eval-after-load 'yasnippet

@@ -530,7 +530,6 @@ It only works for frames with exactly two windows.
   "ll" '(bookmark-jump :which-key "jump to bookmark"))
 
 ;; (use-package bufler
-;;   :quelpa (bufler :fetcher github :repo "alphapapa/bufler.el")
 ;;   :config
 ;;   (require 'helm-bufler)
 ;;   (bufler-mode))
@@ -540,9 +539,18 @@ It only works for frames with exactly two windows.
 ;;   :config
 ;;   (load-theme 'zenburn t))
 ;; (use-package cyberpunk-theme :ensure t)
-(use-package doom-themes
+;; (use-package doom-themes
+;;   :config
+;;   (load-theme 'doom-dark+ t))
+
+;; (use-package modus-operandi-theme
+;;   :config
+;;   (load-theme 'modus-operandi t))
+
+(use-package modus-vivendi-theme
   :config
-  (load-theme 'doom-dark+ t))
+  (load-theme 'modus-vivendi t))
+
 
 ;; (use-package eziam-dusk-theme  
 ;;   :ensure eziam-theme)  
@@ -1386,6 +1394,10 @@ limitations under the License.
   (add-hook 'csharp-mode-hook #'my/add-header)
   ;; (add-hook 'csharp-mode-hook (lambda () 
   ;;                               (add-hook 'before-save-hook #'my/indent-buffer-without-bosss-header nil t)))
+  ;; TODO
+  ;; (defun my/launch-on-lichtenberg (path)
+  ;;   (async-shell-command
+  ;;    (concat "ssh lcluster \"sbatch " path "\"")))
 
   (setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
   (defun my/csharp-find-current-project ()

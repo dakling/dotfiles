@@ -410,7 +410,7 @@ It only works for frames with exactly two windows.
                                  (unless (null (my/exwm-get-other-workspace)) "[%s] "))
                          exwm-workspace-current-index
                          (my/exwm-get-other-workspace)))
-          "  |"
+          "    |"
           mode-line-end-spaces))
   (mini-modeline-mode 1))
 
@@ -645,8 +645,6 @@ It only works for frames with exactly two windows.
                                     helm-exwm-source
                                     helm-source-recentf))
   (helm-mode 1))
-
-(use-package helm-system-packages)
 
 (use-package helm-exwm)
 
@@ -1642,6 +1640,8 @@ limitations under the License.
                          (noconfirm . "--noconfirm"))))
   (setq system-packages-use-sudo nil)
   (setq system-packages-package-manager 'yay))
+
+(use-package helm-system-packages)
 
 ;; mail
 

@@ -1581,8 +1581,8 @@ limitations under the License.
     "rc"   '(reftex-citation :which-key "cite")))
 
 (use-package latex-extra
+  :hook (LaTeX-mode . latex-extra-mode)
   :config
-  (add-hook 'LaTeX-mode-hook #'latex-extra-mode)
   (my/local-leader-def
     :keymaps 'LaTeX-mode-map
     "j" 'latex/forward-environment
@@ -1883,19 +1883,20 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
                        subword-mode
                        flyspell-mode
                        defining-kbd-macro)))
-;; (use-package eaf
-;;   :ensure nil
-;;   :load-path "~/.config/emacs/site-lisp/emacs-application-framework"
-;;   :custom
-;;   (eaf-find-alternate-file-in-dired t)
-;;   :config
-;;   ;; (eaf-bind-key scroll_up "k" eaf-browser-keybinding)
-;;   ;; (eaf-bind-key scroll_down "j" eaf-browser-keybinding)
-;;   (setq eaf-browser-default-search-engine "duckduckgo")
-;;   (eaf-setq eaf-browse-blank-page-url "https://duckduckgo.com")
-;;   (eaf-bind-key take_photo "p" eaf-camera-keybinding)
-;;   (setq browse-url-browser-function 'eaf-open-browser)
-;;   (defalias 'browse-web #'eaf-open-browser))
+(use-package eaf
+  :ensure nil
+  :load-path "/usr/share/emacs/site-lisp/eaf"
+  :custom
+  (eaf-find-alternate-file-in-dired t)
+  :config
+  ;; (eaf-bind-key scroll_up "k" eaf-browser-keybinding)
+  ;; (eaf-bind-key scroll_down "j" eaf-browser-keybinding)
+  (setq eaf-browser-default-search-engine "duckduckgo")
+  (eaf-setq eaf-browse-blank-page-url "https://duckduckgo.com")
+  (eaf-bind-key take_photo "p" eaf-camera-keybinding)
+  ;; (setq browse-url-browser-function 'eaf-open-browser)
+  ;; (defalias 'browse-web #'eaf-open-browser)
+  )
 
 
 

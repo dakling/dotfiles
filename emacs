@@ -19,7 +19,7 @@
 (add-hook 'after-init-hook #'ambrevar-reset-file-name-handler-alist)
 
 ;;; 
-(setq custom-file "~/.config/emacs/custom.el")
+(setq custom-file "~/.emacs.d/custom.el")
 (load custom-file t)
 
 ;; todo change for 27
@@ -61,9 +61,9 @@
 (setq delete-old-versions -1)		; delete excess backup versions silently
 (setq version-control t)		; use version control
 (setq vc-make-backup-files t)		; make backups file even when in version controlled dir
-(setq backup-directory-alist `(("." . "~/.config/emacs/backups"))) ; which directory to put backups file
+(setq backup-directory-alist `(("." . "~/.emacs.d/backups"))) ; which directory to put backups file
 (setq vc-follow-symlinks t)				       ; don't ask for confirmation when opening symlinked file
-(setq auto-save-file-name-transforms '((".*" "~/.config/emacs/auto-save-list/" t))) ;transform backups file name
+(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t))) ;transform backups file name
 (setq inhibit-startup-screen t)	; inhibit startup screen
 (setq ring-bell-function 'ignore)	; silent bell when you make a mistake
 (set-language-environment "UTF-8")
@@ -134,12 +134,12 @@
 (defun find-config-file ()
   "Open Emacs configuration file."
   (interactive)
-  (find-file "~/.config/emacs/init.el"))
+  (find-file "~/.emacs.d/init.el"))
 
 (defun load-config-file ()
   "Load Emacs configuration file."
   (interactive)
-  (load-file "~/.config/emacs/init.el"))
+  (load-file "~/.emacs.d/init.el"))
 
 (defun find-dotfile-dir ()
   "Open dotfile directory."
@@ -539,17 +539,18 @@ It only works for frames with exactly two windows.
 ;;   :config
 ;;   (load-theme 'zenburn t))
 ;; (use-package cyberpunk-theme :ensure t)
-;; (use-package doom-themes
-;;   :config
-;;   (load-theme 'doom-dark+ t))
+
+(use-package doom-themes
+  :config
+  (load-theme 'doom-dark+ t))
 
 ;; (use-package modus-operandi-theme
 ;;   :config
 ;;   (load-theme 'modus-operandi t))
 
-(use-package modus-vivendi-theme
-  :config
-  (load-theme 'modus-vivendi t))
+;; (use-package modus-vivendi-theme
+;;   :config
+;;   (load-theme 'modus-vivendi t))
 
 
 ;; (use-package eziam-dusk-theme  
@@ -615,7 +616,13 @@ It only works for frames with exactly two windows.
 ;;   (setq ivy-count-format "(%d/%d) ") ; count format, from the ivy help page
 ;;   )
 
-(use-package pulseaudio-control)
+(use-package pulseaudio-control
+  :custom
+  (pulseaudio-control-volume-step "5%")
+  :config
+  (setq pulseaudio-control--volume-maximum '(("percent" . 110)
+                                               ("decibels" . 2.5)
+                                               ("raw" . 72000))))
 
 (use-package helm
   :diminish helm-mode
@@ -1883,20 +1890,21 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
                        subword-mode
                        flyspell-mode
                        defining-kbd-macro)))
-;; (use-package eaf
-;;   :ensure nil
-;;   :load-path "~/.config/emacs/site-lisp/emacs-application-framework"
-;;   :custom
-;;   (eaf-find-alternate-file-in-dired t)
-;;   :config
-;;   ;; (eaf-bind-key scroll_up "k" eaf-browser-keybinding)
-;;   ;; (eaf-bind-key scroll_down "j" eaf-browser-keybinding)
-;;   (setq eaf-browser-default-search-engine "duckduckgo")
-;;   (eaf-setq eaf-browse-blank-page-url "https://duckduckgo.com")
-;;   (eaf-bind-key take_photo "p" eaf-camera-keybinding)
-;;   (setq browse-url-browser-function 'eaf-open-browser)
-;;   (defalias 'browse-web #'eaf-open-browser))
-
+(use-package eaf
+  :ensure nil
+  :load-path "~/.emacs.d/site-lisp/emacs-application-framework"
+  :custom
+  (eaf-find-alternate-file-in-dired t)
+  :config
+  ;; (eaf-bind-key scroll_up "k" eaf-browser-keybinding)
+  ;; (eaf-bind-key scroll_down "j" eaf-browser-keybinding)
+  (setq eaf-browser-default-search-engine "duckduckgo")
+  (eaf-setq eaf-browse-blank-page-url "https://duckduckgo.com")
+  (eaf-bind-key take_photo "p" eaf-camera-keybinding)
+  ;; (setq browse-url-browser-function 'eaf-open-browser)
+  ;; (defalias 'browse-web #'eaf-open-browser)
+  (eaf-setq eaf-browser-dark-mode "true")
+  (eaf-setq eaf-mindmap-dark-mode "true"))
 
 
 ;;; emacs ends here

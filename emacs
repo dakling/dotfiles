@@ -19,7 +19,8 @@
 (add-hook 'after-init-hook #'ambrevar-reset-file-name-handler-alist)
 
 ;;; 
-(setq custom-file "~/.emacs.d/custom.el")
+(setq user-emacs-directory "~/.config/emacs/")
+(setq custom-file (concat user-emacs-directory "custom.el"))
 (load custom-file t)
 
 ;; todo change for 27
@@ -61,9 +62,9 @@
 (setq delete-old-versions -1)		; delete excess backup versions silently
 (setq version-control t)		; use version control
 (setq vc-make-backup-files t)		; make backups file even when in version controlled dir
-(setq backup-directory-alist `(("." . "~/.emacs.d/backups"))) ; which directory to put backups file
+(setq backup-directory-alist `(("." . ,(concat user-emacs-directory "backups")))) ; which directory to put backups file
 (setq vc-follow-symlinks t)				       ; don't ask for confirmation when opening symlinked file
-(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t))) ;transform backups file name
+(setq auto-save-file-name-transforms `((".*"  ,(concat user-emacs-directory "auto-save-list/") t))) ;transform backups file name
 (setq inhibit-startup-screen t)	; inhibit startup screen
 (setq ring-bell-function 'ignore)	; silent bell when you make a mistake
 (set-language-environment "UTF-8")
@@ -134,12 +135,12 @@
 (defun find-config-file ()
   "Open Emacs configuration file."
   (interactive)
-  (find-file "~/.emacs.d/init.el"))
+  (find-file (concat user-emacs-directory "init.el")))
 
 (defun load-config-file ()
   "Load Emacs configuration file."
   (interactive)
-  (load-file "~/.emacs.d/init.el"))
+  (load-file (concat user-emacs-directory "init.el")))
 
 (defun find-dotfile-dir ()
   "Open dotfile directory."
@@ -681,7 +682,7 @@ It only works for frames with exactly two windows.
 
 ;; abbrev mode
 (setq abbrev-file-name             ;; tell emacs where to read abbrev
-      "~/HESSENBOX-DA/programming/abbrev-snippets.el")    ;; definitions from...
+      (concat user-emacs-directory "abbrev-snippets.el"))    ;; definitions from...
 (setq save-abbrevs 'silently)
 (setq-default abbrev-mode nil)
 
@@ -735,6 +736,7 @@ It only works for frames with exactly two windows.
     (read-only-mode t))
   ;; (add-to-list 'auto-mode-alist '("\\.docx\\'" . pandoc-view-mode))
   (my/local-leader-def
+    :keymaps 'doc-view-mode-map
     "p" 'pandoc-view-mode ; TODO create toggle function
     "d" 'doc-view-mode)
   (general-define-key
@@ -1892,7 +1894,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
                        defining-kbd-macro)))
 (use-package eaf
   :ensure nil
-  :load-path "~/.emacs.d/site-lisp/emacs-application-framework"
+  :load-path ("~/.config/emacs/site-lisp/emacs-application-framework")
   :custom
   (eaf-find-alternate-file-in-dired t)
   :config

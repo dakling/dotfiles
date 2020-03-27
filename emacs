@@ -541,18 +541,17 @@ It only works for frames with exactly two windows.
 ;;   (load-theme 'zenburn t))
 ;; (use-package cyberpunk-theme :ensure t)
 
-(use-package doom-themes
-  :config
-  (load-theme 'doom-dark+ t))
+;; (use-package doom-themes
+;;   :config
+;;   (load-theme 'doom-dark+ t))
 
 ;; (use-package modus-operandi-theme
 ;;   :config
 ;;   (load-theme 'modus-operandi t))
 
-;; (use-package modus-vivendi-theme
-;;   :config
-;;   (load-theme 'modus-vivendi t))
-
+(use-package modus-vivendi-theme
+  :config
+  (load-theme 'modus-vivendi t))
 
 ;; (use-package eziam-dusk-theme  
 ;;   :ensure eziam-theme)  
@@ -1252,9 +1251,13 @@ It only works for frames with exactly two windows.
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 
-(use-package org-bullets
+;; (use-package org-bullets
+;;   :config
+;;   (add-hook 'org-mode-hook '(lambda () (org-bullets-mode 1))))
+
+(use-package org-superstar
   :config
-  (add-hook 'org-mode-hook '(lambda () (org-bullets-mode 1))))
+  (add-hook 'org-mode-hook '(lambda () (org-superstar-mode 1))))
 
 (use-package org-ref
   :defer t

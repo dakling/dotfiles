@@ -124,7 +124,7 @@
 
 (defun reboot ()
   (interactive)
-   (shell-command "reboot now"))
+   (async-shell-command "sudo reboot now"))
 
 (defvar browser 
   (cond

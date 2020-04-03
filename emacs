@@ -130,7 +130,7 @@
   (cond
    ;; ((system-name= "klingenberg-tablet") "next")
    ((system-name= "klingenberg-laptop") "epiphany")
-   (t "firefox")))
+   (t "next")))
 
 (defun find-config-file ()
   "Open Emacs configuration file."
@@ -1218,6 +1218,10 @@ It only works for frames with exactly two windows.
            "* TODO %i%? \n:PROPERTIES: \n:CREATED: %U \n:END: \n " :prepend t)
           ("l" "todo with link" entry (file+headline org-default-notes-file "Tasks")
            "* TODO %A \n:PROPERTIES: \n:CREATED: %U \n:END: \n" :prepend t)
+          ("c" "current buffer" entry (file+headline org-default-notes-file "Important Dates")
+           "%(shell-command-to-string \"cat %f\") \n" :prepend t)
+          ;; ("c" "current buffer" entry (file+headline org-default-notes-file "Important Dates")
+          ;;  "%[ %f ]" :prepend t)
           ("p" "Process" entry (file+headline org-default-notes-file "Tasks")
            "* TODO [#A] Process mail from %:fromname on %:subject\nSCHEDULED:%t\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+2d\"))\n:PROPERTIES:\n:CREATED: %U\n:END:\n %a" :immediate-finish t :prepend t)))
   :general
@@ -1811,7 +1815,33 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
     (alert-add-rule
      :category "mu4e-alert"
      :predicate (lambda (_) (string-match-p "^mu4e-" (symbol-name major-mode)))
-     :continue t)))
+     :continue t))
+
+  (require 'mu4e-icalendar)
+  (mu4e-icalendar-setup)
+  (setq mu4e-view-use-gnus nil)
+
+  (define-derived-mode
+    my/mu4e-cal-view-mode
+    fundamental-mode
+    "my/mu4e-cal-view-mode"
+    "View cal in mu4e."
+    (read-only-mode -1)
+    (erase-buffer)
+    (let* ((ical2org (executable-find "ical2org")))
+      (insert (shell-command-to-string
+               (concat "awk -f " ical2org " <" (shell-quote-argument (buffer-file-name)))))
+      (keep-lines "^[\*(  )]" (point-min) (point-max))
+      (flush-lines "^ *$" (point-min) (point-max))))
+
+  (add-to-list 'auto-mode-alist '("\\.vcs\\'" . my/mu4e-cal-view-mode))
+
+  (require 'gnus-icalendar)
+  (gnus-icalendar-setup)
+
+  (setq gnus-icalendar-org-capture-file "~/Documents/TODO.org")
+  (setq gnus-icalendar-org-capture-headline '("IMPORTANT DATES")) ;;make sure to create Calendar heading first
+  (gnus-icalendar-org-setup))
 
 (unless (or (system-name= "localhost") (system-name= "lina"))
   (my/mu4e-setup))

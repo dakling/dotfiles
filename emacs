@@ -1847,8 +1847,138 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   (setq gnus-icalendar-org-capture-headline '("IMPORTANT DATES")) ;;make sure to create Calendar heading first
   (gnus-icalendar-org-setup))
 
-(unless (or (system-name= "localhost") (system-name= "lina"))
-  (my/mu4e-setup))
+;; (unless (or (system-name= "localhost") (system-name= "lina"))
+;;   (my/mu4e-setup))
+
+;; gnus
+; No primary server:
+(setq gnus-select-method '(nnnil ""))
+
+                                        ; Get local email, and store it in nnml; connect via IMAP to imap.mcom.com:
+(setq gnus-secondary-select-methods '((nnml "")
+                                      (nnimap "imap.gmail.com")
+                                      (nnimap "imap.web.de")
+                                      (nnimap "mail.tu-darmstadt.de")
+                                      (nnimap "mail.gsc.ce.tu-darmstadt.de")))
+
+                                        ; Archive outgoing email in Sent folder on imap.mcom.com:
+(setq gnus-message-archive-method '(nnimap "imap.gmail.com")
+      gnus-message-archive-group "[Gmail]/Sent Mail")
+
+                                        ; Mark gcc'ed (archived) as read:
+(setq gnus-gcc-mark-as-read t)
+
+                                        ; Send email via Gmail:
+;; (setq message-send-mail-function 'smtpmail-send-it
+;;       smtpmail-default-smtp-server "smtp.gmail.com")
+
+                                        ; Demon to fetch email every 5 minutes when Emacs has been idle for 5 minutes:
+(gnus-demon-add-handler 'gnus-demon-scan-news 1 0)
+(gnus-demon-init)
+
+;; (defvar smtp-accounts
+;;   '((ssl "dario.klingenberg@gmail.com" "smtp.gmail.com"
+;;      465 "dario.klingenberg" secret)
+;;     (ssl "dario.klingenberg@web.de" "smtp.web.de"
+;;          587 "dario.klingenberg" secret)))
+
+;; Let Gnus change the "From:" line by looking at current group we are in.
+(setq gnus-posting-styles
+      '(("gmail" (address "dario.klingenberg@gmail.com"))
+        ("web" (address "dario.klingenberg@web.de"))
+        ("fdy" (address "klingenberg@fdy.tu-darmstadt.de"))
+        ("gsc" (address "klingenberg@gsc.tu-darmstadt.de"))))
+
+;; Available SMTP accounts.
+(defvar smtp-accounts
+  '((ssl "dario.klingenberg@gmail.com" "smtp.gmail.com" 465  "dario.klingenberg" nil)
+    (ssl "dario.klingenberg@web.de" "smtp.web.de" 587 "dario.klingenberg" nil)
+    (ssl "klingenberg@fdy.tu-darmstadt.de" "smtp.tu-darmstadt.de" 465 "km88econ")
+    (ssl "klingenberg@gsc.tu-darmstadt.de" "smtp.gsc.ce.tu-darmstadt.de" 465 "klingenberg")))
+
+;; Default smtpmail.el configurations.
+(require 'cl)
+(require 'smtpmail)
+(setq send-mail-function 'smtpmail-send-it
+      message-send-mail-function 'smtpmail-send-it
+      mail-from-style nil
+      user-full-name "Dario Klingenberg"
+      smtpmail-debug-info t
+      smtpmail-debug-verb t)
+
+(defun set-smtp (mech server port user password)
+  "Set related SMTP variables for supplied parameters."
+  (setq smtpmail-smtp-server server
+        smtpmail-smtp-service port
+        smtpmail-auth-credentials (list (list server port user password))
+        smtpmail-auth-supported (list mech)
+        smtpmail-starttls-credentials nil)
+  (message "Setting SMTP server to `%s:%s' for user `%s'."
+           server port user))
+
+(defun set-smtp-ssl (server port user password  &optional key cert)
+  "Set related SMTP and SSL variables for supplied parameters."
+  (setq starttls-use-gnutls t
+        starttls-gnutls-program "gnutls-cli"
+        starttls-extra-arguments nil
+        smtpmail-smtp-server server
+        smtpmail-smtp-service port
+        smtpmail-auth-credentials (list (list server port user password))
+        smtpmail-starttls-credentials (list (list server port key cert)))
+  (message
+   "Setting SMTP server to `%s:%s' for user `%s'. (SSL enabled.)"
+   server port user))
+
+(defun change-smtp ()
+  "Change the SMTP server according to the current from line."
+  (save-excursion
+    (loop with from = (save-restriction
+                        (message-narrow-to-headers)
+                        (message-fetch-field "from"))
+          for (auth-mech address . auth-spec) in smtp-accounts
+          when (string-match address from)
+          do (cond
+              ((memq auth-mech '(cram-md5 plain login))
+               (return (apply 'set-smtp (cons auth-mech auth-spec))))
+              ((eql auth-mech 'ssl)
+               (return (apply 'set-smtp-ssl auth-spec)))
+              (t (error "Unrecognized SMTP auth. mechanism: `%s'." auth-mech)))
+          finally (error "Cannot infer SMTP information."))))
+
+ (defadvice smtpmail-via-smtp
+    (before smtpmail-via-smtp-ad-change-smtp (recipient smtpmail-text-buffer))
+    "Call `change-smtp' before every `smtpmail-via-smtp'."
+    (with-current-buffer smtpmail-text-buffer (change-smtp)))
+  
+  (ad-activate 'smtpmail-via-smtp)
+; Set name and email:
+(setq user-full-name "Dario Klingenberg"
+      user-mail-address "dario.klingenberg@gmail.com")
+
+; Use fancy splitting:
+(setq nnmail-split-methods 'nnmail-split-fancy)
+
+; Email splitting rules:
+(setq nnmail-split-fancy
+      '(|
+          ("From" "\\(root\\|cron\\)@gmail.com" "system")
+          "normal"))
+; Use topics per default:
+(add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
+; Show more MIME-stuff:
+(setq gnus-mime-display-multipart-related-as-mixed t)
+; Smileys:
+(setq smiley-style 'medium)
+; Don't get the first article automatically:
+(setq gnus-auto-select-first nil)
+; Don't show that annoying arrow:
+(setq gnus-summary-display-arrow nil)
+(setq message-send-mail-function 'smtpmail-send-it)
+
+(use-package gnus-desktop-notify
+  :config
+  (gnus-desktop-notify-mode)
+  (gnus-demon-add-scanmail))
 
 (use-package rainbow-delimiters)
 

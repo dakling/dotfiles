@@ -1821,11 +1821,8 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   (mu4e-icalendar-setup)
   (setq mu4e-view-use-gnus nil)
 
-  (define-derived-mode
-    my/mu4e-cal-view-mode
-    fundamental-mode
-    "my/mu4e-cal-view-mode"
-    "View cal in mu4e."
+  (defun convert-vcal-to-org ()
+    (interactive)
     (read-only-mode -1)
     (erase-buffer)
     (let* ((ical2org (executable-find "ical2org")))
@@ -1833,6 +1830,13 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
                (concat "awk -f " ical2org " <" (shell-quote-argument (buffer-file-name)))))
       (keep-lines "^[\*(  )]" (point-min) (point-max))
       (flush-lines "^ *$" (point-min) (point-max))))
+
+  (define-derived-mode
+    my/mu4e-cal-view-mode
+    fundamental-mode
+    "my/mu4e-cal-view-mode"
+    "View cal in mu4e."
+    (convert-vcal-to-org))
 
   (add-to-list 'auto-mode-alist '("\\.vcs\\'" . my/mu4e-cal-view-mode))
 

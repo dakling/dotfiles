@@ -318,7 +318,7 @@ It only works for frames with exactly two windows.
     "a" '(:ignore t :which-key "applications")
     "ad" '(deer :which-key "call deer")
     "ab" '(eww :which-key "open browser")
-    "am" '(mu4e-alert-view-unread-mails :which-key "open unread mail")
+    "am" '(gnus :which-key "open unread mail")
     "ap" '(helm-system-packages :which-key "package management")
     "ao" '(sx-search :which-key "search stackoverflow")
     "ar" '(md4rd :which-key "reddit")
@@ -916,7 +916,7 @@ It only works for frames with exactly two windows.
                 ([C-s-f1] . eshell)
                 ([s-f2] . (lambda () (interactive) (start-process "" nil browser)))
                 ([s-f3] . deer)
-                ([s-f4] . (lambda () (interactive) (mu4e)))
+                ([s-f4] . (lambda () (interactive) (gnus)))
                 ([s-f12] . (lambda () (interactive) (start-process "" nil "/usr/bin/slock")))))
         (push ?\s-\  exwm-input-prefix-keys)
         ;; (push ?\M-m  exwm-input-prefix-keys)
@@ -1035,7 +1035,7 @@ It only works for frames with exactly two windows.
                (start-process "" nil browser))
    "s-<f3>" 'deer
    "s-<f4>" '(lambda () (interactive)
-               (mu4e))
+               (gnus))
    "s-<f12>" '(lambda () (interactive)
                 (start-process "" nil "/usr/bin/slock"))))
 
@@ -1671,230 +1671,49 @@ limitations under the License.
 
 (use-package helm-system-packages)
 
-;; mail
-
-(defun my/mu4e-setup ()
-
-  (use-package helm-mu)
-  
-  ;; (use-package mu4e-conversation
-  ;;   :ensure t)
-
-  (use-package mu4e
-    :ensure nil
-    :load-path "/usr/share/emacs/site-lisp/mu4e/")
-
-  (setenv "GPG_AGENT_INFO" nil)
-  (setq mu4e-confirm-quit nil)
-  ;; (global-mu4e-conversation-mode)
-  (defun my/mu4e-set-account ()
-    "Set the account for composing a message."
-    (let* ((account
-            (if mu4e-compose-parent-message
-                (let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
-                  (string-match "/\\(.*?\\)/" maildir)
-                  (match-string 1 maildir))
-              (completing-read (format "Compose with account: (%s) "
-                                       (mapconcat #'(lambda (var) (car var))
-                                                  my/mu4e-account-alist "/"))
-                               (mapcar #'(lambda (var) (car var)) my/mu4e-account-alist)
-                               nil t nil nil (caar my/mu4e-account-alist))))
-           (account-vars (cdr (assoc account my/mu4e-account-alist))))
-      (if account-vars
-          (mapc #'(lambda (var)
-                    (set (car var) (cadr var)))
-                account-vars)
-        (error "No email account found"))))
-
-  ;; ask for account when composing mail
-  (add-hook 'mu4e-compose-pre-hook 'my/mu4e-set-account)
-  (setq mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e")
-  (setq mu4e-maildir "~/Mail")
-  (setq mu4e-trash-folder "/Trash")
-  (setq mu4e-refile-folder "/Archive")
-  (setq mu4e-get-mail-command "offlineimap -o")
-  (setq mu4e-update-interval 120)
-  (setq mu4e-hide-index-messages t) ; do not show minibuffer messages after updates
-  (setq mu4e-index-update-error-warning nil)
-  (setq mu4e-compose-signature-auto-include t)
-  (setq mu4e-view-show-images t)
-  (setq mu4e-enable-notifications t)
-  (setq send-mail-function 'smtpmail-send-it)
-  (setq message-send-mail-function 'smtpmail-send-it)
-  (setq smtpmail-stream-type 'ssl)
-  (setq mu4e-view-show-addresses t)
-  (setq my/mu4e-account-alist
-        '(("FDY"
-           (mu4e-sent-messages-behavior sent)
-           (mu4e-compose-signature-auto-include t)
-           (mu4e-compose-signature
-            "Technische Universität Darmstadt
-Dario Klingenberg, M.Sc.
-Fachgebiet für Strömungsdynamik
-Fachbereich Maschinenbau
-Fachgebiet für Strömungsdynamik (FDY)
-Otto-Berndt-Straße 2 (L1|01 322)
-64287 Darmstadt
-
-E-Mail: klingenberg@fdy.tu-darmstadt.de
-Telefon: +49 6151 16-26207
-Fax: +49 6151 16-26203
-Web: http://www.fdy.tu-darmstadt.de")
-           (mu4e-sent-folder "/FDY/Sent Items")
-           (mu4e-drafts-folder "/FDY/Drafts")
-           (smtpmail-smtp-server "smtp.tu-darmstadt.de")
-           (smtpmail-smtp-service 465)
-           (smtpmail-stream-type ssl)
-           (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
-           (user-full-name "Dario Klingenberg"))
-          ("GSC"
-           (mu4e-sent-messages-behavior sent)
-           (mu4e-compose-signature-auto-include t)
-           (mu4e-compose-signature
-            "Technische Universität Darmstadt
-Dario Klingenberg, M.Sc.
-Graduate School Computational Engineering
-Dolivostraße 15
-64293 Darmstadt
-
-E-Mail: klingenberg@gsc.tu-darmstadt.de
-Telefon: +49 6151 16-24381
-Fax: +49 6151 16-24404
-Web: http://www.gsc.ce.tu-darmstadt.de/")
-           (mu4e-sent-folder "/GSC/Sent Items")
-           (mu4e-drafts-folder "/GSC/Drafts")
-           (smtpmail-smtp-server "smtp.gsc.ce.tu-darmstadt.de")
-           (smtpmail-smtp-service 465)
-           (smtpmail-stream-type ssl)
-           (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
-           (user-full-name "Dario Klingenberg"))
-          ("Gmail"
-           ;; Under each account, set the account-specific variables you want.
-           (mu4e-sent-messages-behavior delete)
-           (mu4e-compose-signature-auto-include nil)
-           (mu4e-sent-folder "/Gmail/sent")
-           (mu4e-drafts-folder "/Gmail/drafts")
-           (user-mail-address "dario.klingenberg@gmail.com")
-           (smtpmail-smtp-server "smtp.gmail.com")
-           (smtpmail-smtp-service 465)
-           (smtpmail-stream-type ssl)
-           (user-full-name "Dario Klingenberg"))
-          ("Web"
-           (mu4e-sent-messages-behavior sent)
-           (mu4e-compose-signature-auto-include nil)
-           (mu4e-sent-folder "/Web/Sent Items")
-           (mu4e-drafts-folder "/Web/Drafts")
-           (smtpmail-smtp-server "smtp.web.de")
-           (smtpmail-smtp-service 587)
-           (smtpmail-stream-type starttls)
-           (user-mail-address "dario.klingenberg@web.de")
-           (user-full-name "dario"))))
-  (run-at-time t mu4e-update-interval #'(lambda ()
-                                          (progn
-                                            (mu4e-update-mail-and-index t)))); this should not be needed, but it is
-  
-  (use-package evil-mu4e
-    :config
-    (evil-define-key 'evilified mu4e-main-mode-map (kbd "j") 'evil-next-line)
-    (evil-define-key 'evilified mu4e-main-mode-map (kbd "s") 'helm-mu)
-    (bind-keys :map mu4e-main-mode-map
-               ("c" . mu4e-compose-new))
-    :general
-    (general-define-key
-     :states '(motion normal)
-     :keymaps 'mu4e-view-mode-map
-     "RET" '(mu4e~view-browse-url-from-binding :which-key "follow link")))
-
-  ;; taken from reddit
-  (use-package mu4e-alert
-    :config
-    (setq mu4e-alert-interesting-mail-query "flag:unread AND NOT flag:trashed AND NOT maildir:/Web/INBOX/")
-    (mu4e-alert-enable-mode-line-display)
-    (mu4e-alert-enable-notifications)
-    (mu4e-alert-set-default-style 'libnotify)
-    (alert-add-rule
-     :category "mu4e-alert"
-     :predicate (lambda (_) (string-match-p "^mu4e-" (symbol-name major-mode)))
-     :continue t))
-
-  (require 'mu4e-icalendar)
-  (mu4e-icalendar-setup)
-  (setq mu4e-view-use-gnus nil)
-
-  (defun convert-vcal-to-org ()
-    (interactive)
-    (read-only-mode -1)
-    (erase-buffer)
-    (let* ((ical2org (executable-find "ical2org")))
-      (insert (shell-command-to-string
-               (concat "awk -f " ical2org " <" (shell-quote-argument (buffer-file-name)))))
-      (keep-lines "^[\*(  )]" (point-min) (point-max))
-      (flush-lines "^ *$" (point-min) (point-max))))
-
-  (define-derived-mode
-    my/mu4e-cal-view-mode
-    fundamental-mode
-    "my/mu4e-cal-view-mode"
-    "View cal in mu4e."
-    (convert-vcal-to-org))
-
-  (add-to-list 'auto-mode-alist '("\\.vcs\\'" . my/mu4e-cal-view-mode))
-
-  (require 'gnus-icalendar)
-  (gnus-icalendar-setup)
-
-  (setq gnus-icalendar-org-capture-file "~/Documents/TODO.org")
-  (setq gnus-icalendar-org-capture-headline '("IMPORTANT DATES")) ;;make sure to create Calendar heading first
-  (gnus-icalendar-org-setup))
-
-;; (unless (or (system-name= "localhost") (system-name= "lina"))
-;;   (my/mu4e-setup))
-
-;; gnus
+;; mail - gnus
+;; Don't ask auto-save stuff when opening
+(setq gnus-always-read-dribble-file t)
 ; No primary server:
 (setq gnus-select-method '(nnnil ""))
 
-                                        ; Get local email, and store it in nnml; connect via IMAP to imap.mcom.com:
+; Get local email, and store it in nnml; connect via IMAP to imap.gmail.com...:
 (setq gnus-secondary-select-methods '((nnml "")
+                                      (nnimap "mail.tu-darmstadt.de")
                                       (nnimap "imap.gmail.com")
                                       (nnimap "imap.web.de")
-                                      (nnimap "mail.tu-darmstadt.de")
                                       (nnimap "mail.gsc.ce.tu-darmstadt.de")))
 
-                                        ; Archive outgoing email in Sent folder on imap.mcom.com:
-(setq gnus-message-archive-method '(nnimap "imap.gmail.com")
-      gnus-message-archive-group "[Gmail]/Sent Mail")
+; Archive outgoing email in Sent folder on imap.mcom.com:
+;; (setq gnus-message-archive-method '(nnimap "imap.gmail.com")
+;;       gnus-message-archive-group "[Gmail]/Sent Mail")
 
-                                        ; Mark gcc'ed (archived) as read:
+; Mark gcc'ed (archived) as read:
 (setq gnus-gcc-mark-as-read t)
 
-                                        ; Send email via Gmail:
+; Send email via Gmail:
 ;; (setq message-send-mail-function 'smtpmail-send-it
 ;;       smtpmail-default-smtp-server "smtp.gmail.com")
 
-                                        ; Demon to fetch email every 5 minutes when Emacs has been idle for 5 minutes:
-(gnus-demon-add-handler 'gnus-demon-scan-news 1 0)
+; Demon to fetch email every 5 minutes when Emacs has been idle for 5 minutes:
+(gnus-demon-add-handler 'gnus-demon-scan-news 1 nil)
 (gnus-demon-init)
 
-;; (defvar smtp-accounts
-;;   '((ssl "dario.klingenberg@gmail.com" "smtp.gmail.com"
-;;      465 "dario.klingenberg" secret)
-;;     (ssl "dario.klingenberg@web.de" "smtp.web.de"
-;;          587 "dario.klingenberg" secret)))
-
-;; Let Gnus change the "From:" line by looking at current group we are in.
-(setq gnus-posting-styles
-      '(("gmail" (address "dario.klingenberg@gmail.com"))
-        ("web" (address "dario.klingenberg@web.de"))
-        ("fdy" (address "klingenberg@fdy.tu-darmstadt.de"))
-        ("gsc" (address "klingenberg@gsc.tu-darmstadt.de"))))
 
 ;; Available SMTP accounts.
 (defvar smtp-accounts
-  '((ssl "dario.klingenberg@gmail.com" "smtp.gmail.com" 465  "dario.klingenberg" nil)
-    (ssl "dario.klingenberg@web.de" "smtp.web.de" 587 "dario.klingenberg" nil)
-    (ssl "klingenberg@fdy.tu-darmstadt.de" "smtp.tu-darmstadt.de" 465 "km88econ")
-    (ssl "klingenberg@gsc.tu-darmstadt.de" "smtp.gsc.ce.tu-darmstadt.de" 465 "klingenberg")))
+  '((ssl "klingenberg@fdy.tu-darmstadt.de" "smtp.tu-darmstadt.de" 465 "km88econ" nil)
+    (ssl "dario.klingenberg@gmail.com" "smtp.gmail.com" 465  "dario.klingenberg" nil)
+    (starttls "dario.klingenberg@web.de" "smtp.web.de" 587 "dario.klingenberg" nil)
+    (ssl "klingenberg@gsc.tu-darmstadt.de" "smtp.gsc.ce.tu-darmstadt.de" 465 "klingenberg" nil)))
+
+;; Let Gnus change the "From:" line by looking at current group we are in.
+(setq gnus-posting-styles
+      '(((mail-header-from "*fdy*") (signature-file "~/.config/emacs/fdy-signature"))
+        ("fdy" (address "klingenberg@fdy.tu-darmstadt.de") (signature-file "~/.config/emacs/fdy-signature"))
+        ("gsc" (address "klingenberg@gsc.tu-darmstadt.de") (signature-file "~/.config/emacs/gsc-signature"))
+        ("gmail" (address "dario.klingenberg@gmail.com") (signature-file nil))
+        ("web" (address "dario.klingenberg@web.de") (signature-file nil))))
 
 ;; Default smtpmail.el configurations.
 (require 'cl)
@@ -1903,6 +1722,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
       message-send-mail-function 'smtpmail-send-it
       mail-from-style nil
       user-full-name "Dario Klingenberg"
+      user-mail-address "klingenberg@fdy.tu-darmstadt.de"
       smtpmail-debug-info t
       smtpmail-debug-verb t)
 
@@ -1923,6 +1743,21 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
         starttls-extra-arguments nil
         smtpmail-smtp-server server
         smtpmail-smtp-service port
+        smtpmail-stream-type 'ssl
+        smtpmail-auth-credentials (list (list server port user password))
+        smtpmail-starttls-credentials (list (list server port key cert)))
+  (message
+   "Setting SMTP server to `%s:%s' for user `%s'. (SSL enabled.)"
+   server port user))
+
+(defun set-smtp-starttls (server port user password  &optional key cert)
+  "Set related SMTP and Starttls variables for supplied parameters."
+  (setq starttls-use-gnutls t
+        starttls-gnutls-program "gnutls-cli"
+        starttls-extra-arguments nil
+        smtpmail-smtp-server server
+        smtpmail-smtp-service port
+        smtpmail-stream-type 'starttls
         smtpmail-auth-credentials (list (list server port user password))
         smtpmail-starttls-credentials (list (list server port key cert)))
   (message
@@ -1942,27 +1777,19 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
                (return (apply 'set-smtp (cons auth-mech auth-spec))))
               ((eql auth-mech 'ssl)
                (return (apply 'set-smtp-ssl auth-spec)))
-              (t (error "Unrecognized SMTP auth. mechanism: `%s'." auth-mech)))
-          finally (error "Cannot infer SMTP information."))))
+              ((eql auth-mech 'starttls)
+               (return (apply 'set-smtp-starttls auth-spec)))
+              (t (error "Unrecognized SMTP auth. mechanism: `%s'" auth-mech)))
+          finally (error "Cannot infer SMTP information"))))
 
- (defadvice smtpmail-via-smtp
+(defadvice smtpmail-via-smtp
     (before smtpmail-via-smtp-ad-change-smtp (recipient smtpmail-text-buffer))
-    "Call `change-smtp' before every `smtpmail-via-smtp'."
-    (with-current-buffer smtpmail-text-buffer (change-smtp)))
+  "Call `change-smtp' before every `smtpmail-via-smtp'."
+  (with-current-buffer smtpmail-text-buffer (change-smtp)))
   
-  (ad-activate 'smtpmail-via-smtp)
-; Set name and email:
-(setq user-full-name "Dario Klingenberg"
-      user-mail-address "dario.klingenberg@gmail.com")
+(ad-activate 'smtpmail-via-smtp)
+;; (ad-deactivate 'smtpmail-via-smtp)
 
-; Use fancy splitting:
-(setq nnmail-split-methods 'nnmail-split-fancy)
-
-; Email splitting rules:
-(setq nnmail-split-fancy
-      '(|
-          ("From" "\\(root\\|cron\\)@gmail.com" "system")
-          "normal"))
 ; Use topics per default:
 (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
 ; Show more MIME-stuff:
@@ -1973,12 +1800,53 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 (setq gnus-auto-select-first nil)
 ; Don't show that annoying arrow:
 (setq gnus-summary-display-arrow nil)
-(setq message-send-mail-function 'smtpmail-send-it)
+
+;; (setq nnimap-split-inbox "INBOX") ;; (1)
+;; (setq nnimap-split-predicate "UNDELETED") ;; (2)
+;; (setq nnimap-split-rule
+;;        '(
+;;          ("INBOX.web" "^To:.*web.de")
+;;          ("INBOX.gmail" "^To:.*gmail.com")    
+;;          ("INBOX.fdy" "^To:.*fdy.tu-darmstadt.de")    
+;;          ("INBOX.gsc" "^To:.*gsc.tu-darmstadt.de")   
+;;         )) 
+
+(setq gnus-topic-topology '(("Gnus" visible)
+                            (("work" visible))
+                            (("important" visible))
+                            (("misc" visible)) ))
+
+; Email splitting rules:
+(setq nnmail-split-fancy
+      '(|
+          (any "klingenberg@fdy.tu-darmstadt.de" "work")
+          (any "klingenberg@gsc.tu-darmstadt.de" "work")
+          (any "klingenberg@gmail.tu-darmstadt.de" "important")
+          "INBOX"))
+; Use fancy splitting:
+(setq nnmail-split-methods 'nnmail-split-fancy)
+
+
+(general-define-key
+ :keymaps 'gnus-group-mode-map
+ :states 'normal
+ "s" '(gnus-group-make-nnir-group :which-key "search")
+ "o" '(gnus-group-list-all-groups :which-key "all groups")
+ "D" '(gnus-group-delete-group :which-key "delete groups")
+ "M-G" '(gnus-group-get-new-news :which-key "refresh all groups"))
 
 (use-package gnus-desktop-notify
   :config
   (gnus-desktop-notify-mode)
   (gnus-demon-add-scanmail))
+
+(require 'gnus-icalendar)
+(gnus-icalendar-setup)
+
+(setq gnus-icalendar-org-capture-file "~/Documents/TODO.org")
+(setq gnus-icalendar-org-capture-headline '("IMPORTANT DATES")) ;;make sure to create Calendar heading first
+(gnus-icalendar-org-setup)
+
 
 (use-package rainbow-delimiters)
 

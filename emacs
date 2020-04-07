@@ -1672,6 +1672,10 @@ limitations under the License.
 (use-package helm-system-packages)
 
 ;; mail - gnus
+(use-package nnreddit
+  :config
+  (setq elpy-rpc-python-command "python3"))
+
 ;; Don't ask auto-save stuff when opening
 (setq gnus-always-read-dribble-file t)
 ; No primary server:
@@ -1682,7 +1686,10 @@ limitations under the License.
                                       (nnimap "mail.tu-darmstadt.de")
                                       (nnimap "imap.gmail.com")
                                       (nnimap "imap.web.de")
-                                      (nnimap "mail.gsc.ce.tu-darmstadt.de")))
+                                      (nnimap "mail.gsc.ce.tu-darmstadt.de")
+                                      ;;(nnrss "https://www.zeitsprung.fm/feed/mp3/")
+                                      ;;(nnreddit "")
+                                      ))
 
 ; Archive outgoing email in Sent folder on imap.mcom.com:
 ;; (setq gnus-message-archive-method '(nnimap "imap.gmail.com")
@@ -1694,10 +1701,6 @@ limitations under the License.
 ; Send email via Gmail:
 ;; (setq message-send-mail-function 'smtpmail-send-it
 ;;       smtpmail-default-smtp-server "smtp.gmail.com")
-
-; Demon to fetch email every 5 minutes when Emacs has been idle for 5 minutes:
-(gnus-demon-add-handler 'gnus-demon-scan-news 1 nil)
-(gnus-demon-init)
 
 
 ;; Available SMTP accounts.
@@ -1812,9 +1815,20 @@ limitations under the License.
 ;;         )) 
 
 (setq gnus-topic-topology '(("Gnus" visible)
-                            (("work" visible))
-                            (("important" visible))
-                            (("misc" visible)) ))
+                            (("important" visible)
+                             (("work" visible)))
+                            (("misc" visible))))
+
+;; TODO - test
+(mapcar #'(lambda (topic)
+            (gnus-topic-set-parameters
+             topic
+             '((gnus-use-adaptive-scoring nil)
+                (gnus-use-scoring nil)
+                (visible . t)
+                (display . all)
+                (modeline-notify . t))))
+        '("important" "work"))
 
 ; Email splitting rules:
 (setq nnmail-split-fancy
@@ -1828,12 +1842,15 @@ limitations under the License.
 
 
 (general-define-key
- :keymaps 'gnus-group-mode-map
- :states 'normal
+ :keymaps '(gnus-group-mode-map gnus-topic-mode-map)
+ :states '(override normal)
  "s" '(gnus-group-make-nnir-group :which-key "search")
  "o" '(gnus-group-list-all-groups :which-key "all groups")
  "D" '(gnus-group-delete-group :which-key "delete groups")
  "M-G" '(gnus-group-get-new-news :which-key "refresh all groups"))
+
+(gnus-demon-add-handler 'gnus-demon-scan-news 5 nil)
+(gnus-demon-init)
 
 (use-package gnus-desktop-notify
   :config
@@ -1842,7 +1859,6 @@ limitations under the License.
 
 (require 'gnus-icalendar)
 (gnus-icalendar-setup)
-
 (setq gnus-icalendar-org-capture-file "~/Documents/TODO.org")
 (setq gnus-icalendar-org-capture-headline '("IMPORTANT DATES")) ;;make sure to create Calendar heading first
 (gnus-icalendar-org-setup)
@@ -1902,12 +1918,12 @@ limitations under the License.
           lisp
           baduk)))
 
-(use-package elfeed
-  :defer t
-  :config
-  (setq elfeed-feeds
-        '("https://www.zeitsprung.fm/feed/ogg/"
-          "https://kickermeetsdazn.podigee.io/feed/mp3")))
+;; (use-package elfeed
+;;   :defer t
+;;   :config
+;;   (setq elfeed-feeds
+;;         '("https://www.zeitsprung.fm/feed/ogg/"
+;;           "https://kickermeetsdazn.podigee.io/feed/mp3")))
 
 (use-package telega
   :config

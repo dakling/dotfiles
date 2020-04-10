@@ -1,4 +1,4 @@
 #!/bin/bash
 
-xinput --map-to-output $(xinput list --id-only "Wacom ISDv4 E6 Finger") LVDS1
+xinput --map-to-output $(xinput list --id-only "ELAN Touchscreen") eDP1
 xinput --map-to-output $(xinput list --id-only "Wacom ISDv4 E6 Pen") LVDS1

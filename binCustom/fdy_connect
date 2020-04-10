@@ -1,4 +1,4 @@
 #! /bin/sh
 
 # termite -e "xfreerdp /v:terminal02 /u:klingenberg /f"
-termite -e "xfreerdp /v:terminal03 /u:klingenberg /f +clipboard /home-drive"
+gnome-terminal -e "xfreerdp /v:terminal03 /u:klingenberg /f +clipboard /home-drive"

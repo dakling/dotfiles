@@ -174,6 +174,10 @@
   (interactive)
   (shell-command "xbacklight -dec 10"))
 
+(defun my/fix-touchscreen ()
+  (when (system-name= "klingenberg-tablet")
+    (async-shell-command "xinput --map-to-output $(xinput list --id-only \"ELAN Touchscreen\") eDP1")))
+
 (defun my/open-url (url)
   (start-process-shell-command
    "" nil (concat browser
@@ -978,7 +982,9 @@ It only works for frames with exactly two windows.
                      placement
                      " "
                      monitor2
-                     " --auto"))))
+                     " --auto")))
+          (my/fix-touchscreen))
+
         :hook (exwm-randr-screen-change . my/exwm-xrandr)
         :init
         (setq exwm-randr-workspace-monitor-plist (list 0 monitor1
@@ -1672,6 +1678,9 @@ limitations under the License.
 (use-package helm-system-packages)
 
 ;; mail - gnus
+(gnus-demon-add-handler 'gnus-demon-scan-news 5 nil)
+(gnus-demon-init)
+
 (use-package nnreddit
   :config
   (setq elpy-rpc-python-command "python3"))
@@ -1688,7 +1697,7 @@ limitations under the License.
                                       (nnimap "imap.web.de")
                                       (nnimap "mail.gsc.ce.tu-darmstadt.de")
                                       ;;(nnrss "https://www.zeitsprung.fm/feed/mp3/")
-                                      ;;(nnreddit "")
+                                      ;; (nnreddit "")
                                       ))
 
 ; Archive outgoing email in Sent folder on imap.mcom.com:
@@ -1848,9 +1857,6 @@ limitations under the License.
  "o" '(gnus-group-list-all-groups :which-key "all groups")
  "D" '(gnus-group-delete-group :which-key "delete groups")
  "M-G" '(gnus-group-get-new-news :which-key "refresh all groups"))
-
-(gnus-demon-add-handler 'gnus-demon-scan-news 5 nil)
-(gnus-demon-init)
 
 (use-package gnus-desktop-notify
   :config

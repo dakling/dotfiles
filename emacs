@@ -176,7 +176,7 @@
 
 (defun my/fix-touchscreen ()
   (when (system-name= "klingenberg-tablet")
-    (async-shell-command "xinput --map-to-output $(xinput list --id-only \"ELAN Touchscreen\") eDP1")))
+    (shell-command "xinput --map-to-output $(xinput list --id-only \"ELAN Touchscreen\") eDP1")))
 
 (defun my/open-url (url)
   (start-process-shell-command
@@ -1798,6 +1798,8 @@ limitations under the License.
     (before smtpmail-via-smtp-ad-change-smtp (recipient smtpmail-text-buffer))
   "Call `change-smtp' before every `smtpmail-via-smtp'."
   (with-current-buffer smtpmail-text-buffer (change-smtp)))
+
+(setq message-dont-reply-to-names "klingenberg")
   
 (ad-activate 'smtpmail-via-smtp)
 ;; (ad-deactivate 'smtpmail-via-smtp)
@@ -1849,7 +1851,6 @@ limitations under the License.
 ; Use fancy splitting:
 (setq nnmail-split-methods 'nnmail-split-fancy)
 
-
 (general-define-key
  :keymaps '(gnus-group-mode-map gnus-topic-mode-map)
  :states '(override normal)
@@ -1857,6 +1858,12 @@ limitations under the License.
  "o" '(gnus-group-list-all-groups :which-key "all groups")
  "D" '(gnus-group-delete-group :which-key "delete groups")
  "M-G" '(gnus-group-get-new-news :which-key "refresh all groups"))
+
+(general-define-key
+ :keymaps '(gnus-summary-mode-map gnus-article-mode-map)
+ :states '(override normal)
+ "r" '(gnus-summary-reply-with-original :which-key "reply")
+ "R" '(gnus-summary-wide-reply-with-original :which-key "reply to all"))
 
 (use-package gnus-desktop-notify
   :config

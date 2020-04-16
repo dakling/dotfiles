@@ -1,9 +1,13 @@
+;; -*- lexical-binding: t -*-
+
 ;;; package  --- Summary
 ;; my emacs config
 ;;; Commentary:
 ;; I use evil-mode everywhere, and the config is based on use-package and general
 ;;; Code:
 
+
+(setq lexical-binding t)
 ;;; speed up startup using Ambrevar's suggestions: (reset later by loading gcmh)
 (setq gc-cons-threshold (* 64 1024 1024)
        gc-cons-percentage 0.6)
@@ -641,8 +645,8 @@ It only works for frames with exactly two windows.
    "M-r" 'helm-ff-run-rename-file
    "M-s" 'helm-ff-run-find-file-as-root
    "M-o" 'helm-ff-run-switch-other-window
-   "M-O" 'helm-ff-run-switch-other-frame)
-   "M-RET" 'helm-open-file-with-default-tool)
+   "M-O" 'helm-ff-run-switch-other-frame
+   "M-RET" 'helm-ff-run-open-file-with-default-tool)
   (general-define-key
    :keymaps 'helm-buffer-map
    "M-d" 'helm-buffer-run-kill-persistent)
@@ -1651,13 +1655,28 @@ limitations under the License.
    "M-l" 'eww-forward-url
    "f" 'ace-link-eww))
 
+(use-package async-await)
 ;; adapted from snippet by oremacs
 (defun my/youtube-dl ()
   (interactive)
-  (let* ((str (plist-get eww-data :url)))
-    (async-shell-command
-     (concat "cd ~/Videos ; youtube-dl \"" str "\" ;"
-             "mpv ~/Videos/"))))
+  (let* ((url (plist-get eww-data :url))
+         (str (replace-regexp-in-string
+               "https://www.youtube.com/watch\\?v="
+               ""
+               url))
+         (download-dir "~/Videos/"))
+    (set-process-sentinel
+     (start-process-shell-command
+      "youtube-download"
+      "*youtube-download*"
+      "youtube-dl"
+      (concat "-o " download-dir "%\\(title\\)s%\\(id\\)s")
+      str)
+     (lambda (_ _)
+       (helm-open-file-with-default-tool (car (directory-files
+                                               "~/Videos/"
+                                               ;; download-dir
+                                               t str)))))))
 
 (use-package ace-link)
 

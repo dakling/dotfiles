@@ -642,6 +642,7 @@ It only works for frames with exactly two windows.
    "M-s" 'helm-ff-run-find-file-as-root
    "M-o" 'helm-ff-run-switch-other-window
    "M-O" 'helm-ff-run-switch-other-frame)
+   "M-RET" 'helm-open-file-with-default-tool)
   (general-define-key
    :keymaps 'helm-buffer-map
    "M-d" 'helm-buffer-run-kill-persistent)
@@ -1641,13 +1642,22 @@ limitations under the License.
       (eww (cadr (assoc country country-search-string-table)))))
   (my/local-leader-def
     :keymaps 'eww-mode-map
-    "o" 'helm-eww)
+    "o" 'helm-eww
+    "d" '(my/youtube-dl :which-key "Download and open youtube video"))
   (general-define-key
    :states '(override motion normal)
    :keymaps 'eww-mode-map
    "M-h" 'eww-back-url
    "M-l" 'eww-forward-url
    "f" 'ace-link-eww))
+
+;; adapted from snippet by oremacs
+(defun my/youtube-dl ()
+  (interactive)
+  (let* ((str (plist-get eww-data :url)))
+    (async-shell-command
+     (concat "cd ~/Videos ; youtube-dl \"" str "\" ;"
+             "mpv ~/Videos/"))))
 
 (use-package ace-link)
 

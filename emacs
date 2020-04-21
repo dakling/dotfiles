@@ -10,7 +10,7 @@
 (setq lexical-binding t)
 ;;; speed up startup using Ambrevar's suggestions: (reset later by loading gcmh)
 (setq gc-cons-threshold (* 64 1024 1024)
-       gc-cons-percentage 0.6)
+      gc-cons-percentage 0.6)
 
 ;;; Temporarily disable the file name handler.
 (setq default-file-name-handler-alist file-name-handler-alist)
@@ -39,10 +39,10 @@
 
 ;; Bootstrap quelpa
 (unless (package-installed-p 'quelpa)
-    (with-temp-buffer
-      (url-insert-file-contents "https://github.com/quelpa/quelpa/raw/master/quelpa.el")
-      (eval-buffer)
-      (quelpa-self-upgrade)))
+  (with-temp-buffer
+    (url-insert-file-contents "https://github.com/quelpa/quelpa/raw/master/quelpa.el")
+    (eval-buffer)
+    (quelpa-self-upgrade)))
 
 (quelpa
  '(quelpa-use-package
@@ -109,7 +109,7 @@
 (defadvice transpose-words
     (before my/transpose-words)
   (when (looking-at "$")
-      (backward-word 1)))
+    (backward-word 1)))
 
 (ad-activate 'transpose-words)
 
@@ -128,13 +128,13 @@
 
 (defun reboot ()
   (interactive)
-   (async-shell-command "sudo reboot now"))
+  (async-shell-command "sudo reboot now"))
 
 (defvar browser 
   (cond
    ;; ((system-name= "klingenberg-tablet") "next")
    ((system-name= "klingenberg-laptop") "epiphany")
-   (t "next")))
+   (t "firefox")))
 
 (defun find-config-file ()
   "Open Emacs configuration file."
@@ -629,8 +629,8 @@ It only works for frames with exactly two windows.
   (pulseaudio-control-volume-step "5%")
   :config
   (setq pulseaudio-control--volume-maximum '(("percent" . 110)
-                                               ("decibels" . 2.5)
-                                               ("raw" . 72000))))
+                                             ("decibels" . 2.5)
+                                             ("raw" . 72000))))
 
 (use-package helm
   :diminish helm-mode
@@ -833,34 +833,34 @@ It only works for frames with exactly two windows.
 
 (defun my/csharp-setup-pretty-symbols ()
   (my/setup-pretty-symbols
-         '(("!=" . 8800) 
-           ("==" . #xff1d) 
-           ("=" . 8592) 
-           ("int" . #x2124)
-           ("double" . #x211d)
-           ("bool" . 8492)
-           ("string" . #x3c3)
-           ("String" . #x3c3)
-           ("void" . #x2205)
-           ("new" . #x2605)
-           ("this" . #x3c4)
-           ("List" . #x2112)
-           ;; ("[]" . #x2a02)
-           ;; ("Dictionary" . #x1d507)
-           ("public" . 8511)
-           ("protected" . 8508)
-           ("not" .      #x2757)
-           ("for" .      #x2200)
-           ("foreach" . #x2200)
-           ("in" . #x2208)
-           ("var" .  #x3bd)
-           ("delegate" . 955)
-           ("return" . #x27fb)
-           ("get" . #x2934)
-           ("set" . #x2935)
-           ("null" . #x2205)
-           ("true" . 10003)
-           ("false" . 10007))))
+   '(("!=" . 8800) 
+     ("==" . #xff1d) 
+     ("=" . 8592) 
+     ("int" . #x2124)
+     ("double" . #x211d)
+     ("bool" . 8492)
+     ("string" . #x3c3)
+     ("String" . #x3c3)
+     ("void" . #x2205)
+     ("new" . #x2605)
+     ("this" . #x3c4)
+     ("List" . #x2112)
+     ;; ("[]" . #x2a02)
+     ;; ("Dictionary" . #x1d507)
+     ("public" . 8511)
+     ("protected" . 8508)
+     ("not" .      #x2757)
+     ("for" .      #x2200)
+     ("foreach" . #x2200)
+     ("in" . #x2208)
+     ("var" .  #x3bd)
+     ("delegate" . 955)
+     ("return" . #x27fb)
+     ("get" . #x2934)
+     ("set" . #x2935)
+     ("null" . #x2205)
+     ("true" . 10003)
+     ("false" . 10007))))
 
 ;; (add-hook 'csharp-mode-hook #'my/csharp-setup-pretty-symbols)
 
@@ -1035,6 +1035,10 @@ It only works for frames with exactly two windows.
    "s-h" 'evil-window-left
    "s-j" 'evil-window-down
    "s-k" 'evil-window-up
+   "s-L" 'enlarge-window-horizontally
+   "s-H" 'shrink-window-horizontally
+   "s-J" 'enlarge-window
+   "s-K" 'shrink-window
    "s-v" 'split-window-right
    "s-s" 'split-window-below
    "s-c" 'my/close-buffer
@@ -1127,30 +1131,94 @@ It only works for frames with exactly two windows.
 ;;     (add-to-list 'eglot-server-programs
 ;;                  `(csharp-mode . ("~/.omnisharp/omnisharp/omnisharp/OmniSharp.exe" "-lsp")))))
 
-;; (add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))
-;; (add-hook 'lisp-mode-hook (lambda () (lispy-mode 1)))
-
-;; (use-package lispy
-;;   :diminish lispy-mode
-;;   :defer t
-;;   :config
-;;   (add-hook 'lispy-mode-hook (lambda () (add-hook 'before-save-hook #'my/indent-buffer nil t)))
-;;   ;; (add-hook 'lispy-mode-hook #'rainbow-delimiters-mode-enable)
-;;   )
-
-;; (use-package lispyville
-;;   :diminish lispyville-mode
-;;   :after lispy
-;;   :init
-;;   (general-add-hook '(emacs-lisp-mode-hook lisp-mode-hook) #'lispyville-mode)
-;;   :config
-;;   (lispyville-set-key-theme '(operators c-w additional)))
-
-(use-package evil-smartparens
+(use-package lispy
+  :diminish lispy-mode
+  :defer t
   :config
-  (add-hook 'emacs-lisp-mode-hook (lambda () (evil-smartparens-mode 1)))
-  (add-hook 'lisp-mode-hook (lambda () (evil-smartparens-mode 1)))
-  (add-hook 'csharp-mode-hook (lambda () (evil-smartparens-mode 1))))
+  (lispy-set-key-theme '(lispy c-digits)) ;; disable single-key bindings
+  (add-hook 'emacs-lisp-mode-hook #'lispy-mode)
+  (add-hook 'lisp-mode-hook #'lispy-mode)
+  (add-hook 'scheme-mode-hook #'lispy-mode)
+  (add-hook 'csharp-mode-hook #'lispy-mode) ; because why not :)
+  ;; (add-hook 'lispy-mode-hook (lambda () (add-hook 'before-save-hook #'my/indent-buffer nil t)))
+  ;; (add-hook 'lispy-mode-hook #'rainbow-delimiters-mode-enable)
+  ) 
+
+(use-package lispyville
+  :diminish lispyville-mode
+  :after lispy
+  :init
+  (general-add-hook 'lispy-mode #'lispyville-mode)
+  :config
+  (setq lispy-use-sly t)
+  ;; copied and slightly adapted from ambrevar's config
+  (lispyville-set-key-theme '(operators
+                              c-w
+                              additional
+                              additional-insert
+                              (escape insert)
+                              slurp/barf-cp
+                              ;; mark
+                              ;; mark-special
+                              ;; mark-toggle
+                              ))
+  (general-define-key
+   :states '(override motion normal visual)
+   :keymaps 'lispyville-mode-map
+   "M-h" #'lispy-left
+   ;; (kbd "M-h") #'lispyville-previous-opening
+   "M-l" #'lispyville-next-opening
+   ;; (kbd "M-j") #'lispy-down
+   ;; (kbd "M-k") #'lispy-up
+   "M-J" #'lispyville-drag-forward
+   "M-K" #'lispyville-drag-backward
+   "M-H" #'lispyville-<
+   "M-L" #'lispyville->
+   "C-M-h" #'lispy-move-left
+   "C-M-l" #'lispy-move-right
+   "M-r" #'lispy-raise-sexp
+   "M-d" #'lispyville-wrap-round
+   ;; (kbd "M-8") #'lispyville-wrap-brackets
+   ;; (kbd "M-7") #'lispyville-wrap-braces
+   ;; (kbd "M-9") #'lispyville-wrap-brackets
+   ;; (kbd "M-0") #'lispyville-wrap-braces
+   "C-<return>" #'lispy-split
+   "C-1" #'lispy-describe-inline
+   "C-2" #'lispy-arglist-inline
+   "C-4" #'lispy-x
+   "gd" #'lispy-goto-symbol
+   ;; (kbd "M-<backspace>") 'lispyville-delete-backward-word
+   ;; (kbd "/") #'lispy-occur
+   "gcl" #'lispyville-comment
+   "gcc" #'lispyville-comment-line
+   ;; TODO: lispy-eval-and-replace
+   "=" #'lispyville-prettify)
+  (my/local-leader-def
+   :keymaps 'lispyville-mode-map
+   "el" #'lispy-eval)
+  (general-define-key
+   :states 'insert
+   :keymaps 'lispyville-mode-map
+   (kbd "<backspace>") 'lispy-delete-backward
+   (kbd "M-<backspace>") 'lispyville-delete-backward-word
+   ";" 'lispy-comment
+   ":" 'lispy-colon ; The colon is not always used to delimit keys.
+   "'" 'lispy-tick 
+   "`" 'lispy-backtick
+   "\"" 'lispy-quotes
+   "(" 'lispy-parens
+   ")" 'lispy-right-nostring))
+
+;; (use-package evil-smartparens
+;;   :config
+;;   ;; (add-hook 'emacs-lisp-mode-hook (lambda () (evil-smartparens-mode 1)))
+;;   ;; (add-hook 'lisp-mode-hook (lambda () (evil-smartparens-mode 1)))
+;;   (add-hook 'csharp-mode-hook (lambda () (evil-smartparens-mode 1))))
+
+;; (use-package evil-lispy
+;;   :config
+;;   (add-hook 'emacs-lisp-mode-hook (lambda () (evil-smartparens-mode 1)))
+;;   (add-hook 'lisp-mode-hook (lambda () (evil-smartparens-mode 1))))
 
 (use-package sly
   :defer t
@@ -1160,9 +1228,11 @@ It only works for frames with exactly two windows.
              :keymaps 'lisp-mode-map
              "'" '(sly :which-key "start repl")
              "e" '(:ignore :which-key "eval")
-             "ef" '(sly-eval-defun :which-key "eval function")
-             "ee" '(sly-eval-last-expression :which-key "eval last expression")
-             "eb" '(sly-eval-buffer :which-key "eval buffer")))
+             "ef" '(sly-compile-defun :which-key "eval function")
+             "ee" '(sly-compile-last-expression :which-key "eval last expression")
+             "eb" '(sly-compile-buffer :which-key "eval buffer")))
+
+
 
 ;; (use-package sly-quicklisp
 ;;   :ensure t)
@@ -1366,18 +1436,18 @@ limitations under the License.
 
   (defun my/add-file-to-project (file project)
     "Add FILE to PROJECT."
-     (find-file project)
-     (goto-line 0)
-     (search-forward "<Compile Include=")
-     (evil-open-above 1)
-     (princ (concat "<Compile Include=\""
-                    (file-relative-name file
-                                        (file-name-directory project))
-                    "\"/>")
-            (current-buffer))
-     (save-buffer)
-     (magit-stage-file file)
-     (kill-buffer (current-buffer)))
+    (find-file project)
+    (goto-line 0)
+    (search-forward "<Compile Include=")
+    (evil-open-above 1)
+    (princ (concat "<Compile Include=\""
+                   (file-relative-name file
+                                       (file-name-directory project))
+                   "\"/>")
+           (current-buffer))
+    (save-buffer)
+    (magit-stage-file file)
+    (kill-buffer (current-buffer)))
 
   (defun my/add-current-file-to-project ()
     "Add current file to my project."
@@ -1440,7 +1510,7 @@ limitations under the License.
                 ((string-equal "/" (expand-file-name dir)) nil) ; prevent infinite loops
                 (t (iter (concat dir "/../" )))))) ; if there is no .csproj file, look one directory higher
       (iter (file-name-directory (buffer-file-name)))))
- 
+  
   (my/local-leader-def
     :keymaps 'csharp-mode-map
     "b" '(:ignore :which-key "build")
@@ -1684,23 +1754,23 @@ limitations under the License.
   :config
   (add-to-list 'system-packages-supported-package-managers
                '(yay .
-                        ((default-sudo . nil)
-                         (install . "yay -S")
-                         (search . "yay -Ss")
-                         (uninstall . "yay -Rs")
-                         (update . "yay -Syu")
-                         (clean-cache . "yay -Sc")
-                         (log . "cat /var/log/pacman.log")
-                         (get-info . "yay -Qi")
-                         (get-info-remote . "yay -Si")
-                         (list-files-provided-by . "yay -Ql")
-                         (verify-all-packages . "yay -Qkk")
-                         (verify-all-dependencies . "yay -Dk")
-                         (remove-orphaned . "yay -Rns $(pacman -Qtdq)")
-                         (list-installed-packages . "yay -Qe")
-                         (list-installed-packages-all . "yay -Q")
-                         (list-dependencies-of . "yay -Qi")
-                         (noconfirm . "--noconfirm"))))
+                     ((default-sudo . nil)
+                      (install . "yay -S")
+                      (search . "yay -Ss")
+                      (uninstall . "yay -Rs")
+                      (update . "yay -Syu")
+                      (clean-cache . "yay -Sc")
+                      (log . "cat /var/log/pacman.log")
+                      (get-info . "yay -Qi")
+                      (get-info-remote . "yay -Si")
+                      (list-files-provided-by . "yay -Ql")
+                      (verify-all-packages . "yay -Qkk")
+                      (verify-all-dependencies . "yay -Dk")
+                      (remove-orphaned . "yay -Rns $(pacman -Qtdq)")
+                      (list-installed-packages . "yay -Qe")
+                      (list-installed-packages-all . "yay -Q")
+                      (list-dependencies-of . "yay -Qi")
+                      (noconfirm . "--noconfirm"))))
   (setq system-packages-use-sudo nil)
   (setq system-packages-package-manager 'yay))
 
@@ -1716,10 +1786,10 @@ limitations under the License.
 
 ;; Don't ask auto-save stuff when opening
 (setq gnus-always-read-dribble-file t)
-; No primary server:
+                                        ; No primary server:
 (setq gnus-select-method '(nnnil ""))
 
-; Get local email, and store it in nnml; connect via IMAP to imap.gmail.com...:
+                                        ; Get local email, and store it in nnml; connect via IMAP to imap.gmail.com...:
 (setq gnus-secondary-select-methods '((nnml "")
                                       (nnimap "mail.tu-darmstadt.de")
                                       (nnimap "imap.gmail.com")
@@ -1729,14 +1799,14 @@ limitations under the License.
                                       ;; (nnreddit "")
                                       ))
 
-; Archive outgoing email in Sent folder on imap.mcom.com:
+                                        ; Archive outgoing email in Sent folder on imap.mcom.com:
 ;; (setq gnus-message-archive-method '(nnimap "imap.gmail.com")
 ;;       gnus-message-archive-group "[Gmail]/Sent Mail")
 
-; Mark gcc'ed (archived) as read:
+                                        ; Mark gcc'ed (archived) as read:
 (setq gnus-gcc-mark-as-read t)
 
-; Send email via Gmail:
+                                        ; Send email via Gmail:
 ;; (setq message-send-mail-function 'smtpmail-send-it
 ;;       smtpmail-default-smtp-server "smtp.gmail.com")
 
@@ -1829,19 +1899,19 @@ limitations under the License.
   (with-current-buffer smtpmail-text-buffer (change-smtp)))
 
 (setq message-dont-reply-to-names "klingenberg")
-  
+
 (ad-activate 'smtpmail-via-smtp)
 ;; (ad-deactivate 'smtpmail-via-smtp)
 
-; Use topics per default:
+                                        ; Use topics per default:
 (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
-; Show more MIME-stuff:
+                                        ; Show more MIME-stuff:
 (setq gnus-mime-display-multipart-related-as-mixed t)
-; Smileys:
+                                        ; Smileys:
 (setq smiley-style 'medium)
-; Don't get the first article automatically:
+                                        ; Don't get the first article automatically:
 (setq gnus-auto-select-first nil)
-; Don't show that annoying arrow:
+                                        ; Don't show that annoying arrow:
 (setq gnus-summary-display-arrow nil)
 
 ;; (setq nnimap-split-inbox "INBOX") ;; (1)
@@ -1864,20 +1934,20 @@ limitations under the License.
             (gnus-topic-set-parameters
              topic
              '((gnus-use-adaptive-scoring nil)
-                (gnus-use-scoring nil)
-                (visible . t)
-                (display . all)
-                (modeline-notify . t))))
+               (gnus-use-scoring nil)
+               (visible . t)
+               (display . all)
+               (modeline-notify . t))))
         '("important" "work"))
 
-; Email splitting rules:
+                                        ; Email splitting rules:
 (setq nnmail-split-fancy
       '(|
-          (any "klingenberg@fdy.tu-darmstadt.de" "work")
-          (any "klingenberg@gsc.tu-darmstadt.de" "work")
-          (any "klingenberg@gmail.tu-darmstadt.de" "important")
-          "INBOX"))
-; Use fancy splitting:
+        (any "klingenberg@fdy.tu-darmstadt.de" "work")
+        (any "klingenberg@gsc.tu-darmstadt.de" "work")
+        (any "klingenberg@gmail.tu-darmstadt.de" "important")
+        "INBOX"))
+                                        ; Use fancy splitting:
 (setq nnmail-split-methods 'nnmail-split-fancy)
 
 (general-define-key

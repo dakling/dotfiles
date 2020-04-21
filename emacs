@@ -1156,19 +1156,21 @@ It only works for frames with exactly two windows.
                               additional
                               additional-insert
                               (escape insert)
-                              slurp/barf-cp
-                              ;; mark
-                              ;; mark-special
-                              ;; mark-toggle
-                              ))
-  (general-define-key
+                              slurp/barf-cp))
+  ;; Bindings that must only be set in lisp languages
+(general-define-key
    :states '(override motion normal visual)
-   :keymaps 'lispyville-mode-map
+   :keymaps '(emacs-lisp-mode-map lisp-mode-map scheme-mode-map)
+   "gd" #'lispy-goto-symbol)
+  ;; Bindings that can safely be set in other languages
+(general-define-key
+ :states '(override motion normal visual)
+ :keymaps 'lispyville-mode-map
    "M-h" #'lispy-left
    ;; (kbd "M-h") #'lispyville-previous-opening
    "M-l" #'lispyville-next-opening
-   ;; (kbd "M-j") #'lispy-down
-   ;; (kbd "M-k") #'lispy-up
+   "M-j" #'lispy-down
+   "M-k" #'lispy-up
    "M-J" #'lispyville-drag-forward
    "M-K" #'lispyville-drag-backward
    "M-H" #'lispyville-<
@@ -1185,11 +1187,10 @@ It only works for frames with exactly two windows.
    "C-1" #'lispy-describe-inline
    "C-2" #'lispy-arglist-inline
    "C-4" #'lispy-x
-   "gd" #'lispy-goto-symbol
    ;; (kbd "M-<backspace>") 'lispyville-delete-backward-word
    ;; (kbd "/") #'lispy-occur
-   "gcl" #'lispyville-comment
-   "gcc" #'lispyville-comment-line
+   "gc" #'lispyville-comment-or-uncomment
+   ;; "gcc" #'lispyville-comment-or-uncomment-line ;; maybe not needed
    ;; TODO: lispy-eval-and-replace
    "=" #'lispyville-prettify)
   (my/local-leader-def
@@ -1200,8 +1201,8 @@ It only works for frames with exactly two windows.
    :keymaps 'lispyville-mode-map
    (kbd "<backspace>") 'lispy-delete-backward
    (kbd "M-<backspace>") 'lispyville-delete-backward-word
-   ";" 'lispy-comment
-   ":" 'lispy-colon ; The colon is not always used to delimit keys.
+   ;; ";" 'lispy-comment
+   ;; ":" 'lispy-colon ; The colon is not always used to delimit keys.
    "'" 'lispy-tick 
    "`" 'lispy-backtick
    "\"" 'lispy-quotes
@@ -1386,6 +1387,31 @@ It only works for frames with exactly two windows.
     "o" '(jenkins--show-console-output-from-job-screen :which-key "view")))
 
 ;;c#
+(defun my/csharp-list-to-array ()
+  (replace-regexp "List<\\(.*\\)>" "\\1[]"
+                  nil
+                  (line-beginning-position)
+                  (line-end-position)))
+
+(defun my/csharp-array-to-list ()
+  (replace-regexp "\\(.*\\)\\[\\]" "List<\\1>"
+                  nil
+                  (line-beginning-position)
+                  (line-end-position)))
+
+(defun my/csharp-toggle-list-and-array ()
+  (interactive)
+  (let ((min (line-beginning-position))
+        (max (line-end-position)))
+    (save-excursion
+      (beginning-of-line)
+      (cond ((re-search-forward "List<\\(.*\\)>" max t)
+             (my/csharp-list-to-array))
+            ((re-search-forward "\\(.*\\)\\[\\]" max t)
+             (my/csharp-array-to-list))
+            (t (message "neither array nor string found on current line"))))))
+
+
 (defun my/setup-csharp-and-bosss ()
   "Setup stuff specific to bosss and csharp."
   (use-package csharp-repl
@@ -1490,10 +1516,6 @@ limitations under the License.
   (add-hook 'csharp-mode-hook #'my/add-header)
   ;; (add-hook 'csharp-mode-hook (lambda () 
   ;;                               (add-hook 'before-save-hook #'my/indent-buffer-without-bosss-header nil t)))
-  ;; TODO
-  ;; (defun my/launch-on-lichtenberg (path)
-  ;;   (async-shell-command
-  ;;    (concat "ssh lcluster \"sbatch " path "\"")))
 
   (setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
   (defun my/csharp-find-current-project ()
@@ -1509,6 +1531,7 @@ limitations under the License.
                 ((string-equal "/" (expand-file-name dir)) nil) ; prevent infinite loops
                 (t (iter (concat dir "/../" )))))) ; if there is no .csproj file, look one directory higher
       (iter (file-name-directory (buffer-file-name)))))
+
   
   (my/local-leader-def
     :keymaps 'csharp-mode-map
@@ -1564,6 +1587,7 @@ limitations under the License.
       :keymaps 'csharp-mode-map
       "t" '(omnisharp-current-type-information :which-key "current type information")
       "T" '(omnisharp-current-type-documentation :which-key "current type documentation")
+      "l" '(my/csharp-toggle-list-and-array :which-key "current type documentation")
       "gr" '(omnisharp-run-code-action-refactoring :which-key "refactor")
       "n" '('ignore :which-key "navigate")
       "nf" '('ignore :which-key "function")
@@ -1577,8 +1601,7 @@ limitations under the License.
       "fi" '(omnisharp-find-implementations :which-key "find implementations")
       "fu" '(omnisharp-find-usages :which-key "find usages")
       "fI" '(omnisharp-fix-code-issue-at-point :which-key "fix code issue at point")
-      "fU" '(omnisharp-fix-usings :which-key "fix usings")))
-  )
+      "fU" '(omnisharp-fix-usings :which-key "fix usings"))))
 
 (add-hook 'csharp-mode-hook #'my/setup-csharp-and-bosss)
 

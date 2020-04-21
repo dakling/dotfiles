@@ -1147,9 +1147,8 @@ It only works for frames with exactly two windows.
 (use-package lispyville
   :diminish lispyville-mode
   :after lispy
-  :init
-  (general-add-hook 'lispy-mode #'lispyville-mode)
   :config
+  (add-hook 'lispy-mode-hook #'lispyville-mode)
   (setq lispy-use-sly t)
   ;; copied and slightly adapted from ambrevar's config
   (lispyville-set-key-theme '(operators

@@ -391,6 +391,7 @@ It only works for frames with exactly two windows.
     "id"  '((lambda () (interactive) (my/open-url "https://www.dazn.com")) :which-key "dazn")
     "ig"  '((lambda () (interactive) (my/open-url "https://www.dragongoserver.net/status.php")) :which-key "dgs")
     "iy"  '((lambda () (interactive) (my/open-url "https://www.youtube.com/")) :which-key "youtube")
+    "d"  '(my/youtube-dl :which-key "youtube download")
     "ss"  'shutdown
     "sr"  'reboot
     "sl"  (lambda () (interactive) (shell-command "/usr/bin/slock"))))
@@ -1753,12 +1754,17 @@ limitations under the License.
 ;; adapted from snippet by oremacs
 (defun my/youtube-dl ()
   (interactive)
-  (let* ((url (plist-get eww-data :url))
+  (let* ((url (or (plist-get eww-data :url)
+                  (current-kill 0)))
          (str (replace-regexp-in-string
-               "https://www.youtube.com/watch\\?v="
+               "https://www.invidio.us/watch\\?v="
                ""
-               url))
+               (replace-regexp-in-string
+                "https://www.youtube.com/watch\\?v="
+                ""
+                url)))
          (download-dir "~/Videos/"))
+    (message "Downloading video...")
     (set-process-sentinel
      (start-process-shell-command
       "youtube-download"

@@ -1185,9 +1185,6 @@ It only works for frames with exactly two windows.
    ;; (kbd "M-9") #'lispyville-wrap-brackets
    ;; (kbd "M-0") #'lispyville-wrap-braces
    "C-<return>" #'lispy-split
-   "C-1" #'lispy-describe-inline
-   "C-2" #'lispy-arglist-inline
-   "C-4" #'lispy-x
    ;; (kbd "M-<backspace>") 'lispyville-delete-backward-word
    ;; (kbd "/") #'lispy-occur
    "gc" #'lispyville-comment-or-uncomment
@@ -1196,7 +1193,10 @@ It only works for frames with exactly two windows.
    "=" #'lispyville-prettify)
   (my/local-leader-def
     :keymaps 'lispyville-mode-map
-    "el" #'lispy-eval)
+    "el" #'lispy-eval
+    "d" #'lispy-describe-inline
+    "a" #'lispy-arglist-inline
+    "x" #'lispy-x)
   (general-define-key
    :states 'insert
    :keymaps 'lispyville-mode-map
@@ -2094,5 +2094,8 @@ limitations under the License.
   (eaf-setq eaf-browser-dark-mode "true")
   (eaf-setq eaf-mindmap-dark-mode "true"))
 
+;; load my custom scripts
+(load "~/Dropbox/Helen/washing-machine-timer.el" t t)
+(load "~/Dropbox/Helen/einkaufsliste/interactiveEnterLisp.el" t t)
 
 ;;; emacs ends here

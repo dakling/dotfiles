@@ -1139,7 +1139,6 @@ It only works for frames with exactly two windows.
   (add-hook 'emacs-lisp-mode-hook #'lispy-mode)
   (add-hook 'lisp-mode-hook #'lispy-mode)
   (add-hook 'scheme-mode-hook #'lispy-mode)
-  (add-hook 'csharp-mode-hook #'lispy-mode) ; because why not :)
   ;; (add-hook 'lispy-mode-hook (lambda () (add-hook 'before-save-hook #'my/indent-buffer nil t)))
   ;; (add-hook 'lispy-mode-hook #'rainbow-delimiters-mode-enable)
   ) 
@@ -1149,23 +1148,25 @@ It only works for frames with exactly two windows.
   :after lispy
   :config
   (add-hook 'lispy-mode-hook #'lispyville-mode)
+  (add-hook 'csharp-mode-hook #'lispyville-mode) ; because why not :)
   (setq lispy-use-sly t)
   ;; copied and slightly adapted from ambrevar's config
   (lispyville-set-key-theme '(operators
                               c-w
                               additional
+                              prettify
                               additional-insert
                               (escape insert)
                               slurp/barf-cp))
   ;; Bindings that must only be set in lisp languages
-(general-define-key
+  (general-define-key
    :states '(override motion normal visual)
    :keymaps '(emacs-lisp-mode-map lisp-mode-map scheme-mode-map)
    "gd" #'lispy-goto-symbol)
   ;; Bindings that can safely be set in other languages
-(general-define-key
- :states '(override motion normal visual)
- :keymaps 'lispyville-mode-map
+  (general-define-key
+   :states '(override motion normal visual)
+   :keymaps 'lispyville-mode-map
    "M-h" #'lispy-left
    ;; (kbd "M-h") #'lispyville-previous-opening
    "M-l" #'lispyville-next-opening
@@ -1194,8 +1195,8 @@ It only works for frames with exactly two windows.
    ;; TODO: lispy-eval-and-replace
    "=" #'lispyville-prettify)
   (my/local-leader-def
-   :keymaps 'lispyville-mode-map
-   "el" #'lispy-eval)
+    :keymaps 'lispyville-mode-map
+    "el" #'lispy-eval)
   (general-define-key
    :states 'insert
    :keymaps 'lispyville-mode-map
@@ -1203,7 +1204,7 @@ It only works for frames with exactly two windows.
    (kbd "M-<backspace>") 'lispyville-delete-backward-word
    ;; ";" 'lispy-comment
    ;; ":" 'lispy-colon ; The colon is not always used to delimit keys.
-   "'" 'lispy-tick 
+   "'" 'lispy-tick
    "`" 'lispy-backtick
    "\"" 'lispy-quotes
    "(" 'lispy-parens
@@ -1394,7 +1395,7 @@ It only works for frames with exactly two windows.
                   (line-end-position)))
 
 (defun my/csharp-array-to-list ()
-  (replace-regexp "\\(.*\\)\\[\\]" "List<\\1>"
+  (replace-regexp "\\([A-z]*\\)\\[\\]" "List<\\1>"
                   nil
                   (line-beginning-position)
                   (line-end-position)))
@@ -1587,7 +1588,7 @@ limitations under the License.
       :keymaps 'csharp-mode-map
       "t" '(omnisharp-current-type-information :which-key "current type information")
       "T" '(omnisharp-current-type-documentation :which-key "current type documentation")
-      "l" '(my/csharp-toggle-list-and-array :which-key "current type documentation")
+      "a" '(my/csharp-toggle-list-and-array :which-key "current type documentation")
       "gr" '(omnisharp-run-code-action-refactoring :which-key "refactor")
       "n" '('ignore :which-key "navigate")
       "nf" '('ignore :which-key "function")

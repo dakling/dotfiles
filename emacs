@@ -189,7 +189,8 @@
 
 (defun my/close-buffer ()
   (interactive)
-  (kill-this-buffer)
+  (unless (equalp (buffer-name) "*scratch*")
+    (kill-this-buffer))
   (when (< 1 (length (window-list)))
     (evil-window-delete)))
 

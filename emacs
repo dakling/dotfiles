@@ -648,9 +648,11 @@ It only works for frames with exactly two windows.
    "M-s" 'helm-ff-run-find-file-as-root
    "M-o" 'helm-ff-run-switch-other-window
    "M-O" 'helm-ff-run-switch-other-frame
+   "M-SPC" 'helm-toggle-visible-mark-forward
    "M-RET" 'helm-ff-run-open-file-with-default-tool)
   (general-define-key
    :keymaps 'helm-buffer-map
+   "M-SPC" 'helm-toggle-visible-mark-forward
    "M-d" 'helm-buffer-run-kill-persistent)
   (setq completion-styles `(basic partial-completion emacs22 initials
                                   ,(if (version<= emacs-version "27.0") 'helm-flex 'flex)))
@@ -1152,7 +1154,7 @@ It only works for frames with exactly two windows.
   (add-hook 'lispy-mode-hook #'lispyville-mode)
   (add-hook 'csharp-mode-hook #'lispyville-mode) ; because why not :)
   (setq lispy-use-sly t)
-  ;; copied and slightly adapted from ambrevar's config
+  ;; copied and adapted from ambrevar's config
   (lispyville-set-key-theme '(operators
                               c-w
                               additional
@@ -1985,6 +1987,7 @@ limitations under the License.
  :states '(override normal)
  "s" '(gnus-group-make-nnir-group :which-key "search")
  "o" '(gnus-group-list-all-groups :which-key "all groups")
+ "O" '(gnus-group-list-groups :which-key "hide groups")
  "D" '(gnus-group-delete-group :which-key "delete groups")
  "M-G" '(gnus-group-get-new-news :which-key "refresh all groups"))
 

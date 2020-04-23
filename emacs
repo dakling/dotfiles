@@ -271,6 +271,18 @@ It only works for frames with exactly two windows.
   (save-excursion
     (evil-indent (point-min) (point-max))))
 
+;; Credit goes to https://stackoverflow.com/questions/18102004/emacs-evil-mode-how-to-create-a-new-text-object-to-select-words-with-any-non-sp
+(defmacro define-and-bind-text-object (key start-regex end-regex)
+  (let ((inner-name (make-symbol "inner-name"))
+        (outer-name (make-symbol "outer-name")))
+    `(progn
+       (evil-define-text-object ,inner-name (count &optional beg end type)
+         (evil-select-paren ,start-regex ,end-regex beg end type count nil))
+       (evil-define-text-object ,outer-name (count &optional beg end type)
+         (evil-select-paren ,start-regex ,end-regex beg end type count t))
+       (define-key evil-inner-text-objects-map ,key (quote ,inner-name))
+       (define-key evil-outer-text-objects-map ,key (quote ,outer-name)))))
+
 ;; packages with configuration
 (use-package gcmh
   :config
@@ -337,7 +349,7 @@ It only works for frames with exactly two windows.
     "aS" '(eshell :which-key "open existing eshell")
     "as" '((lambda () (interactive) (eshell 'N)) :which-key "open new eshell")
     "g"  '(:ignore t :which-key "git")
-    "/"  '(helm-occur t :which-key "helm-occur")
+    ;; "/"  '(helm-occur t :which-key "helm-occur")
     "cc" '(org-capture :which-key "org capture")
     "f" '(:ignore t :which-key "file")
     "fs" '(save-buffer :which-key "save file")
@@ -496,6 +508,10 @@ It only works for frames with exactly two windows.
   :config
   (evil-exchange-install))
 
+(use-package evil-matchit
+  :config
+  (global-evil-matchit-mode 1))
+
 (use-package expand-region
   :custom
   expand-region-contract-fast-key "X"
@@ -574,8 +590,8 @@ It only works for frames with exactly two windows.
   :config
   (setq auto-dim-other-buffers-face nil)
   (auto-dim-other-buffers-mode 1))
-
 ;; eshell
+
 (defun my/eshell-delete-line ()
   (interactive)
   (eshell-bol)
@@ -605,8 +621,8 @@ It only works for frames with exactly two windows.
 
 (use-package esh-autosuggest
   :hook (eshell-mode . esh-autosuggest-mode))
-
 ;; ranger
+
 (use-package ranger
   :commands ranger
   :config
@@ -684,6 +700,25 @@ It only works for frames with exactly two windows.
 
 (use-package helm-flycheck)
 
+(use-package helm-swoop
+  :config
+  (general-define-key
+   :states '(override normal visual)
+   "/" 'helm-swoop
+   "?" 'helm-swoop
+   "n" '(lambda () (interactive)
+          (let ((helm-swoop-pre-input-function
+                 (lambda () (if (boundp 'helm-swoop-pattern)
+                                helm-swoop-pattern ""))))
+            (helm-swoop)))
+   "N" '(lambda () (interactive)
+          (let ((helm-swoop-pre-input-function
+                 (lambda () (if (boundp 'helm-swoop-pattern)
+                                helm-swoop-pattern ""))))
+            (helm-swoop)))
+   "*" 'helm-swoop
+   "#" 'helm-swoop))
+
 (use-package company
   :diminish company-mode
   :config
@@ -691,11 +726,12 @@ It only works for frames with exactly two windows.
   (setq company-dabbrev-downcase nil)
   (setq read-file-name-completion-ignore-case t)
   (global-company-mode 1))
-
 ;; abbrev mode
 (setq abbrev-file-name             ;; tell emacs where to read abbrev
-      (concat user-emacs-directory "abbrev-snippets.el"))    ;; definitions from...
+      (concat user-emacs-directory "abbrev-snippets.el"))
+;; definitions from...
 (setq save-abbrevs 'silently)
+
 (setq-default abbrev-mode nil)
 
 (use-package yasnippet
@@ -814,7 +850,6 @@ It only works for frames with exactly two windows.
       "b"  '(pdf-view-set-slice-from-bounding-box :which-key "slice from bounding box")
       "R"  '(pdf-view-reset-slice :which-key "reset slice")
       "zr" '(pdf-view-scale-reset :which-key "zoom reset"))))
-
 ;; prettify stuff
 ;; (set-fontset-font "fontset-default" '(#x1d4d0 . #x1d4e2) "Symbola")
 (global-prettify-symbols-mode +1)
@@ -823,6 +858,7 @@ It only works for frames with exactly two windows.
                                         ("/" . 247) 
                                         ("<=" . ?≤)
                                         (">=" . ?≥)))
+
 (defun my/setup-pretty-symbols (list)
   (mapc #'(lambda (pair) (push pair prettify-symbols-alist))
         (append
@@ -872,8 +908,8 @@ It only works for frames with exactly two windows.
   :config
   (pretty-activate-groups
    '(:sub-and-superscripts :greek :arithmetic-nary :equality :ordering :ordering-double :ordering-triple :arrows :arrows-twoheaded :punctuation :logic :sets)))
-
 ;;exwm
+
 (if (not (system-name= "lina"))
     (progn
       (use-package exwm 
@@ -1109,8 +1145,8 @@ It only works for frames with exactly two windows.
     ;; "ro" '(run-csharp-repl-other-frame :which-key "start repl")
     ;; "rr" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl")
     ))
-
 ;; optionally
+
 (use-package lsp-ui 
   :commands lsp-ui-mode)
 
@@ -1119,8 +1155,8 @@ It only works for frames with exactly two windows.
 
 (use-package helm-lsp
   :commands helm-lsp-workspace-symbol)
-
 ;; optionally if you want to use debugger
+
 (use-package dap-mode)
 
 ;; (use-package dap-csharp
@@ -1135,9 +1171,9 @@ It only works for frames with exactly two windows.
 ;;     (add-to-list 'eglot-server-programs
 ;;                  `(csharp-mode . ("~/.omnisharp/omnisharp/omnisharp/OmniSharp.exe" "-lsp")))))
 
+
 (use-package lispy
   :diminish lispy-mode
-  :defer t
   :config
   (lispy-set-key-theme '(lispy c-digits)) ;; disable single-key bindings
   (add-hook 'emacs-lisp-mode-hook #'lispy-mode)
@@ -1145,7 +1181,7 @@ It only works for frames with exactly two windows.
   (add-hook 'scheme-mode-hook #'lispy-mode)
   ;; (add-hook 'lispy-mode-hook (lambda () (add-hook 'before-save-hook #'my/indent-buffer nil t)))
   ;; (add-hook 'lispy-mode-hook #'rainbow-delimiters-mode-enable)
-  ) 
+  )
 
 (use-package lispyville
   :diminish lispyville-mode
@@ -1225,6 +1261,8 @@ It only works for frames with exactly two windows.
 ;;   (add-hook 'emacs-lisp-mode-hook (lambda () (evil-smartparens-mode 1)))
 ;;   (add-hook 'lisp-mode-hook (lambda () (evil-smartparens-mode 1))))
 
+
+
 (use-package sly
   :defer t
   :config
@@ -1236,11 +1274,9 @@ It only works for frames with exactly two windows.
              "ef" '(sly-compile-defun :which-key "eval function")
              "ee" '(sly-compile-last-expression :which-key "eval last expression")
              "eb" '(sly-compile-buffer :which-key "eval buffer")))
-
-
-
 ;; (use-package sly-quicklisp
 ;;   :ensure t)
+
 (use-package geiser
   :defer t
   :config
@@ -1268,14 +1304,14 @@ It only works for frames with exactly two windows.
 (use-package piper
   :quelpa (piper :fetcher gitlab :repo "howardabrams/emacs-piper"))
 
+
 ;; (use-package maplev
 ;;   :ensure nil
 ;;   :load-path "~/emacs-packages/maplev/lisp/"
 ;;   :config
 ;;   (add-to-list 'auto-mode-alist '("\\.mpl\\'" . maplev-mode)))
-
-
 ;;org
+
 (use-package org
   :diminish org-indent-mode
   :diminish org-beamer-mode
@@ -1390,8 +1426,8 @@ It only works for frames with exactly two windows.
     "b" '(jenkins--call-build-job-from-main-screen :which-key "build")
     "v" '(jenkins-visit-jenkins-web-page :which-key "view")
     "o" '(jenkins--show-console-output-from-job-screen :which-key "view")))
-
 ;;c#
+
 (defun my/csharp-list-to-array ()
   (replace-regexp "List<\\(.*\\)>" "\\1[]"
                   nil
@@ -1404,6 +1440,7 @@ It only works for frames with exactly two windows.
                   (line-beginning-position)
                   (line-end-position)))
 
+
 (defun my/csharp-toggle-list-and-array ()
   (interactive)
   (let ((min (line-beginning-position))
@@ -1415,7 +1452,6 @@ It only works for frames with exactly two windows.
             ((re-search-forward "\\(.*\\)\\[\\]" max t)
              (my/csharp-array-to-list))
             (t (message "neither array nor string found on current line"))))))
-
 
 (defun my/setup-csharp-and-bosss ()
   "Setup stuff specific to bosss and csharp."
@@ -1560,7 +1596,8 @@ limitations under the License.
     (setq bosss-path-reference (mapcar #'(lambda (proj) (concat "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/" proj))
                                        '("RANSCommon/bin/Release/RANS_Solver.dll"
                                          "KOmegaModelSolver/bin/Release/KOmegaSolver.exe"
-                                         "KOmegaStatSymmModelSolver/bin/Release/KOmegaSSSolver.exe")))
+                                         "KOmegaStatSymmModelSolver/bin/Release/KOmegaSSSolver.exe"
+                                         "ParameterOptimization/bin/Release/ParameterOptimization.exe")))
     :config
     (my/local-leader-def
       :keymaps 'bosss-mode-map
@@ -1616,8 +1653,8 @@ limitations under the License.
   (my/local-leader-def
     :keymaps 'fsharp-mode-map
     "ef" '(fsharp-eval-phrase :which-key "eval current phrase")))
-
 ;;latex (auctex)
+
 (use-package tex
   :ensure auctex
   :init
@@ -1648,61 +1685,91 @@ limitations under the License.
   (add-hook 'LaTeX-mode-hook
             (lambda ()
               (progn
-                (push '(?d . ("\\left\( " . " \\right\)")) evil-surround-pairs-alist)
-                (push '(?\$ . ("\\\(" . "\\\)")) evil-surround-pairs-alist))))
-  ;; (general-define-key
-  ;;  :states '(motion normal)
-  ;;  :keymaps 'LaTeX-mode-map
-  ;;  "-"  nil)
+                (push '(?d . ("\\left( " . " \\right)")) evil-surround-pairs-alist)
+                (push '(?\$ . ("\\(" . "\\)")) evil-surround-pairs-alist))))
   ;; (add-to-list 'company-backends 'company-auctex t)
   (add-to-list 'company-backends 'company-math t)
+  ;; imitate the great lervag/vimtex
+  (define-and-bind-text-object "e" "\\\\begin{.*}" "\\\\end{.*}")
+  (define-and-bind-text-object "$" "\\\\(" "\\\\)")
+  (define-and-bind-text-object "d" "\\\\left(" "\\\\right)")
+  ;; toggle starred environment
+  (defun my/LaTeX-star-environment-dwim ()
+    "Convert between the starred and the not starred version of the current environment."
+    (interactive)
+    ;; If the current environment is starred.
+    (if (string-match "\*$" (LaTeX-current-environment))
+        ;; Remove the star from the current environment.
+        (LaTeX-modify-environment (substring (LaTeX-current-environment) 0 -1))
+      ;; Else add a star to the current environment.
+      (LaTeX-modify-environment (concat (LaTeX-current-environment) "*"))))
+  ;; toggle \left( \right) and ()
+  (defun my/evil-surround-change-noninteractive (key char)
+    (let* ((outer (evil-surround-outer-overlay char))
+           (inner (evil-surround-inner-overlay char)))
+      (unless (evil-surround-delete-char-noop-p char)
+        (evil-surround-delete char outer inner))
+      (evil-surround-region (overlay-start outer)
+                            (overlay-end outer)
+                            nil (if (evil-surround-valid-char-p key) key char))))
+  (defun my/left-right-to-parens ()
+    (let* ((key ?\))
+           (char ?d))
+      (my/evil-surround-change-noninteractive key char)))
+  (defun my/parens-to-left-right ()
+    (let* ((char ?\()
+           (key ?d))
+      (my/evil-surround-change-noninteractive key char)))
+  (defun my/toggle-parens-and-left-right ()
+    (interactive)
+    (save-excursion
+      (search-forward ")")
+      (backward-char)
+      (if (equalp (symbol-at-point) 'right)
+          (my/left-right-to-parens)
+        (my/parens-to-left-right))))
   (my/local-leader-def
     :keymaps '(TeX-mode-map LaTeX-mode-map)
-    "-"   'TeX-recenter-output-buffer         
-    "."   'LaTeX-mark-environment
-    "*"   'LaTeX-mark-section
-    "a"   'TeX-command-run-all                
-    "b"   'TeX-command-master
-    "e"   'TeX-next-error
-    "k"   'TeX-kill-job                       
-    "l"   'TeX-recenter-output-buffer         
-    "m"   'TeX-insert-macro                   
-    "v"   'TeX-view                           
+    "-" 'TeX-recenter-output-buffer
+    "." 'LaTeX-mark-environment
+    "*" 'LaTeX-mark-section
+    "a" 'TeX-command-run-all
+    "b" 'TeX-command-master
+    "e" 'TeX-next-error
+    "k" 'TeX-kill-job
+    "l" 'TeX-recenter-output-buffer
+    "m" 'TeX-insert-macro
+    "v" 'TeX-view
+    "s" '(my/LaTeX-star-environment-dwim :which-key "toggle starred environment")
+    "t" '(my/toggle-parens-and-left-right :which-key "toggle parens and \left( \right)")
     "c" '(:ignore :which-key "change")
     "cs" '(:ignore :which-key "change environment")
-    "cse" '((lambda() (interactive) (LaTeX-environment 1)) :which-key "change current environment")
-    "yae" '((lambda() (interactive)
-              (progn
-                (LaTeX-mark-environment)
-                (kill-ring-save 0 0 t))) :which-key "yank current environment")
-    "dae" '((lambda() (interactive)
-              (progn 
-                (LaTeX-mark-environment)
-                (kill-region 0 0 t))) :which-key "delete current environment")
+    "cse" '((lambda () (interactive) (LaTeX-environment 1)) :which-key "change current environment")
     ;; TeX-doc is a very slow function
-    "hd"  'TeX-doc
-    "xb"  'latex/font-bold
-    "xc"  'latex/font-code
-    "xe"  'latex/font-emphasis
-    "xi"  'latex/font-italic
-    "xr"  'latex/font-clear
-    "xo"  'latex/font-oblique
+    "hd" 'TeX-doc
+    "xb" 'latex/font-bold
+    "xc" 'latex/font-code
+    "xe" 'latex/font-emphasis
+    "xi" 'latex/font-italic
+    "xr" 'latex/font-clear
+    "xo" 'latex/font-oblique
     "xfc" 'latex/font-small-caps
     "xff" 'latex/font-sans-serif
     "xfr" 'latex/font-serif
-    "r"   '(:ignore :which-key "reftex")
+    "r" '(:ignore :which-key "reftex")
     "rt" '(reftex-toc :which-key "table of contents")
-    "rr"   '(reftex-cleveref-cref :which-key "cref")
-    "rc"   '(reftex-citation :which-key "cite")
-    "ol" '(lambda() (interactive) (find-file "definLocal.tex"))
-    "og" '(lambda() (interactive) (find-file (getenv "LatexGlobalConfig")))
-    "ob" '(lambda() (interactive) (find-file "bibliography.bib")))
+    "rr" '(reftex-cleveref-cref :which-key "cref")
+    "rc" '(reftex-citation :which-key "cite")
+    "ol" '(lambda () (interactive) (find-file "definLocal.tex"))
+    "og" '(lambda () (interactive) (find-file (getenv "LatexGlobalConfig")))
+    "ob" '(lambda () (interactive) (find-file "bibliography.bib")))
   (my/local-insert-leader-def
     :keymaps '(TeX-mode-map LaTeX-mode-map)
-    "r"   '(:ignore :which-key "reftex")
+    "r" '(:ignore :which-key "reftex")
     "rt" '(reftex-toc :which-key "table of contents")
-    "rr"   '(reftex-cleveref-cref :which-key "cref")
-    "rc"   '(reftex-citation :which-key "cite")))
+    "rr" '(reftex-cleveref-cref :which-key "cref")
+    "rc" '(reftex-citation :which-key "cite")))
+
 
 (use-package latex-extra
   :hook (LaTeX-mode . latex-extra-mode)
@@ -1712,12 +1779,10 @@ limitations under the License.
     "j" 'latex/forward-environment
     "k" 'latex/backward-environment))
 
-;; (use-package auctex-latexmk
-;;   :defer t
-;;   :init
-;;   (progn
-;;     (auctex-latexmk-setup)
-;;     (setq auctex-latexmk-inherit-TeX-PDF-mode t)))
+(use-package auctex-latexmk
+  :config
+  (auctex-latexmk-setup)
+  (setq auctex-latexmk-inherit-TeX-PDF-mode t))
 
 (use-package company-reftex
   :defer t
@@ -1981,6 +2046,15 @@ limitations under the License.
         "INBOX"))
                                         ; Use fancy splitting:
 (setq nnmail-split-methods 'nnmail-split-fancy)
+
+;; auto-complete addresses
+(use-package bbdb
+  :config
+  (add-to-list 'company-backends 'company-bbdb)
+  (bbdb-initialize 'gnus 'message)
+  (bbdb-mua-auto-update-init 'gnus 'message))
+
+
 
 (general-define-key
  :keymaps '(gnus-group-mode-map gnus-topic-mode-map)

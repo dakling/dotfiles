@@ -207,7 +207,7 @@
   (interactive)
   (let* ((hook (intern (completing-read "hook: "
                                         obarray
-                                        #'(lambda (symbol) (string-suffix-p "hook" (format "%s" symbol))))))
+                                        (lambda (symbol) (string-suffix-p "hook" (format "%s" symbol))))))
          (fun (intern (completing-read "fun: " (eval hook)))))
     (remove-hook hook fun)))
 
@@ -860,7 +860,7 @@ It only works for frames with exactly two windows.
                                         (">=" . ?≥)))
 
 (defun my/setup-pretty-symbols (list)
-  (mapc #'(lambda (pair) (push pair prettify-symbols-alist))
+  (mapc (lambda (pair) (push pair prettify-symbols-alist))
         (append
          global-prettify-symbols-alist
          list)))
@@ -1209,7 +1209,7 @@ It only works for frames with exactly two windows.
    :keymaps 'lispyville-mode-map
    "M-h" #'lispy-left
    ;; (kbd "M-h") #'lispyville-previous-opening
-   "M-l" #'lispyville-next-opening
+   "M-l" #'lispyville-next-closing
    "M-j" #'lispy-down
    "M-k" #'lispy-up
    "M-J" #'lispyville-drag-forward
@@ -1593,7 +1593,7 @@ limitations under the License.
     :init
     (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
     (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Release/BoSSSpad.exe")
-    (setq bosss-path-reference (mapcar #'(lambda (proj) (concat "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/" proj))
+    (setq bosss-path-reference (mapcar (lambda (proj) (concat "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/" proj))
                                        '("RANSCommon/bin/Release/RANS_Solver.dll"
                                          "KOmegaModelSolver/bin/Release/KOmegaSolver.exe"
                                          "KOmegaStatSymmModelSolver/bin/Release/KOmegaSSSolver.exe"
@@ -1831,7 +1831,7 @@ limitations under the License.
                 ""
                 url)))
          (download-dir "~/Videos/"))
-    (message "Downloading video...")
+    (message "Downloading video, will open as soon as download is complete...")
     (set-process-sentinel
      (start-process-shell-command
       "youtube-download"
@@ -2027,7 +2027,7 @@ limitations under the License.
                             (("misc" visible))))
 
 ;; TODO - test
-(mapcar #'(lambda (topic)
+(mapcar (lambda (topic)
             (gnus-topic-set-parameters
              topic
              '((gnus-use-adaptive-scoring nil)

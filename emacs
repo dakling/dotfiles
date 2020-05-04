@@ -324,7 +324,7 @@ It only works for frames with exactly two windows.
   (general-define-key "TAB" 'company-complete :which-key "trigger completion")
 
   (general-define-key
-   :keymaps 'override
+   ;; :keymaps 'override
    :states 'normal
    "gb" '(pop-tag-mark :which-key "go back"))
 
@@ -704,20 +704,27 @@ It only works for frames with exactly two windows.
   :config
   (general-define-key
    :states '(override normal visual)
-   "/" 'helm-swoop
-   "?" 'helm-swoop
+   "/" '(lambda () (interactive)
+          (let ((helm-swoop-pre-input-function
+                 (lambda () "")))
+            (helm-swoop)))
+   "?" '(lambda () (interactive)
+          (let ((helm-swoop-pre-input-function
+                 (lambda () "")))
+            (helm-swoop)))
    "n" '(lambda () (interactive)
           (let ((helm-swoop-pre-input-function
                  (lambda () (if (boundp 'helm-swoop-pattern)
-                                helm-swoop-pattern ""))))
+                           helm-swoop-pattern ""))))
             (helm-swoop)))
    "N" '(lambda () (interactive)
           (let ((helm-swoop-pre-input-function
                  (lambda () (if (boundp 'helm-swoop-pattern)
-                                helm-swoop-pattern ""))))
+                           helm-swoop-pattern ""))))
             (helm-swoop)))
    "*" 'helm-swoop
-   "#" 'helm-swoop))
+   "#" 'helm-swoop)
+  (define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-current-mode-from-helm-swoop))
 
 (use-package company
   :diminish company-mode
@@ -1179,6 +1186,7 @@ It only works for frames with exactly two windows.
   (add-hook 'emacs-lisp-mode-hook #'lispy-mode)
   (add-hook 'lisp-mode-hook #'lispy-mode)
   (add-hook 'scheme-mode-hook #'lispy-mode)
+  (add-hook 'racket-mode-hook #'lispy-mode)
   ;; (add-hook 'lispy-mode-hook (lambda () (add-hook 'before-save-hook #'my/indent-buffer nil t)))
   ;; (add-hook 'lispy-mode-hook #'rainbow-delimiters-mode-enable)
   )
@@ -1203,6 +1211,12 @@ It only works for frames with exactly two windows.
    :states '(override motion normal visual)
    :keymaps '(emacs-lisp-mode-map lisp-mode-map scheme-mode-map)
    "gd" #'lispy-goto-symbol)
+  (my/local-leader-def
+    :keymaps '(emacs-lisp-mode-map lisp-mode-map scheme-mode-map)
+    "el" #'lispy-eval
+    "d" #'lispy-describe-inline
+    "a" #'lispy-arglist-inline
+    "x" #'lispy-x)
   ;; Bindings that can safely be set in other languages
   (general-define-key
    :states '(override motion normal visual)
@@ -1231,15 +1245,9 @@ It only works for frames with exactly two windows.
    ;; "gcc" #'lispyville-comment-or-uncomment-line ;; maybe not needed
    ;; TODO: lispy-eval-and-replace
    "=" #'lispyville-prettify)
-  (my/local-leader-def
-    :keymaps 'lispyville-mode-map
-    "el" #'lispy-eval
-    "d" #'lispy-describe-inline
-    "a" #'lispy-arglist-inline
-    "x" #'lispy-x)
   (general-define-key
    :states 'insert
-   :keymaps 'lispyville-mode-map
+   :keymaps '(emacs-lisp-mode-map lisp-mode-map scheme-mode-map)
    (kbd "<backspace>") 'lispy-delete-backward
    (kbd "M-<backspace>") 'lispyville-delete-backward-word
    ;; ";" 'lispy-comment
@@ -1271,29 +1279,62 @@ It only works for frames with exactly two windows.
              :keymaps 'lisp-mode-map
              "'" '(sly :which-key "start repl")
              "e" '(:ignore :which-key "eval")
-             "ef" '(sly-compile-defun :which-key "eval function")
-             "ee" '(sly-compile-last-expression :which-key "eval last expression")
-             "eb" '(sly-compile-buffer :which-key "eval buffer")))
+             "ef" '(sly-eval-defun :which-key "eval function")
+             "ee" '(sly-eval-last-expression :which-key "eval last expression")
+             "eb" '(sly-eval-buffer :which-key "eval buffer")
+             "c" '(:ignore :which-key "compile")
+             "cf" '(sly-compile-defun :which-key "compile function")
+             "cc" '(sly-compile-defun :which-key "compile function")
+             "ce" '(sly-compile-last-expression :which-key "compile last expression")
+             "cb" '(sly-compile-buffer :which-key "compile buffer")))
 ;; (use-package sly-quicklisp
 ;;   :ensure t)
 
-(use-package geiser
-  :defer t
+;; (use-package geiser
+;;   :defer t
+;;   :init
+;;   (setq geiser-active-implementations '(racket guile))
+;;   :config
+;;   ;; (add-hook 'scheme-mode-hook #'rainbow-delimiters-mode-enable)
+;;   ;; (add-hook 'scheme-mode-hook (lambda () (add-hook 'before-save-hook #'my/indent-buffer nil t)))
+;;   (when (system-name= "klingenberg-laptop")
+;;     (with-eval-after-load 'geiser-guile
+;;       (add-to-list 'geiser-guile-load-path "~/guix-packages/guix/"))
+;;     (with-eval-after-load 'yasnippet
+;;       (add-to-list 'yas-snippet-dirs "~/guix-packages/guix/etc/snippets")))
+;;   (general-define-key
+;;    :keymaps 'scheme-mode-map
+;;    :states 'normal
+;;    "gb" 'geiser-pop-symbol-stack)       ;TODO geiser goto definition in racket
+;;   :general (my/local-leader-def
+;;              :keymaps 'scheme-mode-map
+;;              "'" '(geiser :which-key "start reps")
+;;              "e" '(:ignore :which-key "eval")
+;;              "ef" '(geiser-eval-definition :which-key "eval definition")
+;;              "ee" '(geiser-eval-last-sexp :which-key "eval last expression")
+;;              "eb" '(geiser-eval-buffer :which-key "eval buffer")))
+
+;; TODO modeline function description
+(use-package racket-mode
+  :init
+  (setq racket-show-functions '(racket-show-echo-area))
   :config
-  ;; (add-hook 'scheme-mode-hook #'rainbow-delimiters-mode-enable)
-  ;; (add-hook 'scheme-mode-hook (lambda () (add-hook 'before-save-hook #'my/indent-buffer nil t)))
-  (when (system-name= "klingenberg-laptop")
-    (with-eval-after-load 'geiser-guile
-      (add-to-list 'geiser-guile-load-path "~/guix-packages/guix/"))
-    (with-eval-after-load 'yasnippet
-      (add-to-list 'yas-snippet-dirs "~/guix-packages/guix/etc/snippets")))
-  :general (my/local-leader-def
-             :keymaps 'scheme-mode-map
-             "'" '(geiser :which-key "start reps")
-             "e" '(:ignore :which-key "eval")
-             "ef" '(geiser-eval-definition :which-key "eval definition")
-             "ee" '(geiser-eval-last-sexp :which-key "eval last expression")
-             "eb" '(geiser-eval-buffer :which-key "eval buffer")))
+  (add-hook 'racket-mode #'racket-xp-mode)
+  (general-define-key
+   :keymaps 'racket-mode-map
+   :states 'normal
+   "gd" 'racket-xp-visit-definition
+   "gb" 'racket-unvisit
+   "gr" 'racket-xp-rename)
+  (my/local-leader-def
+    :keymaps 'racket-mode-map
+    "'" 'racket-repl
+    "ef" 'racket-send-definition
+    "ee" 'racket-send-last-sexp
+    "eb" 'racket-run
+    "lm" 'racket-visit-module
+    "d" 'racket-xp-describe
+    "a" 'racket-xp-annotate))
 
 (use-package eval-sexp-fu
   :config
@@ -1795,6 +1836,7 @@ limitations under the License.
 ;; browser
 (use-package helm-eww
   :config
+  (setq browse-url-browser-function 'eww-browse-url)
   (defun my/eww-open-league-table ()
     "Do an internet search for soccer league table."
     (interactive)

@@ -1,5 +1,6 @@
 " Manage Plugins using vim-plug
-call plug#begin('~/.config/nvim/plugged')
+" call plug#begin('~/.config/nvim/plugged')
+call plug#begin('~/.vim/plugged')
 " Plug 'cocopon/iceberg.vim'
 " Plug 'joshdick/onedark.vim'
 " Plug 'morhetz/gruvbox'
@@ -33,7 +34,7 @@ Plug 'JuliaEditorSupport/julia-vim'
 Plug 'tpope/vim-surround'
 Plug 'wellle/targets.vim'
 " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'Valloric/YouCompleteMe'
+" Plug 'Valloric/YouCompleteMe'
 Plug 'bfredl/nvim-miniyank'
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'

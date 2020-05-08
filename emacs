@@ -1290,35 +1290,38 @@ It only works for frames with exactly two windows.
 ;; (use-package sly-quicklisp
 ;;   :ensure t)
 
-;; (use-package geiser
-;;   :defer t
-;;   :init
-;;   (setq geiser-active-implementations '(racket guile))
-;;   :config
-;;   ;; (add-hook 'scheme-mode-hook #'rainbow-delimiters-mode-enable)
-;;   ;; (add-hook 'scheme-mode-hook (lambda () (add-hook 'before-save-hook #'my/indent-buffer nil t)))
-;;   (when (system-name= "klingenberg-laptop")
-;;     (with-eval-after-load 'geiser-guile
-;;       (add-to-list 'geiser-guile-load-path "~/guix-packages/guix/"))
-;;     (with-eval-after-load 'yasnippet
-;;       (add-to-list 'yas-snippet-dirs "~/guix-packages/guix/etc/snippets")))
-;;   (general-define-key
-;;    :keymaps 'scheme-mode-map
-;;    :states 'normal
-;;    "gb" 'geiser-pop-symbol-stack)       ;TODO geiser goto definition in racket
-;;   :general (my/local-leader-def
-;;              :keymaps 'scheme-mode-map
-;;              "'" '(geiser :which-key "start reps")
-;;              "e" '(:ignore :which-key "eval")
-;;              "ef" '(geiser-eval-definition :which-key "eval definition")
-;;              "ee" '(geiser-eval-last-sexp :which-key "eval last expression")
-;;              "eb" '(geiser-eval-buffer :which-key "eval buffer")))
+(use-package geiser
+  :init
+  (setq geiser-active-implementations '(chicken))
+  :config
+  (setq flycheck-scheme-chicken-executable "chicken-csc")
+  ;; (add-hook 'scheme-mode-hook #'rainbow-delimiters-mode-enable)
+  ;; (add-hook 'scheme-mode-hook (lambda () (add-hook 'before-save-hook #'my/indent-buffer nil t)))
+  (setq geiser-chicken-binary "chicken-csi")
+  ;; (when (system-name= "klingenberg-laptop")
+  ;;   (with-eval-after-load 'geiser-guile
+  ;;     (add-to-list 'geiser-guile-load-path "~/guix-packages/guix/"))
+  ;;   (with-eval-after-load 'yasnippet
+  ;;     (add-to-list 'yas-snippet-dirs "~/guix-packages/guix/etc/snippets")))
+  (general-define-key
+   :keymaps 'scheme-mode-map
+   :states 'normal
+   "gb" 'geiser-pop-symbol-stack)
+  (my/local-leader-def
+    :keymaps 'scheme-mode-map
+    "'" '(geiser :which-key "start reps")
+    "e" '(:ignore :which-key "eval")
+    "ef" '(geiser-eval-definition :which-key "eval definition")
+    "ee" '(geiser-eval-last-sexp :which-key "eval last expression")
+    "eb" '(geiser-eval-buffer :which-key "eval buffer")))
 
-;; TODO modeline function description
+; TODO modeline function description
 (use-package racket-mode
   :init
   (setq racket-show-functions '(racket-show-echo-area))
   :config
+  (add-to-list 'auto-mode-alist 
+               '("\\.rkt\\'" . racket-mode))
   (add-hook 'racket-mode #'racket-xp-mode)
   (general-define-key
    :keymaps 'racket-mode-map
@@ -1360,6 +1363,10 @@ It only works for frames with exactly two windows.
   :defer t
   :config
   (setq org-startup-indented t)
+  (setq org-file-apps
+        '((auto-mode . emacs)
+          ("\\.mm\\'" . default)
+          ("\\.x?html?\\'" . default)))
   (add-hook 'org-mode-hook '(lambda () (org-indent-mode 1)))
   (add-hook 'org-mode-hook 'flyspell-mode)
   (add-to-list 'org-export-backends 'beamer)

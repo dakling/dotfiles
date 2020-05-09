@@ -1287,22 +1287,18 @@ It only works for frames with exactly two windows.
              "cc" '(sly-compile-defun :which-key "compile function")
              "ce" '(sly-compile-last-expression :which-key "compile last expression")
              "cb" '(sly-compile-buffer :which-key "compile buffer")))
-;; (use-package sly-quicklisp
-;;   :ensure t)
 
 (use-package geiser
   :init
   (setq geiser-active-implementations '(chicken))
   :config
   (setq flycheck-scheme-chicken-executable "chicken-csc")
-  ;; (add-hook 'scheme-mode-hook #'rainbow-delimiters-mode-enable)
-  ;; (add-hook 'scheme-mode-hook (lambda () (add-hook 'before-save-hook #'my/indent-buffer nil t)))
   (setq geiser-chicken-binary "chicken-csi")
-  ;; (when (system-name= "klingenberg-laptop")
-  ;;   (with-eval-after-load 'geiser-guile
-  ;;     (add-to-list 'geiser-guile-load-path "~/guix-packages/guix/"))
-  ;;   (with-eval-after-load 'yasnippet
-  ;;     (add-to-list 'yas-snippet-dirs "~/guix-packages/guix/etc/snippets")))
+  (when (system-name= "klingenberg-laptop")
+    (with-eval-after-load 'geiser-guile
+      (add-to-list 'geiser-guile-load-path "~/guix-packages/guix/"))
+    (with-eval-after-load 'yasnippet
+      (add-to-list 'yas-snippet-dirs "~/guix-packages/guix/etc/snippets")))
   (general-define-key
    :keymaps 'scheme-mode-map
    :states 'normal
@@ -1873,12 +1869,15 @@ limitations under the License.
   (let* ((url (or (plist-get eww-data :url)
                   (current-kill 0)))
          (str (replace-regexp-in-string
-               "https://www.invidio.us/watch\\?v="
+               "\\&list.*"
                ""
                (replace-regexp-in-string
-                "https://www.youtube.com/watch\\?v="
+                "https://www.invidio.us/watch\\?v="
                 ""
-                url)))
+                (replace-regexp-in-string
+                 "https://www.youtube.com/watch\\?v="
+                 ""
+                 url))))
          (download-dir "~/Videos/"))
     (message "Downloading video, will open as soon as download is complete...")
     (set-process-sentinel

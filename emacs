@@ -157,6 +157,13 @@
   (find-file "~/Documents/TODO.org")
   (calendar))
 
+;; Taken from StackOverflow
+(defun my/show-file-name ()
+  "Show the full path file name in the minibuffer."
+  (interactive)
+  (kill-new (buffer-file-name))
+  (message (buffer-file-name)))
+
 (defun my/get-rid-of-mouse ()
   "Move the mouse to the bottom right corner of the screen"
   (interactive)
@@ -339,6 +346,7 @@ It only works for frames with exactly two windows.
     "a" '(:ignore t :which-key "applications")
     "ad" '(deer :which-key "call deer")
     "ab" '(eww :which-key "open browser")
+    "aB" '(helm-eww-bookmarks :which-key "open browser bookmarks")
     "am" '(gnus :which-key "open unread mail")
     "ap" '(helm-system-packages :which-key "package management")
     "ao" '(sx-search :which-key "search stackoverflow")
@@ -1210,7 +1218,8 @@ It only works for frames with exactly two windows.
   (general-define-key
    :states '(override motion normal visual)
    :keymaps '(emacs-lisp-mode-map lisp-mode-map scheme-mode-map)
-   "gd" #'lispy-goto-symbol)
+   "gd" #'lispy-goto-symbol
+   "=" #'lispyville-prettify)
   (my/local-leader-def
     :keymaps '(emacs-lisp-mode-map lisp-mode-map scheme-mode-map)
     "el" #'lispy-eval
@@ -1241,10 +1250,7 @@ It only works for frames with exactly two windows.
    "C-<return>" #'lispy-split
    ;; (kbd "M-<backspace>") 'lispyville-delete-backward-word
    ;; (kbd "/") #'lispy-occur
-   "gc" #'lispyville-comment-or-uncomment
-   ;; "gcc" #'lispyville-comment-or-uncomment-line ;; maybe not needed
-   ;; TODO: lispy-eval-and-replace
-   "=" #'lispyville-prettify)
+   "gc" #'lispyville-comment-or-uncomment)
   (general-define-key
    :states 'insert
    :keymaps '(emacs-lisp-mode-map lisp-mode-map scheme-mode-map)
@@ -1430,7 +1436,6 @@ It only works for frames with exactly two windows.
   (add-hook 'org-mode-hook '(lambda () (org-superstar-mode 1))))
 
 (use-package org-ref
-  :defer t
   :init
   (setq org-latex-pdf-process (list "latexmk -shell-escape -f -pdf %f"))
   :config
@@ -1444,6 +1449,8 @@ It only works for frames with exactly two windows.
     "rc" '(org-ref-helm-insert-cite-link :which-key "insert citation")
     "rr" '(org-ref-insert-ref-link :which-key "insert reference")))
 
+(use-package org-web-tools)
+
 (use-package org-re-reveal)
 
 (use-package csv-mode
@@ -1455,7 +1462,6 @@ It only works for frames with exactly two windows.
 (use-package wgrep)
 
 (use-package jenkins
-  :defer t
   :config
   (setq jenkins-api-token "115e5da14d9018ef2d51d040fefc48eeb4")
   (setq jenkins-url "http://130.83.248.141:8080/")
@@ -1854,12 +1860,18 @@ limitations under the License.
   (my/local-leader-def
     :keymaps 'eww-mode-map
     "o" 'helm-eww
+    "r" '(lambda ()
+           "Convert and show current page as org."
+           (interactive)
+           (org-web-tools-read-url-as-org
+            (plist-get eww-data :url)))
     "d" '(my/youtube-dl :which-key "Download and open youtube video"))
   (general-define-key
    :states '(override motion normal)
    :keymaps 'eww-mode-map
    "M-h" 'eww-back-url
    "M-l" 'eww-forward-url
+   "M-y" 'eww-copy-page-url
    "f" 'ace-link-eww))
 
 (use-package async-await)
@@ -1869,15 +1881,18 @@ limitations under the License.
   (let* ((url (or (plist-get eww-data :url)
                   (current-kill 0)))
          (str (replace-regexp-in-string
-               "\\&list.*"
-               ""
+               "-"
+               "-"
                (replace-regexp-in-string
-                "https://www.invidio.us/watch\\?v="
+                "\\&list.*"
                 ""
                 (replace-regexp-in-string
-                 "https://www.youtube.com/watch\\?v="
+                 "https://www.invidio.us/watch\\?v="
                  ""
-                 url))))
+                 (replace-regexp-in-string
+                  "https://www.youtube.com/watch\\?v="
+                  ""
+                  url)))))
          (download-dir "~/Videos/"))
     (message "Downloading video, will open as soon as download is complete...")
     (set-process-sentinel
@@ -1886,7 +1901,7 @@ limitations under the License.
       "*youtube-download*"
       "youtube-dl"
       (concat "-o " download-dir "%\\(title\\)s%\\(id\\)s")
-      str)
+      (concat "\"" str "\""))
      (lambda (_ _)
        (helm-open-file-with-default-tool (car (directory-files
                                                "~/Videos/"

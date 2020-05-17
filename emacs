@@ -31,9 +31,9 @@
 ;; (setq package-enable-at-startup nil) ; tells emacs not to load any packages before starting up
 ;; the following lines tell emacs where on the internet to look up
 ;; for new packages.
-(setq package-archives '(("org"       . "http://orgmode.org/elpa/")
-                         ("gnu"       . "http://elpa.gnu.org/packages/")
-                         ("melpa"     . "https://melpa.org/packages/")))
+(setq package-archives '(("org" . "http://orgmode.org/elpa/")
+                         ("gnu" . "http://elpa.gnu.org/packages/")
+                         ("melpa" . "https://melpa.org/packages/")))
 ;; todo change for 27
 ;; (package-initialize)
 
@@ -68,7 +68,7 @@
 (setq vc-make-backup-files t)		; make backups file even when in version controlled dir
 (setq backup-directory-alist `(("." . ,(concat user-emacs-directory "backups")))) ; which directory to put backups file
 (setq vc-follow-symlinks t)				       ; don't ask for confirmation when opening symlinked file
-(setq auto-save-file-name-transforms `((".*"  ,(concat user-emacs-directory "auto-save-list/") t))) ;transform backups file name
+(setq auto-save-file-name-transforms `((".*" ,(concat user-emacs-directory "auto-save-list/") t))) ;transform backups file name
 (setq inhibit-startup-screen t)	; inhibit startup screen
 (setq ring-bell-function 'ignore)	; silent bell when you make a mistake
 (set-language-environment "UTF-8")
@@ -130,7 +130,7 @@
   (interactive)
   (async-shell-command "sudo reboot now"))
 
-(defvar browser 
+(defvar browser
   (cond
    ;; ((system-name= "klingenberg-tablet") "next")
    ((system-name= "klingenberg-laptop") "epiphany")
@@ -268,9 +268,11 @@ It only works for frames with exactly two windows.
           (funcall splitter)
           (if this-win-2nd (other-window 1))
           (set-window-buffer (selected-window) this-win-buffer)
-          (set-window-buffer (next-window) next-win-buffer )
+          (set-window-buffer (next-window) next-win-buffer)
           (select-window first-win)
           (if this-win-2nd (other-window 1))))))
+
+
 
 (defun my/indent-buffer ()
   "Indent the entire buffer using evil-indent."
@@ -287,8 +289,8 @@ It only works for frames with exactly two windows.
          (evil-select-paren ,start-regex ,end-regex beg end type count nil))
        (evil-define-text-object ,outer-name (count &optional beg end type)
          (evil-select-paren ,start-regex ,end-regex beg end type count t))
-       (define-key evil-inner-text-objects-map ,key (quote ,inner-name))
-       (define-key evil-outer-text-objects-map ,key (quote ,outer-name)))))
+       (define-key evil-inner-text-objects-map ,key ',inner-name)
+       (define-key evil-outer-text-objects-map ,key ',outer-name))))
 
 ;; packages with configuration
 (use-package gcmh
@@ -356,7 +358,7 @@ It only works for frames with exactly two windows.
     "at" '(shell :which-key "open shell")
     "aS" '(eshell :which-key "open existing eshell")
     "as" '((lambda () (interactive) (eshell 'N)) :which-key "open new eshell")
-    "g"  '(:ignore t :which-key "git")
+    "g" '(:ignore t :which-key "git")
     ;; "/"  '(helm-occur t :which-key "helm-occur")
     "cc" '(org-capture :which-key "org capture")
     "f" '(:ignore t :which-key "file")
@@ -366,55 +368,55 @@ It only works for frames with exactly two windows.
     "fed" '(find-config-file :which-key "find config file")
     "fer" '(load-config-file :which-key "load config file")
     "feD" '(find-dotfile-dir :which-key "find dotfile directory")
-    "ft"  '(find-todo :which-key "find todo file")
-    "fz"  '((lambda () (interactive) (switch-to-buffer "*scratch*")) :which-key "find scratch buffer")
+    "ft" '(find-todo :which-key "find todo file")
+    "fz" '((lambda () (interactive) (switch-to-buffer "*scratch*")) :which-key "find scratch buffer")
     "fp" '(helm-locate :which-key "helm-locate")
     "fg" '(helm-do-grep-ag :which-key "helm-ag")
     "b" '(:ignore t :which-key "buffer")
     "bb" '(helm-mini :which-key "switch buffer")
     "be" '(helm-exwm :which-key "switch to exwm buffer")
     "bd" '(kill-this-buffer :which-key "kill buffer")
-    "m"  '(imenu t :which-key "imenu")
-    "w"  '(:ignore t :which-key "window management")
-    "w TAB"  '(evil-switch-to-windows-last-buffer :which-key switch to last buffer)
+    "m" '(imenu t :which-key "imenu")
+    "w" '(:ignore t :which-key "window management")
+    "w TAB" '(evil-switch-to-windows-last-buffer :which-key switch to last buffer)
     ;; "w2"  'spacemacs/layout-double-columns
     ;; "w3"  'spacemacs/layout-triple-columns
     ;; "wb"  'spacemacs/switch-to-minibuffer-window
-    "wd"  'evil-window-delete
-    "wH"  'evil-window-move-far-left
-    "wh"  'evil-window-left
-    "wJ"  'evil-window-move-very-bottom
-    "wj"  'evil-window-down
-    "wK"  'evil-window-move-very-top
-    "wk"  'evil-window-up
-    "wL"  'evil-window-move-far-right
-    "wl"  'evil-window-right
-    "wm"  'delete-other-windows
-    "ws"  'split-window-below
-    "wS"  'split-window-below-and-focus
-    "w-"  'split-window-below
-    "wU"  'winner-redo
-    "wu"  'winner-undo
-    "wv"  'split-window-right
-    "wV"  'split-window-right-and-focus
-    "ww"  'other-window
-    "w="  'balance-windows
-    "r"   '(:ignore t :which-key "recent-files")
-    "rr"  'helm-recentf
-    "w+"  '(ambrevar-toggle-window-split :which-key "toggle window split")
-    "e"  '(:ignore t :which-key "eval elisp")
-    "ee"  'eval-last-sexp
-    "ef"  'eval-defun
-    "ep"  'eval-print-last-sexp
-    "er"  'eval-expression
-    "i"   '(:ignore :which-key "internet")
-    "id"  '((lambda () (interactive) (my/open-url "https://www.dazn.com")) :which-key "dazn")
-    "ig"  '((lambda () (interactive) (my/open-url "https://www.dragongoserver.net/status.php")) :which-key "dgs")
-    "iy"  '((lambda () (interactive) (my/open-url "https://www.youtube.com/")) :which-key "youtube")
-    "d"  '(my/youtube-dl :which-key "youtube download")
-    "ss"  'shutdown
-    "sr"  'reboot
-    "sl"  (lambda () (interactive) (shell-command "/usr/bin/slock"))))
+    "wd" 'evil-window-delete
+    "wH" 'evil-window-move-far-left
+    "wh" 'evil-window-left
+    "wJ" 'evil-window-move-very-bottom
+    "wj" 'evil-window-down
+    "wK" 'evil-window-move-very-top
+    "wk" 'evil-window-up
+    "wL" 'evil-window-move-far-right
+    "wl" 'evil-window-right
+    "wm" 'delete-other-windows
+    "ws" 'split-window-below
+    "wS" 'split-window-below-and-focus
+    "w-" 'split-window-below
+    "wU" 'winner-redo
+    "wu" 'winner-undo
+    "wv" 'split-window-right
+    "wV" 'split-window-right-and-focus
+    "ww" 'other-window
+    "w=" 'balance-windows
+    "r" '(:ignore t :which-key "recent-files")
+    "rr" 'helm-recentf
+    "w+" '(ambrevar-toggle-window-split :which-key "toggle window split")
+    "e" '(:ignore t :which-key "eval elisp")
+    "ee" 'eval-last-sexp
+    "ef" 'eval-defun
+    "ep" 'eval-print-last-sexp
+    "er" 'eval-expression
+    "i" '(:ignore :which-key "internet")
+    "id" '((lambda () (interactive) (my/open-url "https://www.dazn.com")) :which-key "dazn")
+    "ig" '((lambda () (interactive) (my/open-url "https://www.dragongoserver.net/status.php")) :which-key "dgs")
+    "iy" '((lambda () (interactive) (my/open-url "https://www.youtube.com/")) :which-key "youtube")
+    "d" '(my/youtube-dl :which-key "youtube download")
+    "ss" 'shutdown
+    "sr" 'reboot
+    "sl" (lambda () (interactive) (shell-command "/usr/bin/slock"))))
 
 (use-package mini-modeline
   :custom
@@ -452,7 +454,7 @@ It only works for frames with exactly two windows.
   :config (evil-mode 1))
 
 (use-package evil-collection
-  :after (evil helm) 
+  :after (evil helm)
   :init
   (setq evil-collection-setup-minibuffer t)
   :config
@@ -683,14 +685,14 @@ It only works for frames with exactly two windows.
   (setq helm-mode-fuzzy-match t)
   (setq helm-completion-in-region-fuzzy-match t)
   (setq helm-M-x-fuzzy-match t)
-  (setq helm-buffers-fuzzy-matching           t)
+  (setq helm-buffers-fuzzy-matching t)
   (setq helm-completion-in-region-fuzzy-match t)
-  (setq helm-file-cache-fuzzy-match           t)
-  (setq helm-imenu-fuzzy-match                t)
-  (setq helm-mode-fuzzy-match                 t)
-  (setq helm-locate-fuzzy-match               t) 
-  (setq helm-quick-update                     t)
-  (setq helm-recentf-fuzzy-match              t)
+  (setq helm-file-cache-fuzzy-match t)
+  (setq helm-imenu-fuzzy-match t)
+  (setq helm-mode-fuzzy-match t)
+  (setq helm-locate-fuzzy-match t)
+  (setq helm-quick-update t)
+  (setq helm-recentf-fuzzy-match t)
   (setq helm-exwm-emacs-buffers-source (helm-exwm-build-emacs-buffers-source))
   (setq helm-exwm-source (helm-exwm-build-source))
   (setq helm-mini-default-sources `(helm-exwm-emacs-buffers-source
@@ -723,12 +725,12 @@ It only works for frames with exactly two windows.
    "n" '(lambda () (interactive)
           (let ((helm-swoop-pre-input-function
                  (lambda () (if (boundp 'helm-swoop-pattern)
-                           helm-swoop-pattern ""))))
+                                helm-swoop-pattern ""))))
             (helm-swoop)))
    "N" '(lambda () (interactive)
           (let ((helm-swoop-pre-input-function
                  (lambda () (if (boundp 'helm-swoop-pattern)
-                           helm-swoop-pattern ""))))
+                                helm-swoop-pattern ""))))
             (helm-swoop)))
    "*" 'helm-swoop
    "#" 'helm-swoop)
@@ -742,7 +744,7 @@ It only works for frames with exactly two windows.
   (setq read-file-name-completion-ignore-case t)
   (global-company-mode 1))
 ;; abbrev mode
-(setq abbrev-file-name             ;; tell emacs where to read abbrev
+(setq abbrev-file-name ;; tell emacs where to read abbrev
       (concat user-emacs-directory "abbrev-snippets.el"))
 ;; definitions from...
 (setq save-abbrevs 'silently)
@@ -800,7 +802,7 @@ It only works for frames with exactly two windows.
   ;; (add-to-list 'auto-mode-alist '("\\.docx\\'" . pandoc-view-mode))
   (my/local-leader-def
     :keymaps 'doc-view-mode-map
-    "p" 'pandoc-view-mode ; TODO create toggle function
+    "p" 'pandoc-view-mode               ; TODO create toggle function
     "d" 'doc-view-mode)
   (general-define-key
    :states 'normal
@@ -831,46 +833,46 @@ It only works for frames with exactly two windows.
      :keymaps 'pdf-view-mode-map
      ;; evil-style bindings
      ;; "SPC"  nil ;TODO where to put this globally?
-     "-"  nil ;TODO where to put this globally?
-     "j"  '(pdf-view-scroll-up-or-next-page :which-key "scroll down")
-     "k"  '(pdf-view-scroll-down-or-previous-page :which-key "scroll up")
+     "-" nil                         ;TODO where to put this globally?
+     "j" '(pdf-view-scroll-up-or-next-page :which-key "scroll down")
+     "k" '(pdf-view-scroll-down-or-previous-page :which-key "scroll up")
      "<down>" 'pdf-view-scroll-up-or-next-page
      "<up>" 'pdf-view-scroll-down-or-previous-page
      ;; "j"  '(pdf-view-next-line-or-next-page :which-key "scroll down")
      ;; "k"  '(pdf-view-previous-line-or-previous-page :which-key "scroll up")
-     "L"  '(image-forward-hscroll :which-key "scroll right")
-     "H"  '(image-backward-hscroll :which-key "scroll left")
-     "l"  '(pdf-view-next-page :which-key "page down")
-     "h"  '(pdf-view-previous-page :which-key "page up")
-     "u"  '(pdf-view-scroll-down-or-previous-page :which-key "scroll down")
-     "d"  '(pdf-view-scroll-up-or-next-page :which-key "scroll up")
-     "/"  '(isearch-forward :which-key search forward)
-     "?"  '(isearch-backward :which-key search backward)
-     "0"  '(image-bol :which-key "go left")
-     "$"  '(image-eol :which-key "go right"))
+     "L" '(image-forward-hscroll :which-key "scroll right")
+     "H" '(image-backward-hscroll :which-key "scroll left")
+     "l" '(pdf-view-next-page :which-key "page down")
+     "h" '(pdf-view-previous-page :which-key "page up")
+     "u" '(pdf-view-scroll-down-or-previous-page :which-key "scroll down")
+     "d" '(pdf-view-scroll-up-or-next-page :which-key "scroll up")
+     "/" '(isearch-forward :which-key search forward)
+     "?" '(isearch-backward :which-key search backward)
+     "0" '(image-bol :which-key "go left")
+     "$" '(image-eol :which-key "go right"))
     (my/local-leader-def
       ;; :states 'normal
       :keymaps 'pdf-view-mode-map
       ;; Scale/Fit
       ;; "f"  nil
-      "fw"  '(pdf-view-fit-width-to-window :which-key "fit width")
-      "fh"  '(pdf-view-fit-height-to-window :which-key "fit heigth")
-      "fp"  '(pdf-view-fit-page-to-window :which-key "fit page")
-      "a"  '(:ignore :which-key "annotations")
-      "at"  '(pdf-annot-add-text-annotation :which-key "text")
-      "ah"  '(pdf-annot-add-highlight-markup-annotation :which-key "highlight")
-      "ao"  '(pdf-annot-add-strikeout-markup-annotation :which-key "strikeout")
-      "aD"  '(pdf-annot-delete :which-key "delete")
-      "m"  '(pdf-view-set-slice-using-mouse :which-key "slice using mouse")
-      "b"  '(pdf-view-set-slice-from-bounding-box :which-key "slice from bounding box")
-      "R"  '(pdf-view-reset-slice :which-key "reset slice")
+      "fw" '(pdf-view-fit-width-to-window :which-key "fit width")
+      "fh" '(pdf-view-fit-height-to-window :which-key "fit heigth")
+      "fp" '(pdf-view-fit-page-to-window :which-key "fit page")
+      "a" '(:ignore :which-key "annotations")
+      "at" '(pdf-annot-add-text-annotation :which-key "text")
+      "ah" '(pdf-annot-add-highlight-markup-annotation :which-key "highlight")
+      "ao" '(pdf-annot-add-strikeout-markup-annotation :which-key "strikeout")
+      "aD" '(pdf-annot-delete :which-key "delete")
+      "m" '(pdf-view-set-slice-using-mouse :which-key "slice using mouse")
+      "b" '(pdf-view-set-slice-from-bounding-box :which-key "slice from bounding box")
+      "R" '(pdf-view-reset-slice :which-key "reset slice")
       "zr" '(pdf-view-scale-reset :which-key "zoom reset"))))
 ;; prettify stuff
 ;; (set-fontset-font "fontset-default" '(#x1d4d0 . #x1d4e2) "Symbola")
-(global-prettify-symbols-mode +1)
+(global-prettify-symbols-mode 1)
 (defvar global-prettify-symbols-alist '(("lambda" . 955)
-                                        ("*" . 215) 
-                                        ("/" . 247) 
+                                        ("*" . 215)
+                                        ("/" . 247)
                                         ("<=" . ?≤)
                                         (">=" . ?≥)))
 
@@ -888,32 +890,32 @@ It only works for frames with exactly two windows.
 
 (defun my/csharp-setup-pretty-symbols ()
   (my/setup-pretty-symbols
-   '(("!=" . 8800) 
-     ("==" . #xff1d) 
-     ("=" . 8592) 
-     ("int" . #x2124)
-     ("double" . #x211d)
+   '(("!=" . 8800)
+     ("==" . 65309)
+     ("=" . 8592)
+     ("int" . 8484)
+     ("double" . 8477)
      ("bool" . 8492)
-     ("string" . #x3c3)
-     ("String" . #x3c3)
-     ("void" . #x2205)
-     ("new" . #x2605)
-     ("this" . #x3c4)
-     ("List" . #x2112)
+     ("string" . 963)
+     ("String" . 963)
+     ("void" . 8709)
+     ("new" . 9733)
+     ("this" . 964)
+     ("List" . 8466)
      ;; ("[]" . #x2a02)
      ;; ("Dictionary" . #x1d507)
      ("public" . 8511)
      ("protected" . 8508)
-     ("not" .      #x2757)
-     ("for" .      #x2200)
-     ("foreach" . #x2200)
-     ("in" . #x2208)
-     ("var" .  #x3bd)
+     ("not" . 10071)
+     ("for" . 8704)
+     ("foreach" . 8704)
+     ("in" . 8712)
+     ("var" . 957)
      ("delegate" . 955)
-     ("return" . #x27fb)
-     ("get" . #x2934)
-     ("set" . #x2935)
-     ("null" . #x2205)
+     ("return" . 10235)
+     ("get" . 10548)
+     ("set" . 10549)
+     ("null" . 8709)
      ("true" . 10003)
      ("false" . 10007))))
 
@@ -927,7 +929,9 @@ It only works for frames with exactly two windows.
 
 (if (not (system-name= "lina"))
     (progn
-      (use-package exwm 
+      (use-package xelb)
+
+      (use-package exwm
         :init
         (server-start)
         :config
@@ -935,6 +939,84 @@ It only works for frames with exactly two windows.
         (setq mouse-autoselect-window nil
               focus-follows-mouse nil)
         (exwm-enable))
+
+      ;; taken from https://github.com/dakra/dmacs/blob/master/init.org#exwm
+      (use-package windmove)
+      ;; Switching workspaces
+      (defun exwm-workspace-switch-previous (p)
+        "Switch to previous workspace"
+        (interactive "p")
+        (if (< (- exwm-workspace-current-index p) 0)
+            (exwm-workspace-switch (1- (length exwm-workspace--list)))
+          (exwm-workspace-switch (- exwm-workspace-current-index p))))
+
+      (defun exwm-workspace-switch-next (p)
+        "Switch to next workspace"
+        (interactive "p")
+        (if (> (+ exwm-workspace-current-index p) (1- (length exwm-workspace--list)))
+            (exwm-workspace-switch 0)
+          (exwm-workspace-switch (+ exwm-workspace-current-index p))))
+
+      (defun exwm-windmove-left (&optional arg)
+        "Like windmove-left but go to previous workspace if there is
+dow on the left."
+        (interactive "P")
+        (if (or (<= exwm-connected-displays 1) (windmove-find-other-window 'left arg))
+            (windmove-do-window-select 'left arg)
+          ;; No window to the left
+          ;; Switch to previous workspace and select rightmost window
+          ;; (exwm-workspace-switch-previous 1)
+          (while (windmove-find-other-window 'right arg)
+            (windmove-do-window-select 'right arg))))
+
+      (defun exwm-windmove-right (&optional arg)
+        "Like windmove-right but go to previous workspace if there is
+dow on the right."
+        (interactive "P")
+        (if (or (<= exwm-connected-displays 1) (windmove-find-other-window 'right arg))
+            (windmove-do-window-select 'right arg)
+          ;; No window to the left
+          ;; Switch to next workspace and select leftmost window
+          ;; (exwm-workspace-switch-next 1)
+          (while (windmove-find-other-window 'left arg)
+            (windmove-do-window-select 'left arg))))
+
+      (setq exwm-windmove-workspace-1-below-p t)
+      ;; FIXME: Automatically get displayed workspace on top monitor
+      (setq exwm-windmove-last-workspace-top 1)
+
+      (defun exwm-windmove-down (&optional arg)
+        "Like windmove-down but go to workspace 1 if there is no window
+ive minibuffer below and `exwm-windmove-workspace-1-below-p' is non-NIL."
+        (interactive "P")
+        (let ((active-minibuffer-below-p
+               (and (minibuffer-window-active-p (minibuffer-window))
+                    (eq (minibuffer-window) (windmove-find-other-window 'down arg)))))
+          (if (or (<= exwm-connected-displays 1)
+                  active-minibuffer-below-p
+                  (= exwm-workspace-current-index 0)
+                  (not (eq (minibuffer-window) (windmove-find-other-window 'down arg))))
+              (windmove-do-window-select 'down arg)
+            ;; No window below
+            (when exwm-windmove-workspace-1-below-p
+              ;; Switch to workspace 0 and select top window
+              (setq exwm-windmove-last-workspace-top exwm-workspace-current-index)
+              (exwm-workspace-switch 0)
+              (while (windmove-find-other-window 'up arg)
+                (windmove-do-window-select 'up arg))))))
+
+      (defun exwm-windmove-up (&optional arg)
+        "Like windmove-up but go to workspace 1 if there is
+dow below and `exwm-windmove-workspace-1-below-p' is non-NIL."
+        (interactive "P")
+        (if (or (<= exwm-connected-displays 1) (windmove-find-other-window 'up arg))
+            (windmove-do-window-select 'up arg)
+          ;; No window below
+          (when exwm-windmove-workspace-1-below-p
+            ;; Switch to workspace 1 and select bottom window
+            (exwm-workspace-switch exwm-windmove-last-workspace-top)
+            (while (windmove-find-other-window 'down arg)
+              (windmove-do-window-select 'down arg)))))
 
       (use-package exwm-input
         :after exwm-randr
@@ -948,11 +1030,11 @@ It only works for frames with exactly two windows.
                 ([?\s-F] . exwm-layout-set-fullscreen)
                 ([?\s-a] . exwm-workspace-switch)
                 ([?\s-A] . exwm-workspace-move-window)
-                ,@(mapcar (lambda (i)
-                            `(,(kbd (format "s-%d" i)) .
-                              (lambda () (interactive)
-                                (exwm-workspace-switch-create ,i))))
-                          (number-sequence 0 9))
+                (\,@(mapcar (lambda (i)
+                                `(,(kbd (format "s-%d" i)) .
+                                  (lambda () (interactive)
+                                    (exwm-workspace-switch-create ,i))))
+                              (number-sequence 0 9)))
                 ;; ,@(mapcar (lambda (i)
                 ;; 	      `(,(kbd (format "s-%s" i)) .
                 ;; 		(lambda () (interactive)
@@ -967,10 +1049,10 @@ It only works for frames with exactly two windows.
                 ([?\s-f] . helm-find-files)
                 ([?\s-p] . helm-projectile)
                 ([?\s-b] . helm-mini)
-                ([?\s-l] . evil-window-right)
-                ([?\s-h] . evil-window-left)
-                ([?\s-j] . evil-window-down)
-                ([?\s-k] . evil-window-up)
+                ([?\s-l] . exwm-windmove-right)
+                ([?\s-h] . exwm-windmove-left)
+                ([?\s-j] . exwm-windmove-down)
+                ([?\s-k] . exwm-windmove-up)
                 ([?\s-v] . split-window-right)
                 ([?\s-s] . split-window-below)
                 ([?\s-c] . my/close-buffer)
@@ -994,13 +1076,14 @@ It only works for frames with exactly two windows.
                             'pulseaudio-control-increase-volume)
         (exwm-input-set-key (kbd "<XF86AudioMute>")
                             'pulseaudio-control-toggle-current-sink-mute))
-      
+
       (use-package exwm-systemtray
         :ensure nil
         :after exwm
         :demand t
         :config (exwm-systemtray-enable))
 
+      (defvar exwm-connected-displays)
       (use-package exwm-randr
         :ensure nil
         :after exwm
@@ -1018,6 +1101,7 @@ It only works for frames with exactly two windows.
                (exwm-workspace-switch (my/exwm-get-other-workspace)))
         (defun my/exwm-move-window-to-other-workspace () (interactive)
                (exwm-workspace-move-window (my/exwm-get-other-workspace)))
+
         (cond
          ((system-name= "klingenberg-tablet") (progn (set 'monitor1 "eDP1")
                                                      (set 'monitor2 "HDMI2")
@@ -1043,7 +1127,8 @@ It only works for frames with exactly two windows.
                      " "
                      monitor2
                      " --auto")))
-          (my/fix-touchscreen))
+          (my/fix-touchscreen)
+          (setq exwm-connected-displays (length (cadr (exwm-randr--get-outputs)))))
 
         :hook (exwm-randr-screen-change . my/exwm-xrandr)
         :init
@@ -1086,10 +1171,10 @@ It only works for frames with exactly two windows.
    "s-f" 'helm-find-files
    "s-p" 'helm-projectile
    "s-b" 'helm-mini
-   "s-l" 'evil-window-right
-   "s-h" 'evil-window-left
-   "s-j" 'evil-window-down
-   "s-k" 'evil-window-up
+   "s-l" 'exwm-windmove-right
+   "s-h" 'exwm-windmove-left
+   "s-j" 'exwm-windmove-down
+   "s-k" 'exwm-windmove-up
    "s-L" 'enlarge-window-horizontally
    "s-H" 'shrink-window-horizontally
    "s-J" 'enlarge-window
@@ -1162,7 +1247,7 @@ It only works for frames with exactly two windows.
     ))
 ;; optionally
 
-(use-package lsp-ui 
+(use-package lsp-ui
   :commands lsp-ui-mode)
 
 (use-package company-lsp
@@ -1275,8 +1360,6 @@ It only works for frames with exactly two windows.
 ;;   (add-hook 'emacs-lisp-mode-hook (lambda () (evil-smartparens-mode 1)))
 ;;   (add-hook 'lisp-mode-hook (lambda () (evil-smartparens-mode 1))))
 
-
-
 (use-package sly
   :defer t
   :config
@@ -1322,7 +1405,7 @@ It only works for frames with exactly two windows.
   :init
   (setq racket-show-functions '(racket-show-echo-area))
   :config
-  (add-to-list 'auto-mode-alist 
+  (add-to-list 'auto-mode-alist
                '("\\.rkt\\'" . racket-mode))
   (add-hook 'racket-mode #'racket-xp-mode)
   (general-define-key
@@ -1346,6 +1429,8 @@ It only works for frames with exactly two windows.
   (setq eval-sexp-fu-flash-face
         '((((class color)) (:background "black" :foreground "gray" :bold t))
           (t (:inverse-video nil)))))
+
+(use-package cider)
 
 (use-package piper
   :quelpa (piper :fetcher gitlab :repo "howardabrams/emacs-piper"))
@@ -1508,7 +1593,7 @@ It only works for frames with exactly two windows.
   (use-package csharp-repl
     :ensure nil
     :load-path "~/Documents/programming/elisp/emacs-csharp-repl/")
-  
+
   (defun my/bosss-file-p ()
     (or
      (file-in-directory-p (buffer-file-name) "~/BoSSS/")
@@ -1539,7 +1624,7 @@ limitations under the License.
         (goto-line 0)
         (when (my/bosss-file-p)
           (unless (or (search-forward (substring header-text 93) nil t) ; check if header already exists, start a bit later to ignore year
-                      (derived-mode-p #'bosss-mode)) ; check if this is just a worksheet 
+                      (derived-mode-p #'bosss-mode)) ; check if this is just a worksheet
             (princ header-text (current-buffer)))))))
 
   (defun my/indent-buffer-without-bosss-header ()
@@ -1586,7 +1671,7 @@ limitations under the License.
     "Remove current file to my project."
     (interactive)
     (my/remove-file-from-project (buffer-file-name) (my/csharp-find-current-project)))
-  
+
   (defun my/run-bosss-control-file (solver control-file &optional debug)
     "Run SOLVER with CONTROL-FILE, optionally using sbd to DEBUB"
     (async-shell-command
@@ -1605,7 +1690,7 @@ limitations under the License.
   (add-hook 'csharp-mode-hook (lambda ()
                                 (push '(?< . ("< " . " >")) evil-surround-pairs-alist)))
   (add-hook 'csharp-mode-hook #'my/add-header)
-  ;; (add-hook 'csharp-mode-hook (lambda () 
+  ;; (add-hook 'csharp-mode-hook (lambda ()
   ;;                               (add-hook 'before-save-hook #'my/indent-buffer-without-bosss-header nil t)))
 
   (setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
@@ -1620,10 +1705,10 @@ limitations under the License.
                                          (car (find-csproj-file dir))
                                          dir)) ; if a .csproj file is found in the current directory, return its absolute path
                 ((string-equal "/" (expand-file-name dir)) nil) ; prevent infinite loops
-                (t (iter (concat dir "/../" )))))) ; if there is no .csproj file, look one directory higher
+                (t (iter (concat dir "/../")))))) ; if there is no .csproj file, look one directory higher
       (iter (file-name-directory (buffer-file-name)))))
 
-  
+
   (my/local-leader-def
     :keymaps 'csharp-mode-map
     "b" '(:ignore :which-key "build")
@@ -1974,7 +2059,7 @@ limitations under the License.
 ;; Available SMTP accounts.
 (defvar smtp-accounts
   '((ssl "klingenberg@fdy.tu-darmstadt.de" "smtp.tu-darmstadt.de" 465 "km88econ" nil)
-    (ssl "dario.klingenberg@gmail.com" "smtp.gmail.com" 465  "dario.klingenberg" nil)
+    (ssl "dario.klingenberg@gmail.com" "smtp.gmail.com" 465 "dario.klingenberg" nil)
     (starttls "dario.klingenberg@web.de" "smtp.web.de" 587 "dario.klingenberg" nil)
     (ssl "klingenberg@gsc.tu-darmstadt.de" "smtp.gsc.ce.tu-darmstadt.de" 465 "klingenberg" nil)))
 
@@ -2007,7 +2092,7 @@ limitations under the License.
   (message "Setting SMTP server to `%s:%s' for user `%s'."
            server port user))
 
-(defun set-smtp-ssl (server port user password  &optional key cert)
+(defun set-smtp-ssl (server port user password &optional key cert)
   "Set related SMTP and SSL variables for supplied parameters."
   (setq starttls-use-gnutls t
         starttls-gnutls-program "gnutls-cli"
@@ -2021,7 +2106,7 @@ limitations under the License.
    "Setting SMTP server to `%s:%s' for user `%s'. (SSL enabled.)"
    server port user))
 
-(defun set-smtp-starttls (server port user password  &optional key cert)
+(defun set-smtp-starttls (server port user password &optional key cert)
   "Set related SMTP and Starttls variables for supplied parameters."
   (setq starttls-use-gnutls t
         starttls-gnutls-program "gnutls-cli"
@@ -2091,13 +2176,13 @@ limitations under the License.
 
 ;; TODO - test
 (mapcar (lambda (topic)
-            (gnus-topic-set-parameters
-             topic
-             '((gnus-use-adaptive-scoring nil)
-               (gnus-use-scoring nil)
-               (visible . t)
-               (display . all)
-               (modeline-notify . t))))
+          (gnus-topic-set-parameters
+           topic
+           '((gnus-use-adaptive-scoring nil)
+             (gnus-use-scoring nil)
+             (visible . t)
+             (display . all)
+             (modeline-notify . t))))
         '("important" "work"))
 
                                         ; Email splitting rules:
@@ -2116,8 +2201,6 @@ limitations under the License.
   (add-to-list 'company-backends 'company-bbdb)
   (bbdb-initialize 'gnus 'message)
   (bbdb-mua-auto-update-init 'gnus 'message))
-
-
 
 (general-define-key
  :keymaps '(gnus-group-mode-map gnus-topic-mode-map)
@@ -2194,7 +2277,7 @@ limitations under the License.
 (use-package md4rd
   :defer t
   :config
-  (setq md4rd-subs-active 
+  (setq md4rd-subs-active
         '(linux
           emacs
           lisp
@@ -2242,7 +2325,7 @@ limitations under the License.
   (eaf-setq eaf-mindmap-dark-mode "true"))
 
 ;; load my custom scripts
-(load "~/Dropbox/Helen/washing-machine-timer.el" t t)
-(load "~/Dropbox/Helen/einkaufsliste/interactiveEnterLisp.el" t t)
+(load "~/Dropbox/Helen+Dario/washing-machine-timer.el" t t)
+(load "~/Dropbox/Helen+Dario/einkaufsliste/interactiveEnterLisp.el" t t)
 
 ;;; emacs ends here

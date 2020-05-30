@@ -6,8 +6,18 @@
 ;; I use evil-mode everywhere, and the config is based on use-package and general
 ;;; Code:
 
-
 (setq lexical-binding t)
+
+;; for native-comp branch
+(when (fboundp 'native-compile-async)
+  (if (y-or-n-p "async compile?")
+      (setq comp-async-jobs-number 4 ;; not using all cores
+            comp-deferred-compilation t
+            ;; comp-deferred-compilation-black-list
+            ;; '()
+            )
+    (setq comp-deferred-compilation nil)))
+
 ;;; speed up startup using Ambrevar's suggestions: (reset later by loading gcmh)
 (setq gc-cons-threshold (* 64 1024 1024)
       gc-cons-percentage 0.6)
@@ -958,36 +968,31 @@ It only works for frames with exactly two windows.
           (exwm-workspace-switch (+ exwm-workspace-current-index p))))
 
       (defun exwm-windmove-left (&optional arg)
-        "Like windmove-left but go to previous workspace if there is
-dow on the left."
+        "Like windmove-left but go to previous workspace if there is window on the left."
         (interactive "P")
         (if (or (<= exwm-connected-displays 1) (windmove-find-other-window 'left arg))
             (windmove-do-window-select 'left arg)
           ;; No window to the left
           ;; Switch to previous workspace and select rightmost window
           ;; (exwm-workspace-switch-previous 1)
-          (while (windmove-find-other-window 'right arg)
-            (windmove-do-window-select 'right arg))))
+          ;; (while (windmove-find-other-window 'right arg)
+          ;;   (windmove-do-window-select 'right arg))
+          ))
 
       (defun exwm-windmove-right (&optional arg)
-        "Like windmove-right but go to previous workspace if there is
-dow on the right."
+        "Like windmove-right but go to previous workspace if there is a window on the right."
         (interactive "P")
         (if (or (<= exwm-connected-displays 1) (windmove-find-other-window 'right arg))
             (windmove-do-window-select 'right arg)
           ;; No window to the left
           ;; Switch to next workspace and select leftmost window
           ;; (exwm-workspace-switch-next 1)
-          (while (windmove-find-other-window 'left arg)
-            (windmove-do-window-select 'left arg))))
-
-      (setq exwm-windmove-workspace-1-below-p t)
-      ;; FIXME: Automatically get displayed workspace on top monitor
-      (setq exwm-windmove-last-workspace-top 1)
+          ;; (while (windmove-find-other-window 'left arg)
+          ;;   (windmove-do-window-select 'left arg))
+          ))
 
       (defun exwm-windmove-down (&optional arg)
-        "Like windmove-down but go to workspace 1 if there is no window
-ive minibuffer below and `exwm-windmove-workspace-1-below-p' is non-NIL."
+        "Like windmove-down but switch monitors if there is no window and active minibuffer below"
         (interactive "P")
         (let ((active-minibuffer-below-p
                (and (minibuffer-window-active-p (minibuffer-window))
@@ -998,26 +1003,17 @@ ive minibuffer below and `exwm-windmove-workspace-1-below-p' is non-NIL."
                   (not (eq (minibuffer-window) (windmove-find-other-window 'down arg))))
               (windmove-do-window-select 'down arg)
             ;; No window below
-            (when exwm-windmove-workspace-1-below-p
-              ;; Switch to workspace 0 and select top window
-              (setq exwm-windmove-last-workspace-top exwm-workspace-current-index)
-              (exwm-workspace-switch 0)
-              (while (windmove-find-other-window 'up arg)
-                (windmove-do-window-select 'up arg))))))
-
+            (when (oddp exwm-workspace-current-index) ; very specific to my setup
+              (my/exwm-switch-to-other-workspace)))))
+      
       (defun exwm-windmove-up (&optional arg)
-        "Like windmove-up but go to workspace 1 if there is
-dow below and `exwm-windmove-workspace-1-below-p' is non-NIL."
+        "Like windmove-up but switch monitors if there is no window above"
         (interactive "P")
         (if (or (<= exwm-connected-displays 1) (windmove-find-other-window 'up arg))
             (windmove-do-window-select 'up arg)
           ;; No window below
-          (when exwm-windmove-workspace-1-below-p
-            ;; Switch to workspace 1 and select bottom window
-            (exwm-workspace-switch exwm-windmove-last-workspace-top)
-            (while (windmove-find-other-window 'down arg)
-              (windmove-do-window-select 'down arg)))))
-
+          (when (evenp exwm-workspace-current-index) ; very specific to my setup
+            (my/exwm-switch-to-other-workspace))))
       (use-package exwm-input
         :after exwm-randr
         :ensure nil
@@ -1511,6 +1507,23 @@ dow below and `exwm-windmove-workspace-1-below-p' is non-NIL."
               (evil-org-set-key-theme)))
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
+
+(use-package org-roam
+  :hook
+  (after-init . org-roam-mode)
+  :custom
+  (org-roam-directory "~/Documents/org-roam/")
+  :config
+  (require 'org-roam-protocol)
+  (my/leader-def
+    :states 'normal
+    "n l" 'org-roam
+    "n f" 'org-roam-find-file
+    "n g" 'org-roam-graph)
+  (my/local-leader-def
+    :states 'normal
+    :keymaps 'org-mode-map
+    "n i" 'org-roam-insert))
 
 ;; (use-package org-bullets
 ;;   :config

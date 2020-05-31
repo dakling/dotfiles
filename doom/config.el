@@ -499,6 +499,163 @@
 ;; (gnus-icalendar-org-setup)
 
 
+(defun my/mu4e-setup ()
+
+  ;; (use-package! mu4e-conversation)
+
+  ;; (global-mu4e-conversation-mode)
+  (defun my/mu4e-set-account ()
+    "Set the account for composing a message."
+    (let* ((account
+            (if mu4e-compose-parent-message
+                (let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
+                  (string-match "/\\(.*?\\)/" maildir)
+                  (match-string 1 maildir))
+              (completing-read (format "Compose with account: (%s) "
+                                       (mapconcat #'(lambda (var) (car var))
+                                                  my/mu4e-account-alist "/"))
+                               (mapcar #'(lambda (var) (car var)) my/mu4e-account-alist)
+                               nil t nil nil (caar my/mu4e-account-alist))))
+           (account-vars (cdr (assoc account my/mu4e-account-alist))))
+      (if account-vars
+          (mapc #'(lambda (var)
+                    (set (car var) (cadr var)))
+                account-vars)
+        (error "No email account found"))))
+
+  ;; ask for account when composing mail
+  (add-hook 'mu4e-compose-pre-hook 'my/mu4e-set-account)
+  ;; (setq mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e")
+  ;; (setq mu4e-maildir "~/Mail")
+  ;; (setq mu4e-trash-folder "/Trash")
+  ;; (setq mu4e-refile-folder "/Archive")
+  (setq mu4e-get-mail-command "offlineimap -o")
+  ;; (setq mu4e-update-interval 120)
+  ;; (setq mu4e-hide-index-messages t) ; do not show minibuffer messages after updates
+  ;; (setq mu4e-index-update-error-warning nil)
+  (setq mu4e-compose-signature-auto-include t)
+  ;; (setq mu4e-view-show-images t)
+  (setq mu4e-enable-notifications t)
+  ;; (setq send-mail-function 'smtpmail-send-it)
+  ;; (setq message-send-mail-function 'smtpmail-send-it)
+  ;; (setq smtpmail-stream-type 'ssl)
+  ;; (setq mu4e-view-show-addresses t)
+  (setq my/mu4e-account-alist
+        '(("FDY"
+           (mu4e-sent-messages-behavior sent)
+           (mu4e-compose-signature-auto-include t)
+           (mu4e-compose-signature
+            "Technische Universität Darmstadt
+Dario Klingenberg, M.Sc.
+Fachgebiet für Strömungsdynamik
+Fachbereich Maschinenbau
+Fachgebiet für Strömungsdynamik (FDY)
+Otto-Berndt-Straße 2 (L1|01 322)
+64287 Darmstadt
+
+E-Mail: klingenberg@fdy.tu-darmstadt.de
+Telefon: +49 6151 16-26207
+Fax: +49 6151 16-26203
+Web: http://www.fdy.tu-darmstadt.de")
+           (mu4e-sent-folder "/FDY/Sent Items")
+           (mu4e-drafts-folder "/FDY/Drafts")
+           (smtpmail-smtp-server "smtp.tu-darmstadt.de")
+           (smtpmail-smtp-service 465)
+           (smtpmail-stream-type ssl)
+           (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
+           (user-full-name "Dario Klingenberg"))
+          ("GSC"
+           (mu4e-sent-messages-behavior sent)
+           (mu4e-compose-signature-auto-include t)
+           (mu4e-compose-signature
+            "Technische Universität Darmstadt
+Dario Klingenberg, M.Sc.
+Graduate School Computational Engineering
+Dolivostraße 15
+64293 Darmstadt
+
+E-Mail: klingenberg@gsc.tu-darmstadt.de
+Telefon: +49 6151 16-24381
+Fax: +49 6151 16-24404
+Web: http://www.gsc.ce.tu-darmstadt.de/")
+           (mu4e-sent-folder "/GSC/Sent Items")
+           (mu4e-drafts-folder "/GSC/Drafts")
+           (smtpmail-smtp-server "smtp.gsc.ce.tu-darmstadt.de")
+           (smtpmail-smtp-service 465)
+           (smtpmail-stream-type ssl)
+           (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
+           (user-full-name "Dario Klingenberg"))
+          ("Gmail"
+           ;; Under each account, set the account-specific variables you want.
+           (mu4e-sent-messages-behavior delete)
+           (mu4e-compose-signature-auto-include nil)
+           (mu4e-sent-folder "/Gmail/sent")
+           (mu4e-drafts-folder "/Gmail/drafts")
+           (user-mail-address "dario.klingenberg@gmail.com")
+           (smtpmail-smtp-server "smtp.gmail.com")
+           (smtpmail-smtp-service 465)
+           (smtpmail-stream-type ssl)
+           (user-full-name "Dario Klingenberg"))
+          ("Web"
+           (mu4e-sent-messages-behavior sent)
+           (mu4e-compose-signature-auto-include nil)
+           (mu4e-sent-folder "/Web/Sent Items")
+           (mu4e-drafts-folder "/Web/Drafts")
+           (smtpmail-smtp-server "smtp.web.de")
+           (smtpmail-smtp-service 587)
+           (smtpmail-stream-type starttls)
+           (user-mail-address "dario.klingenberg@web.de")
+           (user-full-name "dario"))))
+  (run-at-time t mu4e-update-interval #'(lambda ()
+                                          (progn
+                                            (mu4e-update-mail-and-index t)))); this should not be needed, but it is
+
+  ;; taken from reddit
+  ;; (use-package! mu4e-alert
+  ;;   :config
+  ;;   (setq mu4e-alert-interesting-mail-query "flag:unread AND NOT flag:trashed AND NOT maildir:/Web/INBOX/")
+  ;;   (mu4e-alert-enable-mode-line-display)
+  ;;   (mu4e-alert-enable-notifications)
+  ;;   (mu4e-alert-set-default-style 'libnotify)
+  ;;   (alert-add-rule
+  ;;    :category "mu4e-alert"
+  ;;    :predicate (lambda (_) (string-match-p "^mu4e-" (symbol-name major-mode)))
+  ;;    :continue t))
+
+  ;; (require 'mu4e-icalendar)
+  ;; (mu4e-icalendar-setup)
+  ;; (setq mu4e-view-use-gnus nil)
+
+  ;; (defun convert-vcal-to-org ()
+  ;;   (interactive)
+  ;;   (read-only-mode -1)
+  ;;   (erase-buffer)
+  ;;   (let* ((ical2org (executable-find "ical2org")))
+  ;;     (insert (shell-command-to-string
+  ;;              (concat "awk -f " ical2org " <" (shell-quote-argument (buffer-file-name)))))
+  ;;     (keep-lines "^[\*(  )]" (point-min) (point-max))
+  ;;     (flush-lines "^ *$" (point-min) (point-max))))
+
+  ;; (define-derived-mode
+  ;;   my/mu4e-cal-view-mode
+  ;;   fundamental-mode
+  ;;   "my/mu4e-cal-view-mode"
+  ;;   "View cal in mu4e."
+  ;;   (convert-vcal-to-org))
+
+  ;; (add-to-list 'auto-mode-alist '("\\.vcs\\'" . my/mu4e-cal-view-mode))
+
+  ;; (require 'gnus-icalendar)
+  ;; (gnus-icalendar-setup)
+
+  ;; (setq gnus-icalendar-org-capture-file "~/Documents/TODO.org")
+  ;; (setq gnus-icalendar-org-capture-headline '("IMPORTANT DATES")) ;;make sure to create Calendar heading first
+  ;; (gnus-icalendar-org-setup)
+  )
+
+(my/mu4e-setup)
+
+
 ;; keybindings
 (map! :leader
       "SPC" #'execute-extended-command

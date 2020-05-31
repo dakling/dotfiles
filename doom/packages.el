@@ -54,10 +54,11 @@
 ;; exwm
 (package! xelb)
 (package! exwm)
+(package! dmenu)
 
 ;; gnus and friends
-(package! bbdb)
-(package! gnus-desktop-notify)
+;; (package! bbdb)
+;; (package! gnus-desktop-notify)
 
 (package! mini-modeline)
 

@@ -192,20 +192,7 @@
       (defvar exwm-connected-displays)
       (use-package! exwm-randr
         :after exwm
-        :preface
-        (defun my/exwm-get-other-workspace ()
-          (cond ((not (= 2 (length (seq-filter #'identity (mapcar #'exwm-workspace--active-p exwm-workspace--list))))) nil) ;currently only works for two monitors
-                ((= exwm-workspace-current-index
-                    (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))
-                 (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
-                ((= exwm-workspace-current-index
-                    (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
-                 (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))))
-        (defun my/exwm-switch-to-other-workspace () (interactive)
-               (exwm-workspace-switch (my/exwm-get-other-workspace)))
-        (defun my/exwm-move-window-to-other-workspace () (interactive)
-               (exwm-workspace-move-window (my/exwm-get-other-workspace)))
-
+        :init
         (cond
          ((system-name= "klingenberg-tablet") (progn (set 'monitor1 "eDP1")
                                                      (set 'monitor2 "HDMI2")
@@ -219,6 +206,31 @@
          (t (progn (set 'monitor2 "VGA-1")
                    (set 'monitor1 "HDMI-1")
                    (set 'placement "left-of"))))
+        (setq exwm-randr-workspace-monitor-plist (list 0 monitor1
+                                                       2 monitor1
+                                                       4 monitor1
+                                                       6 monitor1
+                                                       8 monitor1
+                                                       1 monitor2
+                                                       3 monitor2
+                                                       5 monitor2
+                                                       7 monitor2
+                                                       9 monitor2))
+        :config
+        (defun my/exwm-get-other-workspace ()
+          (cond ((not (= 2 (length (seq-filter #'identity (mapcar #'exwm-workspace--active-p exwm-workspace--list))))) nil) ;currently only works for two monitors
+                ((= exwm-workspace-current-index
+                    (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))
+                 (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
+                ((= exwm-workspace-current-index
+                    (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
+                 (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))))
+        (defun my/exwm-switch-to-other-workspace () (interactive)
+               (exwm-workspace-switch (my/exwm-get-other-workspace)))
+        (defun my/exwm-move-window-to-other-workspace () (interactive)
+               (exwm-workspace-move-window (my/exwm-get-other-workspace)))
+
+
         (defun my/exwm-xrandr ()
           "Configure screen with xrandr."
           (shell-command
@@ -234,35 +246,17 @@
           (my/fix-touchscreen)
           (setq exwm-connected-displays (length (cadr (exwm-randr--get-outputs)))))
 
-        :hook (exwm-randr-screen-change . my/exwm-xrandr)
-        :init
-        (setq exwm-randr-workspace-monitor-plist (list 0 monitor1
-                                                       2 monitor1
-                                                       4 monitor1
-                                                       6 monitor1
-                                                       8 monitor1
-                                                       1 monitor2
-                                                       3 monitor2
-                                                       5 monitor2
-                                                       7 monitor2
-                                                       9 monitor2))
-        :config
+        (add-hook 'exwm-randr-screen-change-hook #'my/exwm-xrandr)
         (progn
           (exwm-randr-enable)))
 
       (use-package! exwm-workspace
-        :ensure nil
         :after exwm
-        :demand t
         :init
         (progn
           (setq exwm-workspace-number 10)
           (setq exwm-workspace-show-all-buffers t)
-          (setq exwm-layout-show-all-buffers t)))
-
-      ;; (require 'exwmx-xfce)
-      ;; (exwmx-xfce-enable)
-      ))
+          (setq exwm-layout-show-all-buffers t)))))
 
 (defun my/create-super-bindings ()
   "Create bindings starting with super for use outside exwm."
@@ -298,211 +292,211 @@
    "s-<f12>" '(lambda () (interactive)
                 (start-process "" nil "/usr/bin/slock"))))
 
-(my/create-super-bindings)
+;; (my/create-super-bindings)
 
 ;; mail - gnus
-(after! gnus
- (gnus-demon-add-handler 'gnus-demon-scan-news 5 nil)
- (gnus-demon-init))
+;; (after! gnus
+;;  (gnus-demon-add-handler 'gnus-demon-scan-news 5 nil)
+;;  (gnus-demon-init))
 
-;; Don't ask auto-save stuff when opening
-(setq gnus-always-read-dribble-file t)
-                                        ; No primary server:
-(setq gnus-select-method '(nnnil ""))
+;; ;; Don't ask auto-save stuff when opening
+;; (setq gnus-always-read-dribble-file t)
+;;                                         ; No primary server:
+;; (setq gnus-select-method '(nnnil ""))
 
-                                        ; Get local email, and store it in nnml; connect via IMAP to imap.gmail.com...:
-(setq gnus-secondary-select-methods '((nnml "")
-                                      (nnimap "mail.tu-darmstadt.de")
-                                      (nnimap "imap.gmail.com")
-                                      (nnimap "imap.web.de")
-                                      (nnimap "mail.gsc.ce.tu-darmstadt.de")
-                                      ;;(nnrss "https://www.zeitsprung.fm/feed/mp3/")
-                                      ;; (nnreddit "")
-                                      ))
+;;                                         ; Get local email, and store it in nnml; connect via IMAP to imap.gmail.com...:
+;; (setq gnus-secondary-select-methods '((nnml "")
+;;                                       (nnimap "mail.tu-darmstadt.de")
+;;                                       (nnimap "imap.gmail.com")
+;;                                       (nnimap "imap.web.de")
+;;                                       (nnimap "mail.gsc.ce.tu-darmstadt.de")
+;;                                       ;;(nnrss "https://www.zeitsprung.fm/feed/mp3/")
+;;                                       ;; (nnreddit "")
+;;                                       ))
 
-                                        ; Archive outgoing email in Sent folder on imap.mcom.com:
-;; (setq gnus-message-archive-method '(nnimap "imap.gmail.com")
-;;       gnus-message-archive-group "[Gmail]/Sent Mail")
+;;                                         ; Archive outgoing email in Sent folder on imap.mcom.com:
+;; ;; (setq gnus-message-archive-method '(nnimap "imap.gmail.com")
+;; ;;       gnus-message-archive-group "[Gmail]/Sent Mail")
 
-                                        ; Mark gcc'ed (archived) as read:
-(setq gnus-gcc-mark-as-read t)
+;;                                         ; Mark gcc'ed (archived) as read:
+;; (setq gnus-gcc-mark-as-read t)
 
-                                        ; Send email via Gmail:
-;; (setq message-send-mail-function 'smtpmail-send-it
-;;       smtpmail-default-smtp-server "smtp.gmail.com")
+;;                                         ; Send email via Gmail:
+;; ;; (setq message-send-mail-function 'smtpmail-send-it
+;; ;;       smtpmail-default-smtp-server "smtp.gmail.com")
 
 
-;; Available SMTP accounts.
-(defvar smtp-accounts
-  '((ssl "klingenberg@fdy.tu-darmstadt.de" "smtp.tu-darmstadt.de" 465 "km88econ" nil)
-    (ssl "dario.klingenberg@gmail.com" "smtp.gmail.com" 465 "dario.klingenberg" nil)
-    (starttls "dario.klingenberg@web.de" "smtp.web.de" 587 "dario.klingenberg" nil)
-    (ssl "klingenberg@gsc.tu-darmstadt.de" "smtp.gsc.ce.tu-darmstadt.de" 465 "klingenberg" nil)))
+;; ;; Available SMTP accounts.
+;; (defvar smtp-accounts
+;;   '((ssl "klingenberg@fdy.tu-darmstadt.de" "smtp.tu-darmstadt.de" 465 "km88econ" nil)
+;;     (ssl "dario.klingenberg@gmail.com" "smtp.gmail.com" 465 "dario.klingenberg" nil)
+;;     (starttls "dario.klingenberg@web.de" "smtp.web.de" 587 "dario.klingenberg" nil)
+;;     (ssl "klingenberg@gsc.tu-darmstadt.de" "smtp.gsc.ce.tu-darmstadt.de" 465 "klingenberg" nil)))
 
-;; Let Gnus change the "From:" line by looking at current group we are in.
-(setq gnus-posting-styles
-      '(((mail-header-from "*fdy*") (signature-file "~/.config/emacs/fdy-signature"))
-        ("fdy" (address "klingenberg@fdy.tu-darmstadt.de") (signature-file "~/.config/emacs/fdy-signature"))
-        ("gsc" (address "klingenberg@gsc.tu-darmstadt.de") (signature-file "~/.config/emacs/gsc-signature"))
-        ("gmail" (address "dario.klingenberg@gmail.com") (signature-file nil))
-        ("web" (address "dario.klingenberg@web.de") (signature-file nil))))
+;; ;; Let Gnus change the "From:" line by looking at current group we are in.
+;; (setq gnus-posting-styles
+;;       '(((mail-header-from "*fdy*") (signature-file "~/.config/emacs/fdy-signature"))
+;;         ("fdy" (address "klingenberg@fdy.tu-darmstadt.de") (signature-file "~/.config/emacs/fdy-signature"))
+;;         ("gsc" (address "klingenberg@gsc.tu-darmstadt.de") (signature-file "~/.config/emacs/gsc-signature"))
+;;         ("gmail" (address "dario.klingenberg@gmail.com") (signature-file nil))
+;;         ("web" (address "dario.klingenberg@web.de") (signature-file nil))))
 
-;; Default smtpmail.el configurations.
-(require 'cl)
-(require 'smtpmail)
-(setq send-mail-function 'smtpmail-send-it
-      message-send-mail-function 'smtpmail-send-it
-      mail-from-style nil
-      user-full-name "Dario Klingenberg"
-      user-mail-address "klingenberg@fdy.tu-darmstadt.de"
-      smtpmail-debug-info t
-      smtpmail-debug-verb t)
+;; ;; Default smtpmail.el configurations.
+;; (require 'cl)
+;; (require 'smtpmail)
+;; (setq send-mail-function 'smtpmail-send-it
+;;       message-send-mail-function 'smtpmail-send-it
+;;       mail-from-style nil
+;;       user-full-name "Dario Klingenberg"
+;;       user-mail-address "klingenberg@fdy.tu-darmstadt.de"
+;;       smtpmail-debug-info t
+;;       smtpmail-debug-verb t)
 
-(defun set-smtp (mech server port user password)
-  "Set related SMTP variables for supplied parameters."
-  (setq smtpmail-smtp-server server
-        smtpmail-smtp-service port
-        smtpmail-auth-credentials (list (list server port user password))
-        smtpmail-auth-supported (list mech)
-        smtpmail-starttls-credentials nil)
-  (message "Setting SMTP server to `%s:%s' for user `%s'."
-           server port user))
+;; (defun set-smtp (mech server port user password)
+;;   "Set related SMTP variables for supplied parameters."
+;;   (setq smtpmail-smtp-server server
+;;         smtpmail-smtp-service port
+;;         smtpmail-auth-credentials (list (list server port user password))
+;;         smtpmail-auth-supported (list mech)
+;;         smtpmail-starttls-credentials nil)
+;;   (message "Setting SMTP server to `%s:%s' for user `%s'."
+;;            server port user))
 
-(defun set-smtp-ssl (server port user password &optional key cert)
-  "Set related SMTP and SSL variables for supplied parameters."
-  (setq starttls-use-gnutls t
-        starttls-gnutls-program "gnutls-cli"
-        starttls-extra-arguments nil
-        smtpmail-smtp-server server
-        smtpmail-smtp-service port
-        smtpmail-stream-type 'ssl
-        smtpmail-auth-credentials (list (list server port user password))
-        smtpmail-starttls-credentials (list (list server port key cert)))
-  (message
-   "Setting SMTP server to `%s:%s' for user `%s'. (SSL enabled.)"
-   server port user))
+;; (defun set-smtp-ssl (server port user password &optional key cert)
+;;   "Set related SMTP and SSL variables for supplied parameters."
+;;   (setq starttls-use-gnutls t
+;;         starttls-gnutls-program "gnutls-cli"
+;;         starttls-extra-arguments nil
+;;         smtpmail-smtp-server server
+;;         smtpmail-smtp-service port
+;;         smtpmail-stream-type 'ssl
+;;         smtpmail-auth-credentials (list (list server port user password))
+;;         smtpmail-starttls-credentials (list (list server port key cert)))
+;;   (message
+;;    "Setting SMTP server to `%s:%s' for user `%s'. (SSL enabled.)"
+;;    server port user))
 
-(defun set-smtp-starttls (server port user password &optional key cert)
-  "Set related SMTP and Starttls variables for supplied parameters."
-  (setq starttls-use-gnutls t
-        starttls-gnutls-program "gnutls-cli"
-        starttls-extra-arguments nil
-        smtpmail-smtp-server server
-        smtpmail-smtp-service port
-        smtpmail-stream-type 'starttls
-        smtpmail-auth-credentials (list (list server port user password))
-        smtpmail-starttls-credentials (list (list server port key cert)))
-  (message
-   "Setting SMTP server to `%s:%s' for user `%s'. (SSL enabled.)"
-   server port user))
+;; (defun set-smtp-starttls (server port user password &optional key cert)
+;;   "Set related SMTP and Starttls variables for supplied parameters."
+;;   (setq starttls-use-gnutls t
+;;         starttls-gnutls-program "gnutls-cli"
+;;         starttls-extra-arguments nil
+;;         smtpmail-smtp-server server
+;;         smtpmail-smtp-service port
+;;         smtpmail-stream-type 'starttls
+;;         smtpmail-auth-credentials (list (list server port user password))
+;;         smtpmail-starttls-credentials (list (list server port key cert)))
+;;   (message
+;;    "Setting SMTP server to `%s:%s' for user `%s'. (SSL enabled.)"
+;;    server port user))
 
-(defun change-smtp ()
-  "Change the SMTP server according to the current from line."
-  (save-excursion
-    (loop with from = (save-restriction
-                        (message-narrow-to-headers)
-                        (message-fetch-field "from"))
-          for (auth-mech address . auth-spec) in smtp-accounts
-          when (string-match address from)
-          do (cond
-              ((memq auth-mech '(cram-md5 plain login))
-               (return (apply 'set-smtp (cons auth-mech auth-spec))))
-              ((eql auth-mech 'ssl)
-               (return (apply 'set-smtp-ssl auth-spec)))
-              ((eql auth-mech 'starttls)
-               (return (apply 'set-smtp-starttls auth-spec)))
-              (t (error "Unrecognized SMTP auth. mechanism: `%s'" auth-mech)))
-          finally (error "Cannot infer SMTP information"))))
+;; (defun change-smtp ()
+;;   "Change the SMTP server according to the current from line."
+;;   (save-excursion
+;;     (loop with from = (save-restriction
+;;                         (message-narrow-to-headers)
+;;                         (message-fetch-field "from"))
+;;           for (auth-mech address . auth-spec) in smtp-accounts
+;;           when (string-match address from)
+;;           do (cond
+;;               ((memq auth-mech '(cram-md5 plain login))
+;;                (return (apply 'set-smtp (cons auth-mech auth-spec))))
+;;               ((eql auth-mech 'ssl)
+;;                (return (apply 'set-smtp-ssl auth-spec)))
+;;               ((eql auth-mech 'starttls)
+;;                (return (apply 'set-smtp-starttls auth-spec)))
+;;               (t (error "Unrecognized SMTP auth. mechanism: `%s'" auth-mech)))
+;;           finally (error "Cannot infer SMTP information"))))
 
-(defadvice smtpmail-via-smtp
-    (before smtpmail-via-smtp-ad-change-smtp (recipient smtpmail-text-buffer))
-  "Call `change-smtp' before every `smtpmail-via-smtp'."
-  (with-current-buffer smtpmail-text-buffer (change-smtp)))
+;; (defadvice smtpmail-via-smtp
+;;     (before smtpmail-via-smtp-ad-change-smtp (recipient smtpmail-text-buffer))
+;;   "Call `change-smtp' before every `smtpmail-via-smtp'."
+;;   (with-current-buffer smtpmail-text-buffer (change-smtp)))
 
-(setq message-dont-reply-to-names "klingenberg")
+;; (setq message-dont-reply-to-names "klingenberg")
 
-(ad-activate 'smtpmail-via-smtp)
-;; (ad-deactivate 'smtpmail-via-smtp)
+;; (ad-activate 'smtpmail-via-smtp)
+;; ;; (ad-deactivate 'smtpmail-via-smtp)
 
-                                        ; Use topics per default:
-(add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
-                                        ; Show more MIME-stuff:
-(setq gnus-mime-display-multipart-related-as-mixed t)
-                                        ; Smileys:
-(setq smiley-style 'medium)
-                                        ; Don't get the first article automatically:
-(setq gnus-auto-select-first nil)
-                                        ; Don't show that annoying arrow:
-(setq gnus-summary-display-arrow nil)
+;;                                         ; Use topics per default:
+;; (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
+;;                                         ; Show more MIME-stuff:
+;; (setq gnus-mime-display-multipart-related-as-mixed t)
+;;                                         ; Smileys:
+;; (setq smiley-style 'medium)
+;;                                         ; Don't get the first article automatically:
+;; (setq gnus-auto-select-first nil)
+;;                                         ; Don't show that annoying arrow:
+;; (setq gnus-summary-display-arrow nil)
 
-;; (setq nnimap-split-inbox "INBOX") ;; (1)
-;; (setq nnimap-split-predicate "UNDELETED") ;; (2)
-;; (setq nnimap-split-rule
-;;        '(
-;;          ("INBOX.web" "^To:.*web.de")
-;;          ("INBOX.gmail" "^To:.*gmail.com")
-;;          ("INBOX.fdy" "^To:.*fdy.tu-darmstadt.de")
-;;          ("INBOX.gsc" "^To:.*gsc.tu-darmstadt.de")
-;;         ))
+;; ;; (setq nnimap-split-inbox "INBOX") ;; (1)
+;; ;; (setq nnimap-split-predicate "UNDELETED") ;; (2)
+;; ;; (setq nnimap-split-rule
+;; ;;        '(
+;; ;;          ("INBOX.web" "^To:.*web.de")
+;; ;;          ("INBOX.gmail" "^To:.*gmail.com")
+;; ;;          ("INBOX.fdy" "^To:.*fdy.tu-darmstadt.de")
+;; ;;          ("INBOX.gsc" "^To:.*gsc.tu-darmstadt.de")
+;; ;;         ))
 
-(setq gnus-topic-topology '(("Gnus" visible)
-                            (("important" visible)
-                             (("work" visible)))
-                            (("misc" visible))))
+;; (setq gnus-topic-topology '(("Gnus" visible)
+;;                             (("important" visible)
+;;                              (("work" visible)))
+;;                             (("misc" visible))))
 
-;; TODO - test
-;; (mapcar (lambda (topic)
-;;           (gnus-topic-set-parameters
-;;            topic
-;;            '((gnus-use-adaptive-scoring nil)
-;;              (gnus-use-scoring nil)
-;;              (visible . t)
-;;              (display . all)
-;;              (modeline-notify . t))))
-;;         '("important" "work"))
+;; ;; TODO - test
+;; ;; (mapcar (lambda (topic)
+;; ;;           (gnus-topic-set-parameters
+;; ;;            topic
+;; ;;            '((gnus-use-adaptive-scoring nil)
+;; ;;              (gnus-use-scoring nil)
+;; ;;              (visible . t)
+;; ;;              (display . all)
+;; ;;              (modeline-notify . t))))
+;; ;;         '("important" "work"))
 
-                                        ; Email splitting rules:
-(setq nnmail-split-fancy
-      '(|
-        (any "klingenberg@fdy.tu-darmstadt.de" "work")
-        (any "klingenberg@gsc.tu-darmstadt.de" "work")
-        (any "klingenberg@gmail.tu-darmstadt.de" "important")
-        "INBOX"))
-                                        ; Use fancy splitting:
-(setq nnmail-split-methods 'nnmail-split-fancy)
+;;                                         ; Email splitting rules:
+;; (setq nnmail-split-fancy
+;;       '(|
+;;         (any "klingenberg@fdy.tu-darmstadt.de" "work")
+;;         (any "klingenberg@gsc.tu-darmstadt.de" "work")
+;;         (any "klingenberg@gmail.tu-darmstadt.de" "important")
+;;         "INBOX"))
+;;                                         ; Use fancy splitting:
+;; (setq nnmail-split-methods 'nnmail-split-fancy)
 
-;; auto-complete addresses
-(use-package! bbdb
-  :config
-  (add-to-list 'company-backends 'company-bbdb)
-  (bbdb-initialize 'gnus 'message)
-  (bbdb-mua-auto-update-init 'gnus 'message))
+;; ;; auto-complete addresses
+;; (use-package! bbdb
+;;   :config
+;;   (add-to-list 'company-backends 'company-bbdb)
+;;   (bbdb-initialize 'gnus 'message)
+;;   (bbdb-mua-auto-update-init 'gnus 'message))
 
-;; (general-define-key
-;;  :keymaps '(gnus-group-mode-map gnus-topic-mode-map)
-;;  :states '(override normal)
-;;  "s" '(gnus-group-make-nnir-group :which-key "search")
-;;  "o" '(gnus-group-list-all-groups :which-key "all groups")
-;;  "O" '(gnus-group-list-groups :which-key "hide groups")
-;;  "D" '(gnus-group-delete-group :which-key "delete groups")
-;;  "M-G" '(gnus-group-get-new-news :which-key "refresh all groups"))
+;; ;; (general-define-key
+;; ;;  :keymaps '(gnus-group-mode-map gnus-topic-mode-map)
+;; ;;  :states '(override normal)
+;; ;;  "s" '(gnus-group-make-nnir-group :which-key "search")
+;; ;;  "o" '(gnus-group-list-all-groups :which-key "all groups")
+;; ;;  "O" '(gnus-group-list-groups :which-key "hide groups")
+;; ;;  "D" '(gnus-group-delete-group :which-key "delete groups")
+;; ;;  "M-G" '(gnus-group-get-new-news :which-key "refresh all groups"))
 
-;; (general-define-key
-;;  :keymaps '(gnus-summary-mode-map gnus-article-mode-map)
-;;  :states '(override normal)
-;;  "r" '(gnus-summary-reply-with-original :which-key "reply")
-;;  "R" '(gnus-summary-wide-reply-with-original :which-key "reply to all"))
+;; ;; (general-define-key
+;; ;;  :keymaps '(gnus-summary-mode-map gnus-article-mode-map)
+;; ;;  :states '(override normal)
+;; ;;  "r" '(gnus-summary-reply-with-original :which-key "reply")
+;; ;;  "R" '(gnus-summary-wide-reply-with-original :which-key "reply to all"))
 
-(use-package! gnus-desktop-notify
-  :config
-  (gnus-desktop-notify-mode)
-  (gnus-demon-add-scanmail))
+;; (use-package! gnus-desktop-notify
+;;   :config
+;;   (gnus-desktop-notify-mode)
+;;   (gnus-demon-add-scanmail))
 
-(require 'gnus-icalendar)
-(gnus-icalendar-setup)
-(setq gnus-icalendar-org-capture-file "~/Documents/TODO.org")
-(setq gnus-icalendar-org-capture-headline '("IMPORTANT DATES")) ;;make sure to create Calendar heading first
-(gnus-icalendar-org-setup)
+;; (require 'gnus-icalendar)
+;; (gnus-icalendar-setup)
+;; (setq gnus-icalendar-org-capture-file "~/Documents/TODO.org")
+;; (setq gnus-icalendar-org-capture-headline '("IMPORTANT DATES")) ;;make sure to create Calendar heading first
+;; (gnus-icalendar-org-setup)
 
 
 ;; keybindings

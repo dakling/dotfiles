@@ -60,6 +60,8 @@
 ;; (package! bbdb)
 ;; (package! gnus-desktop-notify)
 
+(package! mu4e-alert)
+
 (package! mini-modeline)
 
 (package! smooth-scrolling)

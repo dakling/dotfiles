@@ -25,7 +25,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-dark+)
+(setq doom-theme 'doom-solarized-dark)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -53,8 +53,19 @@
 ;; You can also try 'gd' (or 'C-c g d') to jump to their definition and see how
 ;; they are implemented.
 ;;
-;; Beginning of my configureation
+;; Beginning of my configuration
 
+
+;;; Setting some variables
+(setq evil-collection-setup-minibuffer t)
+
+(setq display-time-24hr-format t
+      display-time-default-load-average nil)
+(display-time-mode 1)
+
+(setq initial-major-mode 'lisp-interaction-mode)
+
+;;; Defining some useful functions
 (defun shutdown ()
   (interactive)
   (cond
@@ -88,6 +99,40 @@
 (defun my/fix-touchscreen ()
   (when (system-name= "klingenberg-tablet")
     (shell-command "xinput --map-to-output $(xinput list --id-only \"ELAN Touchscreen\") eDP1")))
+
+(use-package async-await)
+;; adapted from snippet by oremacs
+(defun my/youtube-dl ()
+  (interactive)
+  (let* ((url (or (plist-get eww-data :url)
+                  (current-kill 0)))
+         (str (replace-regexp-in-string
+               "-"
+               "-"
+               (replace-regexp-in-string
+                "\\&list.*"
+                ""
+                (replace-regexp-in-string
+                 "https://www.invidio.us/watch\\?v="
+                 ""
+                 (replace-regexp-in-string
+                  "https://www.youtube.com/watch\\?v="
+                  ""
+                  url)))))
+         (download-dir "~/Videos/"))
+    (message "Downloading video, will open as soon as download is complete...")
+    (set-process-sentinel
+     (start-process-shell-command
+      "youtube-download"
+      "*youtube-download*"
+      "youtube-dl"
+      (concat "-o " download-dir "%\\(title\\)s%\\(id\\)s")
+      (concat "\"" str "\""))
+     (lambda (_ _)
+       (helm-open-file-with-default-tool (car (directory-files
+                                               "~/Videos/"
+                                               ;; download-dir
+                                               t str)))))))
 
 (defun fdy-mount (source target)
   "Mount a directory from fdy windows remote server."
@@ -498,6 +543,7 @@
 ;; (setq gnus-icalendar-org-capture-headline '("IMPORTANT DATES")) ;;make sure to create Calendar heading first
 ;; (gnus-icalendar-org-setup)
 
+; (setq +mu4e-backend 'offlineimap)
 
 (defun my/mu4e-setup ()
 
@@ -529,7 +575,6 @@
   ;; (setq mu4e-maildir "~/Mail")
   ;; (setq mu4e-trash-folder "/Trash")
   ;; (setq mu4e-refile-folder "/Archive")
-  (setq mu4e-get-mail-command "offlineimap -o")
   ;; (setq mu4e-update-interval 120)
   ;; (setq mu4e-hide-index-messages t) ; do not show minibuffer messages after updates
   ;; (setq mu4e-index-update-error-warning nil)
@@ -541,7 +586,7 @@
   ;; (setq smtpmail-stream-type 'ssl)
   ;; (setq mu4e-view-show-addresses t)
   (setq my/mu4e-account-alist
-        '(("FDY"
+        '(("fdy"
            (mu4e-sent-messages-behavior sent)
            (mu4e-compose-signature-auto-include t)
            (mu4e-compose-signature
@@ -557,14 +602,14 @@ E-Mail: klingenberg@fdy.tu-darmstadt.de
 Telefon: +49 6151 16-26207
 Fax: +49 6151 16-26203
 Web: http://www.fdy.tu-darmstadt.de")
-           (mu4e-sent-folder "/FDY/Sent Items")
-           (mu4e-drafts-folder "/FDY/Drafts")
+           (mu4e-sent-folder "/fdy/Sent Items")
+           (mu4e-drafts-folder "/fdy/Drafts")
            (smtpmail-smtp-server "smtp.tu-darmstadt.de")
            (smtpmail-smtp-service 465)
            (smtpmail-stream-type ssl)
            (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
            (user-full-name "Dario Klingenberg"))
-          ("GSC"
+          ("gsc"
            (mu4e-sent-messages-behavior sent)
            (mu4e-compose-signature-auto-include t)
            (mu4e-compose-signature
@@ -578,49 +623,50 @@ E-Mail: klingenberg@gsc.tu-darmstadt.de
 Telefon: +49 6151 16-24381
 Fax: +49 6151 16-24404
 Web: http://www.gsc.ce.tu-darmstadt.de/")
-           (mu4e-sent-folder "/GSC/Sent Items")
-           (mu4e-drafts-folder "/GSC/Drafts")
+           (mu4e-sent-folder "/gsc/Sent Items")
+           (mu4e-drafts-folder "/gsc/Drafts")
            (smtpmail-smtp-server "smtp.gsc.ce.tu-darmstadt.de")
            (smtpmail-smtp-service 465)
            (smtpmail-stream-type ssl)
            (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
            (user-full-name "Dario Klingenberg"))
-          ("Gmail"
+          ("gmail"
            ;; Under each account, set the account-specific variables you want.
            (mu4e-sent-messages-behavior delete)
            (mu4e-compose-signature-auto-include nil)
-           (mu4e-sent-folder "/Gmail/sent")
-           (mu4e-drafts-folder "/Gmail/drafts")
+           (mu4e-sent-folder "/gmail/sent")
+           (mu4e-drafts-folder "/gmail/drafts")
            (user-mail-address "dario.klingenberg@gmail.com")
            (smtpmail-smtp-server "smtp.gmail.com")
            (smtpmail-smtp-service 465)
            (smtpmail-stream-type ssl)
            (user-full-name "Dario Klingenberg"))
-          ("Web"
+          ("web"
            (mu4e-sent-messages-behavior sent)
            (mu4e-compose-signature-auto-include nil)
-           (mu4e-sent-folder "/Web/Sent Items")
-           (mu4e-drafts-folder "/Web/Drafts")
+           (mu4e-sent-folder "/web/Sent Items")
+           (mu4e-drafts-folder "/web/Drafts")
            (smtpmail-smtp-server "smtp.web.de")
            (smtpmail-smtp-service 587)
            (smtpmail-stream-type starttls)
            (user-mail-address "dario.klingenberg@web.de")
            (user-full-name "dario"))))
-  (run-at-time t mu4e-update-interval #'(lambda ()
-                                          (progn
-                                            (mu4e-update-mail-and-index t)))); this should not be needed, but it is
+  ;; (run-at-time t mu4e-update-interval #'(lambda ()
+  ;;                                         (progn
+  ;;                                           (mu4e-update-mail-and-index t))))
+                                        ; this should not be needed, but it is
 
   ;; taken from reddit
-  ;; (use-package! mu4e-alert
-  ;;   :config
-  ;;   (setq mu4e-alert-interesting-mail-query "flag:unread AND NOT flag:trashed AND NOT maildir:/Web/INBOX/")
-  ;;   (mu4e-alert-enable-mode-line-display)
-  ;;   (mu4e-alert-enable-notifications)
-  ;;   (mu4e-alert-set-default-style 'libnotify)
-  ;;   (alert-add-rule
-  ;;    :category "mu4e-alert"
-  ;;    :predicate (lambda (_) (string-match-p "^mu4e-" (symbol-name major-mode)))
-  ;;    :continue t))
+  (use-package! mu4e-alert
+    :config
+    (setq mu4e-alert-interesting-mail-query "flag:unread AND NOT flag:trashed AND NOT maildir:/Web/INBOX/")
+    (mu4e-alert-enable-mode-line-display)
+    (mu4e-alert-enable-notifications)
+    (mu4e-alert-set-default-style 'libnotify)
+    (alert-add-rule
+     :category "mu4e-alert"
+     :predicate (lambda (_) (string-match-p "^mu4e-" (symbol-name major-mode)))
+     :continue t))
 
   ;; (require 'mu4e-icalendar)
   ;; (mu4e-icalendar-setup)
@@ -657,13 +703,86 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 
 
 ;; keybindings
+;;
+;; alternative leader for exwm
+(setq doom-leader-alt-key "s-SPC")
+
+(setq doom-localleader-key "-")
+
 (map! :leader
       "SPC" #'execute-extended-command
       "lm" #'bookmark-set
-      "ll" #'bookmark-jump)
+      "ll" #'bookmark-jump
+      "x" (lambda () (interactive) (switch-to-buffer "*scratch*"))
+      "w TAB" #'evil-switch-to-windows-last-buffer)
+
+(map!
+ :n "gb" #'pop-tag-mark)
 
 (map! :leader :map (elisp)
       "ef" #'eval-defun)
+
+(use-package! lispyville
+  :diminish lispyville-mode
+  :after lispy
+  :config
+  (add-hook 'lispy-mode-hook #'lispyville-mode)
+  ;; (add-hook 'csharp-mode-hook #'lispyville-mode) ; because why not :)
+  (setq lispy-use-sly t)
+  ;; copied and adapted from ambrevar's config
+  (lispyville-set-key-theme '(operators
+                              c-w
+                              additional
+                              prettify
+                              additional-insert
+                              (escape insert)
+                              slurp/barf-cp))
+  ;; Bindings that must only be set in lisp languages
+  (map!
+   :map (emacs-lisp-mode-map lisp-mode-map scheme-mode-map)
+   :n "gd" #'lispy-goto-symbol
+   :n "=" #'lispyville-prettify)
+  (map!
+    :map (emacs-lisp-mode-map lisp-mode-map scheme-mode-map)
+    :n "el" #'lispy-eval
+    :n "d" #'lispy-describe-inline
+    :n "a" #'lispy-arglist-inline
+    :n "x" #'lispy-x)
+  ;; Bindings that can safely be set in other languages
+  (map!
+   :map lispyville-mode-map
+   :ni "M-h" #'lispy-left
+   ;; (kbd "M-h") #'lispyville-previous-opening
+   :ni "M-l" #'lispyville-next-closing
+   :ni "M-j" #'lispy-down
+   :ni "M-k" #'lispy-up
+   :ni "M-J" #'lispyville-drag-forward
+   :ni "M-K" #'lispyville-drag-backward
+   :ni "M-H" #'lispyville-<
+   :ni "M-L" #'lispyville->
+   :ni "C-M-h" #'lispy-move-left
+   :ni "C-M-l" #'lispy-move-right
+   :ni "M-r" #'lispy-raise-sexp
+   :ni "M-d" #'lispyville-wrap-round
+   ;; (kbd "M-8") #'lispyville-wrap-brackets
+   ;; (kbd "M-7") #'lispyville-wrap-braces
+   ;; (kbd "M-9") #'lispyville-wrap-brackets
+   ;; (kbd "M-0") #'lispyville-wrap-braces
+   :n "C-<return>" #'lispy-split
+   ;; (kbd "M-<backspace>") 'lispyville-delete-backward-word
+   ;; (kbd "/") #'lispy-occur
+   :n "gc" #'lispyville-comment-or-uncomment)
+  (map!
+   :map (emacs-lisp-mode-map lisp-mode-map scheme-mode-map)
+   :ni (kbd "<backspace>") 'lispy-delete-backward
+   :ni (kbd "M-<backspace>") 'lispyville-delete-backward-word
+   ;; ";" 'lispy-comment
+   ;; ":" 'lispy-colon ; The colon is not always used to delimit keys.
+   :n "'" 'lispy-tick
+   :n "`" 'lispy-backtick
+   :n "\"" 'lispy-quotes
+   :n "(" 'lispy-parens
+   :n ")" 'lispy-right-nostring))
 
 ;;c#
 (defun my/csharp-list-to-array ()
@@ -813,7 +932,7 @@ limitations under the License.
 
   (map!
    :localleader
-   :map 'csharp-mode-map
+   :map csharp-mode-map
    "b" '(:ignore :which-key "build")
    "bd" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " (my/csharp-find-current-project)))) :which-key "build debug")
    "br" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " bosss-master-solution))) :which-key "build release")
@@ -838,7 +957,7 @@ limitations under the License.
     :config
     (map!
      :localleader
-      :map 'bosss-mode-map
+      :map bosss-mode-map
       "j" '(bosss-next-field :which-key "next field")
       "k" '(bosss-previous-field :which-key "previous field")
       "ro" '(run-bosss-repl-other-window :which-key "start repl in other window")
@@ -856,7 +975,7 @@ limitations under the License.
   :diminish helm-mode
   :config
   (map!
-   :map 'helm-find-files-map
+   :map helm-find-files-map
    "M-H" 'left-char
    "M-L" 'right-char
    "M-y" 'helm-ff-run-copy-file
@@ -867,7 +986,7 @@ limitations under the License.
    "M-SPC" 'helm-toggle-visible-mark-forward
    "M-RET" 'helm-ff-run-open-file-with-default-tool)
   (map!
-   :map 'helm-buffer-map
+   :map helm-buffer-map
    "M-SPC" 'helm-toggle-visible-mark-forward
    "M-d" 'helm-buffer-run-kill-persistent)
   (setq completion-styles `(basic partial-completion emacs22 initials
@@ -948,6 +1067,9 @@ limitations under the License.
                        subword-mode
                        flyspell-mode
                        defining-kbd-macro)))
+
+;; (use-package! fish-completion)
+;; (use-package bash-completion)
 
 ;; load my custom scripts
 (load "~/Dropbox/Helen+Dario/washing-machine-timer.el" t t)

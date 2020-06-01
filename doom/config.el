@@ -27,6 +27,7 @@
 ;; `load-theme' function. This is the default:
 (setq doom-theme 'doom-solarized-dark)
 
+
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
@@ -722,67 +723,68 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 (map! :leader :map (elisp)
       "ef" #'eval-defun)
 
-(use-package! lispyville
-  :diminish lispyville-mode
-  :after lispy
-  :config
-  (add-hook 'lispy-mode-hook #'lispyville-mode)
-  ;; (add-hook 'csharp-mode-hook #'lispyville-mode) ; because why not :)
-  (setq lispy-use-sly t)
-  ;; copied and adapted from ambrevar's config
-  (lispyville-set-key-theme '(operators
-                              c-w
-                              additional
-                              prettify
-                              additional-insert
-                              (escape insert)
-                              slurp/barf-cp))
-  ;; Bindings that must only be set in lisp languages
-  (map!
-   :map (emacs-lisp-mode-map lisp-mode-map scheme-mode-map)
-   :n "gd" #'lispy-goto-symbol
-   :n "=" #'lispyville-prettify)
-  (map!
-    :map (emacs-lisp-mode-map lisp-mode-map scheme-mode-map)
-    :n "el" #'lispy-eval
-    :n "d" #'lispy-describe-inline
-    :n "a" #'lispy-arglist-inline
-    :n "x" #'lispy-x)
-  ;; Bindings that can safely be set in other languages
-  (map!
-   :map lispyville-mode-map
-   :ni "M-h" #'lispy-left
-   ;; (kbd "M-h") #'lispyville-previous-opening
-   :ni "M-l" #'lispyville-next-closing
-   :ni "M-j" #'lispy-down
-   :ni "M-k" #'lispy-up
-   :ni "M-J" #'lispyville-drag-forward
-   :ni "M-K" #'lispyville-drag-backward
-   :ni "M-H" #'lispyville-<
-   :ni "M-L" #'lispyville->
-   :ni "C-M-h" #'lispy-move-left
-   :ni "C-M-l" #'lispy-move-right
-   :ni "M-r" #'lispy-raise-sexp
-   :ni "M-d" #'lispyville-wrap-round
-   ;; (kbd "M-8") #'lispyville-wrap-brackets
-   ;; (kbd "M-7") #'lispyville-wrap-braces
-   ;; (kbd "M-9") #'lispyville-wrap-brackets
-   ;; (kbd "M-0") #'lispyville-wrap-braces
-   :n "C-<return>" #'lispy-split
-   ;; (kbd "M-<backspace>") 'lispyville-delete-backward-word
-   ;; (kbd "/") #'lispy-occur
-   :n "gc" #'lispyville-comment-or-uncomment)
-  (map!
-   :map (emacs-lisp-mode-map lisp-mode-map scheme-mode-map)
-   :ni (kbd "<backspace>") 'lispy-delete-backward
-   :ni (kbd "M-<backspace>") 'lispyville-delete-backward-word
-   ;; ";" 'lispy-comment
-   ;; ":" 'lispy-colon ; The colon is not always used to delimit keys.
-   :n "'" 'lispy-tick
-   :n "`" 'lispy-backtick
-   :n "\"" 'lispy-quotes
-   :n "(" 'lispy-parens
-   :n ")" 'lispy-right-nostring))
+;; (use-package! lispyville
+;;   :diminish lispyville-mode
+;;   :after lispy
+;;   :config
+;;   (add-hook 'lispy-mode-hook #'lispyville-mode)
+;;   ;; (add-hook 'csharp-mode-hook #'lispyville-mode) ; because why not :)
+;;   (setq lispy-use-sly t)
+;;   ;; copied and adapted from ambrevar's config
+;;   (lispyville-set-key-theme '(operators
+;;                               c-w
+;;                               additional
+;;                               prettify
+;;                               additional-insert
+;;                               (escape insert)
+;;                               slurp/barf-cp))
+;;   ;; Bindings that must only be set in lisp languages
+;;   (map!
+;;    :map (emacs-lisp-mode-map lisp-mode-map scheme-mode-map)
+;;    :n "gd" #'lispy-goto-symbol
+;;    :n "=" #'lispyville-prettify)
+;;   (map!
+;;    :localleader
+;;     :map (emacs-lisp-mode-map lisp-mode-map scheme-mode-map)
+;;     "el" #'lispy-eval
+;;     "d" #'lispy-describe-inline
+;;     "a" #'lispy-arglist-inline
+;;     "x" #'lispy-x)
+;;   ;; Bindings that can safely be set in other languages
+;;   (map!
+;;    :map lispyville-mode-map
+;;    :ni "M-h" #'lispy-left
+;;    ;; (kbd "M-h") #'lispyville-previous-opening
+;;    :ni "M-l" #'lispyville-next-closing
+;;    :ni "M-j" #'lispy-down
+;;    :ni "M-k" #'lispy-up
+;;    :ni "M-J" #'lispyville-drag-forward
+;;    :ni "M-K" #'lispyville-drag-backward
+;;    :ni "M-H" #'lispyville-<
+;;    :ni "M-L" #'lispyville->
+;;    :ni "C-M-h" #'lispy-move-left
+;;    :ni "C-M-l" #'lispy-move-right
+;;    :ni "M-r" #'lispy-raise-sexp
+;;    :ni "M-d" #'lispyville-wrap-round
+;;    ;; (kbd "M-8") #'lispyville-wrap-brackets
+;;    ;; (kbd "M-7") #'lispyville-wrap-braces
+;;    ;; (kbd "M-9") #'lispyville-wrap-brackets
+;;    ;; (kbd "M-0") #'lispyville-wrap-braces
+;;    :n "C-<return>" #'lispy-split
+;;    ;; (kbd "M-<backspace>") 'lispyville-delete-backward-word
+;;    ;; (kbd "/") #'lispy-occur
+;;    :n "gc" #'lispyville-comment-or-uncomment)
+;;   (map!
+;;    :map (emacs-lisp-mode-map lisp-mode-map scheme-mode-map)
+;;    :ni (kbd "<backspace>") 'lispy-delete-backward
+;;    :ni (kbd "M-<backspace>") 'lispyville-delete-backward-word
+;;    ;; ";" 'lispy-comment
+;;    ;; ":" 'lispy-colon ; The colon is not always used to delimit keys.
+;;    :n "'" 'lispy-tick
+;;    :n "`" 'lispy-backtick
+;;    :n "\"" 'lispy-quotes
+;;    :n "(" 'lispy-parens
+;;    :n ")" 'lispy-right-nostring))
 
 ;;c#
 (defun my/csharp-list-to-array ()
@@ -974,21 +976,29 @@ limitations under the License.
 (use-package! helm
   :diminish helm-mode
   :config
+
   (map!
    :map helm-find-files-map
-   "M-H" 'left-char
-   "M-L" 'right-char
-   "M-y" 'helm-ff-run-copy-file
-   "M-r" 'helm-ff-run-rename-file
-   "M-s" 'helm-ff-run-find-file-as-root
-   "M-o" 'helm-ff-run-switch-other-window
-   "M-O" 'helm-ff-run-switch-other-frame
-   "M-SPC" 'helm-toggle-visible-mark-forward
-   "M-RET" 'helm-ff-run-open-file-with-default-tool)
+   "M-j" #'helm-next-line
+   "M-k" #'helm-previous-line
+   "M-l" #'helm-ff-RET
+   "M-h" #'helm-find-files-up-one-level
+   "C-l" nil
+   "M-H" #'left-char
+   "M-L" #'right-char
+   "M-y" #'helm-ff-run-copy-file
+   "M-r" #'helm-ff-run-rename-file
+   "M-s" #'helm-ff-run-find-file-as-root
+   "M-o" #'helm-ff-run-switch-other-window
+   "M-O" #'helm-ff-run-switch-other-frame
+   "M-SPC" #'helm-toggle-visible-mark-forward
+   "M-RET" #'helm-ff-run-open-file-with-default-tool)
   (map!
    :map helm-buffer-map
-   "M-SPC" 'helm-toggle-visible-mark-forward
-   "M-d" 'helm-buffer-run-kill-persistent)
+   "M-j" #'helm-next-line
+   "M-k" #'helm-previous-line
+   "M-SPC" #'helm-toggle-visible-mark-forward
+   "M-d" #'helm-buffer-run-kill-persistent)
   (setq completion-styles `(basic partial-completion emacs22 initials
                                   ,(if (version<= emacs-version "27.0") 'helm-flex 'flex)))
   (setq helm-mode-fuzzy-match t)
@@ -1068,8 +1078,15 @@ limitations under the License.
                        flyspell-mode
                        defining-kbd-macro)))
 
-;; (use-package! fish-completion)
-;; (use-package bash-completion)
+;; eshell
+;; (setq eshell-prompt-regexp "*prompt*")
+;; HACK
+(map!
+ :map eshell-mode-map
+ :n "I" (lambda () (interactive)
+          (progn
+            (eshell-bol)
+            (evil-insert 0))))
 
 ;; load my custom scripts
 (load "~/Dropbox/Helen+Dario/washing-machine-timer.el" t t)

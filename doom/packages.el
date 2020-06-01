@@ -75,3 +75,5 @@
 (package! pinentry)
 
 (package! diminish)
+
+(package! async-await)

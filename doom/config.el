@@ -66,6 +66,12 @@
 
 (setq initial-major-mode 'lisp-interaction-mode)
 
+(setq doom-scratch-initial-major-mode 'lisp-interaction-mode)
+
+(setq browse-url-browser-function 'eww-browse-url)
+
+(customize-set-variable 'compilation-scroll-output t)
+
 ;;; Defining some useful functions
 (defun shutdown ()
   (interactive)
@@ -101,7 +107,7 @@
   (when (system-name= "klingenberg-tablet")
     (shell-command "xinput --map-to-output $(xinput list --id-only \"ELAN Touchscreen\") eDP1")))
 
-(use-package async-await)
+(use-package! async-await)
 ;; adapted from snippet by oremacs
 (defun my/youtube-dl ()
   (interactive)
@@ -576,12 +582,13 @@
   ;; (setq mu4e-maildir "~/Mail")
   ;; (setq mu4e-trash-folder "/Trash")
   ;; (setq mu4e-refile-folder "/Archive")
-  ;; (setq mu4e-update-interval 120)
+  (setq mu4e-update-interval 120)
   ;; (setq mu4e-hide-index-messages t) ; do not show minibuffer messages after updates
   ;; (setq mu4e-index-update-error-warning nil)
   (setq mu4e-compose-signature-auto-include t)
   ;; (setq mu4e-view-show-images t)
   (setq mu4e-enable-notifications t)
+  ;; (setq org-mu4e-convert-to-html nil)
   ;; (setq send-mail-function 'smtpmail-send-it)
   ;; (setq message-send-mail-function 'smtpmail-send-it)
   ;; (setq smtpmail-stream-type 'ssl)
@@ -636,7 +643,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
            (mu4e-sent-messages-behavior delete)
            (mu4e-compose-signature-auto-include nil)
            (mu4e-sent-folder "/gmail/sent")
-           (mu4e-drafts-folder "/gmail/drafts")
+           (mu4e-drafts-folder "/gmail/Drafts")
            (user-mail-address "dario.klingenberg@gmail.com")
            (smtpmail-smtp-server "smtp.gmail.com")
            (smtpmail-smtp-service 465)
@@ -700,7 +707,11 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   ;; (gnus-icalendar-org-setup)
   )
 
-(my/mu4e-setup)
+(after!
+  mu4e
+  (progn
+    (my/mu4e-setup)
+    (evil-set-initial-state 'mu4e-compose-mode 'normal)))
 
 
 ;; keybindings
@@ -710,11 +721,17 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 
 (setq doom-localleader-key "-")
 
+;; (map! "ESC" #'keyboard-quit)
+
 (map! :leader
       "SPC" #'execute-extended-command
+      "++" #'+popup/toggle
+      "+ RET" #'+popup/other
       "lm" #'bookmark-set
       "ll" #'bookmark-jump
-      "x" (lambda () (interactive) (switch-to-buffer "*scratch*"))
+      "er" #'eval-expression
+      "ss" #'shutdown
+      "sr" #'reboot
       "w TAB" #'evil-switch-to-windows-last-buffer)
 
 (map!
@@ -723,68 +740,88 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 (map! :leader :map (elisp)
       "ef" #'eval-defun)
 
-;; (use-package! lispyville
-;;   :diminish lispyville-mode
-;;   :after lispy
-;;   :config
-;;   (add-hook 'lispy-mode-hook #'lispyville-mode)
-;;   ;; (add-hook 'csharp-mode-hook #'lispyville-mode) ; because why not :)
-;;   (setq lispy-use-sly t)
-;;   ;; copied and adapted from ambrevar's config
-;;   (lispyville-set-key-theme '(operators
-;;                               c-w
-;;                               additional
-;;                               prettify
-;;                               additional-insert
-;;                               (escape insert)
-;;                               slurp/barf-cp))
-;;   ;; Bindings that must only be set in lisp languages
-;;   (map!
-;;    :map (emacs-lisp-mode-map lisp-mode-map scheme-mode-map)
-;;    :n "gd" #'lispy-goto-symbol
-;;    :n "=" #'lispyville-prettify)
-;;   (map!
-;;    :localleader
-;;     :map (emacs-lisp-mode-map lisp-mode-map scheme-mode-map)
-;;     "el" #'lispy-eval
-;;     "d" #'lispy-describe-inline
-;;     "a" #'lispy-arglist-inline
-;;     "x" #'lispy-x)
-;;   ;; Bindings that can safely be set in other languages
-;;   (map!
-;;    :map lispyville-mode-map
-;;    :ni "M-h" #'lispy-left
-;;    ;; (kbd "M-h") #'lispyville-previous-opening
-;;    :ni "M-l" #'lispyville-next-closing
-;;    :ni "M-j" #'lispy-down
-;;    :ni "M-k" #'lispy-up
-;;    :ni "M-J" #'lispyville-drag-forward
-;;    :ni "M-K" #'lispyville-drag-backward
-;;    :ni "M-H" #'lispyville-<
-;;    :ni "M-L" #'lispyville->
-;;    :ni "C-M-h" #'lispy-move-left
-;;    :ni "C-M-l" #'lispy-move-right
-;;    :ni "M-r" #'lispy-raise-sexp
-;;    :ni "M-d" #'lispyville-wrap-round
-;;    ;; (kbd "M-8") #'lispyville-wrap-brackets
-;;    ;; (kbd "M-7") #'lispyville-wrap-braces
-;;    ;; (kbd "M-9") #'lispyville-wrap-brackets
-;;    ;; (kbd "M-0") #'lispyville-wrap-braces
-;;    :n "C-<return>" #'lispy-split
-;;    ;; (kbd "M-<backspace>") 'lispyville-delete-backward-word
-;;    ;; (kbd "/") #'lispy-occur
-;;    :n "gc" #'lispyville-comment-or-uncomment)
-;;   (map!
-;;    :map (emacs-lisp-mode-map lisp-mode-map scheme-mode-map)
-;;    :ni (kbd "<backspace>") 'lispy-delete-backward
-;;    :ni (kbd "M-<backspace>") 'lispyville-delete-backward-word
-;;    ;; ";" 'lispy-comment
-;;    ;; ":" 'lispy-colon ; The colon is not always used to delimit keys.
-;;    :n "'" 'lispy-tick
-;;    :n "`" 'lispy-backtick
-;;    :n "\"" 'lispy-quotes
-;;    :n "(" 'lispy-parens
-;;    :n ")" 'lispy-right-nostring))
+(after!
+  lispy
+  (lispy-set-key-theme '(lispy c-digits)) ;; disable single-key bindings
+
+  (setq lispyville-key-theme '(operators
+                               c-w
+                               additional
+                               prettify
+                               additional-insert
+                               (escape insert)
+                               slurp/barf-cp))
+  (map!
+   :map lispyville-mode-map
+   :ni "M-h" #'lispy-left
+   ;; (kbd "M-h") #'lispyville-previous-opening
+   :ni "M-l" #'lispyville-next-closing
+   :ni "M-j" #'lispy-down
+   :ni "M-k" #'lispy-up
+   :ni "M-J" #'lispyville-drag-forward
+   :ni "M-K" #'lispyville-drag-backward
+   :ni "M-H" #'lispyville-<
+   :ni "M-L" #'lispyville->
+   :ni "C-M-h" #'lispy-move-left
+   :ni "C-M-l" #'lispy-move-right
+   :ni "M-r" #'lispy-raise-sexp
+   :ni "M-d" #'lispyville-wrap-round
+   ;; (kbd "M-8") #'lispyville-wrap-brackets
+   ;; (kbd "M-7") #'lispyville-wrap-braces
+   ;; (kbd "M-9") #'lispyville-wrap-brackets
+   ;; (kbd "M-0") #'lispyville-wrap-braces
+   :ni "C-<return>" #'lispy-split
+   ;; (kbd "M-<backspace>") 'lispyville-delete-backward-word
+   ;; (kbd "/") #'lispy-occur
+   :n "gc" #'lispyville-comment-or-uncomment)
+
+  (map!
+   :localleader
+   :map (emacs-lisp-mode-map lisp-mode-map scheme-mode-map)
+   "el" #'lispy-eval
+   "1" #'lispy-describe-inline
+   "2" #'lispy-arglist-inline
+   "x" #'lispy-x))
+
+;; scheme
+(setq flycheck-scheme-chicken-executable "chicken-csc")
+(setq geiser-chicken-binary "chicken-csi")
+
+;; latex
+(setq +latex-viewers '(pdf-tools))
+(setq reftex-default-bibliography "~/Documents/programming/latex_macros/bibliography.bib")
+(map!
+ :localleader
+ :map (TeX-mode-map LaTeX-mode-map)
+ "-" #'TeX-recenter-output-buffer
+ "." #'LaTeX-mark-environment
+ "*" #'LaTeX-mark-section
+ "a" #'TeX-command-run-all
+ "b" #'TeX-command-master
+ "e" #'TeX-next-error
+ "k" #'TeX-kill-job
+ "m" #'TeX-insert-macro
+ "v" #'TeX-view
+ ;; "s" '(my/LaTeX-star-environment-dwim :which-key "toggle starred environment")
+ ;; "t" '(my/toggle-parens-and-left-right :which-key "toggle parens and \left( \right)")
+ ;; "cse" '((lambda () (interactive) (LaTeX-environment 1)) :which-key "change current environment")
+ ;; TeX-doc is a very slow function
+ "hd" #'TeX-doc
+ "xb" #'latex/font-bold
+ "xc" #'latex/font-code
+ "xe" #'latex/font-emphasis
+ "xi" #'latex/font-italic
+ "xr" #'latex/font-clear
+ "xo" #'latex/font-oblique
+ "xfc" #'latex/font-small-caps
+ "xff" #'latex/font-sans-serif
+ "xfr" #'latex/font-serif
+ "rt" #'reftex-toc
+ "rr" #'reftex-cleveref-cref
+ "rc" #'reftex-citation
+ "ol" (lambda () (interactive) (find-file "definLocal.tex"))
+ "og" (lambda () (interactive) (find-file (getenv "LatexGlobalConfig")))
+ "ob" (lambda () (interactive) (find-file "bibliography.bib")))
 
 ;;c#
 (defun my/csharp-list-to-array ()
@@ -935,15 +972,14 @@ limitations under the License.
   (map!
    :localleader
    :map csharp-mode-map
-   "b" '(:ignore :which-key "build")
-   "bd" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " (my/csharp-find-current-project)))) :which-key "build debug")
-   "br" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " bosss-master-solution))) :which-key "build release")
-   "be" '((lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " bosss-master-solution))) :which-key "build everything")
-   "bb" '(recompile :which-key "recompile")
-   "=" '(my/indent-buffer-without-bosss-header :which-key "indent buffer")
-   "et" '((lambda () (interactive) (my/run-tests (my/csharp-find-current-project))) :which-key "run tests")
-   "eo" '(run-csharp-repl-other-frame :which-key "start repl")
-   "er" '(csharp-repl-send-region :which-key "csharp-send-region-to-repl"))
+   "cd" (lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " (my/csharp-find-current-project))))
+   "cr" (lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " bosss-master-solution)))
+   "ce" (lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " bosss-master-solution)))
+   ;; "cc" #'recompile
+   "=" #'my/indent-buffer-without-bosss-header
+   "et" (lambda () (interactive) (my/run-tests (my/csharp-find-current-project)))
+   "eo" #'run-csharp-repl-other-frame
+   "er" #'csharp-repl-send-region)
 
   ;; bosss
   (use-package! bosss
@@ -973,31 +1009,32 @@ limitations under the License.
 
 (add-hook 'csharp-mode-hook #'my/setup-csharp-and-bosss)
 
+(use-package! helm-exwm)
+
 (use-package! helm
   :diminish helm-mode
+  :after helm-exwm
   :config
-
   (map!
-   :map helm-find-files-map
+   :map helm-map
    "M-j" #'helm-next-line
    "M-k" #'helm-previous-line
+   "M-H" #'left-char
+   "M-L" #'right-char
+   "M-SPC" #'helm-toggle-visible-mark-forward)
+  (map!
+   :map helm-find-files-map
    "M-l" #'helm-ff-RET
    "M-h" #'helm-find-files-up-one-level
    "C-l" nil
-   "M-H" #'left-char
-   "M-L" #'right-char
    "M-y" #'helm-ff-run-copy-file
    "M-r" #'helm-ff-run-rename-file
    "M-s" #'helm-ff-run-find-file-as-root
    "M-o" #'helm-ff-run-switch-other-window
    "M-O" #'helm-ff-run-switch-other-frame
-   "M-SPC" #'helm-toggle-visible-mark-forward
    "M-RET" #'helm-ff-run-open-file-with-default-tool)
   (map!
    :map helm-buffer-map
-   "M-j" #'helm-next-line
-   "M-k" #'helm-previous-line
-   "M-SPC" #'helm-toggle-visible-mark-forward
    "M-d" #'helm-buffer-run-kill-persistent)
   (setq completion-styles `(basic partial-completion emacs22 initials
                                   ,(if (version<= emacs-version "27.0") 'helm-flex 'flex)))
@@ -1011,7 +1048,12 @@ limitations under the License.
   (setq helm-mode-fuzzy-match t)
   (setq helm-locate-fuzzy-match t)
   (setq helm-quick-update t)
-  (setq helm-recentf-fuzzy-match t))
+  (setq helm-recentf-fuzzy-match t)
+  (setq helm-exwm-emacs-buffers-source (helm-exwm-build-emacs-buffers-source))
+  (setq helm-exwm-source (helm-exwm-build-source))
+  (setq helm-mini-default-sources `(helm-exwm-emacs-buffers-source
+                                    helm-exwm-source
+                                    helm-source-recentf)))
 
 (use-package! mini-modeline
   :custom
@@ -1082,11 +1124,11 @@ limitations under the License.
 ;; (setq eshell-prompt-regexp "*prompt*")
 ;; HACK
 (map!
- :map eshell-mode-map
- :n "I" (lambda () (interactive)
-          (progn
-            (eshell-bol)
-            (evil-insert 0))))
+  :map eshell-mode-map
+  :n "I" (lambda () (interactive)
+           (progn
+             (eshell-bol)
+             (evil-insert 0))))
 
 ;; load my custom scripts
 (load "~/Dropbox/Helen+Dario/washing-machine-timer.el" t t)

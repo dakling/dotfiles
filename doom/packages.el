@@ -77,3 +77,5 @@
 (package! diminish)
 
 (package! async-await)
+
+(package! helm-exwm)

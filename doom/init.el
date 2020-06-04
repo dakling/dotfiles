@@ -25,7 +25,6 @@
             )
     (setq comp-deferred-compilation nil)))
 
-
 (doom! :input
        ;;chinese
        ;;japanese

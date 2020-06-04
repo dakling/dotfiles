@@ -707,11 +707,21 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   ;; (gnus-icalendar-org-setup)
   )
 
+(defun evil-collection-mu4e-org-set-header-to-normal-mode ()
+  (evil-set-initial-state 'mu4e-compose-mode 'normal))
+
+(defun evil-collection-mu4e-org-set-header-to-insert-mode ()
+  (evil-set-initial-state 'mu4e-compose-mode 'insert))
+
 (after!
   mu4e
   (progn
     (my/mu4e-setup)
-    (evil-set-initial-state 'mu4e-compose-mode 'normal)))
+    ;; For org-mu4e-compose-mode
+    (add-hook 'org-mode-hook
+              #'evil-collection-mu4e-org-set-header-to-normal-mode)
+    (add-hook 'mu4e-compose-pre-hook
+              #'evil-collection-mu4e-org-set-header-to-insert-mode)))
 
 
 ;; keybindings
@@ -1122,13 +1132,25 @@ limitations under the License.
 
 ;; eshell
 ;; (setq eshell-prompt-regexp "*prompt*")
+(defun my-eshell/go-behind-prompt ()
+  ;; TODO better criterion to detect prompt?
+ (when (get-text-property (point) 'read-only)
+   (eshell-bol)))
+
+(defun my-eshell/setup ()
+ (add-hook 'evil-insert-state-entry-hook #'my-eshell/go-behind-prompt))
+
+(after! eshell
+  (add-hook 'eshell-mode-hook #'my-eshell/setup))
+
+
 ;; HACK
-(map!
-  :map eshell-mode-map
-  :n "I" (lambda () (interactive)
-           (progn
-             (eshell-bol)
-             (evil-insert 0))))
+;; (map!
+;;   :map eshell-mode-map
+;;   :n "I" (lambda () (interactive)
+;;            (progn
+;;              (eshell-bol)
+;;              (evil-insert 0))))
 
 ;; load my custom scripts
 (load "~/Dropbox/Helen+Dario/washing-machine-timer.el" t t)

@@ -97,6 +97,7 @@ KEYTIMEOUT=5
 alias ls="ls --color"
 alias ...="cd ../.."
 alias ....="cd ../../.."
+alias ee="emacs -nw --file "
 
 # Theming section  
 autoload -U compinit colors zcalc

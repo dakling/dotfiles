@@ -503,6 +503,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   ;; (gnus-icalendar-org-setup)
   )
 
+;; TODO remove once PR to evil-collection gets merged
 (defun evil-collection-mu4e-org-set-header-to-normal-mode ()
   (evil-set-initial-state 'mu4e-compose-mode 'normal))
 
@@ -517,8 +518,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
     (add-hook 'org-mode-hook
               #'evil-collection-mu4e-org-set-header-to-normal-mode)
     (add-hook 'mu4e-compose-pre-hook
-              #'evil-collection-mu4e-org-set-header-to-insert-mode)
-    ))
+              #'evil-collection-mu4e-org-set-header-to-insert-mode)))
 
 ;; keybindings
 ;;
@@ -549,8 +549,10 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 ;; TODO M-j and M-k bindings
 (after!
   lispy
-  (lispy-set-key-theme '(lispy c-digits)) ;; disable single-key bindings
+  (lispy-set-key-theme '(lispy c-digits))) ;; disable single-key bindings
 
+(after!
+  lispyville
   (setq lispyville-key-theme '(operators
                                c-w
                                additional
@@ -816,6 +818,13 @@ limitations under the License.
 (map! :map company-mode-map
       :i "M-j" #'company-select-next-or-abort
       :i "M-k" #'company-select-previous-or-abort)
+
+(map!
+ :after evil-snipe
+ :v "s" #'evil-surround-region)
+
+(use-package! helm-treemacs-icons
+ (helm-treemacs-icons-enable))
 
 (use-package! helm-exwm)
 

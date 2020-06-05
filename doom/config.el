@@ -191,10 +191,10 @@
                 ([?\s-a] . exwm-workspace-switch)
                 ([?\s-A] . exwm-workspace-move-window)
                 (\,@(mapcar (lambda (i)
-                                `(,(kbd (format "s-%d" i)) .
-                                  (lambda () (interactive)
-                                    (exwm-workspace-switch-create ,i))))
-                              (number-sequence 0 9)))
+                              `(,(kbd (format "s-%d" i)) .
+                                (lambda () (interactive)
+                                  (exwm-workspace-switch-create ,i))))
+                            (number-sequence 0 9)))
                 ;; ,@(mapcar (lambda (i)
                 ;; 	      `(,(kbd (format "s-%s" i)) .
                 ;; 		(lambda () (interactive)
@@ -550,7 +550,7 @@
 ;; (setq gnus-icalendar-org-capture-headline '("IMPORTANT DATES")) ;;make sure to create Calendar heading first
 ;; (gnus-icalendar-org-setup)
 
-; (setq +mu4e-backend 'offlineimap)
+                                        ; (setq +mu4e-backend 'offlineimap)
 
 (defun my/mu4e-setup ()
 
@@ -588,7 +588,7 @@
   (setq mu4e-compose-signature-auto-include t)
   ;; (setq mu4e-view-show-images t)
   (setq mu4e-enable-notifications t)
-  ;; (setq org-mu4e-convert-to-html nil)
+  ;; (setq org-mu4e-convert-to-html t)
   ;; (setq send-mail-function 'smtpmail-send-it)
   ;; (setq message-send-mail-function 'smtpmail-send-it)
   ;; (setq smtpmail-stream-type 'ssl)
@@ -723,7 +723,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
     (add-hook 'mu4e-compose-pre-hook
               #'evil-collection-mu4e-org-set-header-to-insert-mode)))
 
-
 ;; keybindings
 ;;
 ;; alternative leader for exwm
@@ -766,8 +765,8 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    :ni "M-h" #'lispy-left
    ;; (kbd "M-h") #'lispyville-previous-opening
    :ni "M-l" #'lispyville-next-closing
-   :ni "M-j" #'lispy-down
-   :ni "M-k" #'lispy-up
+   :n "M-j" #'lispy-down
+   :n "M-k" #'lispy-up
    :ni "M-J" #'lispyville-drag-forward
    :ni "M-K" #'lispyville-drag-backward
    :ni "M-H" #'lispyville-<
@@ -796,6 +795,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 ;; scheme
 (setq flycheck-scheme-chicken-executable "chicken-csc")
 (setq geiser-chicken-binary "chicken-csi")
+(setq geiser-active-implementations '(chicken))
 
 ;; latex
 (setq +latex-viewers '(pdf-tools))
@@ -859,21 +859,19 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
              (my/csharp-array-to-list))
             (t (message "neither array nor string found on current line"))))))
 
-(defun my/setup-csharp-and-bosss ()
-  "Setup stuff specific to bosss and csharp."
-  (use-package! csharp-repl
-    :load-path "~/Documents/programming/elisp/emacs-csharp-repl/")
+(use-package! csharp-repl
+  :load-path "~/Documents/programming/elisp/emacs-csharp-repl/")
 
-  (defun my/bosss-file-p ()
-    (or
-     (file-in-directory-p (buffer-file-name) "~/BoSSS/")
-     (file-in-directory-p (buffer-file-name) "~/BoSSS-experimental/internal/src/private-kli/")))
+(defun my/bosss-file-p ()
+  (or
+   (file-in-directory-p (buffer-file-name) "~/BoSSS/")
+   (file-in-directory-p (buffer-file-name) "~/BoSSS-experimental/internal/src/private-kli/")))
 
-  (defun my/add-header ()
-    (interactive)
-    (let ((header-text
-           (concat
-            "/* =======================================================================
+(defun my/add-header ()
+  (interactive)
+  (let ((header-text
+         (concat
+          "/* =======================================================================
 Copyright " (format-time-string "%Y") " Technische Universitaet Darmstadt, Fachgebiet fuer Stroemungsdynamik (chair of fluid dynamics)
 
 Licensed under the Apache License, Version 2.0 (the \"License\");
@@ -890,134 +888,136 @@ limitations under the License.
 */
 
 ")))
-      (save-excursion
-        (goto-line 0)
-        (when (my/bosss-file-p)
-          (unless (or (search-forward (substring header-text 93) nil t) ; check if header already exists, start a bit later to ignore year
-                      (derived-mode-p #'bosss-mode)) ; check if this is just a worksheet
-            (princ header-text (current-buffer)))))))
-
-  (defun my/indent-buffer-without-bosss-header ()
-    "Indent file, but ignore header"
-    (interactive)
     (save-excursion
-      (goto-line 16)
-      (let ((beg (point)))
-        (evil-indent beg (point-max)))))
+      (goto-line 0)
+      (when (my/bosss-file-p)
+        (unless (or (search-forward (substring header-text 93) nil t) ; check if header already exists, start a bit later to ignore year
+                    (derived-mode-p #'bosss-mode)) ; check if this is just a worksheet
+          (princ header-text (current-buffer)))))))
 
-  (defun my/add-file-to-project (file project)
-    "Add FILE to PROJECT."
-    (find-file project)
-    (goto-line 0)
-    (search-forward "<Compile Include=")
-    (evil-open-above 1)
-    (princ (concat "<Compile Include=\""
-                   (file-relative-name file
-                                       (file-name-directory project))
-                   "\"/>")
-           (current-buffer))
-    (save-buffer)
-    (magit-stage-file file)
-    (kill-buffer (current-buffer)))
+(defun my/indent-buffer-without-bosss-header ()
+  "Indent file, but ignore header"
+  (interactive)
+  (save-excursion
+    (goto-line 16)
+    (let ((beg (point)))
+      (evil-indent beg (point-max)))))
 
-  (defun my/add-current-file-to-project ()
-    "Add current file to my project."
-    (interactive)
-    (my/add-file-to-project (buffer-file-name) (my/csharp-find-current-project)))
+(defun my/add-file-to-project (file project)
+  "Add FILE to PROJECT."
+  (find-file project)
+  (goto-line 0)
+  (search-forward "<Compile Include=")
+  (evil-open-above 1)
+  (princ (concat "<Compile Include=\""
+                 (file-relative-name file
+                                     (file-name-directory project))
+                 "\"/>")
+         (current-buffer))
+  (save-buffer)
+  (magit-stage-file file)
+  (kill-buffer (current-buffer)))
 
-  (defun my/remove-file-from-project (file project)
-    "Remove FILE from PROJECT."
-    (find-file project)
-    (goto-line 0)
-    (search-forward "<Compile Include=")
-    (search-forward (file-name-nondirectory file))
-    (kill-whole-line)
-    (save-buffer)
-    (delete-file file)
-    (magit-stage-file file)
-    (kill-buffer (current-buffer)))
+(defun my/add-current-file-to-project ()
+  "Add current file to my project."
+  (interactive)
+  (my/add-file-to-project (buffer-file-name) (my/csharp-find-current-project)))
 
-  (defun my/remove-current-file-from-project ()
-    "Remove current file to my project."
-    (interactive)
-    (my/remove-file-from-project (buffer-file-name) (my/csharp-find-current-project)))
+(defun my/remove-file-from-project (file project)
+  "Remove FILE from PROJECT."
+  (find-file project)
+  (goto-line 0)
+  (search-forward "<Compile Include=")
+  (search-forward (file-name-nondirectory file))
+  (kill-whole-line)
+  (save-buffer)
+  (delete-file file)
+  (magit-stage-file file)
+  (kill-buffer (current-buffer)))
 
-  (defun my/run-bosss-control-file (solver control-file &optional debug)
-    "Run SOLVER with CONTROL-FILE, optionally using sbd to DEBUB"
-    (async-shell-command
-     (if debug
-         (concat "sdb \"args -c " control-file "\" \"run " solver "\"")
-       (concat "mono " solver " -c " control-file))))
+(defun my/remove-current-file-from-project ()
+  "Remove current file to my project."
+  (interactive)
+  (my/remove-file-from-project (buffer-file-name) (my/csharp-find-current-project)))
 
-  (defun my/run-tests (path-to-assembly)
-    "Implement tests manually as default functions do not work"
-    (interactive)
-    (async-shell-command (concat "nunit3-console " path-to-assembly)))
+(defun my/run-bosss-control-file (solver control-file &optional debug)
+  "Run SOLVER with CONTROL-FILE, optionally using sbd to DEBUB"
+  (async-shell-command
+   (if debug
+       (concat "sdb \"args -c " control-file "\" \"run " solver "\"")
+     (concat "mono " solver " -c " control-file))))
 
-  ;; (add-hook 'csharp-mode-hook #'subword-mode)
-  ;; (add-hook 'csharp-mode-hook #'company-mode)
-  ;; (add-hook 'csharp-mode-hook #'rainbow-delimiters-mode-enable)
-  (add-hook 'csharp-mode-hook (lambda ()
-                                (push '(?< . ("< " . " >")) evil-surround-pairs-alist)))
-  (add-hook 'csharp-mode-hook #'my/add-header)
-  ;; (add-hook 'csharp-mode-hook (lambda ()
-  ;;                               (add-hook 'before-save-hook #'my/indent-buffer-without-bosss-header nil t)))
+(defun my/run-tests (path-to-assembly)
+  "Implement tests manually as default functions do not work"
+  (interactive)
+  (async-shell-command (concat "nunit3-console " path-to-assembly)))
 
-  (setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
-  (defun my/csharp-find-current-project ()
-    "Find the closest csproj file relative to the current directory."
-    (cl-labels
-        ((find-csproj-file (dir)
-                           (directory-files dir nil ".*csproj"))
-         (iter (dir)
-               (cond
-                ((find-csproj-file dir) (expand-file-name
-                                         (car (find-csproj-file dir))
-                                         dir)) ; if a .csproj file is found in the current directory, return its absolute path
-                ((string-equal "/" (expand-file-name dir)) nil) ; prevent infinite loops
-                (t (iter (concat dir "/../")))))) ; if there is no .csproj file, look one directory higher
-      (iter (file-name-directory (buffer-file-name)))))
+;; (add-hook 'csharp-mode-hook #'subword-mode)
+;; (add-hook 'csharp-mode-hook #'company-mode)
+;; (add-hook 'csharp-mode-hook #'rainbow-delimiters-mode-enable)
+(add-hook 'csharp-mode-hook (lambda ()
+                              (push '(?< . ("< " . " >")) evil-surround-pairs-alist)))
+(add-hook 'csharp-mode-hook #'my/add-header)
+;; (add-hook 'csharp-mode-hook (lambda ()
+;;                               (add-hook 'before-save-hook #'my/indent-buffer-without-bosss-header nil t)))
+
+(setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
+(defun my/csharp-find-current-project ()
+  "Find the closest csproj file relative to the current directory."
+  (cl-labels
+      ((find-csproj-file (dir)
+                         (directory-files dir nil ".*csproj"))
+       (iter (dir)
+             (cond
+              ((find-csproj-file dir) (expand-file-name
+                                       (car (find-csproj-file dir))
+                                       dir)) ; if a .csproj file is found in the current directory, return its absolute path
+              ((string-equal "/" (expand-file-name dir)) nil) ; prevent infinite loops
+              (t (iter (concat dir "/../")))))) ; if there is no .csproj file, look one directory higher
+    (iter (file-name-directory (buffer-file-name)))))
 
 
+(map!
+ :localleader
+ :map csharp-mode-map
+ "cd" (lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " (my/csharp-find-current-project))))
+ "cr" (lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " bosss-master-solution)))
+ "ce" (lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " bosss-master-solution)))
+ ;; "cc" #'recompile
+ "=" #'my/indent-buffer-without-bosss-header
+ "et" (lambda () (interactive) (my/run-tests (my/csharp-find-current-project)))
+ "eo" #'run-csharp-repl-other-frame
+ "er" #'csharp-repl-send-region)
+
+;; bosss
+(use-package! bosss
+  :load-path "~/Documents/programming/elisp/emacs-bosss/"
+  :init
+  (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
+  (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Release/BoSSSpad.exe")
+  (setq bosss-path-reference (mapcar (lambda (proj) (concat "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/" proj))
+                                     '("RANSCommon/bin/Release/RANS_Solver.dll"
+                                       "KOmegaModelSolver/bin/Release/KOmegaSolver.exe"
+                                       "KOmegaStatSymmModelSolver/bin/Release/KOmegaSSSolver.exe"
+                                       "TurbulenceModelParameterOptimization/bin/Release/ParameterOptimization.exe")))
+  :config
   (map!
    :localleader
-   :map csharp-mode-map
-   "cd" (lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " (my/csharp-find-current-project))))
-   "cr" (lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " bosss-master-solution)))
-   "ce" (lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " bosss-master-solution)))
-   ;; "cc" #'recompile
-   "=" #'my/indent-buffer-without-bosss-header
-   "et" (lambda () (interactive) (my/run-tests (my/csharp-find-current-project)))
-   "eo" #'run-csharp-repl-other-frame
-   "er" #'csharp-repl-send-region)
+   :map bosss-mode-map
+   "j" '(bosss-next-field :which-key "next field")
+   "k" '(bosss-previous-field :which-key "previous field")
+   "ro" '(run-bosss-repl-other-window :which-key "start repl in other window")
+   "rn" '(bosss-repl-start-bosss-pad :which-key "run bossspad")
+   "ef" '(bosss-repl-send-current-field :which-key "send region to repl")
+   "ee" '(bosss-repl-send-region :which-key "send region to repl")
+   "eb" '(bosss-repl-send-buffer :which-key "send buffer to repl")
+   "en" '(bosss-eval-and-next-field :which-key "eval and next field")
+   "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
+   "in" '(bosss-create-new-field :which-key "create new input field")))
 
-  ;; bosss
-  (use-package! bosss
-    :load-path "~/Documents/programming/elisp/emacs-bosss/"
-    :init
-    (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
-    (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Release/BoSSSpad.exe")
-    (setq bosss-path-reference (mapcar (lambda (proj) (concat "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/" proj))
-                                       '("RANSCommon/bin/Release/RANS_Solver.dll"
-                                         "KOmegaModelSolver/bin/Release/KOmegaSolver.exe"
-                                         "KOmegaStatSymmModelSolver/bin/Release/KOmegaSSSolver.exe"
-                                         "TurbulenceModelParameterOptimization/bin/Release/ParameterOptimization.exe")))
-    :config
-    (map!
-     :localleader
-      :map bosss-mode-map
-      "j" '(bosss-next-field :which-key "next field")
-      "k" '(bosss-previous-field :which-key "previous field")
-      "ro" '(run-bosss-repl-other-window :which-key "start repl in other window")
-      "rn" '(bosss-repl-start-bosss-pad :which-key "run bossspad")
-      "ef" '(bosss-repl-send-current-field :which-key "send region to repl")
-      "ee" '(bosss-repl-send-region :which-key "send region to repl")
-      "eb" '(bosss-repl-send-buffer :which-key "send buffer to repl")
-      "en" '(bosss-eval-and-next-field :which-key "eval and next field")
-      "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
-      "in" '(bosss-create-new-field :which-key "create new input field"))))
-
-(add-hook 'csharp-mode-hook #'my/setup-csharp-and-bosss)
+(map! :map company-mode-map
+      :i "M-j" #'company-select-next-or-abort
+      :i "M-k" #'company-select-previous-or-abort)
 
 (use-package! helm-exwm)
 
@@ -1131,14 +1131,8 @@ limitations under the License.
                        defining-kbd-macro)))
 
 ;; eshell
-;; (setq eshell-prompt-regexp "*prompt*")
-(defun my-eshell/go-behind-prompt ()
-  ;; TODO better criterion to detect prompt?
- (when (get-text-property (point) 'read-only)
-   (eshell-bol)))
-
 (defun my-eshell/setup ()
- (add-hook 'evil-insert-state-entry-hook #'my-eshell/go-behind-prompt))
+  (add-hook 'evil-insert-state-entry-hook #'+eshell-goto-prompt-on-insert-a nil t))
 
 (after! eshell
   (add-hook 'eshell-mode-hook #'my-eshell/setup))

@@ -823,9 +823,6 @@ limitations under the License.
  :after evil-snipe
  :v "s" #'evil-surround-region)
 
-(use-package! helm-treemacs-icons
- (helm-treemacs-icons-enable))
-
 (use-package! helm-exwm)
 
 (use-package! helm

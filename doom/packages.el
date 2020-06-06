@@ -79,3 +79,5 @@
 (package! async-await)
 
 (package! helm-exwm)
+
+(package! evil-tex :recipe (:host github :repo "itai33/evil-tex"))

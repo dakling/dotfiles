@@ -634,6 +634,10 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
  "og" (lambda () (interactive) (find-file (getenv "LatexGlobalConfig")))
  "ob" (lambda () (interactive) (find-file "bibliography.bib")))
 
+(use-package! evil-tex
+  :config
+  (add-hook 'LaTeX-mode-hook #'evil-tex-mode))
+
 ;;c#
 (defun my/csharp-list-to-array ()
   (replace-regexp "List<\\(.*\\)>" "\\1[]"

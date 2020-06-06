@@ -224,7 +224,7 @@
                 ([C-s-f1] . eshell)
                 ([s-f2] . (lambda () (interactive) (start-process "" nil browser)))
                 ([s-f3] . deer)
-                ([s-f4] . (lambda () (interactive) (gnus)))
+                ([s-f4] . (lambda () (interactive) (mu4e)))
                 ([s-f12] . (lambda () (interactive) (start-process "" nil "/usr/bin/slock")))))
         (push ?\s-\  exwm-input-prefix-keys)
         ;; (push ?\M-m  exwm-input-prefix-keys)
@@ -429,7 +429,7 @@ Fax: +49 6151 16-24404
 Web: http://www.gsc.ce.tu-darmstadt.de/")
            (mu4e-sent-folder "/gsc/Sent Items")
            (mu4e-drafts-folder "/gsc/Drafts")
-           (smtpmail-smtp-server "smtp.gsc.ce.tu-darmstadt.de")
+           (smtpmail-smtp-server "smtp.tu-darmstadt.de")
            (smtpmail-smtp-service 465)
            (smtpmail-stream-type ssl)
            (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
@@ -544,7 +544,8 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
  :n "gb" #'pop-tag-mark)
 
 (map! :leader :map (elisp)
-      "ef" #'eval-defun)
+      "ef" #'eval-defun
+      "ep" #'eval-print-last-sexp)
 
 ;; TODO M-j and M-k bindings
 (after!
@@ -816,6 +817,7 @@ limitations under the License.
    "in" '(bosss-create-new-field :which-key "create new input field")))
 
 (map! :map company-mode-map
+      :i "M-l" #'company-complete-selection
       :i "M-j" #'company-select-next-or-abort
       :i "M-k" #'company-select-previous-or-abort)
 
@@ -833,13 +835,14 @@ limitations under the License.
    :map helm-map
    "M-j" #'helm-next-line
    "M-k" #'helm-previous-line
+   "M-h" #'helm-find-files-up-one-level
+   "M-l" #'helm-execute-persistent-action
    "M-H" #'left-char
    "M-L" #'right-char
    "M-SPC" #'helm-toggle-visible-mark-forward)
   (map!
    :map helm-find-files-map
    "M-l" #'helm-ff-RET
-   "M-h" #'helm-find-files-up-one-level
    "C-l" nil
    "M-y" #'helm-ff-run-copy-file
    "M-r" #'helm-ff-run-rename-file

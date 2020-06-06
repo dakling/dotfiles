@@ -2071,10 +2071,10 @@ limitations under the License.
 
 ;; Available SMTP accounts.
 (defvar smtp-accounts
-  '((ssl "klingenberg@fdy.tu-darmstadt.de" "smtp.tu-darmstadt.de" 465 "km88econ" nil)
+  '((ssl "klingenberg@gsc.tu-darmstadt.de" "smtp.gsc.ce.tu-darmstadt.de" 465 "klingenberg" nil)
     (ssl "dario.klingenberg@gmail.com" "smtp.gmail.com" 465 "dario.klingenberg" nil)
-    (starttls "dario.klingenberg@web.de" "smtp.web.de" 587 "dario.klingenberg" nil)
-    (ssl "klingenberg@gsc.tu-darmstadt.de" "smtp.gsc.ce.tu-darmstadt.de" 465 "klingenberg" nil)))
+    (ssl "klingenberg@fdy.tu-darmstadt.de" "smtp.tu-darmstadt.de" 465 "km88econ" nil)
+    (starttls "dario.klingenberg@web.de" "smtp.web.de" 587 "dario.klingenberg" nil)))
 
 ;; Let Gnus change the "From:" line by looking at current group we are in.
 (setq gnus-posting-styles

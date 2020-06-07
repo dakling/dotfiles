@@ -56,11 +56,9 @@
 (package! exwm)
 (package! dmenu)
 
-;; gnus and friends
-;; (package! bbdb)
-;; (package! gnus-desktop-notify)
-
 (package! mu4e-alert)
+
+(package! modus-vivendi-theme)
 
 (package! mini-modeline)
 

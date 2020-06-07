@@ -216,6 +216,12 @@
 
 (customize-set-variable 'compilation-scroll-output t)
 
+(setq helm-swoop-pre-input-function (lambda () (car evil-ex-search-pattern)))
+
+(after! evil-snipe (evil-snipe-mode -1))
+
+(setq avy-all-windows t)
+
 ;;; Defining some useful functions
 (defun shutdown ()
   (interactive)
@@ -530,18 +536,26 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
       "lm" #'bookmark-set
       "ll" #'bookmark-jump
       "er" #'eval-expression
-      "ss" #'shutdown
-      "sr" #'reboot
+      "ss" #'helm-swoop
+      ;; "ss" #'shutdown
+      ;; "sr" #'reboot
       "w TAB" #'evil-switch-to-windows-last-buffer)
 
 (map!
- :n "gb" #'pop-tag-mark)
+ :n "gb" #'pop-tag-mark
+ :n "s" #'avy-goto-char-timer
+ :n "S" #'avy-goto-char-timer)
 
 (map! :leader :map (elisp)
       "ef" #'eval-defun
       "ep" #'eval-print-last-sexp)
 
-;; TODO M-j and M-k bindings
+;; (map!
+;;  (:after evil-easymotion
+;;   :m "gs" evilem-map
+;;   (:map evilem-map
+;;    "s" #'avy-goto-char-timer)))
+
 (after!
   lispy
   (lispy-set-key-theme '(lispy c-digits))) ;; disable single-key bindings
@@ -869,6 +883,9 @@ limitations under the License.
   (setq helm-mini-default-sources `(helm-exwm-emacs-buffers-source
                                     helm-exwm-source
                                     helm-source-recentf)))
+(use-package! helm-swoop
+  :config
+  (define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-current-mode-from-helm-swoop))
 
 (use-package! mini-modeline
   :custom

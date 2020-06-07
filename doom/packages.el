@@ -80,4 +80,6 @@
 
 (package! helm-exwm)
 
+(package! helm-swoop)
+
 (package! evil-tex :recipe (:host github :repo "itai33/evil-tex"))

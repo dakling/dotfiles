@@ -221,7 +221,9 @@
 
 (after! evil-snipe (evil-snipe-mode -1))
 
-(setq avy-all-windows t)
+(customize-set-variable 'avy-all-windows t)
+
+(customize-set-variable 'avy-single-candidate-jump t)
 
 ;;; Defining some useful functions
 (defun shutdown ()
@@ -887,6 +889,7 @@ limitations under the License.
 (use-package! helm-swoop
   :config
   (define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-current-mode-from-helm-swoop))
+
 
 (use-package! mini-modeline
   :custom

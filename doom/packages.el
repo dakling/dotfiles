@@ -56,11 +56,9 @@
 (package! exwm)
 (package! dmenu)
 
-;; gnus and friends
-;; (package! bbdb)
-;; (package! gnus-desktop-notify)
-
 (package! mu4e-alert)
+
+(package! modus-vivendi-theme)
 
 (package! mini-modeline)
 
@@ -79,3 +77,7 @@
 (package! async-await)
 
 (package! helm-exwm)
+
+(package! helm-swoop)
+
+(package! evil-tex :recipe (:host github :repo "itai33/evil-tex"))

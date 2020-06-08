@@ -225,6 +225,20 @@
 
 (customize-set-variable 'avy-single-candidate-jump t)
 
+(after! org
+ (setq org-file-apps
+       (remove (assoc "\\.pdf\\'" org-file-apps)
+               org-file-apps)))
+
+(setq org-roam-capture-templates
+      '(("d" "default" plain #'org-roam-capture--get-point "%? \n %i \n %a"
+         :file-name "%<%Y%m%d%H%M%S>-${slug}"
+         :head "#+TITLE: ${title}\n"
+         :unnarrowed t)))
+
+(setq pdf-view-midnight-colors '("WhiteSmoke" . "gray16"))
+(add-hook 'pdf-view-mode-hook 'pdf-view-midnight-minor-mode)
+
 ;;; Defining some useful functions
 (defun shutdown ()
   (interactive)
@@ -540,8 +554,8 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
       "ll" #'bookmark-jump
       "er" #'eval-expression
       "ss" #'helm-swoop
-      ;; "ss" #'shutdown
-      ;; "sr" #'reboot
+      "SS" #'shutdown
+      "SR" #'reboot
       "w TAB" #'evil-switch-to-windows-last-buffer)
 
 (map!
@@ -890,6 +904,17 @@ limitations under the License.
   :config
   (define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-current-mode-from-helm-swoop))
 
+(use-package! org-roam-server
+  :config
+  (map! :map doom-leader-notes-map
+        "rg" (lambda () (interactive) (org-roam-server-mode 1) (browse-url-firefox "127.0.0.1:8080")))
+  (setq org-roam-server-host "127.0.0.1"
+        org-roam-server-port 8080
+        org-roam-server-export-inline-images t
+        org-roam-server-authenticate nil
+        org-roam-server-label-truncate t
+        org-roam-server-label-truncate-length 60
+        org-roam-server-label-wrap-length 20))
 
 (use-package! mini-modeline
   :custom

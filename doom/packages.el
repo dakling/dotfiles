@@ -81,3 +81,5 @@
 (package! helm-swoop)
 
 (package! evil-tex :recipe (:host github :repo "itai33/evil-tex"))
+
+(package! org-roam-server)

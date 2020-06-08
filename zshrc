@@ -25,8 +25,8 @@ HISTFILE=~/.zhistory
 HISTSIZE=1000
 SAVEHIST=500
 setopt histignorespace
-export EDITOR=/usr/bin/nvim
-export VISUAL=/usr/bin/nvim
+export EDITOR=/usr/bin/vim
+export VISUAL=/usr/bin/vim
 export PAGER=/usr/bin/nvimpager
 export QT_QPA_PLATFORMTHEME="qt5ct"
 #wayland stuff

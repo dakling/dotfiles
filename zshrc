@@ -27,7 +27,7 @@ SAVEHIST=500
 setopt histignorespace
 export EDITOR=/usr/bin/nvim
 export VISUAL=/usr/bin/nvim
-export PAGER=/usr/bin/nvimpager
+# export PAGER=/usr/bin/nvimpager
 export QT_QPA_PLATFORMTHEME="qt5ct"
 #wayland stuff
 # export QT_QPA_PLATFORM=wayland-egl
@@ -38,6 +38,7 @@ export BOSSS_INSTALL=/home/klingenberg/BoSSS-experimental
 export LatexGlobalConfig=/home/klingenberg/Documents/programming/latex_macros/definGlobal.tex
 export BIBLIOGRAPHY=/home/klingenberg/Documents/programming/latex/bibliography.bib
 export TERMINAL=termite
+export TERM=xterm
 export PATH="$PATH:/home/klingenberg/.stack/"
 export PATH="$PATH:/home/klingenberg/.local/bin/"
 export PATH="$PATH:/home/klingenberg/.config/emacs/bin/"

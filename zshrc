@@ -1,6 +1,8 @@
 [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
 [ -r /etc/profile.d/cnf.sh ] && . /etc/profile.d/cnf.sh
 
+export XDG_CONFIG_DIR=/home/klingenberg/.config/
+
 
 ## Options section
 setopt correct                                                  # Auto correct mistakes

@@ -517,7 +517,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   (evil-set-initial-state 'mu4e-compose-mode 'insert))
 
 (after! mu4e
-  (setq mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e")
   (setq mu4e-update-interval 120)
   (setq mu4e-compose-signature-auto-include t)
   (setq mu4e-enable-notifications t)

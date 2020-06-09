@@ -239,6 +239,8 @@
 (setq pdf-view-midnight-colors '("WhiteSmoke" . "gray16"))
 (add-hook 'pdf-view-mode-hook 'pdf-view-midnight-minor-mode)
 
+(setq smerge-command-prefix "-")
+
 ;;; Defining some useful functions
 (defun shutdown ()
   (interactive)
@@ -392,21 +394,7 @@
 
 ;; ask for account when composing mail
 (add-hook 'mu4e-compose-pre-hook 'my/mu4e-set-account)
-;; (setq mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e")
-;; (setq mu4e-maildir "~/Mail")
-;; (setq mu4e-trash-folder "/Trash")
-;; (setq mu4e-refile-folder "/Archive")
-(setq mu4e-update-interval 120)
-;; (setq mu4e-hide-index-messages t) ; do not show minibuffer messages after updates
-;; (setq mu4e-index-update-error-warning nil)
-(setq mu4e-compose-signature-auto-include t)
-;; (setq mu4e-view-show-images t)
-(setq mu4e-enable-notifications t)
-;; (setq org-mu4e-convert-to-html t)
-;; (setq send-mail-function 'smtpmail-send-it)
-;; (setq message-send-mail-function 'smtpmail-send-it)
-;; (setq smtpmail-stream-type 'ssl)
-;; (setq mu4e-view-show-addresses t)
+
 (setq my/mu4e-account-alist
       '(("fdy"
          (mu4e-sent-messages-behavior sent)
@@ -528,8 +516,10 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 (defun evil-collection-mu4e-org-set-header-to-insert-mode ()
   (evil-set-initial-state 'mu4e-compose-mode 'insert))
 
-(after!
-  mu4e
+(after! mu4e
+  (setq mu4e-update-interval 120)
+  (setq mu4e-compose-signature-auto-include t)
+  (setq mu4e-enable-notifications t)
   (progn
     ;; For org-mu4e-compose-mode
     (add-hook 'org-mode-hook
@@ -544,7 +534,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 
 (setq doom-localleader-key "-")
 
-;; (map! "ESC" #'keyboard-quit)
+(map! "C-g" #'keyboard-quit)
 
 (map! :leader
       "SPC" #'execute-extended-command
@@ -619,9 +609,18 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    "x" #'lispy-x))
 
 ;; scheme
-(setq flycheck-scheme-chicken-executable "chicken-csc")
-(setq geiser-chicken-binary "chicken-csi")
-(setq geiser-active-implementations '(chicken))
+(use-package! geiser
+  :config
+  (setq flycheck-scheme-chicken-executable "chicken-csc")
+  (setq geiser-chicken-binary "chicken-csi")
+  (setq geiser-active-implementations '(chicken))
+  (map!
+   :localleader
+   :map scheme-mode-map
+   :n "'" #'geiser
+   :n "ef" #'geiser-eval-definition
+   :n "ee" #'geiser-eval-last-sexp
+   :n "eb" #'geiser-eval-buffer))
 
 ;; latex
 (setq +latex-viewers '(pdf-tools))

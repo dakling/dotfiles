@@ -213,6 +213,9 @@
 
 (setq doom-scratch-initial-major-mode 'lisp-interaction-mode)
 
+(after! sly
+  (setq inferior-lisp-program "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp"))
+
 (setq browse-url-browser-function 'eww-browse-url)
 
 (customize-set-variable 'compilation-scroll-output t)
@@ -235,9 +238,6 @@
          :file-name "%<%Y%m%d%H%M%S>-${slug}"
          :head "#+TITLE: ${title}\n"
          :unnarrowed t)))
-
-(setq pdf-view-midnight-colors '("WhiteSmoke" . "gray16"))
-(add-hook 'pdf-view-mode-hook 'pdf-view-midnight-minor-mode)
 
 (setq smerge-command-prefix "-")
 
@@ -960,10 +960,43 @@ limitations under the License.
   (setq pulseaudio-control--volume-maximum '(("percent" . 110)
                                              ("decibels" . 2.5)
                                              ("raw" . 72000))))
+(use-package! pdf-tools
+    ;; :init
+    ;; (pdf-tools-install)
+    :config
+    (add-hook 'pdf-view-mode-hook 'pdf-view-midnight-minor-mode)
+    ;; (add-hook 'pdf-view-mode-hook 'auto-revert-mode)
+    ;; (setq-default pdf-view-display-size 'fit-page)
+    ;; (setq pdf-view-continuous nil)
+    (evil-collection-init 'pdf)
+    (setq pdf-view-midnight-colors '("WhiteSmoke" . "gray16"))
+    (map!
+     :map pdf-view-mode-map
+     :n "-" nil)
+    (map!
+     :localleader
+     :map pdf-view-mode-map
+     ;; Scale/Fit
+     ;; "f"  nil
+     ;; "fw" #'pdf-view-fit-width-to-window
+     ;; "fh" #'pdf-view-fit-height-to-window
+     ;; "fp" #'pdf-view-fit-page-to-window
+     "at" #'pdf-annot-add-text-annotation
+     "ah" #'pdf-annot-add-highlight-markup-annotation
+     "ao" #'pdf-annot-add-strikeout-markup-annotation
+     "aD" #'pdf-annot-delete))
 
 (use-package! telega
   :config
   (telega-notifications-mode 1))
+
+(use-package! elfeed
+  :config
+  (setq elfeed-feeds
+        '("https://www.zeitsprung.fm/feed/ogg/"
+          ;; "https://audioboom.com/channels/2399216.rss" ; no such thing as a fish
+          ;; "https://kickermeetsdazn.podigee.io/feed/mp3"
+          )))
 
 (use-package! pinentry
   :init

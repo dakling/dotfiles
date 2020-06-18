@@ -72,6 +72,10 @@
 
 (package! pinentry)
 
+(package! elfeed)
+
+(package! emms)
+
 (package! diminish)
 
 (package! async-await)

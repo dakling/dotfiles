@@ -688,8 +688,8 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
              (my/csharp-array-to-list))
             (t (message "neither array nor string found on current line"))))))
 
-(use-package! csharp-repl
-  :load-path "~/Documents/programming/elisp/emacs-csharp-repl/")
+;; (use-package! csharp-repl
+;;   :load-path "~/Documents/programming/elisp/emacs-csharp-repl/")
 
 (defun my/bosss-file-p ()
   (or
@@ -819,30 +819,30 @@ limitations under the License.
  "er" #'csharp-repl-send-region)
 
 ;; bosss
-(use-package! bosss
-  :load-path "~/Documents/programming/elisp/emacs-bosss/"
-  :init
-  (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
-  (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Release/BoSSSpad.exe")
-  (setq bosss-path-reference (mapcar (lambda (proj) (concat "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/" proj))
-                                     '("RANSCommon/bin/Release/RANS_Solver.dll"
-                                       "KOmegaModelSolver/bin/Release/KOmegaSolver.exe"
-                                       "KOmegaStatSymmModelSolver/bin/Release/KOmegaSSSolver.exe"
-                                       "TurbulenceModelParameterOptimization/bin/Release/ParameterOptimization.exe")))
-  :config
-  (map!
-   :localleader
-   :map bosss-mode-map
-   "j" '(bosss-next-field :which-key "next field")
-   "k" '(bosss-previous-field :which-key "previous field")
-   "ro" '(run-bosss-repl-other-window :which-key "start repl in other window")
-   "rn" '(bosss-repl-start-bosss-pad :which-key "run bossspad")
-   "ef" '(bosss-repl-send-current-field :which-key "send region to repl")
-   "ee" '(bosss-repl-send-region :which-key "send region to repl")
-   "eb" '(bosss-repl-send-buffer :which-key "send buffer to repl")
-   "en" '(bosss-eval-and-next-field :which-key "eval and next field")
-   "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
-   "in" '(bosss-create-new-field :which-key "create new input field")))
+;; (use-package! bosss
+;;   :load-path "~/Documents/programming/elisp/emacs-bosss/"
+;;   :init
+;;   (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
+;;   (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Release/BoSSSpad.exe")
+;;   (setq bosss-path-reference (mapcar (lambda (proj) (concat "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/" proj))
+;;                                      '("RANSCommon/bin/Release/RANS_Solver.dll"
+;;                                        "KOmegaModelSolver/bin/Release/KOmegaSolver.exe"
+;;                                        "KOmegaStatSymmModelSolver/bin/Release/KOmegaSSSolver.exe"
+;;                                        "TurbulenceModelParameterOptimization/bin/Release/ParameterOptimization.exe")))
+;;   :config
+;;   (map!
+;;    :localleader
+;;    :map bosss-mode-map
+;;    "j" '(bosss-next-field :which-key "next field")
+;;    "k" '(bosss-previous-field :which-key "previous field")
+;;    "ro" '(run-bosss-repl-other-window :which-key "start repl in other window")
+;;    "rn" '(bosss-repl-start-bosss-pad :which-key "run bossspad")
+;;    "ef" '(bosss-repl-send-current-field :which-key "send region to repl")
+;;    "ee" '(bosss-repl-send-region :which-key "send region to repl")
+;;    "eb" '(bosss-repl-send-buffer :which-key "send buffer to repl")
+;;    "en" '(bosss-eval-and-next-field :which-key "eval and next field")
+;;    "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
+;;    "in" '(bosss-create-new-field :which-key "create new input field")))
 
 (map! :map company-mode-map
       :i "M-l" #'company-complete-selection
@@ -979,6 +979,12 @@ limitations under the License.
                        subword-mode
                        flyspell-mode
                        defining-kbd-macro)))
+
+;; Somewhere in your .emacs file
+(use-package! elfeed
+  :config
+  (setq elfeed-feeds
+        '("https://audioboom.com/channels/2399216.rss")))
 
 ;; eshell
 ;; (defun my-eshell/setup ()

@@ -241,6 +241,9 @@
 
 (setq smerge-command-prefix "-")
 
+;; For OpenFOAM
+(add-hook 'c++-mode-hook (lambda () (format-all-mode -1)))
+
 ;;; Defining some useful functions
 (defun shutdown ()
   (interactive)
@@ -478,6 +481,12 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    :predicate (lambda (_) (string-match-p "^mu4e-" (symbol-name major-mode)))
    :continue t))
 
+;; TODO
+;; (remove-hook 'mu4e-compose-mode-hook #'org-mu4e-compose-org-mode)
+;; (remove-hook 'message-send-hook #'org-mu4e-convert-to-html)
+;; (setq org-mu4e-convert-to-html nil)
+
+
 ;; (require 'mu4e-icalendar)
 ;; (mu4e-icalendar-setup)
 ;; (setq mu4e-view-use-gnus nil)
@@ -691,10 +700,13 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 (use-package! csharp-repl
   :load-path "~/Documents/programming/elisp/emacs-csharp-repl/")
 
+(defun my/personal-bosss-file-p ()
+  (file-in-directory-p (buffer-file-name) "~/BoSSS-experimental/internal/src/private-kli/"))
+
 (defun my/bosss-file-p ()
   (or
    (file-in-directory-p (buffer-file-name) "~/BoSSS/")
-   (file-in-directory-p (buffer-file-name) "~/BoSSS-experimental/internal/src/private-kli/")))
+   (my/personal-bosss-file-p)))
 
 (defun my/add-header ()
   (interactive)
@@ -719,10 +731,16 @@ limitations under the License.
 ")))
     (save-excursion
       (goto-line 0)
-      (when (my/bosss-file-p)
+      (when (my/personal-bosss-file-p)
         (unless (or (search-forward (substring header-text 93) nil t) ; check if header already exists, start a bit later to ignore year
                     (derived-mode-p #'bosss-mode)) ; check if this is just a worksheet
           (princ header-text (current-buffer)))))))
+
+(defun my/format-on-save ()
+  "Code-format the entire buffen on save."
+  (if (my/personal-bosss-file-p)
+      (format-all-mode 1)               ; not really necessary
+    (format-all-mode -1)))
 
 (defun my/indent-buffer-without-bosss-header ()
   "Indent file, but ignore header"
@@ -787,6 +805,7 @@ limitations under the License.
 (add-hook 'csharp-mode-hook (lambda ()
                               (push '(?< . ("< " . " >")) evil-surround-pairs-alist)))
 (add-hook 'csharp-mode-hook #'my/add-header)
+(add-hook 'csharp-mode-hook #'my/format-on-save)
 ;; (add-hook 'csharp-mode-hook (lambda ()
 ;;                               (add-hook 'before-save-hook #'my/indent-buffer-without-bosss-header nil t)))
 
@@ -993,10 +1012,125 @@ limitations under the License.
 (use-package! elfeed
   :config
   (setq elfeed-feeds
-        '("https://www.zeitsprung.fm/feed/ogg/"
-          ;; "https://audioboom.com/channels/2399216.rss" ; no such thing as a fish
-          ;; "https://kickermeetsdazn.podigee.io/feed/mp3"
-          )))
+        '(("https://www.zeitsprung.fm/feed/ogg/" podcast)
+          ("https://kickermeetsdazn.podigee.io/feed/mp3/" podcast)
+          ("http://www.reddit.com/r/emacs/.rss" emacs second reddit)
+          ("http://www.reddit.com/r/DoomEmacs/.rss" emacs second reddit)
+          ("http://www.reddit.com/r/lisp/.rss" programming second reddit)
+          ("http://www.reddit.com/r/scheme/.rss" programming second reddit)
+          ("http://www.reddit.com/r/linux/.rss" programming second reddit)
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCyHDQ5C6z1NDmJ4g6SerW8g" youtube mailab)
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UChkVOG0PqkXIHHmkBGG15Ig" youtube walulis) ;; Walulis
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCo4693Ony4slDY5hR0ny-bw" youtube walulis) ;; Walulis Daily
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVTyTA7-g9nopHeHbeuvpRA" youtube meyers)
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3XTzVzaHQEd30rQbuvCtTQ" youtube lastweektonight)
+          ("https://www.youtube.com/feeds/videos.xml?playlist_id=PL8FB14A2200B87185" youtube playlist yale economics)))
+
+  ;; Taken from https://joshrollinswrites.com/help-desk-head-desk/20200611/
+  (defun elfeed-v-mpv (url)
+    "Watch a video from URL in MPV"
+    (async-shell-command (format "mpv \"%s\"" url)))
+
+  (defun elfeed-view-mpv (&optional use-generic-p)
+    "Youtube-feed link"
+    (interactive "P")
+    (let ((entries (elfeed-search-selected)))
+      (cl-loop for entry in entries
+               do (elfeed-untag entry 'unread)
+               when (elfeed-entry-link entry)
+               do (elfeed-v-mpv it))
+      (mapc #'elfeed-search-update-entry entries)
+      (unless (use-region-p) (forward-line))))
+
+  ;; Taken from https://noonker.github.io/posts/2020-04-22-elfeed/
+  (defun yt-dl-it (url)
+    "Downloads the URL in an async shell"
+    (let ((default-directory "~/Videos"))
+      (async-shell-command (format "youtube-dl %s" url))))
+
+  (defun elfeed-youtube-dl (&optional use-generic-p)
+    "Youtube-DL link"
+    (interactive "P")
+    (let ((entries (elfeed-search-selected)))
+      (cl-loop for entry in entries
+               do (elfeed-untag entry 'unread)
+               when (elfeed-entry-link entry)
+               do (yt-dl-it it))
+      (mapc #'elfeed-search-update-entry entries)
+      (unless (use-region-p) (forward-line))))
+
+  (defun elfeed-eww-open (&optional use-generic-p)
+    "open with eww"
+    (interactive "P")
+    (let ((entries (elfeed-search-selected)))
+      (cl-loop for entry in entries
+               do (elfeed-untag entry 'unread)
+               when (elfeed-entry-link entry)
+               do (eww-browse-url it)
+               do (delete-other-windows))
+      (mapc #'elfeed-search-update-entry entries)
+      (unless (use-region-p) (forward-line))))
+
+  (defun elfeed-firefox-open (&optional use-generic-p)
+    "open with firefox"
+    (interactive "P")
+    (let ((entries (elfeed-search-selected)))
+      (cl-loop for entry in entries
+               do (elfeed-untag entry 'unread)
+               when (elfeed-entry-link entry)
+               do (browse-url-firefox it))
+      (mapc #'elfeed-search-update-entry entries)
+      (unless (use-region-p) (forward-line))))
+
+  (defun elfeed-reddit-open (&optional use-generic-p)
+    "open with md4rd"
+    (interactive "P")
+    (let ((entries (elfeed-search-selected)))
+      (cl-loop for entry in entries
+               do (elfeed-untag entry 'unread)
+               when (elfeed-entry-link entry)
+               do (md4rd--fetch-comments (format "%s.json" it)))
+      (mapc #'elfeed-search-update-entry entries)
+      ;; (unless (use-region-p) (forward-line))
+      ))
+
+  (defun elfeed-open-item-generic (entry)
+    (cond
+     ((elfeed-tagged-p 'youtube entry) (elfeed-view-mpv))
+     ((elfeed-tagged-p 'reddit entry) (elfeed-reddit-open))
+     ((elfeed-tagged-p 'podcast entry) (let ((elfeed-show-entry entry))
+                                         (elfeed-show-play-enclosure
+                                          (elfeed--enclosure-maybe-prompt-index entry))))
+     (t (elfeed-eww-open))))
+
+  (defun elfeed-open-generic ()
+    (interactive)
+    (let ((entries (elfeed-search-selected)))
+      (cl-loop for entry in entries
+               do (elfeed-untag entry 'unread)
+               when (elfeed-entry-link entry)
+               do (elfeed-open-item-generic entry))
+      (mapc #'elfeed-search-update-entry entries)
+      (unless (use-region-p) (forward-line))))
+
+  ;; TODO open depending on tag
+  (map! :map elfeed-search-mode-map
+        :n "o" #'elfeed-open-generic
+        :n "e" #'elfeed-eww-open
+        :n "b" #'elfeed-firefox-open
+        :n "r" #'elfeed-reddit-open
+        :n "v" #'elfeed-view-mpv
+        :n "d" #'elfeed-youtube-dl))
+
+(use-package! md4rd
+  :config
+  (add-hook 'md4rd-mode-hook 'md4rd-indent-all-the-lines))
+
+(use-package! emms
+  :config
+  (emms-standard)
+  (emms-default-players)
+  (setq emms-source-file-default-directory "~/Music"))
 
 (use-package! pinentry
   :init

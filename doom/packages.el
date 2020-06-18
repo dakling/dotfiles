@@ -87,3 +87,7 @@
 (package! org-roam-server)
 
 (package! wgrep)
+
+(package! md4rd)
+
+(package! emms)

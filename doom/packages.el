@@ -70,6 +70,8 @@
 
 (package! telega)
 
+(package! elfeed)
+
 (package! pinentry)
 
 (package! elfeed)
@@ -87,3 +89,9 @@
 (package! evil-tex :recipe (:host github :repo "itai33/evil-tex"))
 
 (package! org-roam-server)
+
+(package! wgrep)
+
+(package! md4rd)
+
+(package! emms)

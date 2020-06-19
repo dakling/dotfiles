@@ -239,7 +239,7 @@
          :head "#+TITLE: ${title}\n"
          :unnarrowed t)))
 
-(setq smerge-command-prefix "-")
+(setq smerge-command-prefix "+")
 
 ;; For OpenFOAM
 (add-hook 'c++-mode-hook (lambda () (format-all-mode -1)))
@@ -274,6 +274,18 @@
     (shell-command "xinput --map-to-output $(xinput list --id-only \"ELAN Touchscreen\") eDP1")
     ;; (shell-command "xinput --map-to-output $(xinput list --id-only \"HDX HDX DIGITIZER Pen (0)\") eDP1")
     ))
+
+(defun my/eww-open-league-table ()
+    "Do an internet search for soccer league table."
+    (interactive)
+    (let* ((country-search-string-table
+            '(("germany" "bundesliga tabelle")
+              ("spain" "la liga tabelle")
+              ("italy" "seria a tabelle")
+              ("france" "ligue 1 tabelle")
+              ("england" "premier league tabelle")))
+           (country (completing-read "which country? " (mapcar #'car country-search-string-table))))
+      (eww (cadr (assoc country country-search-string-table)))))
 
 (use-package! async-await)
 ;; adapted from snippet by oremacs
@@ -701,11 +713,13 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   :load-path "~/Documents/programming/elisp/emacs-csharp-repl/")
 
 (defun my/personal-bosss-file-p ()
-  (file-in-directory-p (buffer-file-name) "~/BoSSS-experimental/internal/src/private-kli/"))
+  (and (buffer-file-name)
+       (file-in-directory-p (buffer-file-name) "~/BoSSS-experimental/internal/src/private-kli/")))
 
 (defun my/bosss-file-p ()
   (or
-   (file-in-directory-p (buffer-file-name) "~/BoSSS/")
+   (and (buffer-file-name)
+        (file-in-directory-p (buffer-file-name) "~/BoSSS/"))
    (my/personal-bosss-file-p)))
 
 (defun my/add-header ()
@@ -1012,8 +1026,9 @@ limitations under the License.
 (use-package! elfeed
   :config
   (setq elfeed-feeds
-        '(("https://www.zeitsprung.fm/feed/ogg/" podcast)
-          ("https://kickermeetsdazn.podigee.io/feed/mp3/" podcast)
+        '(("https://www.zeitsprung.fm/feed/ogg/" podcast zeitsprung)
+          ("https://kickermeetsdazn.podigee.io/feed/mp3/" podcast kmd)
+          ("https://audioboom.com/channels/2399216.rss" podcast nstaaf)
           ("http://www.reddit.com/r/emacs/.rss" emacs second reddit)
           ("http://www.reddit.com/r/DoomEmacs/.rss" emacs second reddit)
           ("http://www.reddit.com/r/lisp/.rss" programming second reddit)

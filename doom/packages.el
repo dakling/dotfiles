@@ -60,7 +60,7 @@
 
 (package! modus-vivendi-theme)
 
-(package! mini-modeline)
+;; (package! mini-modeline)
 
 (package! smooth-scrolling)
 

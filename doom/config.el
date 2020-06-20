@@ -26,7 +26,7 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 ;; (setq doom-theme 'doom-solarized-dark)
-(setq doom-theme 'modus-vivendi)
+(setq doom-theme 'doom-city-lights)
 
 
 ;; If you use `org' and don't want your org files in the default location below,
@@ -69,7 +69,34 @@
         :init
         (server-start)
         :config
+        ;; Add workspace to modeline
+        (add-to-list 'global-mode-string
+                     '(:eval (format (concat "<%s> "
+                                             (unless (null (my/exwm-get-other-workspace)) "[%s] "))
+                                     exwm-workspace-current-index
+                                     (my/exwm-get-other-workspace))))
+        (defun +exwm/rename-buffer-to-title-h ()
+          "Make sure that the exwm buffers name convays its content."
+          (exwm-workspace-rename-buffer
+           (format "%s - %s" exwm-class-name exwm-title)))
+        (defun +exwm/update-class-h ()
+          (unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+                      (string= "gimp" exwm-instance-name)
+                      (string= "Firefox" exwm-class-name))
+            (exwm-workspace-rename-buffer exwm-class-name)))
+        (defun +exwm/update-title-h ()
+          (cond ((or (not exwm-instance-name)
+                     (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+                     (string= "gimp" exwm-instance-name)
+                     (string= "Firefox" exwm-class-name))
+                 (exwm-workspace-rename-buffer exwm-title))))
         (evil-set-initial-state 'exwm-mode 'emacs)
+        (add-hook 'exwm-floating-exit-hook #'exwm-layout-show-mode-line)
+        (add-hook 'exwm-floating-setup-hook #'exwm-layout-hide-mode-line)
+        (add-hook 'exwm-update-title-hook #'+exwm/rename-buffer-to-title-h)
+        (add-hook 'exwm-update-class-hook #'+exwm/update-class-h)
+        (add-hook 'exwm-update-title-hook #'+exwm/update-title-h)
+        (add-hook 'exwm-mode #'doom-mark-buffer-as-real-h)
         (setq mouse-autoselect-window nil
               focus-follows-mouse nil)
         (exwm-enable))
@@ -753,7 +780,8 @@ limitations under the License.
 (defun my/format-on-save ()
   "Code-format the entire buffen on save."
   (if (my/personal-bosss-file-p)
-      (format-all-mode 1)               ; not really necessary
+      ;; (format-all-mode 1)               ; not really necessary
+      (add-hook 'before-save-hook #'omnisharp-code-format-entire-file)
     (format-all-mode -1)))
 
 (defun my/indent-buffer-without-bosss-header ()
@@ -948,43 +976,43 @@ limitations under the License.
         org-roam-server-label-truncate-length 60
         org-roam-server-label-wrap-length 20))
 
-(use-package! mini-modeline
-  :custom
-  mini-modeline-enhance-visual nil
-  :config
-  (setq display-time-default-load-average nil)
-  (setq display-time-load-average-threshold 10000000)
-  (setq mini-modeline-r-format
-        '("%e" mode-line-front-space
-          ;; mode-line-mule-info
-          ;; mode-line-client
-          ;; mode-line-modified
-          ;; mode-line-remote
-          ;; mode-line-frame-identification
-          mode-line-buffer-identification
-          vc-mode
-          " " mode-line-position " "
-          ;; evil-mode-line-tag
-          ;; mode-line-modes
-          mode-name
-          " "
-          mode-line-misc-info
-          (:eval (format (concat "<%s> "
-                                 (unless (null (my/exwm-get-other-workspace)) "[%s] "))
-                         exwm-workspace-current-index
-                         (my/exwm-get-other-workspace)))
-          "    |"
-          mode-line-end-spaces))
-  (mini-modeline-mode 1))
+;; (use-package! mini-modeline
+;;   :custom
+;;   mini-modeline-enhance-visual nil
+;;   :config
+;;   (setq display-time-default-load-average nil)
+;;   (setq display-time-load-average-threshold 10000000)
+;;   ;; (setq mini-modeline-r-format
+;;   ;;       '("%e" mode-line-front-space
+;;   ;;         ;; mode-line-mule-info
+;;   ;;         ;; mode-line-client
+;;   ;;         ;; mode-line-modified
+;;   ;;         ;; mode-line-remote
+;;   ;;         ;; mode-line-frame-identification
+;;   ;;         mode-line-buffer-identification
+;;   ;;         vc-mode
+;;   ;;         " " mode-line-position " "
+;;   ;;         ;; evil-mode-line-tag
+;;   ;;         ;; mode-line-modes
+;;   ;;         mode-name
+;;   ;;         " "
+;;   ;;         mode-line-misc-info
+;;   ;;         (:eval (format (concat "<%s> "
+;;   ;;                                (unless (null (my/exwm-get-other-workspace)) "[%s] "))
+;;   ;;                        exwm-workspace-current-index
+;;   ;;                        (my/exwm-get-other-workspace)))
+;;   ;;         "    |"
+;;   ;;         mode-line-end-spaces))
+;;   (mini-modeline-mode 1))
 
 (use-package! smooth-scrolling
   :config
   (smooth-scrolling-mode 1))
 
-(use-package! auto-dim-other-buffers
-  :config
-  (setq auto-dim-other-buffers-face nil)
-  (auto-dim-other-buffers-mode 1))
+;; (use-package! auto-dim-other-buffers
+;;   :config
+;;   (setq auto-dim-other-buffers-face nil)
+;;   (auto-dim-other-buffers-mode 1))
 
 (use-package! pulseaudio-control
   :custom
@@ -1029,11 +1057,12 @@ limitations under the License.
         '(("https://www.zeitsprung.fm/feed/ogg/" podcast zeitsprung)
           ("https://kickermeetsdazn.podigee.io/feed/mp3/" podcast kmd)
           ("https://audioboom.com/channels/2399216.rss" podcast nstaaf)
-          ("http://www.reddit.com/r/emacs/.rss" emacs second reddit)
-          ("http://www.reddit.com/r/DoomEmacs/.rss" emacs second reddit)
-          ("http://www.reddit.com/r/lisp/.rss" programming second reddit)
-          ("http://www.reddit.com/r/scheme/.rss" programming second reddit)
-          ("http://www.reddit.com/r/linux/.rss" programming second reddit)
+          ("https://ambrevar.xyz/atom.xml" blog emacs programming)
+          ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
+          ("http://www.reddit.com/r/DoomEmacs/.rss" emacs reddit)
+          ("http://www.reddit.com/r/lisp/.rss" programming reddit)
+          ("http://www.reddit.com/r/scheme/.rss" programming reddit)
+          ("http://www.reddit.com/r/linux/.rss" programming reddit)
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UCyHDQ5C6z1NDmJ4g6SerW8g" youtube mailab)
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UChkVOG0PqkXIHHmkBGG15Ig" youtube walulis) ;; Walulis
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UCo4693Ony4slDY5hR0ny-bw" youtube walulis) ;; Walulis Daily
@@ -1172,3 +1201,52 @@ limitations under the License.
 ;; load my custom scripts
 (load "~/Dropbox/Helen+Dario/washing-machine-timer.el" t t)
 (load "~/Dropbox/Helen+Dario/einkaufsliste/interactiveEnterLisp.el" t t)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ansi-color-faces-vector
+   [default bold shadow italic underline success warning error])
+ '(avy-all-windows t)
+ '(avy-single-candidate-jump t)
+ '(compilation-scroll-output t)
+ '(custom-safe-themes
+   '("d71aabbbd692b54b6263bfe016607f93553ea214bc1435d17de98894a5c3a086" "fe94e2e42ccaa9714dd0f83a5aa1efeef819e22c5774115a9984293af609fce7" default))
+ '(flymake-error-bitmap '(flymake-double-exclamation-mark modus-theme-fringe-red))
+ '(flymake-note-bitmap '(exclamation-mark modus-theme-fringe-cyan))
+ '(flymake-warning-bitmap '(exclamation-mark modus-theme-fringe-yellow))
+ '(hl-todo-keyword-faces
+   '(("HOLD" . "#cfdf30")
+     ("TODO" . "#feacd0")
+     ("NEXT" . "#b6a0ff")
+     ("THEM" . "#f78fe7")
+     ("PROG" . "#00d3d0")
+     ("OKAY" . "#4ae8fc")
+     ("DONT" . "#80d200")
+     ("FAIL" . "#ff8059")
+     ("DONE" . "#44bc44")
+     ("NOTE" . "#f0ce43")
+     ("KLUDGE" . "#eecc00")
+     ("HACK" . "#eecc00")
+     ("TEMP" . "#ffcccc")
+     ("FIXME" . "#ff9977")
+     ("XXX+" . "#f4923b")
+     ("REVIEW" . "#6ae4b9")
+     ("DEPRECATED" . "#aaeeee")))
+ '(ibuffer-deletion-face 'modus-theme-mark-del)
+ '(ibuffer-filter-group-name-face 'modus-theme-mark-symbol)
+ '(ibuffer-marked-face 'modus-theme-mark-sel)
+ '(ibuffer-title-face 'modus-theme-header)
+ '(pulseaudio-control-volume-step "5%")
+ '(vc-annotate-background-mode nil)
+ '(xterm-color-names
+   ["#000000" "#ff8059" "#44bc44" "#eecc00" "#29aeff" "#feacd0" "#00d3d0" "#a8a8a8"])
+ '(xterm-color-names-bright
+   ["#181a20" "#f4923b" "#80d200" "#cfdf30" "#72a4ff" "#f78fe7" "#4ae8fc" "#ffffff"]))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

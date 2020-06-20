@@ -78,7 +78,7 @@
 
 (package! async-await)
 
-(package! helm-exwm)
+;; (package! helm-exwm)
 
 (package! helm-swoop)
 

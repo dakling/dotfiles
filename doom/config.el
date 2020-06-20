@@ -129,7 +129,7 @@
                 ([?\s-x] . helm-M-x)
                 ([?\s-f] . helm-find-files)
                 ([?\s-p] . helm-projectile)
-                ([?\s-b] . helm-mini)
+                ([?\s-b] . helm-buffers-list)
                 ([?\s-l] . evil-window-right)
                 ([?\s-h] . evil-window-left)
                 ([?\s-j] . evil-window-down)
@@ -914,7 +914,7 @@ limitations under the License.
  :after evil-snipe
  :v "s" #'evil-surround-region)
 
-(use-package! helm-exwm)
+;; (use-package! helm-exwm)
 
 (use-package! helm
   :diminish helm-mode

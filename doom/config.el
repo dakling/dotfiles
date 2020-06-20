@@ -918,7 +918,6 @@ limitations under the License.
 
 (use-package! helm
   :diminish helm-mode
-  :after helm-exwm
   :config
   (map!
    :map helm-map
@@ -955,10 +954,10 @@ limitations under the License.
   (setq helm-locate-fuzzy-match t)
   (setq helm-quick-update t)
   (setq helm-recentf-fuzzy-match t)
-  (setq helm-exwm-emacs-buffers-source (helm-exwm-build-emacs-buffers-source))
-  (setq helm-exwm-source (helm-exwm-build-source))
-  (setq helm-mini-default-sources `(helm-exwm-emacs-buffers-source
-                                    helm-exwm-source
+  ;; (setq helm-exwm-emacs-buffers-source (helm-exwm-build-emacs-buffers-source))
+  ;; (setq helm-exwm-source (helm-exwm-build-source))
+  (setq helm-mini-default-sources `(;; helm-exwm-emacs-buffers-source
+                                    ;; helm-exwm-source
                                     helm-source-recentf)))
 (use-package! helm-swoop
   :config

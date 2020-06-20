@@ -415,6 +415,7 @@
 ;; (use-package! mu4e-conversation)
 
 ;; (global-mu4e-conversation-mode)
+
 (defun my/mu4e-set-account ()
   "Set the account for composing a message."
   (let* ((account
@@ -503,10 +504,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
          (smtpmail-stream-type starttls)
          (user-mail-address "dario.klingenberg@web.de")
          (user-full-name "dario"))))
-;; (run-at-time t mu4e-update-interval #'(lambda ()
-;;                                         (progn
-;;                                           (mu4e-update-mail-and-index t))))
-                                        ; this should not be needed, but it is
 
 ;; taken from reddit
 (use-package! mu4e-alert
@@ -520,49 +517,14 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    :predicate (lambda (_) (string-match-p "^mu4e-" (symbol-name major-mode)))
    :continue t))
 
-;; TODO
-;; (remove-hook 'mu4e-compose-mode-hook #'org-mu4e-compose-org-mode)
-;; (remove-hook 'message-send-hook #'org-mu4e-convert-to-html)
-;; (setq org-mu4e-convert-to-html nil)
-
-
 ;; (require 'mu4e-icalendar)
 ;; (mu4e-icalendar-setup)
 ;; (setq mu4e-view-use-gnus nil)
 
-;; (defun convert-vcal-to-org ()
-;;   (interactive)
-;;   (read-only-mode -1)
-;;   (erase-buffer)
-;;   (let* ((ical2org (executable-find "ical2org")))
-;;     (insert (shell-command-to-string
-;;              (concat "awk -f " ical2org " <" (shell-quote-argument (buffer-file-name)))))
-;;     (keep-lines "^[\*(  )]" (point-min) (point-max))
-;;     (flush-lines "^ *$" (point-min) (point-max))))
-
-;; (define-derived-mode
-;;   my/mu4e-cal-view-mode
-;;   fundamental-mode
-;;   "my/mu4e-cal-view-mode"
-;;   "View cal in mu4e."
-;;   (convert-vcal-to-org))
-
-;; (add-to-list 'auto-mode-alist '("\\.vcs\\'" . my/mu4e-cal-view-mode))
-
 ;; (require 'gnus-icalendar)
 ;; (gnus-icalendar-setup)
 
-;; (setq gnus-icalendar-org-capture-file "~/Documents/TODO.org")
-;; (setq gnus-icalendar-org-capture-headline '("IMPORTANT DATES")) ;;make sure to create Calendar heading first
 ;; (gnus-icalendar-org-setup)
-
-
-;; TODO remove once PR to evil-collection gets merged
-(defun evil-collection-mu4e-org-set-header-to-normal-mode ()
-  (evil-set-initial-state 'mu4e-compose-mode 'normal))
-
-(defun evil-collection-mu4e-org-set-header-to-insert-mode ()
-  (evil-set-initial-state 'mu4e-compose-mode 'insert))
 
 (after! mu4e
   (setq mu4e-update-interval 120)
@@ -605,12 +567,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
       "ef" #'eval-defun
       "ep" #'eval-print-last-sexp)
 
-;; (map!
-;;  (:after evil-easymotion
-;;   :m "gs" evilem-map
-;;   (:map evilem-map
-;;    "s" #'avy-goto-char-timer)))
-
 (after!
   lispy
   (lispy-set-key-theme '(lispy c-digits))) ;; disable single-key bindings
@@ -627,7 +583,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   (map!
    :map lispyville-mode-map
    :ni "M-h" #'lispy-left
-   ;; (kbd "M-h") #'lispyville-previous-opening
    :ni "M-l" #'lispyville-next-closing
    :n "M-j" #'lispy-down
    :n "M-k" #'lispy-up
@@ -639,13 +594,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    :ni "C-M-l" #'lispy-move-right
    :ni "M-r" #'lispy-raise-sexp
    :ni "M-d" #'lispyville-wrap-round
-   ;; (kbd "M-8") #'lispyville-wrap-brackets
-   ;; (kbd "M-7") #'lispyville-wrap-braces
-   ;; (kbd "M-9") #'lispyville-wrap-brackets
-   ;; (kbd "M-0") #'lispyville-wrap-braces
    :ni "C-<return>" #'lispy-split
-   ;; (kbd "M-<backspace>") 'lispyville-delete-backward-word
-   ;; (kbd "/") #'lispy-occur
    :n "gc" #'lispyville-comment-or-uncomment)
 
   (map!
@@ -685,10 +634,6 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
  "k" #'TeX-kill-job
  "m" #'TeX-insert-macro
  "v" #'TeX-view
- ;; "s" '(my/LaTeX-star-environment-dwim :which-key "toggle starred environment")
- ;; "t" '(my/toggle-parens-and-left-right :which-key "toggle parens and \left( \right)")
- ;; "cse" '((lambda () (interactive) (LaTeX-environment 1)) :which-key "change current environment")
- ;; TeX-doc is a very slow function
  "hd" #'TeX-doc
  "xb" #'latex/font-bold
  "xc" #'latex/font-code
@@ -841,15 +786,10 @@ limitations under the License.
   (interactive)
   (async-shell-command (concat "nunit3-console " path-to-assembly)))
 
-;; (add-hook 'csharp-mode-hook #'subword-mode)
-;; (add-hook 'csharp-mode-hook #'company-mode)
-;; (add-hook 'csharp-mode-hook #'rainbow-delimiters-mode-enable)
 (add-hook 'csharp-mode-hook (lambda ()
                               (push '(?< . ("< " . " >")) evil-surround-pairs-alist)))
 (add-hook 'csharp-mode-hook #'my/add-header)
 (add-hook 'csharp-mode-hook #'my/format-on-save)
-;; (add-hook 'csharp-mode-hook (lambda ()
-;;                               (add-hook 'before-save-hook #'my/indent-buffer-without-bosss-header nil t)))
 
 (setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
 (defun my/csharp-find-current-project ()
@@ -914,8 +854,6 @@ limitations under the License.
  :after evil-snipe
  :v "s" #'evil-surround-region)
 
-;; (use-package! helm-exwm)
-
 (use-package! helm
   :diminish helm-mode
   :config
@@ -953,12 +891,8 @@ limitations under the License.
   (setq helm-mode-fuzzy-match t)
   (setq helm-locate-fuzzy-match t)
   (setq helm-quick-update t)
-  (setq helm-recentf-fuzzy-match t)
-  ;; (setq helm-exwm-emacs-buffers-source (helm-exwm-build-emacs-buffers-source))
-  ;; (setq helm-exwm-source (helm-exwm-build-source))
-  (setq helm-mini-default-sources `(;; helm-exwm-emacs-buffers-source
-                                    ;; helm-exwm-source
-                                    helm-source-recentf)))
+  (setq helm-recentf-fuzzy-match t))
+
 (use-package! helm-swoop
   :config
   (define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-current-mode-from-helm-swoop))
@@ -975,43 +909,9 @@ limitations under the License.
         org-roam-server-label-truncate-length 60
         org-roam-server-label-wrap-length 20))
 
-;; (use-package! mini-modeline
-;;   :custom
-;;   mini-modeline-enhance-visual nil
-;;   :config
-;;   (setq display-time-default-load-average nil)
-;;   (setq display-time-load-average-threshold 10000000)
-;;   ;; (setq mini-modeline-r-format
-;;   ;;       '("%e" mode-line-front-space
-;;   ;;         ;; mode-line-mule-info
-;;   ;;         ;; mode-line-client
-;;   ;;         ;; mode-line-modified
-;;   ;;         ;; mode-line-remote
-;;   ;;         ;; mode-line-frame-identification
-;;   ;;         mode-line-buffer-identification
-;;   ;;         vc-mode
-;;   ;;         " " mode-line-position " "
-;;   ;;         ;; evil-mode-line-tag
-;;   ;;         ;; mode-line-modes
-;;   ;;         mode-name
-;;   ;;         " "
-;;   ;;         mode-line-misc-info
-;;   ;;         (:eval (format (concat "<%s> "
-;;   ;;                                (unless (null (my/exwm-get-other-workspace)) "[%s] "))
-;;   ;;                        exwm-workspace-current-index
-;;   ;;                        (my/exwm-get-other-workspace)))
-;;   ;;         "    |"
-;;   ;;         mode-line-end-spaces))
-;;   (mini-modeline-mode 1))
-
 (use-package! smooth-scrolling
   :config
   (smooth-scrolling-mode 1))
-
-;; (use-package! auto-dim-other-buffers
-;;   :config
-;;   (setq auto-dim-other-buffers-face nil)
-;;   (auto-dim-other-buffers-mode 1))
 
 (use-package! pulseaudio-control
   :custom
@@ -1021,13 +921,8 @@ limitations under the License.
                                              ("decibels" . 2.5)
                                              ("raw" . 72000))))
 (use-package! pdf-tools
-    ;; :init
-    ;; (pdf-tools-install)
     :config
     (add-hook 'pdf-view-mode-hook 'pdf-view-midnight-minor-mode)
-    ;; (add-hook 'pdf-view-mode-hook 'auto-revert-mode)
-    ;; (setq-default pdf-view-display-size 'fit-page)
-    ;; (setq pdf-view-continuous nil)
     (evil-collection-init 'pdf)
     (setq pdf-view-midnight-colors '("WhiteSmoke" . "gray16"))
     (map!
@@ -1036,11 +931,6 @@ limitations under the License.
     (map!
      :localleader
      :map pdf-view-mode-map
-     ;; Scale/Fit
-     ;; "f"  nil
-     ;; "fw" #'pdf-view-fit-width-to-window
-     ;; "fh" #'pdf-view-fit-height-to-window
-     ;; "fp" #'pdf-view-fit-page-to-window
      "at" #'pdf-annot-add-text-annotation
      "ah" #'pdf-annot-add-highlight-markup-annotation
      "ao" #'pdf-annot-add-strikeout-markup-annotation
@@ -1156,7 +1046,6 @@ limitations under the License.
       (mapc #'elfeed-search-update-entry entries)
       (unless (use-region-p) (forward-line))))
 
-  ;; TODO open depending on tag
   (map! :map elfeed-search-mode-map
         :n "o" #'elfeed-open-generic
         :n "e" #'elfeed-eww-open
@@ -1189,13 +1078,6 @@ limitations under the License.
                        subword-mode
                        flyspell-mode
                        defining-kbd-macro)))
-
-;; eshell
-;; (defun my-eshell/setup ()
-;;   (add-hook 'evil-insert-state-entry-hook #'+eshell-goto-prompt-on-insert-a nil t))
-
-;; (after! eshell
-;;   (add-hook 'eshell-mode-hook #'my-eshell/setup))
 
 ;; load my custom scripts
 (load "~/Dropbox/Helen+Dario/washing-machine-timer.el" t t)

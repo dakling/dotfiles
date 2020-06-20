@@ -60,8 +60,6 @@
 
 (package! modus-vivendi-theme)
 
-;; (package! mini-modeline)
-
 (package! smooth-scrolling)
 
 (package! auto-dim-other-buffers)
@@ -77,8 +75,6 @@
 (package! diminish)
 
 (package! async-await)
-
-;; (package! helm-exwm)
 
 (package! helm-swoop)
 

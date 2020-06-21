@@ -102,7 +102,7 @@
         (exwm-enable))
 
       (use-package! exwm-input
-        :after exwm-randr
+        :after-call exwm-randr
         :config
         (define-key exwm-mode-map (kbd "C-c") nil)
         (setq exwm-input-global-keys
@@ -159,11 +159,11 @@
                             'pulseaudio-control-toggle-current-sink-mute))
 
       (use-package! exwm-systemtray
-        :after exwm
+        :after-call exwm-mode-hook
         :config (exwm-systemtray-enable))
 
       (use-package! exwm-randr
-        :after exwm
+        :after-call exwm-mode-hook
         :init
         (cond
          ((system-name= "klingenberg-tablet") (progn (set 'monitor1 "eDP1")
@@ -222,7 +222,7 @@
           (exwm-randr-enable)))
 
       (use-package! exwm-workspace
-        :after exwm
+        :after-call exwm-mode-hook
         :init
         (progn
           (setq exwm-workspace-number 10)
@@ -507,6 +507,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 
 ;; taken from reddit
 (use-package! mu4e-alert
+  :after-call mu4e-main-mode-hook
   :config
   (setq mu4e-alert-interesting-mail-query "flag:unread AND NOT flag:trashed AND NOT maildir:/Web/INBOX/")
   (mu4e-alert-enable-mode-line-display)
@@ -607,6 +608,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 
 ;; scheme
 (use-package! geiser
+  :commands (run-geiser)
   :config
   (setq flycheck-scheme-chicken-executable "chicken-csc")
   (setq geiser-chicken-binary "chicken-csi")
@@ -652,6 +654,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
  "ob" (lambda () (interactive) (find-file "bibliography.bib")))
 
 (use-package! evil-tex
+  :after-call LaTeX-mode-hook
   :config
   (add-hook 'LaTeX-mode-hook #'evil-tex-mode))
 
@@ -851,7 +854,7 @@ limitations under the License.
       :i "M-k" #'company-select-previous-or-abort)
 
 (map!
- :after evil-snipe
+ :after-call evil-snipe-mode-hook
  :v "s" #'evil-surround-region)
 
 (use-package! helm
@@ -894,10 +897,12 @@ limitations under the License.
   (setq helm-recentf-fuzzy-match t))
 
 (use-package! helm-swoop
+  :after-call helm-mode-hook
   :config
   (define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-current-mode-from-helm-swoop))
 
 (use-package! org-roam-server
+  :after-call org-roam-mode-hook
   :config
   (map! :map doom-leader-notes-map
         "rg" (lambda () (interactive) (org-roam-server-mode 1) (browse-url-firefox "127.0.0.1:8080")))
@@ -913,6 +918,21 @@ limitations under the License.
   :config
   (smooth-scrolling-mode 1))
 
+;; (use-package! mini-modeline
+;;   :after doom-modeline
+;;   :config
+;;   (defun my-setup-mini-modeline()
+;;     (add-hook 'minibuffer-inactive-mode-hook
+;;               (lambda ()
+;;                 (make-local-variable 'face-remapping-alist)
+;;                 (add-to-list 'face-remapping-alist '(default (:background "#21252b")))))
+;;     (doom-modeline-def-modeline 'minibuffer-line
+;;       '(modals workspace-name window-number matches buffer-info remote-host buffer-position word-count selection-info)
+;;       '(misc-info major-mode process vcs lsp checker " \n"))
+;;     (setq mini-modeline-l-format '(:eval (doom-modeline-format--minibuffer-line))))
+;;   (add-hook 'mini-modeline-mode-hook 'my-setup-mini-modeline)
+;;   (add-hook 'after-init-hook 'mini-modeline-mode))
+
 (use-package! pulseaudio-control
   :custom
   (pulseaudio-control-volume-step "5%")
@@ -921,32 +941,35 @@ limitations under the License.
                                              ("decibels" . 2.5)
                                              ("raw" . 72000))))
 (use-package! pdf-tools
-    :config
-    (add-hook 'pdf-view-mode-hook 'pdf-view-midnight-minor-mode)
-    (evil-collection-init 'pdf)
-    (setq pdf-view-midnight-colors '("WhiteSmoke" . "gray16"))
-    (map!
-     :map pdf-view-mode-map
-     :n "-" nil)
-    (map!
-     :localleader
-     :map pdf-view-mode-map
-     "at" #'pdf-annot-add-text-annotation
-     "ah" #'pdf-annot-add-highlight-markup-annotation
-     "ao" #'pdf-annot-add-strikeout-markup-annotation
-     "aD" #'pdf-annot-delete))
+  :config
+  (add-hook 'pdf-view-mode-hook 'pdf-view-midnight-minor-mode)
+  (evil-collection-init 'pdf)
+  (setq pdf-view-midnight-colors '("WhiteSmoke" . "gray16"))
+  (map!
+   :map pdf-view-mode-map
+   :n "-" nil)
+  (map!
+   :localleader
+   :map pdf-view-mode-map
+   "at" #'pdf-annot-add-text-annotation
+   "ah" #'pdf-annot-add-highlight-markup-annotation
+   "ao" #'pdf-annot-add-strikeout-markup-annotation
+   "aD" #'pdf-annot-delete))
 
 (use-package! telega
+  :commands telega
   :config
   (telega-notifications-mode 1))
 
 (use-package! elfeed
+  :commands (elfeed elfeed-update)
   :config
   (setq elfeed-feeds
         '(("https://www.zeitsprung.fm/feed/ogg/" podcast zeitsprung)
           ("https://kickermeetsdazn.podigee.io/feed/mp3/" podcast kmd)
           ("https://audioboom.com/channels/2399216.rss" podcast nstaaf)
           ("https://ambrevar.xyz/atom.xml" blog emacs programming)
+          ("https://nyxt.atlas.engineer/feed" lisp programming nyxt next)
           ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
           ("http://www.reddit.com/r/DoomEmacs/.rss" emacs reddit)
           ("http://www.reddit.com/r/lisp/.rss" programming reddit)
@@ -1055,10 +1078,12 @@ limitations under the License.
         :n "d" #'elfeed-youtube-dl))
 
 (use-package! md4rd
+  :commands (md4rd md4rd--fetch-comments)
   :config
   (add-hook 'md4rd-mode-hook 'md4rd-indent-all-the-lines))
 
 (use-package! emms
+  :commands (emms)
   :config
   (emms-standard)
   (emms-default-players)

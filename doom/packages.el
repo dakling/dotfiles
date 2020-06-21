@@ -87,3 +87,5 @@
 (package! md4rd)
 
 (package! emms)
+
+;; (package! mini-modeline)

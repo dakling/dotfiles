@@ -88,4 +88,6 @@
 
 (package! emms)
 
+(package! ace-link)
+
 ;; (package! mini-modeline)

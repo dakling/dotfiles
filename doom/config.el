@@ -531,12 +531,13 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   (setq mu4e-update-interval 120)
   (setq mu4e-compose-signature-auto-include t)
   (setq mu4e-enable-notifications t)
-  (progn
-    ;; For org-mu4e-compose-mode
-    (add-hook 'org-mode-hook
-              #'evil-collection-mu4e-org-set-header-to-normal-mode)
-    (add-hook 'mu4e-compose-pre-hook
-              #'evil-collection-mu4e-org-set-header-to-insert-mode)))
+  ;; (progn
+  ;;   ;; For org-mu4e-compose-mode
+  ;;   (add-hook 'org-mode-hook
+  ;;             #'evil-collection-mu4e-org-set-header-to-normal-mode)
+  ;;   (add-hook 'mu4e-compose-pre-hook
+  ;;             #'evil-collection-mu4e-org-set-header-to-insert-mode))
+  )
 
 ;; keybindings
 ;;
@@ -854,7 +855,7 @@ limitations under the License.
       :i "M-k" #'company-select-previous-or-abort)
 
 (map!
- :after-call evil-snipe-mode-hook
+ :after evil-snipe
  :v "s" #'evil-surround-region)
 
 (use-package! helm
@@ -968,6 +969,8 @@ limitations under the License.
         '(("https://www.zeitsprung.fm/feed/ogg/" podcast zeitsprung)
           ("https://kickermeetsdazn.podigee.io/feed/mp3/" podcast kmd)
           ("https://audioboom.com/channels/2399216.rss" podcast nstaaf)
+          ("http://fokus-fussball.de/feed/mp3/" podcast collina erben fussball)
+          ("https://tribuenengespraech.podigee.io/feed/vorbis" podcast rasenfunk tribünengespräch fussball)
           ("https://ambrevar.xyz/atom.xml" blog emacs programming)
           ("https://nyxt.atlas.engineer/feed" lisp programming nyxt next)
           ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
@@ -1076,6 +1079,14 @@ limitations under the License.
         :n "r" #'elfeed-reddit-open
         :n "v" #'elfeed-view-mpv
         :n "d" #'elfeed-youtube-dl))
+
+(after! eww
+ (map!
+   :map eww-mode-map
+   :n "M-h" #'eww-back-url
+   :n "M-l" #'eww-forward-url
+   :n "M-y" #'eww-copy-page-url
+   :n "f" #'ace-link-eww))
 
 (use-package! md4rd
   :commands (md4rd md4rd--fetch-comments)

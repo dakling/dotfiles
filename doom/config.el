@@ -682,6 +682,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
             (t (message "neither array nor string found on current line"))))))
 
 (use-package! csharp-repl
+  :unless (system-name= "klingenberg-pi")
   :load-path "~/Documents/programming/elisp/emacs-csharp-repl/")
 
 (defun my/personal-bosss-file-p ()
@@ -821,6 +822,7 @@ limitations under the License.
 
 ;; bosss
 (use-package! bosss
+  :unless (system-name= "klingenberg-pi")
   :load-path "~/Documents/programming/elisp/emacs-bosss/"
   :init
   (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))

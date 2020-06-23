@@ -102,7 +102,7 @@
         (exwm-enable))
 
       (use-package! exwm-input
-        :after-call exwm-randr
+        ;; :after-call exwm-randr
         :config
         (define-key exwm-mode-map (kbd "C-c") nil)
         (setq exwm-input-global-keys
@@ -159,11 +159,11 @@
                             'pulseaudio-control-toggle-current-sink-mute))
 
       (use-package! exwm-systemtray
-        :after-call exwm-mode-hook
+        ;; :after-call exwm-mode-hook
         :config (exwm-systemtray-enable))
 
       (use-package! exwm-randr
-        :after-call exwm-mode-hook
+        ;; :after-call exwm-mode-hook
         :init
         (cond
          ((system-name= "klingenberg-tablet") (progn (set 'monitor1 "eDP1")
@@ -222,7 +222,7 @@
           (exwm-randr-enable)))
 
       (use-package! exwm-workspace
-        :after-call exwm-mode-hook
+        ;; :after-call exwm-mode-hook
         :init
         (progn
           (setq exwm-workspace-number 10)
@@ -269,7 +269,8 @@
 (setq smerge-command-prefix "+")
 
 ;; For OpenFOAM
-(add-hook 'c++-mode-hook (lambda () (format-all-mode -1)))
+(after! format-all-mode
+  (remhash 'c++-mode format-all--mode-table))
 
 ;;; Defining some useful functions
 (defun shutdown ()
@@ -507,7 +508,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 
 ;; taken from reddit
 (use-package! mu4e-alert
-  :after-call mu4e-main-mode-hook
+  :after-call mu4e-index-updated-hook
   :config
   (setq mu4e-alert-interesting-mail-query "flag:unread AND NOT flag:trashed AND NOT maildir:/Web/INBOX/")
   (mu4e-alert-enable-mode-line-display)
@@ -518,19 +519,14 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    :predicate (lambda (_) (string-match-p "^mu4e-" (symbol-name major-mode)))
    :continue t))
 
-;; (require 'mu4e-icalendar)
-;; (mu4e-icalendar-setup)
-;; (setq mu4e-view-use-gnus nil)
-
-;; (require 'gnus-icalendar)
-;; (gnus-icalendar-setup)
-
-;; (gnus-icalendar-org-setup)
-
 (after! mu4e
   (setq mu4e-update-interval 120)
   (setq mu4e-compose-signature-auto-include t)
   (setq mu4e-enable-notifications t)
+  (customize-set-variable 'mu4e-headers-leave-behavior 'apply)
+  (setq mu4e-view-use-gnus t)
+  (require 'mu4e-icalendar)
+  (mu4e-icalendar-setup)
   ;; (progn
   ;;   ;; For org-mu4e-compose-mode
   ;;   (add-hook 'org-mode-hook
@@ -967,7 +963,7 @@ limitations under the License.
   :config
   (setq elfeed-feeds
         '(("https://www.zeitsprung.fm/feed/ogg/" podcast zeitsprung)
-          ("https://kickermeetsdazn.podigee.io/feed/mp3/" podcast kmd)
+          ("https://kickermeetsdazn.podigee.io/feed/mp3/" podcast kmd fussball)
           ("https://audioboom.com/channels/2399216.rss" podcast nstaaf)
           ("http://fokus-fussball.de/feed/mp3/" podcast collina erben fussball)
           ("https://tribuenengespraech.podigee.io/feed/vorbis" podcast rasenfunk tribünengespräch fussball)

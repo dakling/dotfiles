@@ -243,7 +243,7 @@
 (after! sly
   (setq inferior-lisp-program "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp"))
 
-(setq browse-url-browser-function 'eww-browse-url)
+(setq browse-url-browser-function 'browse-url-firefox)
 
 (customize-set-variable 'compilation-scroll-output t)
 
@@ -655,6 +655,18 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
   :config
   (add-hook 'LaTeX-mode-hook #'evil-tex-mode))
 
+;; f#
+(map! :localleader
+      :after fsharp-mode
+      :map fsharp-mode-map
+      :n "'" #'run-fsharp
+      :n "e" nil
+      :n "ef" #'fsharp-eval-phrase
+      :n "er" #'fsharp-eval-region
+      :n "ce" #'compile
+      :n "cr" #'recompile
+      :n "cc" #'recompile)
+
 ;;c#
 (defun my/csharp-list-to-array ()
   (replace-regexp "List<\\(.*\\)>" "\\1[]"
@@ -818,7 +830,9 @@ limitations under the License.
  "=" #'my/indent-buffer-without-bosss-header
  "et" (lambda () (interactive) (my/run-tests (my/csharp-find-current-project)))
  "eo" #'run-csharp-repl-other-frame
- "er" #'csharp-repl-send-region)
+ "R" #'run-csharp-repl-other-window
+ "er" #'csharp-repl-send-region
+ "eb" #'csharp-repl-send-buffer)
 
 ;; bosss
 (use-package! bosss
@@ -840,6 +854,7 @@ limitations under the License.
    :localleader
    :map #'bosss-mode-map
    :n "ro" #'run-bosss-repl-other-window
+   :n "R"  #'run-bosss-repl-other-window
    :n "rn" #'bosss-repl-start-bosss-pad
    :n "ef" #'bosss-repl-send-current-field
    :n "ee" #'bosss-repl-send-region

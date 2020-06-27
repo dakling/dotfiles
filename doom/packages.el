@@ -58,11 +58,11 @@
 
 (package! mu4e-alert)
 
-(package! modus-vivendi-theme)
+;; (package! modus-vivendi-theme)
 
 (package! smooth-scrolling)
 
-(package! auto-dim-other-buffers)
+;; (package! auto-dim-other-buffers)
 
 (package! pulseaudio-control)
 

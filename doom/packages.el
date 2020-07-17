@@ -90,4 +90,6 @@
 
 (package! ace-link)
 
+(package! key-chord)
+
 ;; (package! mini-modeline)

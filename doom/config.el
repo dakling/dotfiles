@@ -260,6 +260,14 @@
        (remove (assoc "\\.pdf\\'" org-file-apps)
                org-file-apps)))
 
+(map!
+   :localleader
+   :after org
+   :map org-mode-map
+   :n "x" (lambda () (interactive)
+             (let ((current-prefix-arg '-)) ; simulate pressing C-u
+               (call-interactively 'org-export-dispatch))))
+
 (setq org-roam-capture-templates
       '(("d" "default" plain #'org-roam-capture--get-point "%? \n %i \n %a"
          :file-name "%<%Y%m%d%H%M%S>-${slug}"
@@ -268,10 +276,13 @@
 
 (setq smerge-command-prefix "+")
 
-;; For OpenFOAM
-(after! format-all-mode
-  (remhash 'c++-mode format-all--mode-table))
+;; don't pop up async shell commnand buffers by default
+(add-to-list 'display-buffer-alist
+             (cons "\\*Async Shell Command\\*.*" (cons #'display-buffer-no-window nil)))
 
+(after! format-all-mode
+  ;; (remhash 'c++-mode format-all--mode-table)
+  (setq +format-on-save-enabled-modes 'omnisharp-mode))
 ;;; Defining some useful functions
 (defun shutdown ()
   (interactive)
@@ -992,11 +1003,15 @@ limitations under the License.
           ("http://www.reddit.com/r/lisp/.rss" programming reddit)
           ("http://www.reddit.com/r/scheme/.rss" programming reddit)
           ("http://www.reddit.com/r/linux/.rss" programming reddit)
+          ("http://www.reddit.com/r/Plover/.rss" programming reddit)
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UCyHDQ5C6z1NDmJ4g6SerW8g" youtube mailab)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UChkVOG0PqkXIHHmkBGG15Ig" youtube walulis) ;; Walulis
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCo4693Ony4slDY5hR0ny-bw" youtube walulis) ;; Walulis Daily
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UChkVOG0PqkXIHHmkBGG15Ig" youtube walulis)
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCo4693Ony4slDY5hR0ny-bw" youtube walulis)
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVTyTA7-g9nopHeHbeuvpRA" youtube meyers)
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3XTzVzaHQEd30rQbuvCtTQ" youtube lastweektonight)
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCYO_jab_esuFRV4b17AJtAw" youtube math 3blue1brown 3b1b)
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCoxcjq-8xIDTYp3uz647V5A" youtube math numberphile)
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCSju5G2aFaWMqn-_0YBtq5A" youtube math standupmaths matt parker)
           ("https://www.youtube.com/feeds/videos.xml?playlist_id=PL8FB14A2200B87185" youtube playlist yale economics)))
 
   ;; Taken from https://joshrollinswrites.com/help-desk-head-desk/20200611/
@@ -1128,6 +1143,18 @@ limitations under the License.
                        subword-mode
                        flyspell-mode
                        defining-kbd-macro)))
+
+;; (use-package! key-chord
+;;   :config
+;;   (key-chord-mode 1)
+;;   (key-chord-define csharp-mode-map "cl"  "class")
+;;   (key-chord-define csharp-mode-map "or"  "override")
+;;   (key-chord-define csharp-mode-map "st"  "static")
+;;   (key-chord-define csharp-mode-map "pu"  "public")
+;;   (key-chord-define csharp-mode-map "pr"  "private")
+;;   (key-chord-define csharp-mode-map "db"  "double")
+;;   (key-chord-define csharp-mode-map "in"  "int")
+;;   (key-chord-define csharp-mode-map ";;"  "\C-e;"))
 
 ;; load my custom scripts
 (load "~/Dropbox/Helen+Dario/washing-machine-timer.el" t t)

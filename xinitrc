@@ -6,3 +6,4 @@ exec emacs
 # emacs --daemon -f exwm-enable
 # exec emacsclient -c
 # exec gnome-session
+xset r rate 660 25

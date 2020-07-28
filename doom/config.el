@@ -238,6 +238,25 @@
 
 (setq initial-major-mode 'lisp-interaction-mode)
 
+;; TODO plover avtivation/deactivation can probably be done in a more elegant way
+(defun my/plover-activate ()
+  (interactive)
+  (start-process "plover" nil "plover" "-g" "none"))
+
+(defun my/plover-deactivate ()
+  (interactive)
+  (shell-command "killall plover"))
+
+(defun my/auto-plover-on ()
+  (interactive)
+  (add-hook 'evil-insert-state-entry-hook #'my/plover-activate)
+  (add-hook 'evil-insert-state-exit-hook #'my/plover-deactivate))
+
+(defun my/auto-plover-off ()
+  (interactive)
+  (remove-hook 'evil-insert-state-entry-hook #'my/plover-activate)
+  (remove-hook 'evil-insert-state-exit-hook #'my/plover-deactivate))
+
 (setq doom-scratch-initial-major-mode 'lisp-interaction-mode)
 
 (after! sly
@@ -412,6 +431,8 @@
    "s-c" 'my/close-buffer
    "s-q" 'my/get-rid-of-mouse
    "s-m" 'delete-other-windows
+   "s-n" 'my/plover-activate
+   "s-N" 'my/plover-deactivate
    "s-<f1>" '(lambda () (interactive) (eshell 'N))
    "C-s-<f1>" 'eshell
    "s-<f2>" '(lambda () (interactive)
@@ -427,6 +448,11 @@
 ;; (use-package! mu4e-conversation)
 
 ;; (global-mu4e-conversation-mode)
+
+;; disable mu4e-org
+;; (remove-hook 'message-send-hook #'doom--setq-org-mu4e-convert-to-html-for-message-send-h)
+;; (remove-hook 'mu4e-compose-mode-hook #'org-mu4e-compose-org-mode)
+;; (setq org-mu4e-convert-to-html nil)
 
 (defun my/mu4e-set-account ()
   "Set the account for composing a message."
@@ -746,12 +772,19 @@ limitations under the License.
                     (derived-mode-p #'bosss-mode)) ; check if this is just a worksheet
           (princ header-text (current-buffer)))))))
 
-(defun my/format-on-save ()
+(defun my/format-on-save-enable ()
   "Code-format the entire buffen on save."
+  (interactive)
   (if (my/personal-bosss-file-p)
       ;; (format-all-mode 1)               ; not really necessary
       (add-hook 'before-save-hook #'omnisharp-code-format-entire-file)
     (format-all-mode -1)))
+
+(defun my/format-on-save-disable ()
+  "Disable Code-formatting of the entire buffen on save."
+  (interactive)
+  (remove-hook 'before-save-hook #'omnisharp-code-format-entire-file)
+  (format-all-mode -1))
 
 (defun my/indent-buffer-without-bosss-header ()
   "Indent file, but ignore header"
@@ -813,7 +846,7 @@ limitations under the License.
 (add-hook 'csharp-mode-hook (lambda ()
                               (push '(?< . ("< " . " >")) evil-surround-pairs-alist)))
 (add-hook 'csharp-mode-hook #'my/add-header)
-(add-hook 'csharp-mode-hook #'my/format-on-save)
+(add-hook 'csharp-mode-hook #'my/format-on-save-enable)
 
 (setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
 (defun my/csharp-find-current-project ()
@@ -995,14 +1028,18 @@ limitations under the License.
           ("https://kickermeetsdazn.podigee.io/feed/mp3/" podcast kmd fussball)
           ("https://audioboom.com/channels/2399216.rss" podcast nstaaf)
           ("http://fokus-fussball.de/feed/mp3/" podcast collina erben fussball)
+          ("https://liebling-bosman.podigee.io/feed/mp3" podcast liebling bosman fussball)
           ("https://tribuenengespraech.podigee.io/feed/vorbis" podcast rasenfunk tribünengespräch fussball)
+          ("https://feeds.feedburner.com/hacks-on-tap" podcast hacks on tap politics)
           ("https://ambrevar.xyz/atom.xml" blog emacs programming)
           ("https://nyxt.atlas.engineer/feed" lisp programming nyxt next)
           ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
           ("http://www.reddit.com/r/DoomEmacs/.rss" emacs reddit)
           ("http://www.reddit.com/r/lisp/.rss" programming reddit)
+          ("http://www.reddit.com/r/common_lisp/.rss" programming reddit)
           ("http://www.reddit.com/r/scheme/.rss" programming reddit)
           ("http://www.reddit.com/r/linux/.rss" programming reddit)
+          ("http://www.reddit.com/r/archlinux/.rss" programming reddit)
           ("http://www.reddit.com/r/Plover/.rss" programming reddit)
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UCyHDQ5C6z1NDmJ4g6SerW8g" youtube mailab)
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UChkVOG0PqkXIHHmkBGG15Ig" youtube walulis)
@@ -1029,7 +1066,6 @@ limitations under the License.
                do (elfeed-v-mpv it))
       (mapc #'elfeed-search-update-entry entries)
       (unless (use-region-p) (forward-line))))
-
   ;; Taken from https://noonker.github.io/posts/2020-04-22-elfeed/
   (defun yt-dl-it (url)
     "Downloads the URL in an async shell"

@@ -4,6 +4,7 @@
 
   imports = [
     ./hardware-configuration.nix
+    ./local.nix
   ];
 
   nixpkgs = rec {
@@ -67,6 +68,12 @@
     fd
     clang
     firefox
+    python
+    # nixfmt
+    # sbcl
+    # quicklisp
+    # nextcloud stuff
+    # doom-doctor output stuff
   ];
 
 }

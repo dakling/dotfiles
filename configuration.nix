@@ -3,14 +3,18 @@
 {
 
   imports = [
-    ./hardware-configuration.nix
-    ./local.nix
+    /etc/nixos/hardware-configuration.nix
+    /etc/nixos/local.nix
   ];
 
   nixpkgs = rec {
     crossSystem = (import <nixpkgs> {}).pkgsCross.aarch64-multiplatform.stdenv.targetPlatform;
     localSystem = crossSystem;
   };
+
+  nixpkgs.overlays = [
+    (import (builtins.fetchTarball https://github.com/nix-community/emacs-overlay/archive/master.tar.gz))
+  ];
 
   boot.loader.grub.enable = false;
   boot.loader.raspberryPi.enable = true;
@@ -48,19 +52,14 @@
   services.xserver.displayManager.lightdm.enable = true;
   services.xserver.desktopManager.xterm.enable = false;
   services.xserver.desktopManager.xfce.enable = true;
-  services.xserver.windowManager.exwm.enable = true;
-  services.xserver.windowManager.exwm.enableDefaultConfig = false;
+  # services.xserver.windowManager.exwm.enable = true;
+  # services.xserver.windowManager.exwm.enableDefaultConfig = false;
   services.xserver.videoDrivers = [ "fbdev" ];
   services.xserver.layout = "de";
   console.useXkbConfig = true;
 
-  nixpkgs.overlays = [
-    (import (builtins.fetchTarball https://github.com/nix-community/emacs-overlay/archive/master.tar.gz))
-  ];
-
   environment.systemPackages = with pkgs; [
     emacsUnstable
-    # exwm
     git
     wget
     ripgrep
@@ -68,8 +67,8 @@
     fd
     clang
     firefox
-    python
-    # nixfmt
+ #   python
+#    nixfmt
     # sbcl
     # quicklisp
     # nextcloud stuff

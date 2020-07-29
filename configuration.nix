@@ -43,19 +43,33 @@
 
   hardware.enableRedistributableFirmware = true;
 
-  # services.xserver.enable = true;
+  services.xserver.enable = true;
 
-  # services.xserver.displayManager.lightdm.enable = true;
-  # services.xserver.desktopManager.xterm.enable = false;
-  # services.xserver.desktopManager.xfce.enable = true;
-  # # services.xserver.windowManager.exwm.enable = true;
-  # # services.xserver.windowManager.exwm.enableDefaultConfig = false;
-  # services.xserver.videoDrivers = [ "fbdev" ];
-  # services.xserver.layout = "de";
-  # console.useXkbConfig = true;
+  services.xserver.displayManager.defaultSession = "none+xsession";
 
-xsession.enable = true;
-xsession.windowManager.command = "emacs";
+  services.xserver.displayManager.lightdm.enable = true;
+  services.xserver.displayManager.lightdm.autoLogin.enable = true;
+  services.xserver.displayManager.lightdm.autoLogin.user = "klingenberg";
+  services.xserver.videoDrivers = [ "fbdev" ];
+  services.xserver.layout = "de";
+  services.xserver.xkbOptions = "ctrl:nocaps";
+  console.useXkbConfig = true;
+
+  services.xserver.windowManager.session = lib.singleton {
+    name = "xsession";
+    start = pkgs.writeScript "xsession" ''
+        #!${pkgs.runtimeShell}
+        if test -f $HOME/.xsession; then
+          exec ${pkgs.runtimeShell} -c $HOME/.xsession
+        else
+          echo "No xsession script found"
+          exit 1
+        fi
+      '';
+  };
+
+  xsession.enable = true;
+  xsession.windowManager.command = "emacs";
 
   nixpkgs.overlays = [
     (import (builtins.fetchTarball https://github.com/nix-community/emacs-overlay/archive/master.tar.gz))
@@ -78,5 +92,26 @@ xsession.windowManager.command = "emacs";
     # nextcloud stuff
     # doom-doctor output stuff
   ];
+
+  services.kdeconnect = {
+    enable = true;
+    indicator = true;
+  };
+  services.network-manager-applet.enable = true;
+
+  gtk = {
+    enable = true;
+    iconTheme = {
+      package = pkgs.hicolor_icon_theme;
+      name = "hicolor";
+    };
+  };
+  # And make QT look the same
+  qt = {
+    useGtkTheme = true;
+    enable = true;
+  };
+
+  services.dunst.enable = true;
 
 }

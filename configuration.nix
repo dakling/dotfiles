@@ -12,10 +12,6 @@
     localSystem = crossSystem;
   };
 
-  nixpkgs.overlays = [
-    (import (builtins.fetchTarball https://github.com/nix-community/emacs-overlay/archive/master.tar.gz))
-  ];
-
   boot.loader.grub.enable = false;
   boot.loader.raspberryPi.enable = true;
   boot.loader.raspberryPi.version = 4;
@@ -49,14 +45,44 @@
 
   services.xserver.enable = true;
 
+  # services.xserver.displayManager.defaultSession = "none+xsession";
+
   services.xserver.displayManager.lightdm.enable = true;
-  services.xserver.desktopManager.xterm.enable = false;
+  # services.xserver.displayManager.autoLogin.enable = true;
+  # services.xserver.displayManager.autoLogin.user = "klingenberg";
   services.xserver.desktopManager.xfce.enable = true;
-  # services.xserver.windowManager.exwm.enable = true;
-  # services.xserver.windowManager.exwm.enableDefaultConfig = false;
+  services.xserver.windowManager = {
+    session = lib.singleton {
+      name = "exwm";
+      start = ''
+          eval `dbus-launch --exit-with-session ${pkgs.emacsUnstable}/bin/emacs`
+        '';
+    };
+  };
+  # windowManager = let
+  #   emacs = pkgs.emacsUnstable.override {
+  #     withXwidgets = true;
+  #     withGTK3 = true;
+  #   };
+  # in {
+  #       session = lib.singleton {
+  #         name = "exwm";
+  #         start = ''
+  #           eval `dbus-launch --exit-with-session ${emacs}/bin/emacs`
+  #         '';
+  #       };
+  #     };
   services.xserver.videoDrivers = [ "fbdev" ];
   services.xserver.layout = "de";
+  services.xserver.xkbOptions = "ctrl:nocaps";
   console.useXkbConfig = true;
+
+  #xsession.enable = true;
+  #xsession.windowManager.command = "emacs";
+
+  nixpkgs.overlays = [
+    (import (builtins.fetchTarball https://github.com/nix-community/emacs-overlay/archive/master.tar.gz))
+  ];
 
   environment.systemPackages = with pkgs; [
     emacsUnstable
@@ -67,8 +93,9 @@
     fd
     clang
     firefox
- #   python
-#    nixfmt
+    sqlite
+    #   python
+    #    nixfmt
     # sbcl
     # quicklisp
     # nextcloud stuff

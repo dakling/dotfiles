@@ -45,11 +45,11 @@
 
   services.xserver.enable = true;
 
-  # services.xserver.displayManager.defaultSession = "none+xsession";
+  services.xserver.displayManager.defaultSession = "none+exwm";
 
   services.xserver.displayManager.lightdm.enable = true;
-  # services.xserver.displayManager.autoLogin.enable = true;
-  # services.xserver.displayManager.autoLogin.user = "klingenberg";
+  services.xserver.displayManager.autoLogin.enable = true;
+  services.xserver.displayManager.autoLogin.user = "klingenberg";
   services.xserver.desktopManager.xfce.enable = true;
   services.xserver.windowManager = {
     session = lib.singleton {
@@ -59,26 +59,17 @@
         '';
     };
   };
-  # windowManager = let
-  #   emacs = pkgs.emacsUnstable.override {
-  #     withXwidgets = true;
-  #     withGTK3 = true;
-  #   };
-  # in {
-  #       session = lib.singleton {
-  #         name = "exwm";
-  #         start = ''
-  #           eval `dbus-launch --exit-with-session ${emacs}/bin/emacs`
-  #         '';
-  #       };
-  #     };
+  
   services.xserver.videoDrivers = [ "fbdev" ];
   services.xserver.layout = "de";
   services.xserver.xkbOptions = "ctrl:nocaps";
+  networking.networkmanager.enable = true;
+  programs.nm-applet.enable = true;
+#   networking.wireless.extraConfig = ''
+#   ctrl_interface=/run/wpa_supplicant
+#   ctrl_interface_group=wheel
+# '';
   console.useXkbConfig = true;
-
-  #xsession.enable = true;
-  #xsession.windowManager.command = "emacs";
 
   nixpkgs.overlays = [
     (import (builtins.fetchTarball https://github.com/nix-community/emacs-overlay/archive/master.tar.gz))
@@ -94,12 +85,20 @@
     clang
     firefox
     sqlite
-    #   python
-    #    nixfmt
-    # sbcl
+    mu
+    isync
+    gnupg
+    pinentry
+    python
+    networkmanager
+    networkmanagerapplet
+    mpv
+    #nixfmt
+    sbcl
     # quicklisp
     # nextcloud stuff
     # doom-doctor output stuff
+    # dropbox
   ];
 
 }

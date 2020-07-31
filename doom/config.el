@@ -57,6 +57,8 @@
 ;;
 ;; Beginning of my configuration
 
+(add-load-path! "/run/current-system/sw/share/emacs/site-lisp/mu4e")
+
 (defun system-name= (&rest names)
   (cl-some
    (lambda (name)
@@ -258,6 +260,11 @@
   (remove-hook 'evil-insert-state-exit-hook #'my/plover-deactivate))
 
 (setq doom-scratch-initial-major-mode 'lisp-interaction-mode)
+
+;; autostart
+(when (system-name= "klingenberg-pi")
+  (async-shell-command "nm-applet"))
+
 
 (after! sly
   (setq inferior-lisp-program "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp"))

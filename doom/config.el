@@ -712,6 +712,10 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
       :n "cc" #'recompile)
 
 ;;c#
+
+(when (system-name= "klingenberg-pi")
+    (setq omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
+
 (defun my/csharp-list-to-array ()
   (replace-regexp "List<\\(.*\\)>" "\\1[]"
                   nil

@@ -81,6 +81,7 @@
     wget
     ripgrep
     coreutils
+    arandr
     fd
     clang
     firefox
@@ -95,6 +96,9 @@
     mpv
     #nixfmt
     sbcl
+    mono
+    msbuild
+    omnisharp-roslyn
     # quicklisp
     # nextcloud stuff
     # doom-doctor output stuff

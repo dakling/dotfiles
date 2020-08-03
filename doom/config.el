@@ -57,8 +57,6 @@
 ;;
 ;; Beginning of my configuration
 
-(add-load-path! "/run/current-system/sw/share/emacs/site-lisp/mu4e")
-
 (defun system-name= (&rest names)
   (cl-some
    (lambda (name)
@@ -239,6 +237,13 @@
 (display-time-mode 1)
 
 (setq initial-major-mode 'lisp-interaction-mode)
+
+(cond
+ ((system-name= "klingenberg-pi")
+  (add-load-path! "/run/current-system/sw/share/emacs/site-lisp/mu4e"))
+ ((system-name= "klingenberg-tablet")
+  (add-load-path! "/run/current-system/profile/share/emacs/site-lisp/")))
+
 
 ;; TODO plover avtivation/deactivation can probably be done in a more elegant way
 (defun my/plover-activate ()
@@ -651,6 +656,10 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 (use-package! geiser
   :commands (run-geiser)
   :config
+  (with-eval-after-load 'geiser-guile
+    (add-to-list 'geiser-guile-load-path "~/src/guix"))
+  (with-eval-after-load 'yasnippet
+    (add-to-list 'yas-snippet-dirs "~/src/guix/etc/snippets"))
   (setq flycheck-scheme-chicken-executable "chicken-csc")
   (setq geiser-chicken-binary "chicken-csi")
   (setq geiser-active-implementations '(chicken))
@@ -713,8 +722,11 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 
 ;;c#
 
-(when (system-name= "klingenberg-pi")
-    (setq omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
+(cond
+ ((system-name= "klingenberg-pi")
+  (setq omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
+ ((system-name= "klingenberg-tablet")
+  (setq omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp")))
 
 (defun my/csharp-list-to-array ()
   (replace-regexp "List<\\(.*\\)>" "\\1[]"

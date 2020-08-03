@@ -261,10 +261,6 @@
 
 (setq doom-scratch-initial-major-mode 'lisp-interaction-mode)
 
-;; autostart
-(when (system-name= "klingenberg-pi")
-  (async-shell-command "nm-applet"))
-
 
 (after! sly
   (setq inferior-lisp-program "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp"))

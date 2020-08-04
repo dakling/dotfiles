@@ -45,7 +45,7 @@
        ;; hydra
        ;;indent-guides     ; highlighted indent columns
        ;;minimap           ; show a map of the code on the side
-       ;; modeline          ; snazzy, Atom-inspired modeline, plus API
+       modeline          ; snazzy, Atom-inspired modeline, plus API
        ;;nav-flash         ; blink cursor line after big motions
        ;;neotree           ; a project drawer, like NERDTree for vim
        ophints                    ; highlight the region an operation acts on
@@ -64,7 +64,7 @@
        (evil +everywhere)               ; come to the dark side, we have cookies
        file-templates                   ; auto-snippets for empty files
        fold                             ; (nigh) universal code folding
-       (format +onsave)                 ; automated prettiness
+       format                 ; automated prettiness
        ;;god               ; run Emacs commands without modifier keys
        lispy ; vim for lisp, for people who don't like vim
        ;;multiple-cursors  ; editing in many places at once
@@ -117,8 +117,8 @@
 
        :lang
        ;;agda              ; types of types of types of types...
-       cc                ; C/C++/Obj-C madness
-       ;;clojure           ; java with a lisp
+       (cc +lsp)                ; C/C++/Obj-C madness
+       clojure           ; java with a lisp
        common-lisp              ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
        ;;crystal           ; ruby at the speed of c
@@ -131,7 +131,7 @@
        ;;erlang            ; an elegant language for a more civilized age
        ;;ess               ; emacs speaks statistics
        ;;faust             ; dsp, but you get to keep your soul
-       ;;fsharp           ; ML stands for Microsoft's Language
+       (fsharp +lsp)           ; ML stands for Microsoft's Language
        ;;fstar             ; (dependent) types and (monadic) effects and Z3
        ;;(go +lsp)         ; the hipster dialect
        ;;(haskell +dante)  ; a language that's lazier than I am
@@ -142,14 +142,14 @@
        ;;javascript        ; all(hope(abandon(ye(who(enter(here))))))
        ;;julia             ; a better, faster MATLAB
        ;;kotlin            ; a better, slicker Java(Script)
-       (latex +lsp +latexmk) ; writing papers in Emacs has never been so fun
+       (latex +lsp +latexmk +fold) ; writing papers in Emacs has never been so fun
        ;;lean
        ;;factor
        ;;ledger            ; an accounting system in Emacs
        ;;lua               ; one-based indices? one-based indices
        markdown          ; writing docs for people to ignore
        ;;nim               ; python + lisp at the speed of c
-       ;;nix               ; I hereby declare "nix geht mehr!"
+       nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
        (org +roam +present +capture)             ; organize your plain life in plain text
        ;;perl              ; write code no one else can comprehend
@@ -174,7 +174,7 @@
        yaml                             ; JSON, but readable
 
        :email
-       (mu4e +gmail -org)
+       (mu4e +gmail)
        ;;notmuch
        ;;(wanderlust +gmail)
 

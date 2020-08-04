@@ -58,13 +58,11 @@
 
 (package! mu4e-alert)
 
-(package! modus-vivendi-theme)
-
-(package! mini-modeline)
+;; (package! modus-vivendi-theme)
 
 (package! smooth-scrolling)
 
-(package! auto-dim-other-buffers)
+;; (package! auto-dim-other-buffers)
 
 (package! pulseaudio-control)
 
@@ -82,8 +80,6 @@
 
 (package! async-await)
 
-(package! helm-exwm)
-
 (package! helm-swoop)
 
 (package! evil-tex :recipe (:host github :repo "itai33/evil-tex"))
@@ -95,3 +91,9 @@
 (package! md4rd)
 
 (package! emms)
+
+(package! ace-link)
+
+(package! key-chord)
+
+;; (package! mini-modeline)

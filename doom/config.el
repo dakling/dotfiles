@@ -1014,6 +1014,7 @@ limitations under the License.
   (setq elfeed-feeds
         '(("https://www.zeitsprung.fm/feed/ogg/" podcast)
           ("https://kickermeetsdazn.podigee.io/feed/mp3/" podcast)
+          ("https://audioboom.com/channels/2399216.rss" podcast nstaaf)
           ("http://www.reddit.com/r/emacs/.rss" emacs second reddit)
           ("http://www.reddit.com/r/DoomEmacs/.rss" emacs second reddit)
           ("http://www.reddit.com/r/lisp/.rss" programming second reddit)
@@ -1147,11 +1148,6 @@ limitations under the License.
                        flyspell-mode
                        defining-kbd-macro)))
 
-;; Somewhere in your .emacs file
-(use-package! elfeed
-  :config
-  (setq elfeed-feeds
-        '("https://audioboom.com/channels/2399216.rss")))
 
 ;; eshell
 ;; (defun my-eshell/setup ()

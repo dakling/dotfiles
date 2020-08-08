@@ -93,7 +93,7 @@ of XELB.")
         #:phases
         (modify-phases %standard-phases
                        (add-after 'build 'install-xsession
-                                  (lambda*
+               (lambda*
                                    (#:key inputs outputs #:allow-other-keys)
                                    (let*
                                        ((out
@@ -176,15 +176,23 @@ of XELB.")
   (append
    (list
     (service xfce-desktop-service-type)
+    (service slim-service-type
+             (slim-configuration
+              (display ":1")
+              (vt "vt7")
+              (auto-login? #t)
+              (default-user "klingenberg")
+              (xorg-configuration
+               (xorg-configuration
+                (keyboard-layout keyboard-layout)))))
     (service nix-service-type)
     (service openvpn-client-service-type
              (openvpn-client-configuration))
     (bluetooth-service
-     #:auto-enable? #t)
-    (set-xorg-configuration
-     (xorg-configuration
-      (keyboard-layout keyboard-layout))))
-   %desktop-services))
+     #:auto-enable? #t))
+   (remove (lambda (service)
+             (eq? (service-kind service) gdm-service-type))
+           %desktop-services)))
  (bootloader
   (bootloader-configuration
    (bootloader grub-efi-bootloader)

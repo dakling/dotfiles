@@ -244,6 +244,10 @@
  ((system-name= "klingenberg-tablet")
   (add-load-path! "/run/current-system/profile/share/emacs/site-lisp/")))
 
+;; (when (system-name= "klingenberg-tablet")
+;;   (add-to-list 'exec-path "/home/klingenberg/.nix-profile/bin")
+;;   (setenv "PATH"
+;;           (concat (getenv "HOME") "/.nix-profile/bin:" (getenv "PATH"))))
 
 ;; TODO plover avtivation/deactivation can probably be done in a more elegant way
 (defun my/plover-activate ()
@@ -268,7 +272,9 @@
 
 
 (after! sly
-  (setq inferior-lisp-program "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp"))
+  (setq inferior-lisp-program (cond
+                               ((system-name= "klingenberg-tablet") "sbcl --load /home/klingenberg/quicklisp.lisp")
+                               (t "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp"))))
 
 (setq browse-url-browser-function 'browse-url-firefox)
 
@@ -314,17 +320,18 @@
 (defun shutdown ()
   (interactive)
   (cond
-   ((system-name= "klingenberg-laptop") (async-shell-command "sudo shutdown"))
+   ((system-name= "klingenberg-laptop" "klingenberg-tablet") (async-shell-command "sudo shutdown"))
    (t (shell-command "shutdown now"))))
 
 (defun reboot ()
   (interactive)
-  (async-shell-command "sudo reboot now"))
+  (async-shell-command "sudo reboot"))
 
 (defvar browser
   (cond
    ;; ((system-name= "klingenberg-tablet") "next")
    ((system-name= "klingenberg-laptop") "epiphany")
+   ;; ((system-name= "klingenberg-tablet") "nyxt")
    (t "firefox")))
 
 (defun my/brightness+ ()
@@ -649,23 +656,43 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    "x" #'lispy-x))
 
 ;; scheme
-(use-package! geiser
-  :commands (run-geiser)
-  :config
-  (with-eval-after-load 'geiser-guile
-    (add-to-list 'geiser-guile-load-path "~/src/guix"))
-  (with-eval-after-load 'yasnippet
-    (add-to-list 'yas-snippet-dirs "~/src/guix/etc/snippets"))
-  (setq flycheck-scheme-chicken-executable "chicken-csc")
-  (setq geiser-chicken-binary "chicken-csi")
-  (setq geiser-active-implementations '(chicken))
-  (map!
+;; (use-package! geiser
+;;   :commands (run-geiser)
+;;   :config
+;;   ;; (with-eval-after-load 'geiser-guile
+;;   ;;   (add-to-list 'geiser-guile-load-path "~/guix"))
+;;   (with-eval-after-load 'yasnippet
+;;     (add-to-list 'yas-snippet-dirs "~/guix/etc/snippets"))
+;;   (setq flycheck-scheme-chicken-executable "chicken-csc")
+;;   (setq geiser-chicken-binary "chicken-csi")
+;;   (setq geiser-active-implementations '(guile chicken))
+;;   (map!
+;;    :localleader
+;;    :map scheme-mode-map
+;;    :n "'" #'geiser
+;;    :n "ef" #'geiser-eval-definition
+;;    :n "ee" #'geiser-eval-last-sexp
+;;    :n "eb" #'geiser-eval-buffer))
+
+;; (use-package! guix
+;;   :load-path "~/guix.el/elisp/"
+;;   :init (require 'guix-autoloads nil t))
+
+
+;; (with-eval-after-load 'geiser-guile
+;;   (add-to-list 'geiser-guile-load-path "~/guix"))
+;; (with-eval-after-load 'yasnippet
+;;   (add-to-list 'yas-snippet-dirs "~/guix/etc/snippets"))
+(setq flycheck-scheme-chicken-executable "chicken-csc")
+(setq geiser-chicken-binary "chicken-csi")
+(setq geiser-active-implementations '(guile chicken))
+(map!
    :localleader
    :map scheme-mode-map
    :n "'" #'geiser
    :n "ef" #'geiser-eval-definition
    :n "ee" #'geiser-eval-last-sexp
-   :n "eb" #'geiser-eval-buffer))
+   :n "eb" #'geiser-eval-buffer)
 
 ;; latex
 (setq +latex-viewers '(pdf-tools))
@@ -1053,6 +1080,7 @@ limitations under the License.
           ("https://ambrevar.xyz/atom.xml" blog emacs programming)
           ("https://nyxt.atlas.engineer/feed" lisp programming nyxt next)
           ("https://guix.gnu.org/feeds/blog/arm.atom" lisp programming guix blog)
+          ("https://www.kernel.org/feeds/kdist.xml" linux kernel updates)
           ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
           ("http://www.reddit.com/r/DoomEmacs/.rss" emacs reddit)
           ("http://www.reddit.com/r/lisp/.rss" programming reddit)

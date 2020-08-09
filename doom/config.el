@@ -273,7 +273,7 @@
 
 (after! sly
   (setq inferior-lisp-program (cond
-                               ((system-name= "klingenberg-tablet") "sbcl --load /home/klingenberg/quicklisp.lisp")
+                               ((system-name= "klingenberg-tablet")  "~/.local/bin/.run-sbcl.sh")
                                (t "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp"))))
 
 (setq browse-url-browser-function 'browse-url-firefox)

@@ -16,6 +16,7 @@
  (gnu packages lxde)
  (gnu packages display-managers)
  (gnu packages guile)
+ (gnu packages commencement)
  (gnu packages web-browsers)
  (gnu packages password-utils)
  (gnu packages fonts)
@@ -115,19 +116,44 @@ of XELB.")
                                       #:try-exec exwm-executable)
                                      ;; Add a shell wrapper to bin
                                      (with-output-to-file exwm-executable
+                                       ;; (lambda _
+                     ;;                     (format #t "#!~a ~@
+                     ;; ~a +SI:localuser:$USER ~@
+                     ;; exec ~a --exit-with-session ~a \"$@\" --eval '~s' ~%"
+                     ;;                             (string-append
+                     ;;                              (assoc-ref inputs "bash")
+                     ;;                              "/bin/sh")
+                     ;;                             (string-append
+                     ;;                              (assoc-ref inputs "xhost")
+                     ;;                              "/bin/xhost")
+                     ;;                             (string-append
+                     ;;                              (assoc-ref inputs "dbus")
+                     ;;                              "/bin/dbus-launch")
+                     ;;                             (string-append
+                     ;;                              (assoc-ref inputs "emacs")
+                     ;;                              "/bin/emacs")
+                     ;;                             '(cond
+                     ;;                               ((file-exists-p "~/.exwm")
+                     ;;                                (load-file "~/.exwm"))
+                     ;;                               ((not
+                     ;;                                 (featurep 'exwm))
+                     ;;                                (require 'exwm)
+                     ;;                                (require 'exwm-config)
+                     ;;                                (exwm-config-default)
+                     ;;                                (message
+                     ;;                                 (concat "exwm configuration not found. "
+                     ;;                                         "Falling back to default configuration..."))))))
                                        (lambda _
                                          (format #t "#!~a ~@
                      ~a +SI:localuser:$USER ~@
-                     exec ~a --exit-with-session ~a \"$@\" --eval '~s' ~%"
+                     source /home/klingenberg/.xprofile ~@
+                     exec ~a"
                                                  (string-append
                                                   (assoc-ref inputs "bash")
-                                                  "/bin/sh")
+                                                  "/bin/bash")
                                                  (string-append
                                                   (assoc-ref inputs "xhost")
                                                   "/bin/xhost")
-                                                 (string-append
-                                                  (assoc-ref inputs "dbus")
-                                                  "/bin/dbus-launch")
                                                  (string-append
                                                   (assoc-ref inputs "emacs")
                                                   "/bin/emacs")
@@ -159,8 +185,10 @@ of XELB.")
     nix
     password-store
     sbcl
+    ;; libffi
     ;; guile-3.0-latest
     gcc
+    gcc-toolchain
     arandr
     xrandr
     pinentry-emacs
@@ -170,12 +198,13 @@ of XELB.")
     mate-icon-theme-faenza
     curl
     gvfs
+    xinput
     git)
    %base-packages))
  (services
   (append
    (list
-    (service xfce-desktop-service-type)
+    ;; (service xfce-desktop-service-type)
     (service slim-service-type
              (slim-configuration
               (display ":1")
@@ -227,14 +256,14 @@ of XELB.")
         (list (channel
                (name 'nonguix)
                (url "https://gitlab.com/nonguix/nonguix")
-               (commit "75e26eaada172927711c6b1a45e99f06a03f1020"))
+               (commit "1101d8070d80a8a4fd40a7f6f4e540bf56cbf6cd"))
               (channel
                (name 'guix)
                (url "https://git.savannah.gnu.org/git/guix.git")
-               (commit "416fe466a6b4621264387751f3ca65533bc2915a"))))
+               (commit "2d80caa86c5450938ec859fcab593bff9e4ceef4"))))
        (inferior
         (inferior-for-channels channels)))
-    (car (lookup-inferior-packages inferior "linux" "5.4.56")))
+    (car (lookup-inferior-packages inferior "linux" "5.7.14")))
   ;; linux
   )
  (initrd microcode-initrd)

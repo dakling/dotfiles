@@ -4,56 +4,65 @@
 (use-modules
  (srfi srfi-1)
  (gnu)
- (gnu packages vpn)
  (gnu system nss)
- (gnu packages tls)
- (gnu packages sqlite)
- (gnu packages version-control)
- (gnu packages xorg)
- (gnu packages linux)
- (gnu packages compression)
- (gnu packages video)
- (gnu packages lxde)
- (gnu packages display-managers)
- (gnu packages guile)
- (gnu packages commencement)
- (gnu packages web-browsers)
- (gnu packages password-utils)
- (gnu packages fonts)
- (gnu packages display-managers)
- (gnu packages syncthing)
- (gnu packages gnuzilla)
  (nongnu packages linux)
- (gnu packages gcc)
- (gnu packages mono)
- (gnu packages ssh)
- (gnu packages package-management)
- (gnu packages curl)
- (gnu packages emacs)
- (gnu packages emacs-xyz)
  (nongnu packages linux)
  (nongnu system linux-initrd)
- (gnu packages pulseaudio)
- (gnu packages mail)
- (gnu packages terminals)
- (gnu packages xdisorg)
- (gnu packages gnupg)
- (gnu packages gnome)
- (gnu packages mate)
- (gnu packages readline)
- (gnu packages tex)
- (gnu packages maths)
- (gnu packages libffi)
- (gnu packages pdf)
  (guix packages)
  (guix channels)
  (guix inferior)
  (ice-9 popen)
  (rnrs io ports))
 
-(use-service-modules networking sound vpn ssh nix xorg desktop)
+(use-service-modules
+ networking
+ sound
+ vpn
+ ssh
+ nix
+ xorg
+ desktop)
 
-(use-package-modules certs gnome lisp package-management)
+(use-package-modules
+ certs
+ gnome
+ pulseaudio
+ gcc
+ mono
+ vpn
+ tls
+ sqlite
+ version-control
+ xorg
+ linux
+ compression
+ video
+ lxde
+ display-managers
+ guile
+ commencement
+ web-browsers
+ password-utils
+ fonts
+ syncthing
+ gnuzilla
+ ssh
+ package-management
+ curl
+ emacs
+ emacs-xyz
+ mail
+ terminals
+ xdisorg
+ gnupg
+ mate
+ readline
+ tex
+ maths
+ libffi
+ pdf
+ lisp
+ package-management)
 
 (operating-system
  (locale "en_US.utf8")
@@ -94,82 +103,82 @@ of XELB.")
         #:phases
         (modify-phases %standard-phases
                        (add-after 'build 'install-xsession
-               (lambda*
-                                   (#:key inputs outputs #:allow-other-keys)
-                                   (let*
-                                       ((out
-                                         (assoc-ref outputs "out"))
-                                        (xsessions
-                                         (string-append out "/share/xsessions"))
-                                        (bin
-                                         (string-append out "/bin"))
-                                        (exwm-executable
-                                         (string-append bin "/exwm")))
-                                     ;; Add a .desktop file to xsessions
-                                     (mkdir-p xsessions)
-                                     (mkdir-p bin)
-                                     (make-desktop-entry-file
-                                      (string-append xsessions "/exwm.desktop")
-                                      #:name ,name
-                                      #:comment ,synopsis
-                                      #:exec exwm-executable
-                                      #:try-exec exwm-executable)
-                                     ;; Add a shell wrapper to bin
-                                     (with-output-to-file exwm-executable
-                                       ;; (lambda _
-                     ;;                     (format #t "#!~a ~@
-                     ;; ~a +SI:localuser:$USER ~@
-                     ;; exec ~a --exit-with-session ~a \"$@\" --eval '~s' ~%"
-                     ;;                             (string-append
-                     ;;                              (assoc-ref inputs "bash")
-                     ;;                              "/bin/sh")
-                     ;;                             (string-append
-                     ;;                              (assoc-ref inputs "xhost")
-                     ;;                              "/bin/xhost")
-                     ;;                             (string-append
-                     ;;                              (assoc-ref inputs "dbus")
-                     ;;                              "/bin/dbus-launch")
-                     ;;                             (string-append
-                     ;;                              (assoc-ref inputs "emacs")
-                     ;;                              "/bin/emacs")
-                     ;;                             '(cond
-                     ;;                               ((file-exists-p "~/.exwm")
-                     ;;                                (load-file "~/.exwm"))
-                     ;;                               ((not
-                     ;;                                 (featurep 'exwm))
-                     ;;                                (require 'exwm)
-                     ;;                                (require 'exwm-config)
-                     ;;                                (exwm-config-default)
-                     ;;                                (message
-                     ;;                                 (concat "exwm configuration not found. "
-                     ;;                                         "Falling back to default configuration..."))))))
-                                       (lambda _
-                                         (format #t "#!~a ~@
+                                  (lambda*
+                                      (#:key inputs outputs #:allow-other-keys)
+                                    (let*
+                                        ((out
+                                          (assoc-ref outputs "out"))
+                                         (xsessions
+                                          (string-append out "/share/xsessions"))
+                                         (bin
+                                          (string-append out "/bin"))
+                                         (exwm-executable
+                                          (string-append bin "/exwm")))
+                                      ;; Add a .desktop file to xsessions
+                                      (mkdir-p xsessions)
+                                      (mkdir-p bin)
+                                      (make-desktop-entry-file
+                                       (string-append xsessions "/exwm.desktop")
+                                       #:name ,name
+                                       #:comment ,synopsis
+                                       #:exec exwm-executable
+                                       #:try-exec exwm-executable)
+                                      ;; Add a shell wrapper to bin
+                                      (with-output-to-file exwm-executable
+                                        ;; (lambda _
+                                        ;;                     (format #t "#!~a ~@
+                                        ;; ~a +SI:localuser:$USER ~@
+                                        ;; exec ~a --exit-with-session ~a \"$@\" --eval '~s' ~%"
+                                        ;;                             (string-append
+                                        ;;                              (assoc-ref inputs "bash")
+                                        ;;                              "/bin/sh")
+                                        ;;                             (string-append
+                                        ;;                              (assoc-ref inputs "xhost")
+                                        ;;                              "/bin/xhost")
+                                        ;;                             (string-append
+                                        ;;                              (assoc-ref inputs "dbus")
+                                        ;;                              "/bin/dbus-launch")
+                                        ;;                             (string-append
+                                        ;;                              (assoc-ref inputs "emacs")
+                                        ;;                              "/bin/emacs")
+                                        ;;                             '(cond
+                                        ;;                               ((file-exists-p "~/.exwm")
+                                        ;;                                (load-file "~/.exwm"))
+                                        ;;                               ((not
+                                        ;;                                 (featurep 'exwm))
+                                        ;;                                (require 'exwm)
+                                        ;;                                (require 'exwm-config)
+                                        ;;                                (exwm-config-default)
+                                        ;;                                (message
+                                        ;;                                 (concat "exwm configuration not found. "
+                                        ;;                                         "Falling back to default configuration..."))))))
+                                        (lambda _
+                                          (format #t "#!~a ~@
                      ~a +SI:localuser:$USER ~@
                      source /home/klingenberg/.xprofile ~@
                      exec ~a"
-                                                 (string-append
-                                                  (assoc-ref inputs "bash")
-                                                  "/bin/bash")
-                                                 (string-append
-                                                  (assoc-ref inputs "xhost")
-                                                  "/bin/xhost")
-                                                 (string-append
-                                                  (assoc-ref inputs "emacs")
-                                                  "/bin/emacs")
-                                                 '(cond
-                                                   ((file-exists-p "~/.exwm")
-                                                    (load-file "~/.exwm"))
-                                                   ((not
-                                                     (featurep 'exwm))
-                                                    (require 'exwm)
-                                                    (require 'exwm-config)
-                                                    (exwm-config-default)
-                                                    (message
-                                                     (concat "exwm configuration not found. "
-                                                             "Falling back to default configuration...")))))))
-                                     (chmod exwm-executable #o555)
-                                     #t)))))))
+                                                  (string-append
+                                                   (assoc-ref inputs "bash")
+                                                   "/bin/bash")
+                                                  (string-append
+                                                   (assoc-ref inputs "xhost")
+                                                   "/bin/xhost")
+                                                  (string-append
+                                                   (assoc-ref inputs "emacs")
+                                                   "/bin/emacs")
+                                                  '(cond
+                                                    ((file-exists-p "~/.exwm")
+                                                     (load-file "~/.exwm"))
+                                                    ((not
+                                                      (featurep 'exwm))
+                                                     (require 'exwm)
+                                                     (require 'exwm-config)
+                                                     (exwm-config-default)
+                                                     (message
+                                                      (concat "exwm configuration not found. "
+                                                              "Falling back to default configuration...")))))))
+                                      (chmod exwm-executable #o555)
+                                      #t)))))))
     emacs-guix
     emacs-geiser
     guile-gcrypt

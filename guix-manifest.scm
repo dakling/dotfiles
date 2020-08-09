@@ -35,6 +35,7 @@
    ;; "sbcl-py4cl"
    "cl-py4cl"
    "xdotool"
+   "rsync"
    "webkitgtk"
    "glib-networking"
    "gsettings-desktop-schemas"

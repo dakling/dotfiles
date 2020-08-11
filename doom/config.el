@@ -116,6 +116,11 @@
                                 (lambda () (interactive)
                                   (exwm-workspace-switch-create ,i))))
                             (number-sequence 0 9)))
+                (\,@(mapcar (lambda (i)
+                              `(,(kbd (format "M-%d" i)) .
+                                (lambda () (interactive)
+                                  (exwm-workspace-switch-create ,i))))
+                            (number-sequence 0 9)))
                 ;; ,@(mapcar (lambda (i)
                 ;; 	      `(,(kbd (format "s-%s" i)) .
                 ;; 		(lambda () (interactive)
@@ -656,43 +661,23 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    "x" #'lispy-x))
 
 ;; scheme
-;; (use-package! geiser
-;;   :commands (run-geiser)
-;;   :config
-;;   ;; (with-eval-after-load 'geiser-guile
-;;   ;;   (add-to-list 'geiser-guile-load-path "~/guix"))
-;;   (with-eval-after-load 'yasnippet
-;;     (add-to-list 'yas-snippet-dirs "~/guix/etc/snippets"))
-;;   (setq flycheck-scheme-chicken-executable "chicken-csc")
-;;   (setq geiser-chicken-binary "chicken-csi")
-;;   (setq geiser-active-implementations '(guile chicken))
-;;   (map!
-;;    :localleader
-;;    :map scheme-mode-map
-;;    :n "'" #'geiser
-;;    :n "ef" #'geiser-eval-definition
-;;    :n "ee" #'geiser-eval-last-sexp
-;;    :n "eb" #'geiser-eval-buffer))
-
-;; (use-package! guix
-;;   :load-path "~/guix.el/elisp/"
-;;   :init (require 'guix-autoloads nil t))
-
-
-;; (with-eval-after-load 'geiser-guile
-;;   (add-to-list 'geiser-guile-load-path "~/guix"))
-;; (with-eval-after-load 'yasnippet
-;;   (add-to-list 'yas-snippet-dirs "~/guix/etc/snippets"))
-(setq flycheck-scheme-chicken-executable "chicken-csc")
-(setq geiser-chicken-binary "chicken-csi")
-(setq geiser-active-implementations '(guile chicken))
-(map!
+(use-package! geiser
+  :commands (run-geiser)
+  :config
+  ;; (with-eval-after-load 'geiser-guile
+  ;;   (add-to-list 'geiser-guile-load-path "~/guix"))
+  (with-eval-after-load 'yasnippet
+    (add-to-list 'yas-snippet-dirs "~/guix/etc/snippets"))
+  (setq flycheck-scheme-chicken-executable "chicken-csc")
+  (setq geiser-chicken-binary "chicken-csi")
+  (setq geiser-active-implementations '(guile chicken))
+  (map!
    :localleader
    :map scheme-mode-map
    :n "'" #'geiser
    :n "ef" #'geiser-eval-definition
    :n "ee" #'geiser-eval-last-sexp
-   :n "eb" #'geiser-eval-buffer)
+   :n "eb" #'geiser-eval-buffer))
 
 ;; latex
 (setq +latex-viewers '(pdf-tools))

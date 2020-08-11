@@ -36,6 +36,7 @@
    "cl-py4cl"
    "xdotool"
    "rsync"
+   "libreoffice"
    "webkitgtk"
    "glib-networking"
    "gsettings-desktop-schemas"
@@ -56,6 +57,6 @@
    "arandr"
    ;; "tensorflow"
    "termite"
-   "plover"
+   ;; "plover"
    "ghc-tldr"
    "lm-sensors"))

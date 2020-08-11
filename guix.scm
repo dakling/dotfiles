@@ -71,7 +71,8 @@
   (keyboard-layout "de"
                    "nodeadkeys"
                    #:options
-                   '("ctrl:nocaps")))
+                   '("ctrl:nocaps"))
+  )
  (host-name "klingenberg-tablet")
  (users
   (cons*
@@ -81,7 +82,7 @@
     (group "users")
     (home-directory "/home/klingenberg")
     (supplementary-groups
-     '("wheel" "netdev" "audio" "video" "lp")))
+     '("wheel" "netdev" "audio" "video" "lp" "dialout")))
    %base-user-accounts))
  (packages
   (append
@@ -180,7 +181,6 @@ of XELB.")
                                       (chmod exwm-executable #o555)
                                       #t)))))))
     emacs-guix
-    emacs-geiser
     guile-gcrypt
     emacs-pdf-tools
     emacs-pulseaudio-control
@@ -222,7 +222,8 @@ of XELB.")
               (default-user "klingenberg")
               (xorg-configuration
                (xorg-configuration
-                (keyboard-layout keyboard-layout)))))
+                (keyboard-layout keyboard-layout)))
+              ))
     (service nix-service-type)
     (service openvpn-client-service-type
              (openvpn-client-configuration))
@@ -235,7 +236,8 @@ of XELB.")
   (bootloader-configuration
    (bootloader grub-efi-bootloader)
    (target "/boot/efi")
-   (keyboard-layout keyboard-layout)))
+   (keyboard-layout keyboard-layout)
+   ))
  (swap-devices
   (list "/dev/sda2"))
  (file-systems

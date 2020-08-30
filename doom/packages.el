@@ -92,4 +92,6 @@
 
 (package! key-chord)
 
+;; (package! hyperbole)
+
 ;; (package! mini-modeline)

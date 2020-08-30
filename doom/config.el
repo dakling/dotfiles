@@ -171,8 +171,8 @@
         ;; :after-call exwm-mode-hook
         :init
         (cond
-         ((system-name= "klingenberg-tablet") (progn (set 'monitor1 "eDP1")
-                                                     (set 'monitor2 "HDMI2")
+         ((system-name= "klingenberg-tablet") (progn (set 'monitor1 "eDP-1")
+                                                     (set 'monitor2 "HDMI-2")
                                                      (set 'placement "below")))
          ((system-name= "klingenbergLaptop") (progn (set 'monitor1 "LVDS1")
                                                     (set 'monitor2 "VGA1")
@@ -321,6 +321,7 @@
 (after! format-all-mode
   ;; (remhash 'c++-mode format-all--mode-table)
   (setq +format-on-save-enabled-modes 'omnisharp-mode))
+
 ;;; Defining some useful functions
 (defun shutdown ()
   (interactive)
@@ -349,8 +350,8 @@
 
 (defun my/fix-touchscreen ()
   (when (system-name= "klingenberg-tablet")
-    (shell-command "xinput --map-to-output $(xinput list --id-only \"ELAN Touchscreen\") eDP1")
-    ;; (shell-command "xinput --map-to-output $(xinput list --id-only \"HDX HDX DIGITIZER Pen (0)\") eDP1")
+    (shell-command "xinput --map-to-output $(xinput list --id-only \"ELAN Touchscreen\") eDP-1")
+    ;; (shell-command "xinput --map-to-output $(xinput list --id-only \"HDX HDX DIGITIZER Pen (0)\") eDP-1")
     ))
 
 (defun my/eww-open-league-table ()
@@ -364,6 +365,15 @@
               ("england" "premier league tabelle")))
            (country (completing-read "which country? " (mapcar #'car country-search-string-table))))
       (eww (cadr (assoc country country-search-string-table)))))
+
+(defun my/make-alert (time mesg)
+  (run-at-time
+   time
+   nil
+   (lambda ()
+     (let ((ans (y-or-n-p (concat "Reminder: " mesg " Dismiss reminder (y) or remind again in 30 seconds (n)?"))))
+       (unless ans
+         (my/make-alert 30 mesg))))))
 
 (use-package! async-await)
 ;; adapted from snippet by oremacs
@@ -461,6 +471,38 @@
    "s-<f4>" '(lambda () (interactive)
                (mu4e))
    "s-<f12>" '(lambda () (interactive)
+                (start-process "" nil "/usr/bin/slock")))
+  (map!
+   :n
+   ;; :states '(insert emacs hybrid normal visual motion operator replace)
+   "s-i w" '(other-window :which-key "other window")
+   "s-i d" 'dmenu
+   "s-i x" 'helm-M-x
+   "s-i f" 'helm-find-files
+   "s-i p" 'helm-projectile
+   "s-i b" 'helm-mini
+   "s-i l" 'evil-window-right
+   "s-i h" 'evil-window-left
+   "s-i j" 'evil-window-down
+   "s-i k" 'evil-window-up
+   "s-i L" 'enlarge-window-horizontally
+   "s-i H" 'shrink-window-horizontally
+   "s-i J" 'enlarge-window
+   "s-i K" 'shrink-window
+   "s-i v" 'split-window-right
+   "s-i s" 'split-window-below
+   "s-i c" 'my/close-buffer
+   "s-i q" 'my/get-rid-of-mouse
+   "s-i m" 'delete-other-windows
+   "s-i n" 'my/plover-activate
+   "s-i N" 'my/plover-deactivate
+   "s-i <f1>" '(lambda () (interactive) (eshell 'N))
+   "s-i <f2>" '(lambda () (interactive)
+               (start-process "" nil browser))
+   "s-i <f3>" 'deer
+   "s-i <f4>" '(lambda () (interactive)
+               (mu4e))
+   "s-i <f12>" '(lambda () (interactive)
                 (start-process "" nil "/usr/bin/slock"))))
 
 (my/create-super-bindings)
@@ -1225,6 +1267,8 @@ limitations under the License.
 ;;   (key-chord-define csharp-mode-map "db"  "double")
 ;;   (key-chord-define csharp-mode-map "in"  "int")
 ;;   (key-chord-define csharp-mode-map ";;"  "\C-e;"))
+
+;; (use-package! hyperbole)
 
 ;; load my custom scripts
 (load "~/Dropbox/Helen+Dario/washing-machine-timer.el" t t)

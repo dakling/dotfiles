@@ -1,7 +1,14 @@
 {
-    "KW-T": "{# super(c)}",
-    "SW": "{# super(a)}",
-    "TKPH": "{# super(d)}",
-    "TP*F": "{# super(f)}",
-    "SPW": "{# super(b)}"
+"HRO*ER": "{MODE:LOWER}",
+"K-BGS": "{MODE:CAMEL}",
+"KA*PS": "{MODE:CAPS}",
+"KHRAO*ER": "{MODE:RESET}",
+"KW-T": "{# super(c)}",
+"SKWR": "{# super(i)}",
+"SPW": "{# super(b)}",
+"STPHA*EUBG": "{MODE:SNAKE}",
+"SW": "{# super(a)}",
+"TAO*EULT": "{MODE:TITLE}",
+"TKPH": "{# super(d)}",
+"TP*F": "{# super(f)}"
 }

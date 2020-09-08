@@ -249,32 +249,7 @@
  ((system-name= "klingenberg-tablet")
   (add-load-path! "/run/current-system/profile/share/emacs/site-lisp/")))
 
-;; (when (system-name= "klingenberg-tablet")
-;;   (add-to-list 'exec-path "/home/klingenberg/.nix-profile/bin")
-;;   (setenv "PATH"
-;;           (concat (getenv "HOME") "/.nix-profile/bin:" (getenv "PATH"))))
-
-;; TODO plover avtivation/deactivation can probably be done in a more elegant way
-(defun my/plover-activate ()
-  (interactive)
-  (start-process "plover" nil "plover" "-g" "none"))
-
-(defun my/plover-deactivate ()
-  (interactive)
-  (shell-command "killall plover"))
-
-(defun my/auto-plover-on ()
-  (interactive)
-  (add-hook 'evil-insert-state-entry-hook #'my/plover-activate)
-  (add-hook 'evil-insert-state-exit-hook #'my/plover-deactivate))
-
-(defun my/auto-plover-off ()
-  (interactive)
-  (remove-hook 'evil-insert-state-entry-hook #'my/plover-activate)
-  (remove-hook 'evil-insert-state-exit-hook #'my/plover-deactivate))
-
 (setq doom-scratch-initial-major-mode 'lisp-interaction-mode)
-
 
 (after! sly
   (setq inferior-lisp-program (cond
@@ -354,17 +329,22 @@
     ;; (shell-command "xinput --map-to-output $(xinput list --id-only \"HDX HDX DIGITIZER Pen (0)\") eDP-1")
     ))
 
+(defun my/get-rid-of-mouse ()
+  "move the cursor out of the way and to the top right part of the screen"
+  (interactive)
+  (shell-command "xdotool mousemove 1920 1080"))
+
 (defun my/eww-open-league-table ()
-    "Do an internet search for soccer league table."
-    (interactive)
-    (let* ((country-search-string-table
-            '(("germany" "bundesliga tabelle")
-              ("spain" "la liga tabelle")
-              ("italy" "seria a tabelle")
-              ("france" "ligue 1 tabelle")
-              ("england" "premier league tabelle")))
-           (country (completing-read "which country? " (mapcar #'car country-search-string-table))))
-      (eww (cadr (assoc country country-search-string-table)))))
+  "Do an internet search for soccer league table."
+  (interactive)
+  (let* ((country-search-string-table
+          '(("germany" "bundesliga tabelle")
+            ("spain" "la liga tabelle")
+            ("italy" "seria a tabelle")
+            ("france" "ligue 1 tabelle")
+            ("england" "premier league tabelle")))
+         (country (completing-read "which country? " (mapcar #'car country-search-string-table))))
+    (eww (cadr (assoc country country-search-string-table)))))
 
 (defun my/make-alert (time mesg)
   (run-at-time
@@ -496,14 +476,12 @@
    "s-i m" 'delete-other-windows
    "s-i n" 'my/plover-activate
    "s-i N" 'my/plover-deactivate
-   "s-i <f1>" '(lambda () (interactive) (eshell 'N))
-   "s-i <f2>" '(lambda () (interactive)
+   "s-I 1" '(lambda () (interactive) (eshell 'N))
+   "s-I 2" '(lambda () (interactive)
                (start-process "" nil browser))
-   "s-i <f3>" 'deer
-   "s-i <f4>" '(lambda () (interactive)
-               (mu4e))
-   "s-i <f12>" '(lambda () (interactive)
-                (start-process "" nil "/usr/bin/slock"))))
+   "s-I 3" 'deer
+   "s-I 4" '(lambda () (interactive)
+                 (mu4e))))
 
 (my/create-super-bindings)
 

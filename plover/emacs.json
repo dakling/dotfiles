@@ -4,6 +4,7 @@
 "KA*PS": "{MODE:CAPS}",
 "KHRAO*ER": "{MODE:RESET}",
 "KW-T": "{# super(c)}",
+"SKWH": "{# super(I)}",
 "SKWR": "{# super(i)}",
 "SPW": "{# super(b)}",
 "STPHA*EUBG": "{MODE:SNAKE}",

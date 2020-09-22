@@ -171,20 +171,20 @@
     "/run/current-sytem/profile/sbin/reboot")
    %setuid-programs))
  (kernel
-  (let*
-      ((channels
-        (list (channel
-               (name 'nonguix)
-               (url "https://gitlab.com/nonguix/nonguix")
-               (commit "277c59d26f31acbcb7c282e760491b9251583986"))
-              (channel
-               (name 'guix)
-               (url "https://git.savannah.gnu.org/git/guix.git")
-               (commit "0e7731ba801a581a00fdf6113c87c46236c673c5"))))
-       (inferior
-        (inferior-for-channels channels)))
-    (car (lookup-inferior-packages inferior "linux" "5.8.5")))
-  ;; linux
+  ;; (let*
+  ;;     ((channels
+  ;;       (list (channel
+  ;;              (name 'nonguix)
+  ;;              (url "https://gitlab.com/nonguix/nonguix")
+  ;;              (commit ""))
+  ;;             (channel
+  ;;              (name 'guix)
+  ;;              (url "https://git.savannah.gnu.org/git/guix.git")
+  ;;              (commit ""))))
+  ;;      (inferior
+  ;;       (inferior-for-channels channels)))
+  ;;   (car (lookup-inferior-packages inferior "linux" "5.8.10")))
+  linux
   )
  (initrd microcode-initrd)
  (firmware

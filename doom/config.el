@@ -269,9 +269,9 @@
 (customize-set-variable 'avy-single-candidate-jump t)
 
 (after! org
- (setq org-file-apps
-       (remove (assoc "\\.pdf\\'" org-file-apps)
-               org-file-apps)))
+  (setq org-file-apps
+        (remove (assoc "\\.pdf\\'" org-file-apps)
+                org-file-apps)))
 
 (map!
    :localleader
@@ -280,12 +280,39 @@
    :n "x" (lambda () (interactive)
              (let ((current-prefix-arg '-)) ; simulate pressing C-u
                (call-interactively 'org-export-dispatch))))
+(map!
+   :after org
+   :map org-mode-map
+   :n "gb" 'org-mark-ring-goto)
 
 (setq org-roam-capture-templates
       '(("d" "default" plain #'org-roam-capture--get-point "%? \n %i \n %a"
          :file-name "%<%Y%m%d%H%M%S>-${slug}"
          :head "#+TITLE: ${title}\n"
          :unnarrowed t)))
+
+(setq org-capture-templates
+      '(("t" "Personal todo" entry (file+headline +org-capture-todo-file "Inbox") "* TODO %?
+%i
+%a" :prepend t) ("n" "Personal notes" entry (file+headline +org-capture-notes-file "Inbox") "* %u %?
+%i
+%a" :prepend t) ("j" "Journal" entry (file+olp+datetree +org-capture-journal-file) "* %U %?
+%i
+%a" :prepend t) ("p" "Templates for projects") ("pt" "Project-local todo" entry (file+headline +org-capture-project-todo-file "Inbox") "* TODO %?
+%i
+%a" :prepend t) ("pn" "Project-local notes" entry (file+headline +org-capture-project-notes-file "Inbox") "* %U %?
+%i
+%a" :prepend t) ("pc" "Project-local changelog" entry (file+headline +org-capture-project-changelog-file "Unreleased") "* %U %?
+%i
+%a" :prepend t) ("o" "Centralized templates for projects") ("ot" "Project todo" entry #'+org-capture-central-project-todo-file "* TODO %?
+ %i
+ %a" :heading "Tasks" :prepend nil) ("on" "Project notes" entry #'+org-capture-central-project-notes-file "* %U %?
+ %i
+ %a" :heading "Notes" :prepend t) ("oc" "Project changelog" entry #'+org-capture-central-project-changelog-file "* %U %?
+ %i
+ %a" :heading "Changelog" :prepend t)))
+
+(setq org-todo-keywords (list "TODO" "SCOP" "PROG" "DONE" "BLOC" "KILL"))
 
 (setq smerge-command-prefix "+")
 
@@ -478,10 +505,10 @@
    "s-i N" 'my/plover-deactivate
    "s-I 1" '(lambda () (interactive) (eshell 'N))
    "s-I 2" '(lambda () (interactive)
-               (start-process "" nil browser))
+              (start-process "" nil browser))
    "s-I 3" 'deer
    "s-I 4" '(lambda () (interactive)
-                 (mu4e))))
+              (mu4e))))
 
 (my/create-super-bindings)
 
@@ -958,6 +985,11 @@ limitations under the License.
    :n "lp" #'bosss-repl-load-my-assembly
    :n "in" #'bosss-create-new-field))
 
+;; org-kanban
+(use-package! kanban
+  :unless (system-name= "klingenberg-pi" "hla0001" "hla0002" "hla0003" "hla0004")
+  :load-path  "~/Documents/programming/elisp/kanban/")
+
 (map! :map company-mode-map
       :i "M-l" #'company-complete-selection
       :i "M-j" #'company-select-next-or-abort
@@ -1200,7 +1232,7 @@ limitations under the License.
         :n "d" #'elfeed-youtube-dl))
 
 (after! eww
- (map!
+  (map!
    :map eww-mode-map
    :n "M-h" #'eww-back-url
    :n "M-l" #'eww-forward-url

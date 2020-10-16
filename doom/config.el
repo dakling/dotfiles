@@ -1130,6 +1130,7 @@ limitations under the License.
           ("http://www.reddit.com/r/archlinux/.rss" programming reddit)
           ("http://www.reddit.com/r/nixos/.rss" programming reddit)
           ("http://www.reddit.com/r/Plover/.rss" programming reddit)
+          ("http://www.reddit.com/r/baduk/.rss" go baduk reddit)
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UCyHDQ5C6z1NDmJ4g6SerW8g" youtube mailab)
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UChkVOG0PqkXIHHmkBGG15Ig" youtube walulis)
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UCo4693Ony4slDY5hR0ny-bw" youtube walulis)

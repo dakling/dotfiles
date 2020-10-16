@@ -271,28 +271,13 @@
 (after! org
   (setq org-file-apps
         (remove (assoc "\\.pdf\\'" org-file-apps)
-                org-file-apps)))
-
-(map!
-   :localleader
-   :after org
-   :map org-mode-map
-   :n "x" (lambda () (interactive)
-             (let ((current-prefix-arg '-)) ; simulate pressing C-u
-               (call-interactively 'org-export-dispatch))))
-(map!
-   :after org
-   :map org-mode-map
-   :n "gb" 'org-mark-ring-goto)
-
-(setq org-roam-capture-templates
-      '(("d" "default" plain #'org-roam-capture--get-point "%? \n %i \n %a"
-         :file-name "%<%Y%m%d%H%M%S>-${slug}"
-         :head "#+TITLE: ${title}\n"
-         :unnarrowed t)))
-
-(setq org-capture-templates
-      '(("t" "Personal todo" entry (file+headline +org-capture-todo-file "Inbox") "* TODO %?
+                org-file-apps))
+  (setq org-todo-keywords (list "TODO" "SCOP" "PROG" "|" "DONE" "BLOC" "KILL"))
+  (setq org-todo-keyword-faces
+        '(("DONE" . font-lock-comment-face)
+          ("SCOP" . +org-todo-onhold)))
+  (setq org-capture-templates
+        '(("t" "Personal todo" entry (file+headline +org-capture-todo-file "Inbox") "* TODO %?
 %i
 %a" :prepend t) ("n" "Personal notes" entry (file+headline +org-capture-notes-file "Inbox") "* %u %?
 %i
@@ -310,9 +295,26 @@
  %i
  %a" :heading "Notes" :prepend t) ("oc" "Project changelog" entry #'+org-capture-central-project-changelog-file "* %U %?
  %i
- %a" :heading "Changelog" :prepend t)))
+ %a" :heading "Changelog" :prepend t))))
 
-(setq org-todo-keywords (list "TODO" "SCOP" "PROG" "DONE" "BLOC" "KILL"))
+(map!
+   :localleader
+   :after org
+   :map org-mode-map
+   :n "x" (lambda () (interactive)
+             (let ((current-prefix-arg '-)) ; simulate pressing C-u
+               (call-interactively 'org-export-dispatch))))
+
+(map!
+   :after org
+   :map org-mode-map
+   :n "gb" 'org-mark-ring-goto)
+
+(setq org-roam-capture-templates
+      '(("d" "default" plain #'org-roam-capture--get-point "%? \n %i \n %a"
+         :file-name "%<%Y%m%d%H%M%S>-${slug}"
+         :head "#+TITLE: ${title}\n"
+         :unnarrowed t)))
 
 (setq smerge-command-prefix "+")
 
@@ -353,8 +355,8 @@
 (defun my/fix-touchscreen ()
   (when (system-name= "klingenberg-tablet")
     (shell-command "xinput --map-to-output $(xinput list --id-only \"ELAN Touchscreen\") eDP-1")
-    ;; (shell-command "xinput --map-to-output $(xinput list --id-only \"HDX HDX DIGITIZER Pen (0)\") eDP-1")
-    ))
+    (ignore-errors
+      (shell-command "xinput --map-to-output $(xinput list --id-only \"HDX HDX DIGITIZER Pen (0)\") eDP-1"))))
 
 (defun my/get-rid-of-mouse ()
   "move the cursor out of the way and to the top right part of the screen"
@@ -819,7 +821,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 (defun my/bosss-file-p ()
   (or
    (and (buffer-file-name)
-        (file-in-directory-p (buffer-file-name) "~/BoSSS/"))
+        (file-in-directory-p (buffer-file-name) "~/BoSSS-experimental/"))
    (my/personal-bosss-file-p)))
 
 (defun my/add-header ()
@@ -945,9 +947,9 @@ limitations under the License.
 (map!
  :localleader
  :map csharp-mode-map
- "cd" (lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " (my/csharp-find-current-project))))
- "cr" (lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " bosss-master-solution)))
- "ce" (lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " bosss-master-solution)))
+ "cd" (lambda () (interactive) (compile (concat "msbuild /p:WarningLevel=0 /p:Configuration=Debug " (my/csharp-find-current-project))))
+ "cr" (lambda () (interactive) (compile (concat "msbuild /p:WarningLevel=0 /p:Configuration=Release " bosss-master-solution)))
+ "ce" (lambda () (interactive) (compile (concat "msbuild /p:WarningLevel=0 /p:Configuration=Debug " bosss-master-solution)))
  ;; "cc" #'recompile
  "=" #'my/indent-buffer-without-bosss-header
  "et" (lambda () (interactive) (my/run-tests (my/csharp-find-current-project)))
@@ -1084,6 +1086,7 @@ limitations under the License.
                                              ("raw" . 72000))))
 (use-package! pdf-tools
   :config
+  (add-hook 'pdf-view-mode-hook 'pdf-view-auto-slice-minor-mode)
   (add-hook 'pdf-view-mode-hook 'pdf-view-midnight-minor-mode)
   (evil-collection-init 'pdf)
   (setq pdf-view-midnight-colors '("WhiteSmoke" . "gray16"))

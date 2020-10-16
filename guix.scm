@@ -6,7 +6,7 @@
  (gnu)
  (gnu system nss)
  (nongnu packages linux)
- (nongnu packages linux)
+ (flat packages emacs)
  (nongnu system linux-initrd)
  (guix packages)
  (guix channels)
@@ -88,6 +88,7 @@
   (append
    (list
     (specification->package "nss-certs")
+    ;; emacs-native-comp
     emacs
     emacs-exwm
     emacs-guix
@@ -171,20 +172,20 @@
     "/run/current-sytem/profile/sbin/reboot")
    %setuid-programs))
  (kernel
-  ;; (let*
-  ;;     ((channels
-  ;;       (list (channel
-  ;;              (name 'nonguix)
-  ;;              (url "https://gitlab.com/nonguix/nonguix")
-  ;;              (commit ""))
-  ;;             (channel
-  ;;              (name 'guix)
-  ;;              (url "https://git.savannah.gnu.org/git/guix.git")
-  ;;              (commit ""))))
-  ;;      (inferior
-  ;;       (inferior-for-channels channels)))
-  ;;   (car (lookup-inferior-packages inferior "linux" "5.8.10")))
-  linux
+  (let*
+      ((channels
+        (list (channel
+               (name 'nonguix)
+               (url "https://gitlab.com/nonguix/nonguix")
+               (commit "694e85778daf6dbb8a6e87949c67e45ead658e5"))
+              (channel
+               (name 'guix)
+               (url "https://git.savannah.gnu.org/git/guix.git")
+               (commit "b4369430e3c0d895f7be92e473c1aca261c699dc"))))
+       (inferior
+        (inferior-for-channels channels)))
+    (car (lookup-inferior-packages inferior "linux" "5.8.10")))
+  ;; linux
   )
  (initrd microcode-initrd)
  (firmware

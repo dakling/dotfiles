@@ -68,8 +68,6 @@
 
 (package! telega)
 
-(package! elfeed)
-
 (package! pinentry)
 
 (package! diminish)

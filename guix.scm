@@ -184,7 +184,7 @@
                (commit "b4369430e3c0d895f7be92e473c1aca261c699dc"))))
        (inferior
         (inferior-for-channels channels)))
-    (car (lookup-inferior-packages inferior "linux" "5.8.10")))
+    (car (lookup-inferior-packages inferior "linux" "5.8.14")))
   ;; linux
   )
  (initrd microcode-initrd)

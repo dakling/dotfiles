@@ -519,6 +519,15 @@
 ;; (global-mu4e-conversation-mode)
 
 ;; disable mu4e-org
+;;
+(after! mu4e
+  ;; (remove-hook 'mu4e-compose-pre-hook #'org-msg-mode)
+  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
+        org-msg-startup "hidestars indent inlineimages"
+        org-msg-greeting-fmt "\nHallo *%s*,\n\n"
+        org-msg-greeting-name-limit 3
+        org-msg-default-alternatives '(html text)))
+
 ;; (remove-hook 'message-send-hook #'doom--setq-org-mu4e-convert-to-html-for-message-send-h)
 ;; (remove-hook 'mu4e-compose-mode-hook #'org-mu4e-compose-org-mode)
 ;; (setq org-mu4e-convert-to-html nil)
@@ -549,8 +558,10 @@
       '(("fdy"
          (mu4e-sent-messages-behavior sent)
          (mu4e-compose-signature-auto-include t)
-         (mu4e-compose-signature
-          "Technische Universität Darmstadt
+         (org-msg-signature
+          "#+begin_signature
+--
+Technische Universität Darmstadt
 Dario Klingenberg, M.Sc.
 Fachgebiet für Strömungsdynamik
 Fachbereich Maschinenbau
@@ -561,7 +572,8 @@ Otto-Berndt-Straße 2 (L1|01 322)
 E-Mail: klingenberg@fdy.tu-darmstadt.de
 Telefon: +49 6151 16-26207
 Fax: +49 6151 16-26203
-Web: http://www.fdy.tu-darmstadt.de")
+Web: http://www.fdy.tu-darmstadt.de
+#+end_signature")
          (mu4e-sent-folder "/fdy/Sent Items")
          (mu4e-drafts-folder "/fdy/Drafts")
          (smtpmail-smtp-server "smtp.tu-darmstadt.de")
@@ -572,8 +584,10 @@ Web: http://www.fdy.tu-darmstadt.de")
         ("gsc"
          (mu4e-sent-messages-behavior sent)
          (mu4e-compose-signature-auto-include t)
-         (mu4e-compose-signature
-          "Technische Universität Darmstadt
+         (org-msg-signature
+          "#+begin_signature
+--
+Technische Universität Darmstadt
 Dario Klingenberg, M.Sc.
 Graduate School Computational Engineering
 Dolivostraße 15
@@ -582,7 +596,8 @@ Dolivostraße 15
 E-Mail: klingenberg@gsc.tu-darmstadt.de
 Telefon: +49 6151 16-24381
 Fax: +49 6151 16-24404
-Web: http://www.gsc.ce.tu-darmstadt.de/")
+Web: http://www.gsc.ce.tu-darmstadt.de/
+#+end_signature")
          (mu4e-sent-folder "/gsc/Sent Items")
          (mu4e-drafts-folder "/gsc/Drafts")
          (smtpmail-smtp-server "smtp.tu-darmstadt.de")

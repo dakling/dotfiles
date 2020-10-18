@@ -520,17 +520,8 @@
 
 ;; disable mu4e-org
 ;;
-(after! mu4e
-  ;; (remove-hook 'mu4e-compose-pre-hook #'org-msg-mode)
-  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
-        org-msg-startup "hidestars indent inlineimages"
-        org-msg-greeting-fmt "\nHallo *%s*,\n\n"
-        org-msg-greeting-name-limit 3
-        org-msg-default-alternatives '(html text)))
-
-;; (remove-hook 'message-send-hook #'doom--setq-org-mu4e-convert-to-html-for-message-send-h)
-;; (remove-hook 'mu4e-compose-mode-hook #'org-mu4e-compose-org-mode)
-;; (setq org-mu4e-convert-to-html nil)
+;; (after! mu4e
+;;   (remove-hook 'mu4e-compose-pre-hook #'org-msg-mode))
 
 (defun my/mu4e-set-account ()
   "Set the account for composing a message."
@@ -648,13 +639,11 @@ Web: http://www.gsc.ce.tu-darmstadt.de/
   (setq mu4e-view-use-gnus t)
   (require 'mu4e-icalendar)
   (mu4e-icalendar-setup)
-  ;; (progn
-  ;;   ;; For org-mu4e-compose-mode
-  ;;   (add-hook 'org-mode-hook
-  ;;             #'evil-collection-mu4e-org-set-header-to-normal-mode)
-  ;;   (add-hook 'mu4e-compose-pre-hook
-  ;;             #'evil-collection-mu4e-org-set-header-to-insert-mode))
-  )
+  ;;;  org-msg
+  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
+        ;; org-msg-startup "hidestars indent inlineimages"
+        org-msg-greeting-fmt "\nHallo *%s*,\n\n\n"
+        org-msg-default-alternatives '(html text)))
 
 ;; keybindings
 ;;

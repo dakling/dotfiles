@@ -66,6 +66,8 @@
  wm
  package-management)
 
+
+
 (operating-system
  (locale "en_US.utf8")
  (timezone "Europe/Berlin")
@@ -142,8 +144,7 @@
               (default-user "klingenberg")
               (xorg-configuration
                (xorg-configuration
-                (keyboard-layout keyboard-layout)))
-              ))
+                (keyboard-layout keyboard-layout)))))
     (service nix-service-type)
     (service openvpn-client-service-type
              (openvpn-client-configuration))

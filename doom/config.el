@@ -35,7 +35,7 @@
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type t)
+(setq display-line-numbers-type nil)
 
 
 ;; Here are some additional functions/macros that could help you configure Doom:
@@ -237,6 +237,8 @@
 ;;; Setting some variables
 (setq evil-collection-setup-minibuffer t)
 
+(setq +evil-want-o/O-to-continue-comments nil)
+
 (setq display-time-24hr-format t
       display-time-default-load-average nil)
 (display-time-mode 1)
@@ -267,6 +269,8 @@
 (customize-set-variable 'avy-all-windows t)
 
 (customize-set-variable 'avy-single-candidate-jump t)
+
+(setq magit-repository-directories '(("~/" . 1)))
 
 (after! org
   (setq org-file-apps
@@ -384,6 +388,11 @@
        (unless ans
          (my/make-alert 30 mesg))))))
 
+(defun eshell/nonguixupdate ()
+  (shell-command "nix-channel --update")
+  (shell-command "nix-env -u")
+  (shell-command "flatpak --user update"))
+
 (use-package! async-await)
 ;; adapted from snippet by oremacs
 (defun my/youtube-dl ()
@@ -470,8 +479,9 @@
    "s-c" 'my/close-buffer
    "s-q" 'my/get-rid-of-mouse
    "s-m" 'delete-other-windows
-   "s-n" 'my/plover-activate
-   "s-N" 'my/plover-deactivate
+   "s-g" 'guix
+   ;; "s-n" 'my/plover-activate
+   ;; "s-N" 'my/plover-deactivate
    "s-<f1>" '(lambda () (interactive) (eshell 'N))
    "C-s-<f1>" 'eshell
    "s-<f2>" '(lambda () (interactive)
@@ -563,7 +573,7 @@ Otto-Berndt-Straße 2 (L1|01 322)
 E-Mail: klingenberg@fdy.tu-darmstadt.de
 Telefon: +49 6151 16-26207
 Fax: +49 6151 16-26203
-Web: http://www.fdy.tu-darmstadt.de
+Web: https://www.fdy.tu-darmstadt.de
 #+end_signature")
          (mu4e-sent-folder "/fdy/Sent Items")
          (mu4e-drafts-folder "/fdy/Drafts")
@@ -587,7 +597,7 @@ Dolivostraße 15
 E-Mail: klingenberg@gsc.tu-darmstadt.de
 Telefon: +49 6151 16-24381
 Fax: +49 6151 16-24404
-Web: http://www.gsc.ce.tu-darmstadt.de/
+Web: https://www.gsc.ce.tu-darmstadt.de/
 #+end_signature")
          (mu4e-sent-folder "/gsc/Sent Items")
          (mu4e-drafts-folder "/gsc/Drafts")
@@ -606,7 +616,9 @@ Web: http://www.gsc.ce.tu-darmstadt.de/
          (smtpmail-smtp-server "smtp.gmail.com")
          (smtpmail-smtp-service 465)
          (smtpmail-stream-type ssl)
-         (user-full-name "Dario Klingenberg"))
+         (user-full-name "Dario Klingenberg")
+         (org-msg-signature nil)
+         )
         ("web"
          (mu4e-sent-messages-behavior sent)
          (mu4e-compose-signature-auto-include nil)
@@ -616,7 +628,8 @@ Web: http://www.gsc.ce.tu-darmstadt.de/
          (smtpmail-smtp-service 587)
          (smtpmail-stream-type starttls)
          (user-mail-address "dario.klingenberg@web.de")
-         (user-full-name "dario"))))
+         (user-full-name "dario")
+         (org-msg-signature nil))))
 
 ;; taken from reddit
 (use-package! mu4e-alert
@@ -642,7 +655,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/
   ;;;  org-msg
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
         ;; org-msg-startup "hidestars indent inlineimages"
-        org-msg-greeting-fmt "\nHallo *%s*,\n\n\n"
+        org-msg-greeting-fmt "Hallo %s,\n\n\n"
         org-msg-default-alternatives '(html text)))
 
 ;; keybindings
@@ -721,6 +734,21 @@ Web: http://www.gsc.ce.tu-darmstadt.de/
   ;;   (add-to-list 'geiser-guile-load-path "~/guix"))
   (with-eval-after-load 'yasnippet
     (add-to-list 'yas-snippet-dirs "~/guix/etc/snippets"))
+  ;;
+  ;; Temporary HACK
+  (defun guix-buffer-p (&optional buffer)
+    (let ((buf-name (buffer-name (or buffer (current-buffer)))))
+      (not (null (or (string-match "*Guix REPL" buf-name)
+                     (string-match "*Guix Internal REPL" buf-name))))))
+
+  (defun guix-geiser--set-project (&optional _impl _prompt)
+    (when (and (eq 'guile geiser-impl--implementation)
+               (null geiser-repl--project)
+               (guix-buffer-p))
+      (geiser-repl--set-this-buffer-project 'guix)))
+
+  (advice-add 'geiser-impl--set-buffer-implementation :after #'guix-geiser--set-project)
+  ;; HACK END
   (setq flycheck-scheme-chicken-executable "chicken-csc")
   (setq geiser-chicken-binary "chicken-csi")
   (setq geiser-active-implementations '(guile chicken))

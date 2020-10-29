@@ -6,7 +6,7 @@
  (gnu)
  (gnu system nss)
  (nongnu packages linux)
- (flat packages emacs)
+ ;; (flat packages emacs)
  (nongnu system linux-initrd)
  (guix packages)
  (guix channels)
@@ -62,6 +62,8 @@
  libffi
  pdf
  lisp
+ lisp-xyz
+ wm
  package-management)
 
 (operating-system
@@ -88,9 +90,16 @@
   (append
    (list
     (specification->package "nss-certs")
+    ;; stumpwm+slynk
+    stumpwm
+    stumpish
+    sbcl-stumpwm-ttf-fonts
+    sbcl-stumpwm-pass
+    sbcl-stumpwm-wifi
+    sbcl-stumpwm-stumptray
     ;; emacs-native-comp
     emacs
-    emacs-exwm
+    ;; emacs-exwm
     emacs-guix
     ;; emacs-pdf-tools
     guile-gcrypt

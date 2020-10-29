@@ -32,7 +32,7 @@
 ;; (clipboard-history:start-clipboard-manager)
 
 ;; change the prefix key to something else
-(set-prefix-key (kbd "s-q"))
+(set-prefix-key (kbd "s-SPC"))
 
 ;; prompt the user for an interactive command. The first arg is an
 ;; optional initial contents.
@@ -42,8 +42,28 @@
       (eval-command cmd t))))
 
 ;; define my own commands
-(defcommand move-right-emacs () ()
-  (run-shell-command "emacsclient \"(evil-move-right 1)\""))
+(defun emacs-is-current-window-p ()
+  (and (current-window) (search "Emacs" (window-title (current-window)))))
+
+(defun emacs-evil-window-move (direction)
+  (let ((cmd-string (concatenate 'string "emacsclient -s instance1 -e \"(evil-window-" (subseq (string-downcase (format nil "~s" direction)) 1) " 1)\"")))
+    (run-shell-command cmd-string t)))
+
+(defun emacs-window-close ()
+  (let ((cmd-string "emacsclient -s instance1 -e \"(my/close-buffer)\""))
+    (run-shell-command cmd-string t)))
+
+(defcommand move-window-or-emacs-buffer (direction) ((:direction "Direction: "))
+  (let ((try-emacs
+          (when (emacs-is-current-window-p)
+            (emacs-evil-window-move direction))))
+    (when (or (not try-emacs) (= 1 (length try-emacs)))
+      (move-focus direction))))
+
+(defcommand close-window-or-emacs-buffer () ()
+  (if (emacs-is-current-window-p)
+      (emacs-window-close)
+      (eval-command "delete")))
 
 ;; clean up a little
 (undefine-key *root-map* (kbd "c"))
@@ -61,8 +81,12 @@
 (define-key *root-map* (kbd "e") "exec emacsclient -nc -s instance1")
 (define-key *root-map* (kbd "s-e") "exec emacs")
 ;; vertical split should be the default
-(define-key *root-map* (kbd "s") "hsplit")
-(define-key *root-map* (kbd "v") "vsplit")
+(define-key *top-map* (kbd "s-v") "hsplit")
+(define-key *top-map* (kbd "s-s") "vsplit")
+(define-key *top-map* (kbd "s-V") "hsplit")
+(define-key *top-map* (kbd "s-S") "vsplit")
+(define-key *root-map* (kbd "v") "hsplit")
+(define-key *root-map* (kbd "s") "vsplit")
 ;; spacemacsy style
 (define-key *root-map* (kbd "m") "only")
 (define-key *root-map* (kbd "M") "lastmsg")
@@ -74,30 +98,32 @@
 (define-key *root-map* (kbd ",") "colon")
 (define-key *root-map* (kbd ".") "eval")
 (define-key *root-map* (kbd "s-w") "banish")
+(define-key *root-map* (kbd "s-r") "loadrc")
 
 ;; Ssh somewhere
 ;; (define-key *root-map* (kbd "C-s") "colon1 exec termite -e ssh ")
 ;; Lock screen
-(define-key *root-map* (kbd "C-l") "exec xlock")
+;; (define-key *root-map* (kbd "C-l") "exec xlock")
 
 ;; xmonad habits
-(define-key *top-map* (kbd "s-l") "move-focus right")
-(define-key *top-map* (kbd "s-h") "move-focus left")
-(define-key *top-map* (kbd "s-k") "move-focus up")
-(define-key *top-map* (kbd "s-j") "move-focus down")
+(define-key *top-map* (kbd "s-l") "move-window-or-emacs-buffer right")
+(define-key *top-map* (kbd "s-h") "move-window-or-emacs-buffer left")
+(define-key *top-map* (kbd "s-k") "move-window-or-emacs-buffer up")
+(define-key *top-map* (kbd "s-j") "move-window-or-emacs-buffer down")
 (define-key *top-map* (kbd "s-L") "move-window right")
 (define-key *top-map* (kbd "s-H") "move-window left")
 (define-key *top-map* (kbd "s-K") "move-window up")
 (define-key *top-map* (kbd "s-J") "move-window down")
-(define-key *top-map* (kbd "s-c") "delete")
-(define-key *top-map* (kbd "s-d") "exec rofi -show drun -no-click-on-exit")
-(define-key *top-map* (kbd "s-o") "exec onboard")
+(define-key *top-map* (kbd "s-c") "close-window-or-emacs-buffer")
+(define-key *top-map* (kbd "s-m") "only")
+(define-key *top-map* (kbd "s-F1") "exec termite")
+(define-key *top-map* (kbd "s-F2") "exec firefox")
+(define-key *top-map* (kbd "s-F3") "exec emacsclient -nc -s instance1 -e \"(deer)\"")
 
 ;; program keymap
 (defvar *program-map*
   (let ((m (stumpwm:make-sparse-keymap)))
     (stumpwm:define-key m (stumpwm:kbd "i") "exec firefox")
-    (stumpwm:define-key m (stumpwm:kbd "p") "exec pamac-manager")
     (stumpwm:define-key m (stumpwm:kbd "d") "exec pcmanfm")
     m ; NOTE: this is important
     ))
@@ -178,15 +204,11 @@
   "xmodmap -e 'add mod4 = Super_L'"
   "emacs --daemon=instance1"
   "dropbox"
-  "pamac-tray"
   "nm-applet"
-  "easystroke enable"
   "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
   "setxkbmap -option ctrl:nocaps"  
   "xcape -e 'Control_L=Escape'"
-  "/usr/share/HESSENBOX_DA/HESSENBOX_DA-Client.sh start"
-  "onboard"
-  "touchegg"
+  "bash ~/.screenlayout/default.sh"
   )))
   (dolist (cmd autostart-command-list)
     (run-shell-command cmd)))

@@ -1292,6 +1292,13 @@ limitations under the License.
   :init
   (pinentry-start))
 
+(use-package! stumpwm-mode
+  :load-path "/run/current-system/profile/share/emacs/site-lisp/"
+  :config
+  (map! :localleader :map stumpwm-mode-map
+        "ef" #'stumpwm-eval-defun
+        "ee" #'stumpwm-eval-last-sexp))
+
 (use-package! diminish
   :config
   (mapcar #'diminish '(reftex-mode

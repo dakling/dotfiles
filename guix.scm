@@ -99,6 +99,7 @@
     sbcl-stumpwm-pass
     sbcl-stumpwm-wifi
     sbcl-stumpwm-stumptray
+    emacs-stumpwm-mode
     ;; emacs-native-comp
     emacs
     emacs-exwm

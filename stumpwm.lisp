@@ -4,7 +4,8 @@
 
 ;; TODOs
 ;; - default set of groups at startup
-;; - ensure that emacsclient cmds are sent to emacs instance of the active window
+;; - DONE(?) ensure that emacsclient cmds are sent to emacs instance of the active window
+;; - shutdown cmds
 ;; - DONE(?)  enable modeline on one/both screens in a controlled way
 
 (in-package :stumpwm)
@@ -49,27 +50,48 @@
       (eval-command cmd t))))
 
 ;; define my own commands
+(defcommand start-emacs-client () ()
+  "exec emacs --daemon=instance1")
+
+(defcommand run-emacs-client (&optional command) (:rest)
+  (eval-command
+   (if command
+       (format nil "exec emacsclient -nc -s instance1 -e \"(~a)\"" command)
+       "exec emacsclient -nc -s instance1")))
+
 (defun emacs-is-current-window-p ()
-  (and (current-window) (search "Emacs" (window-title (current-window)))))
+  (and (current-window) (search "Doom Emacs" (window-title (current-window))))) ;TODO come up with more relable test
+
+(defun direction-to-evil-key (direction)
+  (cond
+    ((equalp direction :right) "l")
+    ((equalp direction :left) "h")
+    ((equalp direction :up) "k")
+    ((equalp direction :down) "j")))
 
 (defun emacs-evil-window-move (direction)
-  (let ((cmd-string (concatenate 'string "emacsclient -s instance1 -e \"(evil-window-" (subseq (string-downcase (format nil "~s" direction)) 1) " 1)\"")))
-    (run-shell-command cmd-string t)))
+  (meta (kbd (format nil "s-~a" (direction-to-evil-key direction)))))
+
+;; (defun emacs-evil-window-move (direction)
+;;   (let ((cmd-string (concatenate 'string "emacsclient -s instance1 -e \"(evil-window-" (subseq (string-downcase (format nil "~s" direction)) 1) " 1)\"")))
+;;     (run-shell-command cmd-string t)))
 
 (defun emacs-window-close ()
-  (let ((cmd-string "emacsclient -s instance1 -e \"(my/close-buffer)\""))
-    (run-shell-command cmd-string)))
+  (meta (kbd "s-c")))
 
 (defun emacs-window-maximize ()
-  (let ((cmd-string "emacsclient -s instance1 -e \"(doom/window-maximize-buffer)\""))
-    (run-shell-command cmd-string)))
+  (meta (kbd "s-m")))
+
+(defun emacs-vsplit ()
+  (meta (kbd "s-s")))
+
+(defun emacs-hsplit ()
+  (meta (kbd "s-s")))
 
 (defcommand move-window-or-emacs-buffer (direction) ((:direction "Direction: "))
-  (let ((try-emacs
-          (when (emacs-is-current-window-p)
-            (emacs-evil-window-move direction))))
-    (when (or (not try-emacs) (= 1 (length try-emacs)))
-      (move-focus direction))))
+  (if (emacs-is-current-window-p)
+      (emacs-evil-window-move direction)
+      (move-focus direction)))
 
 (defcommand close-window-or-emacs-buffer () ()
   (if (emacs-is-current-window-p)
@@ -79,7 +101,19 @@
 (defcommand maximize-window-and-emacs-window () ()
   (when (emacs-is-current-window-p)
     (emacs-window-maximize))
-  (eval-command "only"))
+  ;; unless (only-one-frame-p)
+    (eval-command "only"))
+
+;; TODO maybe better to do a normal split and automatically open emacs with the same buffer?
+(defcommand vsplit-maybe-emacs () ()
+  (if (emacs-is-current-window-p)
+      (emacs-vsplit)
+      (eval-command "vsplit")))
+
+(defcommand hsplit-maybe-emacs () ()
+  (if (emacs-is-current-window-p)
+      (emacs-hsplit)
+      (eval-command "hsplit")))
 
 ;; clean up a little
 (undefine-key *root-map* (kbd "c"))
@@ -89,11 +123,12 @@
 (undefine-key *root-map* (kbd "C-b"))
 (undefine-key *root-map* (kbd "C-n"))
 (undefine-key *root-map* (kbd "C-SPC"))
+(undefine-key *root-map* (kbd "w"))
 ;; (undefine-key *root-map* (kbd ";"))
 ;; (undefine-key *root-map* (kbd ":"))
 ;; open stuff
-(define-key *top-map* (kbd "s-v") "hsplit")
-(define-key *top-map* (kbd "s-s") "vsplit")
+(define-key *top-map* (kbd "s-v") "hsplit-maybe-emacs")
+(define-key *top-map* (kbd "s-s") "vsplit-maybe-emacs")
 (define-key *top-map* (kbd "s-V") "hsplit")
 (define-key *top-map* (kbd "s-S") "vsplit")
 ;; spacemacsy style
@@ -107,6 +142,26 @@
 (define-key *root-map* (kbd ".") "eval")
 (define-key *root-map* (kbd "s-w") "banish")
 (define-key *root-map* (kbd "s-r") "loadrc")
+
+(defvar *window-map*
+  (let ((m (stumpwm:make-sparse-keymap)))
+    (stumpwm:define-key m (stumpwm:kbd "TAB") "other-window")
+    (stumpwm:define-key m (stumpwm:kbd "v") "hsplit")
+    (stumpwm:define-key m (stumpwm:kbd "s") "vsplit")
+    (stumpwm:define-key m (stumpwm:kbd "l") "move-focus right")
+    (stumpwm:define-key m (stumpwm:kbd "h") "move-focus left")
+    (stumpwm:define-key m (stumpwm:kbd "k") "move-focus up")
+    (stumpwm:define-key m (stumpwm:kbd "j") "move-focus down")
+    (stumpwm:define-key m (stumpwm:kbd "m") "only")
+    m))
+(stumpwm:define-key stumpwm:*root-map* (stumpwm:kbd "w") '*window-map*)
+
+(defvar *system-map*
+  (let ((m (stumpwm:make-sparse-keymap)))
+    (stumpwm:define-key m (stumpwm:kbd "S") "run-emacs-client shutdown")
+    (stumpwm:define-key m (stumpwm:kbd "R") "run-emacs-client reboot")
+    m))
+(stumpwm:define-key stumpwm:*root-map* (stumpwm:kbd "S") '*system-map*)
 
 ;; Ssh somewhere
 ;; (define-key *root-map* (kbd "C-s") "colon1 exec termite -e ssh ")
@@ -123,30 +178,23 @@
 (define-key *top-map* (kbd "s-J") "move-window down")
 (define-key *top-map* (kbd "s-c") "close-window-or-emacs-buffer")
 (define-key *top-map* (kbd "s-C") "delete")
+(define-key *top-map* (kbd "s-C-c") "remove-split")
 (define-key *top-map* (kbd "s-m") "maximize-window-and-emacs-window")
 (define-key *top-map* (kbd "s-d") "colon1 exec ")
-(define-key *top-map* (kbd "s-e") "exec emacsclient -nc -s instance1")
+(define-key *top-map* (kbd "s-e") "run-emacs-client %s")
 (define-key *top-map* (kbd "s-E") "exec emacs")
 (define-key *top-map* (kbd "s-S-F1") "exec termite")
-(define-key *top-map* (kbd "s-F1") "exec emacsclient -nc -s instance1 -e \"(eshell)\"")
+(define-key *top-map* (kbd "s-F1") "run-emacs-client eshell")
 (define-key *top-map* (kbd "s-F2") "exec firefox")
-(define-key *top-map* (kbd "s-F3") "exec emacsclient -nc -s instance1 -e \"(deer)\"")
+(define-key *top-map* (kbd "s-F3") "run-emacs-client deer")
 (define-key *top-map* (kbd "s-S-F3") "pcmanfm")
-(define-key *top-map* (kbd "s-F4") "exec emacsclient -nc -s instance1 -e \"(mu4e)\"")
+(define-key *top-map* (kbd "s-F4") "run-emacs-client mu4e")
 
 (define-key *top-map* (kbd "s-n") "gnew")
 (define-key *top-map* (kbd "s-w") "grouplist")
 
-;; TODO write nicer
-(define-key *top-map* (kbd "s-1") "gselect 1")
-(define-key *top-map* (kbd "s-2") "gselect 2")
-(define-key *top-map* (kbd "s-3") "gselect 3")
-(define-key *top-map* (kbd "s-4") "gselect 4")
-(define-key *top-map* (kbd "s-5") "gselect 5")
-(define-key *top-map* (kbd "s-6") "gselect 6")
-(define-key *top-map* (kbd "s-7") "gselect 7")
-(define-key *top-map* (kbd "s-8") "gselect 8")
-(define-key *top-map* (kbd "s-9") "gselect 9")
+(loop for i from 1 upto 9
+      do (define-key *top-map* (kbd (format nil "s-~a" i)) (format nil "gselect ~a" i)))
 (define-key *top-map* (kbd "s-!") "gmove 1")
 (define-key *top-map* (kbd "s-\"") "gmove 2")
 (define-key *top-map* (kbd "s-section") "gmove 3")
@@ -221,15 +269,15 @@
 
 (setf *screen-mode-line-format*
       (list "[^B%n^b] %w^>"
-            '(:eval (run-shell-command *battery-status-command* t))
-            " | Vol. "
-            '(:eval (run-shell-command *vol-status-command* t))
+            ;; '(:eval (run-shell-command *battery-status-command* t))
+            ;; " | Vol. "
+            ;; '(:eval (run-shell-command *vol-status-command* t))
             " | %d |"
             "         "))
 
 (setf *window-format* "%m%n%s%c")
 
-(setf *mode-line-timeout* 60)
+(setf *mode-line-timeout* 1)
 
 (setf *mouse-focus-policy* :click)
 
@@ -249,11 +297,13 @@
   (dolist (cmd autostart-command-list)
     (run-shell-command cmd)))
 
+(refresh-heads)
+
 ;; turn on the mode line
-;; TODO check if numbers persist across X-restarts/reboots -> if so, wrap the following in a function
+;; TODO check if numbers persist across X-restarts/reboots -> if so, wrap the following in a function -> seems that way
 (enable-mode-line (stumpwm:current-screen)
                   (stumpwm::head-by-number (stumpwm:current-screen) 0) t)
 ;; (toggle-mode-line (stumpwm:current-screen)
-;;                   (stumpwm::head-by-number (stumpwm:current-screen) 2) t)
+;;                   (stumpwm::head-by-number (stumpwm:current-screen) 0) t)
 
 (stumptray::stumptray)

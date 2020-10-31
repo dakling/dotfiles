@@ -456,6 +456,33 @@
                ((string= location "backup") '("backup" "~/backup"))
                ((string= location "lehre") '("lehre" "~/lehre")))))
 
+(defun stump/move-focus (direction)
+  (shell-command-to-string (format "stumpish eval \\\(move-focus :%s\\\)" direction)))
+
+(defun stump/emacs-window-right ()
+  (interactive)
+  (condition-case nil
+      (evil-window-right 1)
+    (error (stump/move-focus "right"))))
+
+(defun stump/emacs-window-left ()
+  (interactive)
+  (condition-case nil
+      (evil-window-left 1)
+    (error (stump/move-focus "left"))))
+
+(defun stump/emacs-window-up ()
+  (interactive)
+  (condition-case nil
+      (evil-window-up 1)
+    (error (stump/move-focus "up"))))
+
+(defun stump/emacs-window-down ()
+  (interactive)
+  (condition-case nil
+      (evil-window-down 1)
+    (error (stump/move-focus "down"))))
+
 (defun my/create-super-bindings ()
   "Create bindings starting with super for use outside exwm."
   (map!
@@ -467,10 +494,10 @@
    "s-f" 'helm-find-files
    "s-p" 'helm-projectile
    "s-b" 'helm-mini
-   "s-l" 'evil-window-right
-   "s-h" 'evil-window-left
-   "s-j" 'evil-window-down
-   "s-k" 'evil-window-up
+   "s-l" 'stump/emacs-window-right
+   "s-h" 'stump/emacs-window-left
+   "s-j" 'stump/emacs-window-down
+   "s-k" 'stump/emacs-window-up
    "s-L" 'enlarge-window-horizontally
    "s-H" 'shrink-window-horizontally
    "s-J" 'enlarge-window

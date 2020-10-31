@@ -102,7 +102,7 @@
     emacs-stumpwm-mode
     ;; emacs-native-comp
     emacs
-    emacs-exwm
+    ;; emacs-exwm
     emacs-guix
     ;; emacs-pdf-tools
     guile-gcrypt
@@ -141,7 +141,7 @@
              (slim-configuration
               (display ":1")
               (vt "vt7")
-              (auto-login? #f)
+              (auto-login? #t)
               (default-user "klingenberg")
               (xorg-configuration
                (xorg-configuration

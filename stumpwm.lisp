@@ -3,9 +3,9 @@
 ;; Here is a sample .stumpwmrc file
 
 ;; TODOs
-;; - default set of groups at startup
+;; - DONE(?) default set of groups at startup
 ;; - DONE(?) ensure that emacsclient cmds are sent to emacs instance of the active window
-;; - shutdown cmds
+;; - DONE(?)shutdown cmds
 ;; - DONE(?)  enable modeline on one/both screens in a controlled way
 
 (in-package :stumpwm)
@@ -307,3 +307,21 @@
 ;;                   (stumpwm::head-by-number (stumpwm:current-screen) 0) t)
 
 (stumptray::stumptray)
+
+;; TODO find out if this can be done more nicely
+(defvar *groups-initialized-p* nil)
+
+(defun init-groups ()
+  (unless *groups-initialized-p*
+   (gnew "mail")
+   (gnew "programming")
+   (gnew "work")
+   (gnew "hacking")
+   (gnew "entertainment")
+   (gselect 2)
+   (run-shell-command "firefox")
+   (run-emacs-client "mu4e")
+   (gselect 1)
+   (setf *groups-initialized-p* t)))
+
+(init-groups)

@@ -10,22 +10,32 @@
 
 (in-package :stumpwm)
 
-(load "~/.sbclrc")
+;; (load "~/.sbclrc")
 
 ;; (let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp"
 ;;                                        (user-homedir-pathname))))
 ;;   (when (probe-file quicklisp-init)
 ;;     (load quicklisp-init)))
-;; (require "asdf")
 
-;; (asdf:load-system :slynk)
+;; (sb-posix:putenv "SBCL_HOME=")
+
+(sb-posix:putenv "SBCL_HOME=/home/klingenberg/.guix-profile/lib/sbcl")
+;; (sb-posix:putenv "SBCL_HOME=/run/current-system/profile/lib/sbcl/")
+;; (require "asdf")
+;; (load "/home/klingenberg/.guix-profile/share/emacs/site-lisp/")
+;; (load "/run/current-system/profile/share/common-lisp/sbcl-bundle-systems/slynk.asd")
+;; (load "/run/current-system/profile/share/common-lisp/sbcl-bundle-systems/stumpwm.asd")
+;; (asdf:load-asd "/home/klingenberg/.emacs.d/.local/straight/build/sly/slynk/slynk.asd")
+;; (require "slynk")
+;; (asdf:load-system "slynk")
 ;; (slynk:create-server :dont-close t)
 
-;; (require "clx-truetype")
-;; (ql:quickload :clx-truetype)
-;; (require "ttf-fonts")
-;; (cache-fonts)
-;; (xft:cache-fonts)
+;; fonts
+(require :ttf-fonts)
+(setf xft:*font-dirs* '("/run/current-system/profile/share/fonts/"))
+(setf clx-truetype:+font-cache-filename+ (concat (getenv "HOME") "/.fonts/font-cache.sexp"))
+(xft:cache-fonts)
+(set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Book" :size 10))
 
 ;; (require "xembed")
 ;; (load-module "stumptray")
@@ -59,6 +69,12 @@
        (format nil "exec emacsclient -nc -s instance1 -e \"(~a)\"" command)
        "exec emacsclient -nc -s instance1")))
 
+(defcommand run-emacs (&optional command) (:rest)
+  (eval-command
+   (if command
+       (format nil "exec emacs -e \"(~a)\"" command)
+       "exec emacs")))
+
 (defun emacs-is-current-window-p ()
   (and (current-window) (search "Doom Emacs" (window-title (current-window))))) ;TODO come up with more relable test
 
@@ -86,7 +102,7 @@
   (meta (kbd "s-s")))
 
 (defun emacs-hsplit ()
-  (meta (kbd "s-s")))
+  (meta (kbd "s-v")))
 
 (defcommand move-window-or-emacs-buffer (direction) ((:direction "Direction: "))
   (if (emacs-is-current-window-p)
@@ -188,7 +204,7 @@
 (define-key *top-map* (kbd "s-F2") "exec firefox")
 (define-key *top-map* (kbd "s-F3") "run-emacs-client deer")
 (define-key *top-map* (kbd "s-S-F3") "pcmanfm")
-(define-key *top-map* (kbd "s-F4") "run-emacs-client mu4e")
+(define-key *top-map* (kbd "s-F4") "run-emacs mu4e")
 
 (define-key *top-map* (kbd "s-n") "gnew")
 (define-key *top-map* (kbd "s-w") "grouplist")
@@ -223,10 +239,6 @@
 
 (make-web-jump "duckduckgo" "firefox https://duckduckgo.com/?q=")
 (define-key *root-map* (kbd "b") "duckduckgo")
-
-;; Message window font
-(set-font "-xos4-terminus-medium-r-normal--14-140-72-72-c-80-iso8859-15")
-;; (set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Oblique" :size 11))
 
 ;;; Define window placement policy...
 
@@ -318,10 +330,6 @@
    (gnew "work")
    (gnew "hacking")
    (gnew "entertainment")
-   (gselect 2)
-   (run-shell-command "firefox")
-   (run-emacs-client "mu4e")
-   (gselect 1)
    (setf *groups-initialized-p* t)))
 
 (init-groups)

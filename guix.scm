@@ -9,6 +9,8 @@
  ;; (flat packages emacs)
  (nongnu system linux-initrd)
  (guix packages)
+ (guix download)
+ (guix utils)
  (guix channels)
  (guix inferior)
  (ice-9 popen)
@@ -92,10 +94,48 @@
   (append
    (list
     (specification->package "nss-certs")
-    ;; stumpwm+slynk
+    sbcl
+    sbcl-slynk
     stumpwm
+    ;; stumpwm+slynk
+    ;; (package
+    ;;  (inherit stumpwm)
+    ;;  (name "stumpwm-with-slynk")
+    ;;  (outputs '("out" "lib"))
+    ;;  (inputs
+    ;;   `(("stumpwm" ,stumpwm "lib")
+    ;;     ("slynk" ,sbcl-slynk)
+    ;;     ("cl-ppcre" ,sbcl-cl-ppcre)
+    ;;     ("clx" ,sbcl-clx)
+    ;;     ("alexandria" ,sbcl-alexandria)))
+    ;;  (arguments
+    ;;   (substitute-keyword-arguments (package-arguments stumpwm)
+    ;;                                 ((#:phases phases)
+    ;;                                  `(modify-phases ,phases
+    ;;                                                  (replace 'build-program
+    ;;                                                           (lambda* (#:key inputs outputs #:allow-other-keys)
+    ;;                                                             (let* ((out (assoc-ref outputs "out"))
+    ;;                                                                    (program (string-append out "/bin/stumpwm")))
+    ;;                                                               (build-program program outputs
+    ;;                                                                              #:entry-program '((stumpwm:stumpwm) 0)
+    ;;                                                                              #:dependencies '("stumpwm"
+    ;;                                                                                               ,@(@@ (gnu packages lisp-xyz) slynk-systems))
+    ;;                                                                              #:dependency-prefixes
+    ;;                                                                              (map (lambda (input) (assoc-ref inputs input))
+    ;;                                                                                   '("stumpwm" "slynk")))
+    ;;                                                               ;; Remove unneeded file.
+    ;;                                                               (delete-file (string-append out "/bin/stumpwm-exec.fasl"))
+    ;;                                                               #t)))
+    ;;                                                  (delete 'copy-source)
+    ;;                                                  (delete 'build)
+    ;;                                                  (delete 'check)
+    ;;                                                  (delete 'create-asd-file)
+    ;;                                                  (delete 'cleanup)
+    ;;                                                  (delete 'create-symlinks))))))
+    `(,stumpwm "lib")
     stumpish
     sbcl-stumpwm-ttf-fonts
+    font-dejavu
     sbcl-stumpwm-pass
     sbcl-stumpwm-wifi
     sbcl-stumpwm-stumptray
@@ -116,7 +156,6 @@
     unzip
     nix
     password-store
-    sbcl
     ;; libffi
     ;; guile-3.0-latest
     gcc
@@ -188,14 +227,14 @@
         (list (channel
                (name 'nonguix)
                (url "https://gitlab.com/nonguix/nonguix")
-               (commit "694e85778daf6dbb8a6e87949c67e45ead658e5"))
+               (commit "9efcb6799cb3baf3db404e997141ef7a5d06d877"))
               (channel
                (name 'guix)
                (url "https://git.savannah.gnu.org/git/guix.git")
-               (commit "b4369430e3c0d895f7be92e473c1aca261c699dc"))))
+               (commit "bcbd536e3f22e7bcce6ef535171f4257c79d2f0c"))))
        (inferior
         (inferior-for-channels channels)))
-    (car (lookup-inferior-packages inferior "linux" "5.8.14")))
+    (car (lookup-inferior-packages inferior "linux" "5.9.1")))
   ;; linux
   )
  (initrd microcode-initrd)

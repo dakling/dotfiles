@@ -72,11 +72,12 @@
 (defcommand run-emacs (&optional command) (:rest)
   (eval-command
    (if command
-       (format nil "exec emacs -e \"(~a)\"" command)
+       (format nil "exec emacs --eval \"(~a)\"" command)
        "exec emacs")))
 
 (defun emacs-is-current-window-p ()
-  (and (current-window) (search "Doom Emacs" (window-title (current-window))))) ;TODO come up with more relable test
+  (and (current-window)
+       (stumpwm::class-re-p (current-window) "Emacs")))
 
 (defun direction-to-evil-key (direction)
   (cond
@@ -131,6 +132,17 @@
       (emacs-hsplit)
       (eval-command "hsplit")))
 
+(defcommand emacs-M-x () ()
+  (if (emacs-is-current-window-p)
+      (meta (kbd "M-x"))
+      (run-emacs-client "helm-M-x")))
+
+(defcommand my/pause () ()
+  (when (current-window)
+    (cond
+      ((search "DAZN" (window-title (current-window))) (meta (kbd "SPC")))
+      ((stumpwm::class-re-p (current-window) "Firefox") (meta (kbd "K"))))))
+
 ;; clean up a little
 (undefine-key *root-map* (kbd "c"))
 (undefine-key *root-map* (kbd "!"))
@@ -153,11 +165,15 @@
 (define-key *top-map* (kbd "XF86AudioLowerVolume") "exec amixer set Master 5%-")
 (define-key *top-map* (kbd "XF86AudioRaiseVolume") "exec amixer set Master 5%+")
 (define-key *top-map* (kbd "XF86AudioMute") "exec amixer set Master toggle")
+(define-key *top-map* (kbd "XF86AudioPause") "my/pause")
+(define-key *top-map* (kbd "XF86AudioPlay") "my/pause")
 ;;misc
 (define-key *root-map* (kbd ",") "colon")
 (define-key *root-map* (kbd ".") "eval")
 (define-key *root-map* (kbd "s-w") "banish")
 (define-key *root-map* (kbd "s-r") "loadrc")
+(define-key *root-map* (kbd "x") "emacs-M-x")
+(define-key *root-map* (kbd "RET") "toggle-always-show")
 
 (defvar *window-map*
   (let ((m (stumpwm:make-sparse-keymap)))
@@ -197,6 +213,7 @@
 (define-key *top-map* (kbd "s-C-c") "remove-split")
 (define-key *top-map* (kbd "s-m") "maximize-window-and-emacs-window")
 (define-key *top-map* (kbd "s-d") "colon1 exec ")
+(define-key *top-map* (kbd "s-x") "emacs-M-x")
 (define-key *top-map* (kbd "s-e") "run-emacs-client %s")
 (define-key *top-map* (kbd "s-E") "exec emacs")
 (define-key *top-map* (kbd "s-S-F1") "exec termite")
@@ -204,7 +221,7 @@
 (define-key *top-map* (kbd "s-F2") "exec firefox")
 (define-key *top-map* (kbd "s-F3") "run-emacs-client deer")
 (define-key *top-map* (kbd "s-S-F3") "pcmanfm")
-(define-key *top-map* (kbd "s-F4") "run-emacs mu4e")
+(define-key *top-map* (kbd "s-F4") "run-emacs-client mu4e")
 
 (define-key *top-map* (kbd "s-n") "gnew")
 (define-key *top-map* (kbd "s-w") "grouplist")
@@ -300,8 +317,10 @@
   "xmodmap -e 'clear mod4'"
   "xmodmap -e 'add mod4 = Super_L'"
   "emacs --daemon=instance1"
+  "pkill dropbox"
   "dropbox"
   "nm-applet"
+  "blueman-applet"
   "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
   "setxkbmap -option ctrl:nocaps"
   "xcape -e 'Control_L=Escape'"
@@ -333,3 +352,4 @@
    (setf *groups-initialized-p* t)))
 
 (init-groups)
+

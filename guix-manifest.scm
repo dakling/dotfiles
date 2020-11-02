@@ -96,4 +96,10 @@
    "gfortran-toolchain"
    "libgccjit"
    "mpich"
-   "openmpi"))
+   "openmpi"
+   "arm-none-eabi-toolchain"
+   "avr-toolchain@4.9.4"
+   "avrdude"
+   "dfu-programmer"
+   "dfu-util"
+   ))

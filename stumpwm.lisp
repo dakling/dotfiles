@@ -135,7 +135,7 @@
 (defcommand emacs-M-x () ()
   (if (emacs-is-current-window-p)
       (meta (kbd "M-x"))
-      (run-emacs-client "helm-M-x")))
+      (run-emacs-client "helm-M-x nil")))
 
 (defcommand my/pause () ()
   (when (current-window)

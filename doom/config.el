@@ -853,7 +853,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
  ((system-name= "klingenberg-pi")
   (setq omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
  ((system-name= "klingenberg-tablet")
-  (setq omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp")))
+  (setq omnisharp-server-executable-path nil)))
 
 (defun my/csharp-list-to-array ()
   (replace-regexp "List<\\(.*\\)>" "\\1[]"
@@ -886,7 +886,12 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 
 (defun my/personal-bosss-file-p ()
   (and (buffer-file-name)
-       (file-in-directory-p (buffer-file-name) "~/BoSSS-experimental/internal/src/private-kli/")))
+       (cl-search "private-kli" (buffer-file-name))))
+
+(defun my/personal-bosss-control-file-p ()
+  (and (buffer-file-name)
+       (my/personal-bosss-file-p)
+       (cl-search "Controlfiles" (buffer-file-name))))
 
 (defun my/bosss-file-p ()
   (or
@@ -922,17 +927,20 @@ limitations under the License.
                     (derived-mode-p #'bosss-mode)) ; check if this is just a worksheet
           (princ header-text (current-buffer)))))))
 
+(defun my/omnisharp-code-format-entire-file ()
+  (when (and (my/personal-bosss-file-p) (not (my/personal-bosss-control-file-p)))
+    (omnisharp-code-format-entire-file)))
+
 (defun my/format-on-save-enable ()
   "Code-format the entire buffen on save."
   (interactive)
-  (if (my/personal-bosss-file-p)
-      ;; (format-all-mode 1)               ; not really necessary
-      (add-hook 'before-save-hook #'omnisharp-code-format-entire-file)
-    (format-all-mode -1)))
+  (format-all-mode -1)
+  (add-hook 'before-save-hook #'my/omnisharp-code-format-entire-file))
 
 (defun my/format-on-save-disable ()
   "Disable Code-formatting of the entire buffen on save."
   (interactive)
+  (remove-hook 'before-save-hook #'my/omnisharp-code-format-entire-file)
   (remove-hook 'before-save-hook #'omnisharp-code-format-entire-file)
   (format-all-mode -1))
 
@@ -993,10 +1001,11 @@ limitations under the License.
   (interactive)
   (async-shell-command (concat "nunit3-console " path-to-assembly)))
 
-(add-hook 'csharp-mode-hook (lambda ()
-                              (push '(?< . ("< " . " >")) evil-surround-pairs-alist)))
+;; (add-hook 'csharp-mode-hook (lambda () ;probably not needed with doom
+;;                               (push '(?< . ("< " . " >")) evil-surround-pairs-alist)))
 (add-hook 'csharp-mode-hook #'my/add-header)
-(add-hook 'csharp-mode-hook #'my/format-on-save-enable)
+(add-hook 'csharp-mode-hook #'my/format-on-save-disable)
+(add-hook 'csharp-mode-hook #'my/omnisharp-code-format-entire-file)
 
 (setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
 (defun my/csharp-find-current-project ()

@@ -849,11 +849,26 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 
 ;;c#
 
-(cond
- ((system-name= "klingenberg-pi")
-  (setq omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
- ((system-name= "klingenberg-tablet")
-  (setq omnisharp-server-executable-path nil)))
+(after! omnisharp
+  (progn
+   (defun my/create-omnisharp-custom-executable ()
+     "Modify the omnisharp-server run-script as needed for Guix"
+     (when (system-name= "klingenberg-tablet")
+       (with-temp-file (concat (omnisharp--server-installation-dir) "/run-custom")
+         (goto-char (point-min))
+         (insert-file-contents (omnisharp--server-installation-path))
+         (search-forward "mono_cmd")
+         (kill-line)
+         (insert "=mono"))))
+   (my/create-omnisharp-custom-executable)
+   (cond
+    ((system-name= "klingenberg-pi")
+     (setq omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
+    ((system-name= "klingenberg-tablet")
+     ;; (setq omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp/")
+     (setq omnisharp-server-executable-path (concat (omnisharp--server-installation-dir) "/run-custom"))
+     ;; (setq omnisharp-server-executable-path nil)
+     ))))
 
 (defun my/csharp-list-to-array ()
   (replace-regexp "List<\\(.*\\)>" "\\1[]"

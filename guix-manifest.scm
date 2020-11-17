@@ -38,6 +38,7 @@
    "ripgrep"
    "mesa-utils"
    "msmtp"
+   "notmuch"
    "emacs-bluetooth"
    "blueman"
    "libnotify"
@@ -97,9 +98,10 @@
    "libgccjit"
    "mpich"
    "openmpi"
-   "arm-none-eabi-toolchain"
-   "avr-toolchain@4.9.4"
-   "avrdude"
-   "dfu-programmer"
-   "dfu-util"
+   ;; qmk keyboard stuff
+   ;; "arm-none-eabi-toolchain"
+   ;; "avr-toolchain@4.9.4"
+   ;; "avrdude"
+   ;; "dfu-programmer"
+   ;; "dfu-util"
    ))

@@ -137,6 +137,16 @@
       (meta (kbd "M-x"))
       (run-emacs-client "helm-M-x nil")))
 
+(defcommand emacs-find-file () ()
+  (if (emacs-is-current-window-p)
+      (meta (kbd "s-f"))
+      (run-emacs-client "helm-find-files nil")))
+
+(defcommand emacs-find-buffer () ()
+  (if (emacs-is-current-window-p)
+      (meta (kbd "s-b"))
+      (run-emacs-client "helm-mini")))
+
 (defcommand my/pause () ()
   (when (current-window)
     (cond
@@ -155,10 +165,14 @@
 ;; (undefine-key *root-map* (kbd ";"))
 ;; (undefine-key *root-map* (kbd ":"))
 ;; open stuff
-(define-key *top-map* (kbd "s-v") "hsplit-maybe-emacs")
-(define-key *top-map* (kbd "s-s") "vsplit-maybe-emacs")
+;; (define-key *top-map* (kbd "s-v") "hsplit-maybe-emacs")
+;; (define-key *top-map* (kbd "s-s") "vsplit-maybe-emacs")
+(define-key *top-map* (kbd "s-v") "hsplit")
+(define-key *top-map* (kbd "s-s") "vsplit")
 (define-key *top-map* (kbd "s-V") "hsplit")
 (define-key *top-map* (kbd "s-S") "vsplit")
+(define-key *top-map* (kbd "s-f") "emacs-find-file")
+(define-key *top-map* (kbd "s-b") "emacs-find-buffer")
 ;; spacemacsy style
 (define-key *root-map* (kbd "M") "lastmsg")
 ;; audio keys
@@ -172,7 +186,7 @@
 (define-key *root-map* (kbd ".") "eval")
 (define-key *root-map* (kbd "s-w") "banish")
 (define-key *root-map* (kbd "s-r") "loadrc")
-(define-key *root-map* (kbd "x") "emacs-M-x")
+(define-key *root-map* (kbd "SPC") "emacs-M-x")
 (define-key *root-map* (kbd "RET") "toggle-always-show")
 
 (defvar *window-map*
@@ -220,7 +234,7 @@
 (define-key *top-map* (kbd "s-F1") "run-emacs-client eshell")
 (define-key *top-map* (kbd "s-F2") "exec firefox")
 (define-key *top-map* (kbd "s-F3") "run-emacs-client deer")
-(define-key *top-map* (kbd "s-S-F3") "pcmanfm")
+(define-key *top-map* (kbd "s-S-F3") "exec pcmanfm")
 (define-key *top-map* (kbd "s-F4") "run-emacs-client mu4e")
 
 (define-key *top-map* (kbd "s-n") "gnew")
@@ -324,6 +338,7 @@
   "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
   "setxkbmap -option ctrl:nocaps"
   "xcape -e 'Control_L=Escape'"
+  "fix_touchscreen"
   "bash ~/.screenlayout/default.sh")))
   (dolist (cmd autostart-command-list)
     (run-shell-command cmd)))
@@ -340,16 +355,15 @@
 (stumptray::stumptray)
 
 ;; TODO find out if this can be done more nicely
-(defvar *groups-initialized-p* nil)
-
 (defun init-groups ()
-  (unless *groups-initialized-p*
-   (gnew "mail")
-   (gnew "programming")
-   (gnew "work")
-   (gnew "hacking")
-   (gnew "entertainment")
-   (setf *groups-initialized-p* t)))
+  (gnew "mail")                         ;2
+  (gnew "system")                       ;3
+  (gnew "programming")                  ;4
+  (gnew "work")                         ;5
+  (gnew "hacking")                      ;6
+  (gnew "entertainment")                ;7
+  (gnew "baduk")                        ;8
+  (eval-command "gselect 1"))                      ;
 
 (init-groups)
 

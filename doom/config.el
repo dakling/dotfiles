@@ -363,6 +363,7 @@
     (ignore-errors
       (shell-command "xinput --map-to-output $(xinput list --id-only \"HDX HDX DIGITIZER Pen (0)\") eDP-1"))))
 
+
 (defun my/get-rid-of-mouse ()
   "move the cursor out of the way and to the top right part of the screen"
   (interactive)
@@ -438,10 +439,11 @@
                         " -t cifs -o username=klingenberg,noexec,uid=klingenberg")))
 (defun my/close-buffer ()
   (interactive)
-  (unless (equalp (buffer-name) "*scratch*")
-    (kill-this-buffer))
-  (when (< 1 (length (window-list)))
-    (evil-window-delete)))
+  ;; (unless (equalp (buffer-name) "*scratch*")
+  ;;   (kill-this-buffer))
+  (if (< 1 (length (window-list)))
+      (evil-window-delete)
+    (stump/window-close)))
 
 (defun qmount (location)
   "Shortcuts for mounting frequent locations,"
@@ -457,7 +459,8 @@
                ((string= location "lehre") '("lehre" "~/lehre")))))
 
 (defun stump/move-focus (direction)
-  (shell-command-to-string (format "stumpish eval \\\(move-focus :%s\\\)" direction)))
+  (with-current-buffer "*scratch*"
+      (shell-command-to-string (format "stumpish eval \\\(move-focus :%s\\\)" direction))))
 
 (defun stump/emacs-window-right ()
   (interactive)
@@ -482,6 +485,10 @@
   (condition-case nil
       (evil-window-down 1)
     (error (stump/move-focus "down"))))
+
+(defun stump/window-close ()
+  (with-current-buffer "*scratch*"
+      (shell-command-to-string "stumpish delete")))
 
 (defun my/create-super-bindings ()
   "Create bindings starting with super for use outside exwm."
@@ -560,6 +567,8 @@
 ;;
 ;; (after! mu4e
 ;;   (remove-hook 'mu4e-compose-pre-hook #'org-msg-mode))
+
+;; (setq +notmuch-sync-backend 'mbsync)
 
 (defun my/mu4e-set-account ()
   "Set the account for composing a message."
@@ -673,6 +682,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    :continue t))
 
 (after! mu4e
+  (setq mu4e-get-mail-command (format "INSIDE_EMACS=%s mbsync -a" emacs-version))
   (setq mu4e-update-interval 120)
   (setq mu4e-compose-signature-auto-include t)
   (setq mu4e-enable-notifications t)
@@ -683,7 +693,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
   ;;;  org-msg
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
         ;; org-msg-startup "hidestars indent inlineimages"
-        org-msg-greeting-fmt "Hallo %s,\n\n\n"
+        ;; org-msg-greeting-fmt "Hallo %s,\n\n\n"
         org-msg-default-alternatives '(html text)))
 
 ;; keybindings
@@ -1317,11 +1327,21 @@ limitations under the License.
 
 (use-package! pinentry
   :init
-  (pinentry-start))
+  (pinentry-start)
+  :config
+  (setenv "GPG_AGENT_INFO" nil)
+  ;; (setq epg-pinentry-mode 'ask)
+  (setq epg-pinentry-mode 'loopback))
 
 (use-package! stumpwm-mode
   :load-path "/run/current-system/profile/share/emacs/site-lisp/"
   :config
+  (defun my/activate-stump-mode ()
+    (when (equalp
+           (buffer-file-name)
+           "/home/klingenberg/.dotfiles/stumpwm.lisp")
+      (stumpwm-mode 1)))
+  (add-hook 'lisp-mode-hook #'my/activate-stump-mode)
   (map! :localleader :map stumpwm-mode-map
         "ef" #'stumpwm-eval-defun
         "ee" #'stumpwm-eval-last-sexp))

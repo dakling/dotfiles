@@ -163,6 +163,7 @@
     arandr
     xrandr
     pinentry-emacs
+    ;; pinentry
     gnupg
     openvpn
     sqlite

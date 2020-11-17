@@ -1059,7 +1059,7 @@ limitations under the License.
 
 ;; org-kanban
 (use-package! kanban
-  :unless (system-name= "klingenberg-pi" "hla0001" "hla0002" "hla0003" "hla0004")
+  :unless (system-name= "klingenberg-pc" "klingenberg-pi" "hla0001" "hla0002" "hla0003" "hla0004")
   :load-path  "~/Documents/programming/elisp/kanban/")
 
 (map! :map company-mode-map

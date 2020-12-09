@@ -6,7 +6,7 @@
  (gnu)
  (gnu system nss)
  (nongnu packages linux)
- ;; (flat packages emacs)
+ (flat packages emacs)
  (nongnu system linux-initrd)
  (guix packages)
  (guix download)
@@ -140,8 +140,8 @@
     sbcl-stumpwm-wifi
     sbcl-stumpwm-stumptray
     emacs-stumpwm-mode
-    ;; emacs-native-comp
-    emacs
+    emacs-native-comp
+    ;; emacs
     ;; emacs-exwm
     emacs-guix
     ;; emacs-pdf-tools
@@ -198,8 +198,7 @@
   (bootloader-configuration
    (bootloader grub-efi-bootloader)
    (target "/boot/efi")
-   (keyboard-layout keyboard-layout)
-   ))
+   (keyboard-layout keyboard-layout)))
  (swap-devices
   (list "/dev/sda2"))
  (file-systems
@@ -228,14 +227,14 @@
         (list (channel
                (name 'nonguix)
                (url "https://gitlab.com/nonguix/nonguix")
-               (commit "9efcb6799cb3baf3db404e997141ef7a5d06d877"))
+               (commit "d8a529e3941a6d75b261df20c8f6d389996414a1"))
               (channel
                (name 'guix)
                (url "https://git.savannah.gnu.org/git/guix.git")
-               (commit "bcbd536e3f22e7bcce6ef535171f4257c79d2f0c"))))
+               (commit "68feb83790a51bf65bc41478495047448c216768"))))
        (inferior
         (inferior-for-channels channels)))
-    (car (lookup-inferior-packages inferior "linux" "5.9.1")))
+    (car (lookup-inferior-packages inferior "linux" "5.9.9")))
   ;; linux
   )
  (initrd microcode-initrd)

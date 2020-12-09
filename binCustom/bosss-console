@@ -1,6 +1,6 @@
 #!/bin/sh
 
 # mono ~/BoSSS-experimental/internal/src/private-kli/BoSSSpad-console-simple/BoSSSpad-console-simple/bin/Debug/BoSSSpad-console-simple.exe
-mono ~/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Debug/BoSSSpad.exe --simpleconsole
+mono ~/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Release/BoSSSpad.exe --simpleconsole
 # sdb "arguments --simpleconsole" "run /home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Debug/BoSSSpad.exe"
 # mono ~/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Debug/BoSSSpad.exe --console

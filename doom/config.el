@@ -63,178 +63,6 @@
      (string-equal name (system-name)))
    names))
 
-(unless (system-name= "lina")
-    (progn
-      ;; (use-package! exwm
-      ;;   :init
-      ;;   (server-start)
-      ;;   :config
-      ;;   ;; Add workspace to modeline
-      ;;   (add-to-list 'global-mode-string
-      ;;                '(:eval (format (concat "<%s> "
-      ;;                                        (unless (null (my/exwm-get-other-workspace)) "[%s] "))
-      ;;                                exwm-workspace-current-index
-      ;;                                (my/exwm-get-other-workspace))))
-      ;;   (defun +exwm/rename-buffer-to-title-h ()
-      ;;     "Make sure that the exwm buffers name convays its content."
-      ;;     (exwm-workspace-rename-buffer
-      ;;      (format "%s - %s" exwm-class-name exwm-title)))
-      ;;   (defun +exwm/update-class-h ()
-      ;;     (unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
-      ;;                 (string= "gimp" exwm-instance-name)
-      ;;                 (string= "Firefox" exwm-class-name))
-      ;;       (exwm-workspace-rename-buffer exwm-class-name)))
-      ;;   (defun +exwm/update-title-h ()
-      ;;     (cond ((or (not exwm-instance-name)
-      ;;                (string-prefix-p "sun-awt-X11-" exwm-instance-name)
-      ;;                (string= "gimp" exwm-instance-name)
-      ;;                (string= "Firefox" exwm-class-name))
-      ;;            (exwm-workspace-rename-buffer exwm-title))))
-      ;;   (evil-set-initial-state 'exwm-mode 'emacs)
-      ;;   (add-hook 'exwm-floating-exit-hook #'exwm-layout-show-mode-line)
-      ;;   (add-hook 'exwm-floating-setup-hook #'exwm-layout-hide-mode-line)
-      ;;   (add-hook 'exwm-update-title-hook #'+exwm/rename-buffer-to-title-h)
-      ;;   (add-hook 'exwm-update-class-hook #'+exwm/update-class-h)
-      ;;   (add-hook 'exwm-update-title-hook #'+exwm/update-title-h)
-      ;;   (add-hook 'exwm-mode #'doom-mark-buffer-as-real-h)
-      ;;   (setq mouse-autoselect-window nil
-      ;;         focus-follows-mouse nil)
-      ;;   (exwm-enable))
-
-      ;; (use-package! exwm-input
-      ;;   ;; :after-call exwm-randr
-      ;;   :config
-      ;;   (define-key exwm-mode-map (kbd "C-c") nil)
-      ;;   (setq exwm-input-global-keys
-      ;;         `(([?\s-r] . exwm-reset)
-      ;;           ([?\s-e] . exwm-input-release-keyboard)
-      ;;           ([?\s-F] . exwm-layout-set-fullscreen)
-      ;;           ([?\s-a] . exwm-workspace-switch)
-      ;;           ([?\s-A] . exwm-workspace-move-window)
-      ;;           (\,@(mapcar (lambda (i)
-      ;;                         `(,(kbd (format "s-%d" i)) .
-      ;;                           (lambda () (interactive)
-      ;;                             (exwm-workspace-switch-create ,i))))
-      ;;                       (number-sequence 0 9)))
-      ;;           (\,@(mapcar (lambda (i)
-      ;;                         `(,(kbd (format "M-%d" i)) .
-      ;;                           (lambda () (interactive)
-      ;;                             (exwm-workspace-switch-create ,i))))
-      ;;                       (number-sequence 0 9)))
-      ;;           ;; ,@(mapcar (lambda (i)
-      ;;           ;; 	      `(,(kbd (format "s-%s" i)) .
-      ;;           ;; 		(lambda () (interactive)
-      ;;           ;; 		  (exwm-workspace-move-window ,i))))
-      ;;           ;; 	    (list '! \" § $ % & / ( ) =))
-      ;;           ;; (number-sequence 0 9))
-      ;;           ([?\s-o] . my/exwm-switch-to-other-workspace)
-      ;;           ([?\s-O] . my/exwm-move-window-to-other-workspace)
-      ;;           ([?\s-w] . other-window)
-      ;;           ([?\s-d] . dmenu)
-      ;;           ([?\s-x] . helm-M-x)
-      ;;           ([?\s-f] . helm-find-files)
-      ;;           ([?\s-p] . helm-projectile)
-      ;;           ([?\s-b] . helm-buffers-list)
-      ;;           ([?\s-l] . evil-window-right)
-      ;;           ([?\s-h] . evil-window-left)
-      ;;           ([?\s-j] . evil-window-down)
-      ;;           ([?\s-k] . evil-window-up)
-      ;;           ([?\s-v] . split-window-right)
-      ;;           ([?\s-s] . split-window-below)
-      ;;           ([?\s-c] . my/close-buffer)
-      ;;           ([?\s-q] . my/get-rid-of-mouse)
-      ;;           ([?\s-m] . delete-other-windows)
-      ;;           ([s-f1] . (lambda () (interactive) (eshell 'N)))
-      ;;           ([C-s-f1] . eshell)
-      ;;           ([s-f2] . (lambda () (interactive) (start-process "" nil browser)))
-      ;;           ([s-f3] . deer)
-      ;;           ([s-f4] . (lambda () (interactive) (mu4e)))
-      ;;           ([s-f12] . (lambda () (interactive) (start-process "" nil "/usr/bin/slock")))))
-      ;;   (push ?\s-\  exwm-input-prefix-keys)
-      ;;   ;; (push ?\M-m  exwm-input-prefix-keys)
-      ;;   (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
-      ;;                       #'my/brightness+)
-      ;;   (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
-      ;;                       #'my/brightness-)
-      ;;   (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
-      ;;                       'pulseaudio-control-decrease-volume)
-      ;;   (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
-      ;;                       'pulseaudio-control-increase-volume)
-      ;;   (exwm-input-set-key (kbd "<XF86AudioMute>")
-      ;;                       'pulseaudio-control-toggle-current-sink-mute))
-
-      ;; (use-package! exwm-systemtray
-      ;;   ;; :after-call exwm-mode-hook
-      ;;   :config (exwm-systemtray-enable))
-
-      ;; (use-package! exwm-randr
-      ;;   ;; :after-call exwm-mode-hook
-      ;;   :init
-      ;;   (cond
-      ;;    ((system-name= "klingenberg-tablet") (progn (set 'monitor1 "eDP-1")
-      ;;                                                (set 'monitor2 "HDMI-2")
-      ;;                                                (set 'placement "below")))
-      ;;    ((system-name= "klingenbergLaptop") (progn (set 'monitor1 "LVDS1")
-      ;;                                               (set 'monitor2 "VGA1")
-      ;;                                               (set 'placement "below")))
-      ;;    ((system-name= "klingenberg-laptop") (progn (set 'monitor1 "LVDS1")
-      ;;                                                (set 'monitor2 "VGA1")
-      ;;                                                (set 'placement "below")))
-      ;;    (t (progn (set 'monitor2 "VGA-1")
-      ;;              (set 'monitor1 "HDMI-1")
-      ;;              (set 'placement "left-of"))))
-      ;;   (setq exwm-randr-workspace-monitor-plist (list 0 monitor1
-      ;;                                                  2 monitor1
-      ;;                                                  4 monitor1
-      ;;                                                  6 monitor1
-      ;;                                                  8 monitor1
-      ;;                                                  1 monitor2
-      ;;                                                  3 monitor2
-      ;;                                                  5 monitor2
-      ;;                                                  7 monitor2
-      ;;                                                  9 monitor2))
-      ;;   :config
-      ;;   (defun my/exwm-get-other-workspace ()
-      ;;     (cond ((not (= 2 (length (seq-filter #'identity (mapcar #'exwm-workspace--active-p exwm-workspace--list))))) nil) ;currently only works for two monitors
-      ;;           ((= exwm-workspace-current-index
-      ;;               (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))
-      ;;            (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
-      ;;           ((= exwm-workspace-current-index
-      ;;               (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
-      ;;            (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))))
-      ;;   (defun my/exwm-switch-to-other-workspace () (interactive)
-      ;;          (exwm-workspace-switch (my/exwm-get-other-workspace)))
-      ;;   (defun my/exwm-move-window-to-other-workspace () (interactive)
-      ;;          (exwm-workspace-move-window (my/exwm-get-other-workspace)))
-
-
-      ;;   (defun my/exwm-xrandr ()
-      ;;     "Configure screen with xrandr."
-      ;;     (shell-command
-      ;;      (if (file-exists-p "~/.screenlayout/default.sh")
-      ;;          "~/.screenlayout/default.sh" ; prefer saved command by arandr by default
-      ;;        (concat "xrandr --output "
-      ;;                monitor1
-      ;;                " --primary --auto --"
-      ;;                placement
-      ;;                " "
-      ;;                monitor2
-      ;;                " --auto")))
-      ;;     (my/fix-touchscreen))
-
-      ;;   (add-hook 'exwm-randr-screen-change-hook #'my/exwm-xrandr)
-      ;;   (progn
-      ;;     (exwm-randr-enable)))
-
-      ;; (use-package! exwm-workspace
-      ;;   ;; :after-call exwm-mode-hook
-      ;;   :init
-      ;;   (progn
-      ;;     (setq exwm-workspace-number 10)
-      ;;     (setq exwm-workspace-show-all-buffers t)
-      ;;     (setq exwm-layout-show-all-buffers t)))
-      ))
-
 ;;; Setting some variables
 (setq evil-collection-setup-minibuffer t)
 
@@ -245,6 +73,8 @@
 (display-time-mode 1)
 
 (setq initial-major-mode 'lisp-interaction-mode)
+
+(setq-default abbrev-mode t)
 
 (cond
  ((system-name= "klingenberg-pi")
@@ -274,6 +104,7 @@
 (setq magit-repository-directories '(("~/" . 1)))
 
 (after! org
+  (setq org-id-link-to-org-use-id t)
   (setq org-file-apps
         (remove (assoc "\\.pdf\\'" org-file-apps)
                 org-file-apps))
@@ -282,13 +113,19 @@
         '(("DONE" . font-lock-comment-face)
           ("SCOP" . +org-todo-onhold)))
   (setq org-capture-templates
-        '(("t" "Personal todo" entry (file+headline +org-capture-todo-file "Inbox") "* TODO %?
+        `(("t" "Personal todo" entry (file+headline +org-capture-todo-file "Inbox") "* TODO %?
 %i
 %a" :prepend t) ("n" "Personal notes" entry (file+headline +org-capture-notes-file "Inbox") "* %u %?
 %i
 %a" :prepend t) ("j" "Journal" entry (file+olp+datetree +org-capture-journal-file) "* %U %?
 %i
-%a" :prepend t) ("p" "Templates for projects") ("pt" "Project-local todo" entry (file+headline +org-capture-project-todo-file "Inbox") "* TODO %?
+%a" :prepend t) ("b" "BoSSS calculation" entry (file+headline "~/Documents-work/bosss/calculation-log.org" ,(with-current-buffer "*scratch*"
+                                                                                                              (org-insert-time-stamp (current-time)))) "** RUNNING %T %(my/bosss-worksheet-get-project-name \"%f\")
+- %(org-link-make-string (concat (bosss-get-most-recent-deploy-directory) \"/stdout.txt\")  \"stdout.txt\")
+- PID: %(bosss-get-most-recent-pid)
+- previous calculation:
+- %?
+%i" :prepend nil) ("p" "Templates for projects") ("pt" "Project-local todo" entry (file+headline +org-capture-project-todo-file "Inbox") "* TODO %?
 %i
 %a" :prepend t) ("pn" "Project-local notes" entry (file+headline +org-capture-project-notes-file "Inbox") "* %U %?
 %i
@@ -306,6 +143,10 @@
    :localleader
    :after org
    :map org-mode-map
+   :n "ll" #'org-insert-link
+   :n "lf" (lambda () (interactive)
+             (let ((current-prefix-arg '-)) ; simulate pressing C-u
+               (org-insert-link)))
    :n "x" (lambda () (interactive)
              (let ((current-prefix-arg '-)) ; simulate pressing C-u
                (call-interactively 'org-export-dispatch))))
@@ -321,6 +162,15 @@
          :head "#+TITLE: ${title}\n"
          :unnarrowed t)))
 
+(use-package! org-super-links
+  :after org
+  :config
+  (map! :localleader
+        :map org-mode-map
+        ("ss" #'sl-link)
+        ("ls" #'sl-store-link)
+        ("lS" #'sl-insert-link)))
+
 (setq smerge-command-prefix "+")
 
 ;; don't pop up async shell commnand buffers by default
@@ -334,11 +184,13 @@
 ;;; Defining some useful functions
 (defun shutdown ()
   (interactive)
+  (run-hook-with-args-until-failure 'kill-emacs-query-functions)
   (cond
    ((system-name= "klingenberg-laptop" "klingenberg-tablet") (async-shell-command "sudo shutdown"))
    (t (shell-command "shutdown now"))))
 
 (defun reboot ()
+  (run-hook-with-args-until-failure 'kill-emacs-query-functions)
   (interactive)
   (async-shell-command "sudo reboot"))
 
@@ -394,6 +246,8 @@
   (shell-command "nix-channel --update")
   (shell-command "nix-env -u")
   (shell-command "flatpak --user update"))
+(after! bash-completion
+  (setq bash-completion-nospace t))     ; TODO does not have any effect
 
 (use-package! async-await)
 ;; adapted from snippet by oremacs
@@ -457,6 +311,10 @@
                ((string= location "scratch") '("scratch" "~/scratch"))
                ((string= location "backup") '("backup" "~/backup"))
                ((string= location "lehre") '("lehre" "~/lehre")))))
+
+(defun my/run-command-ssh (server &rest cmds)
+  "Run COMMAND on SERVER, assumes that you set it up properly"
+  (async-shell-command (concat "ssh " server " '" (mapconcat 'identity cmds "; ")"'")))
 
 (defun stump/move-focus (direction)
   (with-current-buffer "*scratch*"
@@ -690,11 +548,58 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
   (setq mu4e-view-use-gnus t)
   (require 'mu4e-icalendar)
   (mu4e-icalendar-setup)
-  ;;;  org-msg
+  (require 'org-agenda)
+  (setq gnus-icalendar-org-capture-file "~/org/notes.org")
+  (setq gnus-icalendar-org-capture-headline '("Inbox"))
+  (gnus-icalendar-org-setup)
+;;;  org-msg
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
         ;; org-msg-startup "hidestars indent inlineimages"
         ;; org-msg-greeting-fmt "Hallo %s,\n\n\n"
-        org-msg-default-alternatives '(html text)))
+        org-msg-default-alternatives '(html text))
+  ;; HACK
+  (defun mu4e-icalendar-reply-ical (original-msg event status buffer-name)
+    "Reply to ORIGINAL-MSG containing invitation EVENT with STATUS.
+See `gnus-icalendar-event-reply-from-buffer' for the possible
+STATUS values.  BUFFER-NAME is the name of the buffer holding the
+response in icalendar format."
+    (remove-hook 'mu4e-compose-pre-hook #'org-msg-mode)
+    (org-msg-mode -1)
+    (let ((message-signature nil))
+      (let ((mu4e-compose-cite-function #'mu4e~icalendar-delete-citation)
+            (mu4e-sent-messages-behavior 'delete)
+            (mu4e-compose-reply-recipients 'sender))
+        (mu4e~compose-handler 'reply original-msg))
+      ;; Make sure the recipient is the organizer
+      (let ((organizer (gnus-icalendar-event:organizer event)))
+        (unless (string= organizer "")
+          (message-remove-header "To")
+          (message-goto-to)
+          (insert organizer)))
+      ;; Not (message-goto-body) to possibly skip mll sign directive
+      ;; inserted by `mu4e-compose-mode-hook':
+      (goto-char (point-max))
+      (mml-insert-multipart "alternative")
+      (mml-insert-part "text/plain")
+      (let ((reply-event (gnus-icalendar-event-from-buffer
+                          buffer-name (mu4e-personal-addresses))))
+        (insert (gnus-icalendar-event->gnus-calendar reply-event status)))
+      (forward-line 1); move past closing tag
+      (mml-attach-buffer buffer-name "text/calendar; method=REPLY; charset=utf-8")
+      (message-remove-header "Subject")
+      (message-goto-subject)
+      (insert (capitalize (symbol-name status))
+              ": " (gnus-icalendar-event:summary event))
+      (set-buffer-modified-p nil); not yet modified by user
+      (when mu4e-icalendar-trash-after-reply
+        ;; Override `mu4e-sent-handler' set by `mu4e-compose-mode' to
+        ;; also trash the message (thus must be appended to hooks).
+        (add-hook
+         'message-sent-hook
+         (lambda () (setq mu4e-sent-func
+                          (mu4e~icalendar-trash-message original-msg)))
+         t t))))
+  )
 
 ;; keybindings
 ;;
@@ -848,27 +753,46 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
       :n "cc" #'recompile)
 
 ;;c#
+;; (after! lsp
+;;   (progn
+;;     (let ((version "v1.37.4"))
+;;      (defun my/create-lsp-custom-executable ()
+;;        "Modify the omnisharp-server run-script as needed for Guix"
+;;        (when (system-name= "klingenberg-tablet")
+;;          (with-temp-file (concat (lsp-csharp--server-dir version) "/run-custom")
+;;            (goto-char (point-min))
+;;            (insert-file-contents (lsp-csharp--server-bin version))
+;;            (search-forward "mono_cmd")
+;;            (kill-line)
+;;            (insert "=mono"))))
+;;      (my/create-lsp-custom-executable)
+;;      (cond
+;;       ((system-name= "klingenberg-pi")
+;;        (setq omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
+;;       ((system-name= "klingenberg-tablet")
+;;        ;; (setq omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp/")
+;;        (setq lsp-csharp-server-path (concat (lsp-csharp--server-dir version) "/run-custom")))))))
 
 (after! omnisharp
   (progn
-   (defun my/create-omnisharp-custom-executable ()
-     "Modify the omnisharp-server run-script as needed for Guix"
-     (when (system-name= "klingenberg-tablet")
-       (with-temp-file (concat (omnisharp--server-installation-dir) "/run-custom")
-         (goto-char (point-min))
-         (insert-file-contents (omnisharp--server-installation-path))
-         (search-forward "mono_cmd")
-         (kill-line)
-         (insert "=mono"))))
-   (my/create-omnisharp-custom-executable)
-   (cond
-    ((system-name= "klingenberg-pi")
-     (setq omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
-    ((system-name= "klingenberg-tablet")
-     ;; (setq omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp/")
-     (setq omnisharp-server-executable-path (concat (omnisharp--server-installation-dir) "/run-custom"))
-     ;; (setq omnisharp-server-executable-path nil)
-     ))))
+    (defun my/create-omnisharp-custom-executable ()
+      "Modify the omnisharp-server run-script as needed for Guix"
+      (when (system-name= "klingenberg-tablet")
+        (with-temp-file (concat (omnisharp--server-installation-dir) "/run-custom")
+          (goto-char (point-min))
+          (insert-file-contents (omnisharp--server-installation-path))
+          (search-forward "mono_cmd")
+          (kill-line)
+          (insert "=mono"))))
+    (my/create-omnisharp-custom-executable)
+    (cond
+     ((system-name= "klingenberg-pi")
+      (setq omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
+     ((system-name= "klingenberg-tablet")
+      ;; (setq omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp/")
+      (setq omnisharp-server-executable-path (concat (omnisharp--server-installation-dir) "/run-custom"))
+      ;; (setq omnisharp-server-executable-path nil)
+      ))))
 
 (defun my/csharp-list-to-array ()
   (replace-regexp "List<\\(.*\\)>" "\\1[]"
@@ -1016,11 +940,34 @@ limitations under the License.
   (interactive)
   (async-shell-command (concat "nunit3-console " path-to-assembly)))
 
+(defun my/bosss-worksheet-get-project-name (file)
+  "In a BoSSS worksheet FILE, obtain the project name of the current calculation. Warning: This function is not very sophisticated."
+  (save-excursion
+    (progn
+      (find-file file)
+      (goto-char (point-min))
+      (when
+          (search-forward-regexp "^string ProjName = " nil t)
+        (end-of-line)
+        (backward-word)
+        (thing-at-point 'word t)))))
+
+(defun my/scancel-lichtenberg ()
+  "Scancel (kill) process with pid on lichtenberg, assumes that pid is (thing-at-point)."
+  (interactive)
+  (let ((sid (thing-at-point 'word t)))
+    (my/run-command-ssh "lcluster" (concat "scancel " sid))))
+
+(defun my/squeue-lichtenberg ()
+  "List process state on lichtenberg."
+  (interactive)
+  (my/run-command-ssh "lcluster" "squeue" "sacct --format=\"JobID,JobName%30,State\" | grep RUNNING"))
+
 ;; (add-hook 'csharp-mode-hook (lambda () ;probably not needed with doom
 ;;                               (push '(?< . ("< " . " >")) evil-surround-pairs-alist)))
 (add-hook 'csharp-mode-hook #'my/add-header)
 (add-hook 'csharp-mode-hook #'my/format-on-save-disable)
-(add-hook 'csharp-mode-hook #'my/omnisharp-code-format-entire-file)
+(add-hook 'omnisharp-mode-hook #'my/omnisharp-code-format-entire-file)
 
 (setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
 (defun my/csharp-find-current-project ()
@@ -1072,6 +1019,7 @@ limitations under the License.
    :localleader
    :map #'bosss-mode-map
    :n "ro" #'run-bosss-repl-other-window
+   :n "rq" #'bosss-repl-quit
    :n "R"  #'run-bosss-repl-other-window
    :n "rn" #'bosss-repl-start-bosss-pad
    :n "ef" #'bosss-repl-send-current-field
@@ -1084,7 +1032,7 @@ limitations under the License.
 ;; org-kanban
 (use-package! kanban
   :unless (system-name= "klingenberg-pc" "klingenberg-pi" "hla0001" "hla0002" "hla0003" "hla0004")
-  :load-path  "~/Documents/programming/elisp/kanban/")
+  :load-path  "~/Documents/programming/elisp/kanban.el/")
 
 (map! :map company-mode-map
       :i "M-l" #'company-complete-selection
@@ -1186,6 +1134,8 @@ limitations under the License.
   (setq pdf-view-midnight-colors '("WhiteSmoke" . "gray16"))
   (map!
    :map pdf-view-mode-map
+   :n "J" #'pdf-view-next-page
+   :n "K" #'pdf-view-previous-page
    :n "-" nil)
   (map!
    :localleader

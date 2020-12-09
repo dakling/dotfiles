@@ -16,14 +16,14 @@
 ;;
 ;;
 ;; for native-comp branch
-(when (fboundp 'native-compile-async)
-  (if (y-or-n-p "async compile?")
-      (setq comp-async-jobs-number 4 ;; not using all cores
-            comp-deferred-compilation t
-            ;; comp-deferred-compilation-black-list
-            ;; '()
-            )
-    (setq comp-deferred-compilation nil)))
+;; (when (fboundp 'native-compile-async)
+;;   (if (or (daemonp) (y-or-n-p "async compile?"))
+;;       (setq comp-async-jobs-number 4 ;; not using all cores
+;;             comp-deferred-compilation t
+;;             ;; comp-deferred-compilation-black-list
+;;             ;; '()
+;;             )
+;;     (setq comp-deferred-compilation nil)))
 
 (doom! :input
        ;;chinese
@@ -52,7 +52,7 @@
        (popup +defaults)          ; tame sudden yet inevitable temporary windows
        ;; pretty-code       ; ligatures or substitute text with pretty symbols
        ;;tabs              ; an tab bar for Emacs
-       ;;treemacs          ; a project drawer, like neotree but cooler
+       treemacs          ; a project drawer, like neotree but cooler
        unicode                  ; extended unicode support for various languages
        vc-gutter                ; vcs diff in the fringe
        vi-tilde-fringe          ; fringe tildes to mark beyond EOB
@@ -122,7 +122,7 @@
        common-lisp              ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
        ;;crystal           ; ruby at the speed of c
-       csharp                   ; unity, .NET, and mono shenanigans
+       (csharp -lsp)                   ; unity, .NET, and mono shenanigans
        ;;data              ; config/data formats
        ;;(dart +flutter)   ; paint ui and not much else
        ;;elixir            ; erlang done right
@@ -149,7 +149,7 @@
        ;;lua               ; one-based indices? one-based indices
        markdown          ; writing docs for people to ignore
        ;;nim               ; python + lisp at the speed of c
-       nix               ; I hereby declare "nix geht mehr!"
+       ;; nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
        (org +pretty +dragndrop +gnuplot +pandoc +roam +present +capture)             ; organize your plain life in plain text
        ;;perl              ; write code no one else can comprehend

@@ -60,14 +60,17 @@
       (eval-command cmd t))))
 
 ;; define my own commands
-(defcommand start-emacs-client () ()
-  "exec emacs --daemon=instance1")
+(defcommand start-emacs-daemon () ()
+  (stumpwm::eval-command "exec emacs --daemon=instance1"))
 
 (defcommand run-emacs-client (&optional command) (:rest)
   (eval-command
    (if command
        (format nil "exec emacsclient -nc -s instance1 -e \"(~a)\"" command)
        "exec emacsclient -nc -s instance1")))
+
+(defcommand stop-emacs-daemon () ()
+  (run-emacs-client "save-buffers-kill-emacs"))
 
 (defcommand run-emacs (&optional command) (:rest)
   (eval-command
@@ -198,6 +201,7 @@
     (stumpwm:define-key m (stumpwm:kbd "h") "move-focus left")
     (stumpwm:define-key m (stumpwm:kbd "k") "move-focus up")
     (stumpwm:define-key m (stumpwm:kbd "j") "move-focus down")
+    (stumpwm:define-key m (stumpwm:kbd "d") "remove-split")
     (stumpwm:define-key m (stumpwm:kbd "m") "only")
     m))
 (stumpwm:define-key stumpwm:*root-map* (stumpwm:kbd "w") '*window-map*)
@@ -226,7 +230,8 @@
 (define-key *top-map* (kbd "s-C") "delete")
 (define-key *top-map* (kbd "s-C-c") "remove-split")
 (define-key *top-map* (kbd "s-m") "maximize-window-and-emacs-window")
-(define-key *top-map* (kbd "s-d") "colon1 exec ")
+;; (define-key *top-map* (kbd "s-d") "colon1 exec ")
+(define-key *top-map* (kbd "s-d") "exec dmenu_run")
 (define-key *top-map* (kbd "s-x") "emacs-M-x")
 (define-key *top-map* (kbd "s-e") "run-emacs-client %s")
 (define-key *top-map* (kbd "s-E") "exec emacs")
@@ -336,23 +341,12 @@
   "nm-applet"
   "blueman-applet"
   "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
-  "setxkbmap -option ctrl:nocaps"
+  "setxkbmap de -option ctrl:nocaps nodeadkeys"
   "xcape -e 'Control_L=Escape'"
   "fix_touchscreen"
   "bash ~/.screenlayout/default.sh")))
   (dolist (cmd autostart-command-list)
     (run-shell-command cmd)))
-
-(refresh-heads)
-
-;; turn on the mode line
-;; TODO check if numbers persist across X-restarts/reboots -> if so, wrap the following in a function -> seems that way
-(enable-mode-line (stumpwm:current-screen)
-                  (stumpwm::head-by-number (stumpwm:current-screen) 0) t)
-;; (toggle-mode-line (stumpwm:current-screen)
-;;                   (stumpwm::head-by-number (stumpwm:current-screen) 0) t)
-
-(stumptray::stumptray)
 
 ;; TODO find out if this can be done more nicely
 (defun init-groups ()
@@ -367,3 +361,13 @@
 
 (init-groups)
 
+(refresh-heads)
+
+;; turn on the mode line
+;; TODO check if numbers persist across X-restarts/reboots -> if so, wrap the following in a function -> seems that way
+(enable-mode-line (stumpwm:current-screen)
+                  (stumpwm::head-by-number (stumpwm:current-screen) 0) t)
+;; (toggle-mode-line (stumpwm:current-screen)
+;;                   (stumpwm::head-by-number (stumpwm:current-screen) 0) t)
+
+(stumptray::stumptray)

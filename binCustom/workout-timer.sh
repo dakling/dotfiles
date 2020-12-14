@@ -41,7 +41,7 @@ function workout () {
         exercise "Jog in place" 30
         exercise "Sprint" 20
         exercise "Jog in place" 30
-        exercise "Burpies" 30
+        exercise "Squat hops" 20
         exercise "Drink / Active Rest" 10
         play-end-of-round-sound
     done

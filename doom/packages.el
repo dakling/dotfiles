@@ -92,7 +92,7 @@
 
 (package! org-super-links :recipe (:host github :repo "toshism/org-super-links"))
 
-(package! omnisharp :recipe (:no-native-compile t))
+;; (package! omnisharp :recipe (:no-native-compile t))
 
 ;; (package! hyperbole)
 

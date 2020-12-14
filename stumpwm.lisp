@@ -138,17 +138,22 @@
 (defcommand emacs-M-x () ()
   (if (emacs-is-current-window-p)
       (meta (kbd "M-x"))
-      (run-emacs-client "helm-M-x nil")))
+      (run-emacs-client "counsel-M-x nil")))
+
+(defcommand emacs-pass () ()
+  (if (emacs-is-current-window-p)
+      (meta (kbd "s-P"))
+      (run-emacs-client "ivy-pass")))
 
 (defcommand emacs-find-file () ()
   (if (emacs-is-current-window-p)
       (meta (kbd "s-f"))
-      (run-emacs-client "helm-find-files nil")))
+      (run-emacs-client "counsel-find-files nil")))
 
 (defcommand emacs-find-buffer () ()
   (if (emacs-is-current-window-p)
       (meta (kbd "s-b"))
-      (run-emacs-client "helm-mini")))
+      (run-emacs-client "ivy-switch-buffer")))
 
 (defcommand my/pause () ()
   (when (current-window)
@@ -233,6 +238,7 @@
 ;; (define-key *top-map* (kbd "s-d") "colon1 exec ")
 (define-key *top-map* (kbd "s-d") "exec dmenu_run")
 (define-key *top-map* (kbd "s-x") "emacs-M-x")
+(define-key *top-map* (kbd "s-P") "emacs-pass")
 (define-key *top-map* (kbd "s-e") "run-emacs-client %s")
 (define-key *top-map* (kbd "s-E") "exec emacs")
 (define-key *top-map* (kbd "s-S-F1") "exec termite")

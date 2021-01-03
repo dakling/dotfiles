@@ -74,7 +74,7 @@
 
 (package! async-await)
 
-(package! helm-swoop)
+; (package! helm-swoop)
 
 (package! evil-tex :recipe (:host github :repo "itai33/evil-tex"))
 
@@ -92,7 +92,17 @@
 
 (package! org-super-links :recipe (:host github :repo "toshism/org-super-links"))
 
-;; (package! omnisharp :recipe (:no-native-compile t))
+(package! omnisharp :recipe (:no-native-compile t))
+
+;; (package! parsec)
+
+;; (package! rigpa
+;;   :recipe (:host github
+;;            :repo "countvajhula/rigpa"))
+
+(package! el-igo :recipe (:host github :repo "misohena/el-igo"))
+
+(disable-packages! org-msg)
 
 ;; (package! hyperbole)
 

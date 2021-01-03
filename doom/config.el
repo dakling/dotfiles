@@ -64,6 +64,7 @@
    names))
 
 ;;; Setting some variables
+(setq evil-respect-visual-line-mode t)  ; TODO check if this must be moved to init.el
 (setq evil-collection-setup-minibuffer t)
 
 (setq +evil-want-o/O-to-continue-comments nil)
@@ -94,12 +95,17 @@
 (setq browse-url-browser-function 'browse-url-firefox)
 
 (setq-default abbrev-mode t)
+(setq abbrev-file-name "~/Dropbox/Dario/abbrev.el")
+
 
 (cond
  ((system-name= "klingenberg-pi")
   (add-load-path! "/run/current-system/sw/share/emacs/site-lisp/mu4e"))
  ((system-name= "klingenberg-tablet")
   (add-load-path! "/run/current-system/profile/share/emacs/site-lisp/")))
+
+(after! undo-fu
+  (setq undo-fu-allow-undo-in-region t))
 
 (after! sly
   (setq inferior-lisp-program (cond
@@ -115,6 +121,8 @@
 (customize-set-variable 'avy-single-candidate-jump t)
 
 (setq magit-repository-directories '(("~/" . 1)))
+
+
 
 (after! org
   (setq org-id-link-to-org-use-id t)
@@ -242,7 +250,8 @@
    (lambda ()
      (let ((ans (y-or-n-p (concat "Reminder: " mesg " Dismiss reminder (y) or remind again in 30 seconds (n)?"))))
        (unless ans
-         (my/make-alert 30 mesg))))))
+         (my/make-alert 30 mesg)))))
+  (message "Made alert for %s at %s" mesg time))
 
 (defun eshell/nonguixupdate ()
   (shell-command "nix-channel --update")
@@ -463,11 +472,11 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
          (mu4e-sent-messages-behavior sent)
          (mu4e-compose-signature-auto-include nil)
          (mu4e-compose-signature ,fdy-signature)
-         (org-msg-signature
-          ,(concat
-           "#+begin_signature
---" fdy-signature "
-#+end_signature"))
+         ;; (org-msg-signature
+;;           ,(concat
+;;            "#+begin_signature
+;; --" fdy-signature "
+;; #+end_signature"))
          (mu4e-sent-folder "/fdy/Sent Items")
          (mu4e-drafts-folder "/fdy/Drafts")
          (smtpmail-smtp-server "smtp.tu-darmstadt.de")
@@ -479,11 +488,11 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
          (mu4e-sent-messages-behavior sent)
          (mu4e-compose-signature-auto-include nil)
          (mu4e-compose-signature ,gsc-signature)
-         (org-msg-signature
-          ,(concat
-            "#+begin_signature
---" gsc-signature "
-#+end_signature"))
+         ;; (org-msg-signature
+;;           ,(concat
+;;             "#+begin_signature
+;; --" gsc-signature "
+;; #+end_signature"))
          (mu4e-sent-folder "/gsc/Sent Items")
          (mu4e-drafts-folder "/gsc/Drafts")
          (smtpmail-smtp-server "smtp.tu-darmstadt.de")
@@ -502,7 +511,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
          (smtpmail-smtp-service 465)
          (smtpmail-stream-type ssl)
          (user-full-name "Dario Klingenberg")
-         (org-msg-signature nil)
+         ;; (org-msg-signature nil)
          )
         ("web"
          (mu4e-sent-messages-behavior sent)
@@ -514,7 +523,8 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
          (smtpmail-stream-type starttls)
          (user-mail-address "dario.klingenberg@web.de")
          (user-full-name "dario")
-         (org-msg-signature nil))))
+         ;; (org-msg-signature nil)
+         )))
 
 ;; taken from reddit
 (use-package! mu4e-alert
@@ -530,15 +540,16 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    :continue t))
 
 (after! mu4e
+  (remove-hook 'mu4e-compose-pre-hook 'org-msg-mode)
   (setq mu4e-get-mail-command (format "INSIDE_EMACS=%s mbsync -a" emacs-version))
   (setq mu4e-update-interval 120)
   (setq mu4e-compose-signature-auto-include t)
   (setq mu4e-enable-notifications t)
   (customize-set-variable 'mu4e-headers-leave-behavior 'apply)
   (setq mu4e-view-use-gnus t)
-  ;; (add-hook 'mu4e-compose-mode-hook 'mml-secure-sign-pgpmime)
+  (add-hook 'mu4e-compose-mode-hook 'mml-secure-sign-pgpmime)
   ;; (add-hook 'org-msg-edit-mode-hook 'mml-secure-sign-pgpmime)
-  ;; (setq mml-secure-message-openpgp-sign-with-sender t)
+  (setq mml-secure-message-openpgp-sign-with-sender t)
   (require 'mu4e-icalendar)
   (mu4e-icalendar-setup)
   (require 'org-agenda)
@@ -546,52 +557,53 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
   (setq gnus-icalendar-org-capture-headline '("Inbox"))
   (gnus-icalendar-org-setup)
 ;;;  org-msg
-  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
-        ;; org-msg-startup "hidestars indent inlineimages"
-        ;; org-msg-greeting-fmt "Hallo %s,\n\n\n"
-        org-msg-default-alternatives '(html text))
+  ;; (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
+  ;;       ;; org-msg-startup "hidestars indent inlineimages"
+  ;;       ;; org-msg-greeting-fmt "Hallo %s,\n\n\n"
+  ;;       org-msg-default-alternatives '(html text))
   ;; HACK
-  (defun mu4e-icalendar-reply-ical (original-msg event status buffer-name)
-    "Reply to ORIGINAL-MSG containing invitation EVENT with STATUS.
-See `gnus-icalendar-event-reply-from-buffer' for the possible
-STATUS values.  BUFFER-NAME is the name of the buffer holding the
-response in icalendar format."
-    (remove-hook 'mu4e-compose-pre-hook #'org-msg-mode)
-    (org-msg-mode -1)
-    (let ((message-signature nil))
-      (let ((mu4e-compose-cite-function #'mu4e~icalendar-delete-citation)
-            (mu4e-sent-messages-behavior 'delete)
-            (mu4e-compose-reply-recipients 'sender))
-        (mu4e~compose-handler 'reply original-msg))
-      ;; Make sure the recipient is the organizer
-      (let ((organizer (gnus-icalendar-event:organizer event)))
-        (unless (string= organizer "")
-          (message-remove-header "To")
-          (message-goto-to)
-          (insert organizer)))
-      ;; Not (message-goto-body) to possibly skip mll sign directive
-      ;; inserted by `mu4e-compose-mode-hook':
-      (goto-char (point-max))
-      (mml-insert-multipart "alternative")
-      (mml-insert-part "text/plain")
-      (let ((reply-event (gnus-icalendar-event-from-buffer
-                          buffer-name (mu4e-personal-addresses))))
-        (insert (gnus-icalendar-event->gnus-calendar reply-event status)))
-      (forward-line 1); move past closing tag
-      (mml-attach-buffer buffer-name "text/calendar; method=REPLY; charset=utf-8")
-      (message-remove-header "Subject")
-      (message-goto-subject)
-      (insert (capitalize (symbol-name status))
-              ": " (gnus-icalendar-event:summary event))
-      (set-buffer-modified-p nil); not yet modified by user
-      (when mu4e-icalendar-trash-after-reply
-        ;; Override `mu4e-sent-handler' set by `mu4e-compose-mode' to
-        ;; also trash the message (thus must be appended to hooks).
-        (add-hook
-         'message-sent-hook
-         (lambda () (setq mu4e-sent-func
-                          (mu4e~icalendar-trash-message original-msg)))
-         t t)))))
+  ;; (defun mu4e-icalendar-reply-ical (original-msg event status buffer-name)
+;;     "Reply to ORIGINAL-MSG containing invitation EVENT with STATUS.
+;; See `gnus-icalendar-event-reply-from-buffer' for the possible
+;; STATUS values.  BUFFER-NAME is the name of the buffer holding the
+;; response in icalendar format."
+;;     (remove-hook 'mu4e-compose-pre-hook #'org-msg-mode)
+;;     (org-msg-mode -1)
+;;     (let ((message-signature nil))
+;;       (let ((mu4e-compose-cite-function #'mu4e~icalendar-delete-citation)
+;;             (mu4e-sent-messages-behavior 'delete)
+;;             (mu4e-compose-reply-recipients 'sender))
+;;         (mu4e~compose-handler 'reply original-msg))
+;;       ;; Make sure the recipient is the organizer
+;;       (let ((organizer (gnus-icalendar-event:organizer event)))
+;;         (unless (string= organizer "")
+;;           (message-remove-header "To")
+;;           (message-goto-to)
+;;           (insert organizer)))
+;;       ;; Not (message-goto-body) to possibly skip mll sign directive
+;;       ;; inserted by `mu4e-compose-mode-hook':
+;;       (goto-char (point-max))
+;;       (mml-insert-multipart "alternative")
+;;       (mml-insert-part "text/plain")
+;;       (let ((reply-event (gnus-icalendar-event-from-buffer
+;;                           buffer-name (mu4e-personal-addresses))))
+;;         (insert (gnus-icalendar-event->gnus-calendar reply-event status)))
+;;       (forward-line 1); move past closing tag
+;;       (mml-attach-buffer buffer-name "text/calendar; method=REPLY; charset=utf-8")
+;;       (message-remove-header "Subject")
+;;       (message-goto-subject)
+;;       (insert (capitalize (symbol-name status))
+;;               ": " (gnus-icalendar-event:summary event))
+;;       (set-buffer-modified-p nil); not yet modified by user
+;;       (when mu4e-icalendar-trash-after-reply
+;;         ;; Override `mu4e-sent-handler' set by `mu4e-compose-mode' to
+;;         ;; also trash the message (thus must be appended to hooks).
+;;         (add-hook
+;;          'message-sent-hook
+;;          (lambda () (setq mu4e-sent-func
+;;                           (mu4e~icalendar-trash-message original-msg)))
+;;          t t))))
+  )
 
 ;; keybindings
 ;;
@@ -667,18 +679,6 @@ response in icalendar format."
   ;;   (add-to-list 'geiser-guile-load-path "~/guix"))
   (with-eval-after-load 'yasnippet
     (add-to-list 'yas-snippet-dirs "~/guix/etc/snippets"))
-  ;;
-  ;; Temporary HACK -> TODO check if it can be disabled
-  ;; (defun guix-buffer-p (&optional buffer)
-  ;;   (let ((buf-name (buffer-name (or buffer (current-buffer)))))
-  ;;     (not (null (or (string-match "*Guix REPL" buf-name)
-  ;;                    (string-match "*Guix Internal REPL" buf-name))))))
-
-  ;; (defun guix-geiser--set-project (&optional _impl _prompt)
-  ;;   (when (and (eq 'guile geiser-impl--implementation)
-  ;;              (null geiser-repl--project)
-  ;;              (guix-buffer-p))
-  ;;     (geiser-repl--set-this-buffer-project 'guix)))
 
   ;; (advice-add 'geiser-impl--set-buffer-implementation :after #'guix-geiser--set-project)
   ;; HACK END
@@ -766,26 +766,26 @@ response in icalendar format."
 ;;        ;; (setq omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp/")
 ;;        (setq lsp-csharp-server-path (concat (lsp-csharp--server-dir version) "/run-custom")))))))
 
-(after! omnisharp
-  (progn
-    (defun my/create-omnisharp-custom-executable ()
-      "Modify the omnisharp-server run-script as needed for Guix"
-      (when (system-name= "klingenberg-tablet")
-        (with-temp-file (concat (omnisharp--server-installation-dir) "/run-custom")
-          (goto-char (point-min))
-          (insert-file-contents (omnisharp--server-installation-path))
-          (search-forward "mono_cmd")
-          (kill-line)
-          (insert "=mono"))))
-    (my/create-omnisharp-custom-executable)
-    (cond
-     ((system-name= "klingenberg-pi")
-      (setq omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
-     ((system-name= "klingenberg-tablet")
-      ;; (setq omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp/")
-      (setq omnisharp-server-executable-path (concat (omnisharp--server-installation-dir) "/run-custom"))
-      ;; (setq omnisharp-server-executable-path nil)
-      ))))
+;; (after! omnisharp
+;;   (progn
+;;     (defun my/create-omnisharp-custom-executable ()
+;;       "Modify the omnisharp-server run-script as needed for Guix"
+;;       (when (system-name= "klingenberg-tablet")
+;;         (with-temp-file (concat (omnisharp--server-installation-dir) "/run-custom")
+;;           (goto-char (point-min))
+;;           (insert-file-contents (omnisharp--server-installation-path))
+;;           (search-forward "mono_cmd")
+;;           (kill-line)
+;;           (insert "=mono"))))
+;;     (my/create-omnisharp-custom-executable)
+;;     (cond
+;;      ((system-name= "klingenberg-pi")
+;;       (setq omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
+;;      ((system-name= "klingenberg-tablet")
+;;       ;; (setq omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp/")
+;;       (setq omnisharp-server-executable-path (concat (omnisharp--server-installation-dir) "/run-custom"))
+;;       ;; (setq omnisharp-server-executable-path nil)
+;;       ))))
 
 (defun my/csharp-list-to-array ()
   (replace-regexp "List<\\(.*\\)>" "\\1[]"
@@ -859,21 +859,22 @@ limitations under the License.
                     (derived-mode-p #'bosss-mode)) ; check if this is just a worksheet
           (princ header-text (current-buffer)))))))
 
-(defun my/omnisharp-code-format-entire-file ()
-  (when (and (my/personal-bosss-file-p) (not (my/personal-bosss-control-file-p)))
-    (omnisharp-code-format-entire-file)))
+;; (defun my/omnisharp-code-format-entire-file ()
+;;   (when (and (my/personal-bosss-file-p) (not (my/personal-bosss-control-file-p)))
+;;     (omnisharp-code-format-entire-file)))
 
 (defun my/format-on-save-enable ()
   "Code-format the entire buffen on save."
   (interactive)
   (format-all-mode -1)
-  (add-hook 'before-save-hook #'my/omnisharp-code-format-entire-file))
+  ;; (add-hook 'before-save-hook #'my/omnisharp-code-format-entire-file)
+  )
 
 (defun my/format-on-save-disable ()
   "Disable Code-formatting of the entire buffen on save."
   (interactive)
-  (remove-hook 'before-save-hook #'my/omnisharp-code-format-entire-file)
-  (remove-hook 'before-save-hook #'omnisharp-code-format-entire-file)
+  ;; (remove-hook 'before-save-hook #'my/omnisharp-code-format-entire-file)
+  ;; (remove-hook 'before-save-hook #'omnisharp-code-format-entire-file)
   (format-all-mode -1))
 
 (defun my/indent-buffer-without-bosss-header ()
@@ -958,7 +959,7 @@ limitations under the License.
 
 (add-hook 'csharp-mode-hook #'my/add-header)
 (add-hook 'csharp-mode-hook #'my/format-on-save-disable)
-(add-hook 'omnisharp-mode-hook #'my/omnisharp-code-format-entire-file)
+;; (add-hook 'omnisharp-mode-hook #'my/omnisharp-code-format-entire-file)
 
 (setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
 
@@ -1000,7 +1001,7 @@ limitations under the License.
   (setq bosss-path-reference (mapcar (lambda (proj) (concat "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/" proj))
                                      '("RANSCommon/bin/Release/RANS_Solver.dll"
                                        "KOmegaModelSolver/bin/Release/KOmegaSolver.exe"
-                                       "KOmegaStatSymmModelSolver/bin/Release/KOmegaSSSolver.exe"
+                                       ;; "KOmegaStatSymmModelSolver/bin/Release/KOmegaSSSolver.exe"
                                        "TurbulenceModelParameterOptimization/bin/Release/ParameterOptimization.exe")))
   :config
   (map! :map bosss-mode-map
@@ -1038,6 +1039,7 @@ limitations under the License.
   (setq ivy-extra-directories nil)
   (setq ivy-use-virtual-buffers t)
   (setq ivy-use-selectable-prompt t)
+  (setq counsel-find-file-at-point t)
   (map!
    :map ivy-minibuffer-map
    "M-j" #'ivy-next-line
@@ -1177,6 +1179,7 @@ limitations under the License.
           ("https://liebling-bosman.podigee.io/feed/mp3" podcast liebling bosman fussball)
           ("https://tribuenengespraech.podigee.io/feed/vorbis" podcast rasenfunk tribünengespräch fussball)
           ("https://feeds.feedburner.com/hacks-on-tap" podcast hacks on tap politics)
+          ("https://lexfridman.com/feed/podcast" podcast lex friedman)
           ("https://ambrevar.xyz/atom.xml" blog emacs programming)
           ("https://nyxt.atlas.engineer/feed" lisp programming nyxt next)
           ("https://guix.gnu.org/feeds/blog/arm.atom" lisp programming guix blog)
@@ -1346,6 +1349,107 @@ limitations under the License.
                        subword-mode
                        flyspell-mode
                        defining-kbd-macro)))
+
+(use-package! igo-org
+  :config
+  (igo-org-setup)
+  (autoload 'igo-sgf-mode "igo-sgf-mode")
+  (add-to-list 'auto-mode-alist '("\\.sgf$" . igo-sgf-mode)))
+
+;; (use-package! rigpa
+
+;;   :after (evil parsec symex)
+
+;;   :config
+;;   (setq rigpa-mode t)
+
+;;   ;; custom config
+;;   (setq rigpa-show-menus t)
+
+;;   ;; navigating meta modes
+;;   (map!
+;;    :no "s-m s-m" 'rigpa-flashback-to-last-tower
+;;     :n "C-<escape>" 'my-enter-tower-mode
+;;     :n "M-<escape>" 'my-enter-mode-mode
+;;     :n "s-<escape>" 'my-enter-mode-mode
+;;     :n "M-<return>"
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-selected-level)
+;;                      (let ((ground (rigpa--get-ground-buffer)))
+;;                        (my-exit-mode-mode)
+;;                        (switch-to-buffer ground)))
+;;     :n "s-<return>"
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-selected-level)
+;;                      (let ((ground (rigpa--get-ground-buffer)))
+;;                        (my-exit-mode-mode)
+;;                        (switch-to-buffer ground)))
+;;     :n "C-<return>"
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (my-exit-tower-mode)
+;;                      (my-enter-mode-mode))
+
+;;    ;; indexed entry to various modes
+;;     :n "s-n" 'evil-normal-state
+;;     :n "s-y"        ; symex mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "symex"))
+;;     "s-w"        ; window mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "window"))
+;;     "s-v"        ; view mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "view"))
+;;     "s-x"        ; char mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "char"))
+;;     "s-a"        ; activity mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "activity"))
+;;     "s-z"        ; text mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "text"))
+;;     "s-g"        ; history mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "history"))
+;;     "s-i"        ; system mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "system"))
+;;     "s-b"        ; buffer mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "buffer"))
+;;     "s-f"        ; file mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "file"))
+;;     "s-t"        ; tab mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "tab"))
+;;     "s-l"        ; line mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "line"))
+;;    "s-e"        ; application mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "application"))
+;;    "s-r"        ; word mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "word"))))
 
 ;; load my custom scripts
 (load "~/Dropbox/Helen+Dario/washing-machine-timer.el" t t)

@@ -78,6 +78,20 @@
        (format nil "exec emacs --eval \"(~a)\"" command)
        "exec emacs")))
 
+(defcommand run-terminal (&optional command) (:rest)
+  (eval-command
+   (if command
+       (format nil "exec termite -e \"~a\"" command)
+       "exec termite")))
+
+(defcommand shutdown () ()
+  (stop-emacs-daemon)
+  (run-terminal "sudo shutdown"))
+
+(defcommand reboot () ()
+  (stop-emacs-daemon)
+  (run-terminal "sudo reboot"))
+
 (defun emacs-is-current-window-p ()
   (and (current-window)
        (stumpwm::class-re-p (current-window) "Emacs")))
@@ -213,8 +227,8 @@
 
 (defvar *system-map*
   (let ((m (stumpwm:make-sparse-keymap)))
-    (stumpwm:define-key m (stumpwm:kbd "S") "run-emacs-client shutdown")
-    (stumpwm:define-key m (stumpwm:kbd "R") "run-emacs-client reboot")
+    (stumpwm:define-key m (stumpwm:kbd "S") "shutdown")
+    (stumpwm:define-key m (stumpwm:kbd "R") "reboot")
     m))
 (stumpwm:define-key stumpwm:*root-map* (stumpwm:kbd "S") '*system-map*)
 
@@ -241,7 +255,7 @@
 (define-key *top-map* (kbd "s-P") "emacs-pass")
 (define-key *top-map* (kbd "s-e") "run-emacs-client %s")
 (define-key *top-map* (kbd "s-E") "exec emacs")
-(define-key *top-map* (kbd "s-S-F1") "exec termite")
+(define-key *top-map* (kbd "s-S-F1") "run-terminal")
 (define-key *top-map* (kbd "s-F1") "run-emacs-client eshell")
 (define-key *top-map* (kbd "s-F2") "exec firefox")
 (define-key *top-map* (kbd "s-F3") "run-emacs-client deer")

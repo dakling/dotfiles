@@ -224,19 +224,24 @@
  (kernel
   (let*
       ((channels
-        (list (channel
-               (name 'nonguix)
-               (url "https://gitlab.com/nonguix/nonguix")
-               (commit "d8a529e3941a6d75b261df20c8f6d389996414a1"))
-              (channel
-               (name 'guix)
-               (url "https://git.savannah.gnu.org/git/guix.git")
-               (commit "68feb83790a51bf65bc41478495047448c216768"))))
+        (list
+      (channel
+        (name 'nonguix)
+        (url "https://gitlab.com/nonguix/nonguix")
+        (commit "e25426835e77dbae768f0c8e07d5d69125e82800"))
+      (channel
+        (name 'flat)
+        (url "https://github.com/flatwhatson/guix-channel.git")
+        (commit "9c380556fa42e5f855f09b16d224f793243613f1"))
+      (channel
+        (name 'guix)
+        (url "https://git.savannah.gnu.org/git/guix.git")
+        (commit "1fc9baeebb24a36431736f1a187e501943918444"))))
        (inferior
-        (inferior-for-channels channels)))
-    (car (lookup-inferior-packages inferior "linux" "5.9.9")))
+     (inferior-for-channels channels)))
+      (car (lookup-inferior-packages inferior "linux" "5.10.4")))
   ;; linux
   )
  (initrd microcode-initrd)
  (firmware
-  (list linux-firmware)))
+   (list linux-firmware)))

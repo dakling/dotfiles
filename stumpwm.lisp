@@ -17,7 +17,13 @@
 ;;   (when (probe-file quicklisp-init)
 ;;     (load quicklisp-init)))
 
-;; (sb-posix:putenv "SBCL_HOME=")
+; (sb-posix:putenv "SBCL_HOME=")
+
+;; (let* ((guix-profile (pathname-as-directory (getenv "GUIX_PROFILE")))
+;;        (module-dir (merge-pathnames "share/common-lisp/sbcl/" guix-profile)))
+;;   (set-module-dir module-dir))
+
+; (load-module "ttf-fonts")
 
 (sb-posix:putenv "SBCL_HOME=/home/klingenberg/.guix-profile/lib/sbcl")
 ;; (sb-posix:putenv "SBCL_HOME=/run/current-system/profile/lib/sbcl/")
@@ -35,10 +41,11 @@
 (setf xft:*font-dirs* '("/run/current-system/profile/share/fonts/"))
 (setf clx-truetype:+font-cache-filename+ (concat (getenv "HOME") "/.fonts/font-cache.sexp"))
 (xft:cache-fonts)
-(set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Book" :size 10))
+;; (set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Book" :size 10))
+(set-font (make-instance 'xft:font :family "Fira Mono" :subfamily "Regular" :size 10))
 
 ;; (require "xembed")
-;; (load-module "stumptray")
+; (load-module "stumptray")
 (require "stumptray")
 
 ;; (require "maildir")

@@ -21,12 +21,15 @@
 ;; font string. You generally only need these two:
 ;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
 ;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
+(setq doom-font (font-spec :family "Fira Code Light")
+      doom-variable-pitch-font (font-spec :family "Fira Code Light"))
+;; (setq doom-font (font-spec :family "DejaVu Sans Mono"))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 ;; (setq doom-theme 'doom-solarized-dark)
-(setq doom-theme 'doom-city-lights)
+(setq doom-theme 'doom-one)
 
 
 ;; If you use `org' and don't want your org files in the default location below,
@@ -173,9 +176,9 @@
                (call-interactively 'org-export-dispatch))))
 
 (map!
-   :after org
-   :map org-mode-map
-   :n "gb" 'org-mark-ring-goto)
+ :after org
+ :map org-mode-map
+ :n "gb" 'org-mark-ring-goto)
 
 (setq org-roam-capture-templates
       '(("d" "default" plain #'org-roam-capture--get-point "%? \n %i \n %a"
@@ -188,9 +191,9 @@
   :config
   (map! :localleader
         :map org-mode-map
-        ("ss" #'sl-link)
-        ("ls" #'sl-store-link)
-        ("lS" #'sl-insert-link)))
+        ("ss" #'org-super-links-link)
+        ("ls" #'org-super-links-store-link)
+        ("lS" #'org-super-links-insert-link)))
 
 (setq smerge-command-prefix "+")
 
@@ -470,7 +473,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 (setq my/mu4e-account-alist
       `(("fdy"
          (mu4e-sent-messages-behavior sent)
-         (mu4e-compose-signature-auto-include nil)
+         ;; (mu4e-compose-signature-auto-include nil)
          (mu4e-compose-signature ,fdy-signature)
          ;; (org-msg-signature
 ;;           ,(concat
@@ -486,7 +489,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
          (user-full-name "Dario Klingenberg"))
         ("gsc"
          (mu4e-sent-messages-behavior sent)
-         (mu4e-compose-signature-auto-include nil)
+         ;; (mu4e-compose-signature-auto-include nil)
          (mu4e-compose-signature ,gsc-signature)
          ;; (org-msg-signature
 ;;           ,(concat
@@ -503,7 +506,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
         ("gmail"
          ;; Under each account, set the account-specific variables you want.
          (mu4e-sent-messages-behavior delete)
-         (mu4e-compose-signature-auto-include nil)
+         ;; (mu4e-compose-signature-auto-include nil)
          (mu4e-sent-folder "/gmail/sent")
          (mu4e-drafts-folder "/gmail/Drafts")
          (user-mail-address "dario.klingenberg@gmail.com")
@@ -515,7 +518,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
          )
         ("web"
          (mu4e-sent-messages-behavior sent)
-         (mu4e-compose-signature-auto-include nil)
+         ;; (mu4e-compose-signature-auto-include nil)
          (mu4e-sent-folder "/web/Sent Items")
          (mu4e-drafts-folder "/web/Drafts")
          (smtpmail-smtp-server "smtp.web.de")
@@ -540,6 +543,23 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    :continue t))
 
 (after! mu4e
+  (setq message-subject-re-regexp
+        (concat
+         "^[ \t]*"
+         "\\("
+         "\\("
+         "[Aa][Nn][Tt][Ww]\\.?\\|"     ; antw
+         "[Aa][Ww]\\|"                 ; aw
+         "[Ff][Ww][Dd]?\\|"            ; fwd
+         "[Ww][Gg]?\\|"                ; wg
+         "[Rr][Ee]\\|"                 ; re
+         "[Rr][\311\351][Ff]\\.?\\|"   ; ref
+         "\\)"
+         "\\(\\[[0-9]*\\]\\)"
+         "*:[ \t]*"
+         "\\)"
+         "*[ \t]*"
+         ))
   (remove-hook 'mu4e-compose-pre-hook 'org-msg-mode)
   (setq mu4e-get-mail-command (format "INSIDE_EMACS=%s mbsync -a" emacs-version))
   (setq mu4e-update-interval 120)
@@ -561,48 +581,6 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
   ;;       ;; org-msg-startup "hidestars indent inlineimages"
   ;;       ;; org-msg-greeting-fmt "Hallo %s,\n\n\n"
   ;;       org-msg-default-alternatives '(html text))
-  ;; HACK
-  ;; (defun mu4e-icalendar-reply-ical (original-msg event status buffer-name)
-;;     "Reply to ORIGINAL-MSG containing invitation EVENT with STATUS.
-;; See `gnus-icalendar-event-reply-from-buffer' for the possible
-;; STATUS values.  BUFFER-NAME is the name of the buffer holding the
-;; response in icalendar format."
-;;     (remove-hook 'mu4e-compose-pre-hook #'org-msg-mode)
-;;     (org-msg-mode -1)
-;;     (let ((message-signature nil))
-;;       (let ((mu4e-compose-cite-function #'mu4e~icalendar-delete-citation)
-;;             (mu4e-sent-messages-behavior 'delete)
-;;             (mu4e-compose-reply-recipients 'sender))
-;;         (mu4e~compose-handler 'reply original-msg))
-;;       ;; Make sure the recipient is the organizer
-;;       (let ((organizer (gnus-icalendar-event:organizer event)))
-;;         (unless (string= organizer "")
-;;           (message-remove-header "To")
-;;           (message-goto-to)
-;;           (insert organizer)))
-;;       ;; Not (message-goto-body) to possibly skip mll sign directive
-;;       ;; inserted by `mu4e-compose-mode-hook':
-;;       (goto-char (point-max))
-;;       (mml-insert-multipart "alternative")
-;;       (mml-insert-part "text/plain")
-;;       (let ((reply-event (gnus-icalendar-event-from-buffer
-;;                           buffer-name (mu4e-personal-addresses))))
-;;         (insert (gnus-icalendar-event->gnus-calendar reply-event status)))
-;;       (forward-line 1); move past closing tag
-;;       (mml-attach-buffer buffer-name "text/calendar; method=REPLY; charset=utf-8")
-;;       (message-remove-header "Subject")
-;;       (message-goto-subject)
-;;       (insert (capitalize (symbol-name status))
-;;               ": " (gnus-icalendar-event:summary event))
-;;       (set-buffer-modified-p nil); not yet modified by user
-;;       (when mu4e-icalendar-trash-after-reply
-;;         ;; Override `mu4e-sent-handler' set by `mu4e-compose-mode' to
-;;         ;; also trash the message (thus must be appended to hooks).
-;;         (add-hook
-;;          'message-sent-hook
-;;          (lambda () (setq mu4e-sent-func
-;;                           (mu4e~icalendar-trash-message original-msg)))
-;;          t t))))
   )
 
 ;; keybindings
@@ -732,6 +710,18 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
   :after-call LaTeX-mode-hook
   :config
   (add-hook 'LaTeX-mode-hook #'evil-tex-mode))
+
+;; octave
+(setq auto-mode-alist
+      (cons '("\\.m$" . octave-mode) auto-mode-alist))
+
+(map! :localleader
+      :map octave-mode-map
+      "el" #'octave-send-line
+      "ef" #'octave-send-defun
+      "eb" #'octave-send-block
+      "er" #'octave-send-region
+      "ee" #'octave-send-buffer)
 
 ;; f#
 (map! :localleader
@@ -1130,11 +1120,8 @@ limitations under the License.
 ;;         org-roam-server-label-wrap-length 20))
 ;; END TODO check if this is needed with doom
 
-;; TODO check if this is needed with doom
-;; (use-package! smooth-scrolling
-;;   :config
-;;   (smooth-scrolling-mode 1))
-;; END TODO check if this is needed with doom
+;; (use-package! edit-server
+;;   :config (edit-server-start))
 
 (use-package! pdf-tools
   :config
@@ -1328,16 +1315,31 @@ limitations under the License.
 
 (use-package! stumpwm-mode
   :load-path "/run/current-system/profile/share/emacs/site-lisp/"
+  :hook #'lisp-mode
   :config
   (defun my/activate-stump-mode ()
     (when (equalp
            (buffer-file-name)
            "/home/klingenberg/.dotfiles/stumpwm.lisp")
       (stumpwm-mode 1)))
-  (add-hook 'lisp-mode-hook #'my/activate-stump-mode)
+  ;; (add-hook 'lisp-mode-hook #'my/activate-stump-mode)
   (map! :localleader :map stumpwm-mode-map
         "ef" #'stumpwm-eval-defun
         "ee" #'stumpwm-eval-last-sexp))
+
+;; (use-package! eaf
+;;   :defer t
+;;   :config
+;;   ;; (setq eaf-enable-debug t) ; should only be used when eaf is wigging out
+;;   (eaf-setq eaf-browser-dark-mode "true") ; dark mode is overrated
+;;   (setq eaf-browser-default-search-engine "duckduckgo")
+;;   (eaf-setq eaf-browse-blank-page-url "https://duckduckgo.com"))
+
+;; (use-package! eaf-evil ;; evil bindings in my browser
+;;   :after eaf
+;;   :config
+;;   (setq eaf-evil-leader-keymap doom-leader-map)
+;;   (setq eaf-evil-leader-key "SPC"))
 
 (use-package! diminish
   :config

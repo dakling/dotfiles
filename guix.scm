@@ -23,7 +23,8 @@
  ssh
  nix
  xorg
- desktop)
+ desktop
+ docker)
 
 (use-package-modules
  certs
@@ -32,6 +33,7 @@
  gcc
  mono
  vpn
+ virtualization
  tls
  sqlite
  version-control
@@ -66,9 +68,29 @@
  lisp
  lisp-xyz
  wm
- package-management)
+ package-management
+ docker)
 
-
+; setup custom sudo rules so some clearly specified commands can be
+;; run without password, ALWAYS use absolute filenames here! To
+;; continue working when I install a tool as user, I setup sudo-rules
+;; for both the system-tools and my user-tools.
+(define %sudoers-specification
+  (plain-file "sudoers" "\
+root ALL=(ALL) ALL
+%wheel ALL=(ALL) ALL
+%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/cpupower
+%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/mount --bind /run/user/1000/intellij/caches /home/MYSELF/.IntelliJIdea2019.3/system/caches
+%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/mount --bind /run/user/1000/intellij/index /home/MYSELF/.IntelliJIdea2019.3/system/index
+%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/umount /home/MYSELF/.IntelliJIdea2019.3/system/caches
+%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/umount /home/MYSELF/.IntelliJIdea2019.3/system/index
+%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/umount
+%wheel ALL=(ALL) NOPASSWD: /home/klingenberg/.guix-profile/bin/mount --bind /run/user/1000/intellij/caches /home/MYSELF/.IntelliJIdea2019.3/system/caches
+%wheel ALL=(ALL) NOPASSWD: /home/klingenberg/.guix-profile/bin/mount --bind /run/user/1000/intellij/index /home/MYSELF/.IntelliJIdea2019.3/system/index
+%wheel ALL=(ALL) NOPASSWD: /home/klingenberg/.guix-profile/bin/umount /home/MYSELF/.IntelliJIdea2019.3/system/caches
+%wheel ALL=(ALL) NOPASSWD: /home/klingenberg/.guix-profile/bin/umount /home/MYSELF/.IntelliJIdea2019.3/system/index
+%wheel ALL=(ALL) NOPASSWD: /home/klingenberg/.guix-profile/bin/umount
+"))
 
 (operating-system
  (locale "en_US.utf8")
@@ -77,8 +99,7 @@
   (keyboard-layout "de"
                    "nodeadkeys"
                    #:options
-                   '("ctrl:nocaps"))
-  )
+                   '("ctrl:nocaps")))
  (host-name "klingenberg-tablet")
  (users
   (cons*
@@ -88,8 +109,9 @@
     (group "users")
     (home-directory "/home/klingenberg")
     (supplementary-groups
-     '("wheel" "netdev" "audio" "video" "lp" "dialout")))
+     '("wheel" "netdev" "audio" "video" "lp" "dialout" "docker")))
    %base-user-accounts))
+ (sudoers-file %sudoers-specification)
  (packages
   (append
    (list
@@ -97,61 +119,30 @@
     sbcl
     sbcl-slynk
     stumpwm
-    ;; stumpwm+slynk
-    ;; (package
-    ;;  (inherit stumpwm)
-    ;;  (name "stumpwm-with-slynk")
-    ;;  (outputs '("out" "lib"))
-    ;;  (inputs
-    ;;   `(("stumpwm" ,stumpwm "lib")
-    ;;     ("slynk" ,sbcl-slynk)
-    ;;     ("cl-ppcre" ,sbcl-cl-ppcre)
-    ;;     ("clx" ,sbcl-clx)
-    ;;     ("alexandria" ,sbcl-alexandria)))
-    ;;  (arguments
-    ;;   (substitute-keyword-arguments (package-arguments stumpwm)
-    ;;                                 ((#:phases phases)
-    ;;                                  `(modify-phases ,phases
-    ;;                                                  (replace 'build-program
-    ;;                                                           (lambda* (#:key inputs outputs #:allow-other-keys)
-    ;;                                                             (let* ((out (assoc-ref outputs "out"))
-    ;;                                                                    (program (string-append out "/bin/stumpwm")))
-    ;;                                                               (build-program program outputs
-    ;;                                                                              #:entry-program '((stumpwm:stumpwm) 0)
-    ;;                                                                              #:dependencies '("stumpwm"
-    ;;                                                                                               ,@(@@ (gnu packages lisp-xyz) slynk-systems))
-    ;;                                                                              #:dependency-prefixes
-    ;;                                                                              (map (lambda (input) (assoc-ref inputs input))
-    ;;                                                                                   '("stumpwm" "slynk")))
-    ;;                                                               ;; Remove unneeded file.
-    ;;                                                               (delete-file (string-append out "/bin/stumpwm-exec.fasl"))
-    ;;                                                               #t)))
-    ;;                                                  (delete 'copy-source)
-    ;;                                                  (delete 'build)
-    ;;                                                  (delete 'check)
-    ;;                                                  (delete 'create-asd-file)
-    ;;                                                  (delete 'cleanup)
-    ;;                                                  (delete 'create-symlinks))))))
     `(,stumpwm "lib")
     stumpish
     sbcl-stumpwm-ttf-fonts
     font-dejavu
+    font-adobe-source-code-pro
+    font-fira-code
+    font-fira-mono
+    font-fira-sans
     sbcl-stumpwm-pass
     sbcl-stumpwm-wifi
     sbcl-stumpwm-stumptray
     emacs-stumpwm-mode
-    emacs-native-comp
-    ;; emacs
+    ;; emacs-native-comp
+    emacs
     ;; emacs-exwm
     emacs-guix
     ;; emacs-pdf-tools
     guile-gcrypt
     emacs-pulseaudio-control
-    font-adobe-source-code-pro
     acpi
     mu
     isync
     openssl
+    qemu
     zip
     unzip
     nix
@@ -171,7 +162,8 @@
     curl
     gvfs
     xinput
-    git)
+    git
+    docker)
    %base-packages))
  (services
   (append
@@ -190,7 +182,8 @@
     (service openvpn-client-service-type
              (openvpn-client-configuration))
     (bluetooth-service
-     #:auto-enable? #t))
+     #:auto-enable? #t)
+    (service docker-service-type))
    (remove (lambda (service)
              (eq? (service-kind service) gdm-service-type))
            %desktop-services)))
@@ -222,25 +215,9 @@
     "/run/current-sytem/profile/sbin/reboot")
    %setuid-programs))
  (kernel
-  (let*
-      ((channels
-        (list
-      (channel
-        (name 'nonguix)
-        (url "https://gitlab.com/nonguix/nonguix")
-        (commit "e25426835e77dbae768f0c8e07d5d69125e82800"))
-      (channel
-        (name 'flat)
-        (url "https://github.com/flatwhatson/guix-channel.git")
-        (commit "9c380556fa42e5f855f09b16d224f793243613f1"))
-      (channel
-        (name 'guix)
-        (url "https://git.savannah.gnu.org/git/guix.git")
-        (commit "1fc9baeebb24a36431736f1a187e501943918444"))))
-       (inferior
-     (inferior-for-channels channels)))
-      (car (lookup-inferior-packages inferior "linux" "5.10.4")))
   ;; linux
+  ;; (specification->package "linux@5.4")
+  (specification->package "linux@5.4.90")
   )
  (initrd microcode-initrd)
  (firmware

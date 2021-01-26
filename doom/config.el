@@ -67,6 +67,8 @@
    names))
 
 ;;; Setting some variables
+(set-language-environment "UTF-8")
+(set-default-coding-systems 'utf-8)
 (setq evil-respect-visual-line-mode t)  ; TODO check if this must be moved to init.el
 (setq evil-collection-setup-minibuffer t)
 
@@ -543,6 +545,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    :continue t))
 
 (after! mu4e
+  (setq shr-use-colors nil)
   (setq message-subject-re-regexp
         (concat
          "^[ \t]*"
@@ -576,7 +579,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
   (setq gnus-icalendar-org-capture-file "~/org/notes.org")
   (setq gnus-icalendar-org-capture-headline '("Inbox"))
   (gnus-icalendar-org-setup)
-;;;  org-msg
+;;;    org-msg
   ;; (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
   ;;       ;; org-msg-startup "hidestars indent inlineimages"
   ;;       ;; org-msg-greeting-fmt "Hallo %s,\n\n\n"
@@ -610,6 +613,14 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 (map! :leader :map (elisp)
       "ef" #'eval-defun
       "ep" #'eval-print-last-sexp)
+
+;; outline-minor-mode messes with some of my lispy bindings
+;; (remove-hook! 'emacs-lisp-mode-hook #'outline-minor-mode)
+(map! :map outline-minor-mode-map       ;TODO check if this messes up other situtations
+      "M-j" nil
+      "M-k" nil
+      "M-h" nil
+      "M-l" nil)
 
 (after!
   lispy
@@ -677,6 +688,8 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
       (cond
        ((system-name= "klingenberg-tablet") "~/Documents-work/conferences/latex_macros/bibliography.bib")
        ((system-name= "klingenberg-pc") "~/Documents/conferences/latex_macros/bibliography.bib")))
+
+(add-hook! (TeX-mode-hook LaTeX-mode-hook) #'auto-fill-mode)
 
 (map!
  :localleader
@@ -1357,6 +1370,49 @@ limitations under the License.
   (igo-org-setup)
   (autoload 'igo-sgf-mode "igo-sgf-mode")
   (add-to-list 'auto-mode-alist '("\\.sgf$" . igo-sgf-mode)))
+
+;; (use-package! fira-code-mode
+;;   :custom (fira-code-mode-disabled-ligatures (list "[]" "#{" "#(" "#_" "#_(" "x"))
+;;   :config (global-fira-code-mode -1))
+
+(plist-put! +ligatures-extra-symbols
+  ;; org
+  :name          "»"
+  :src_block     "»"
+  :src_block_end "«"
+  :quote         "“"
+  :quote_end     "”"
+  ;; Functional
+  :lambda        "λ"
+  :def           "ƒ"
+  :composition   "∘"
+  :map           "↦"
+  ;; Types
+  :null          "∅"
+  :true          "✓"
+  :false         "✗"
+  :int           "ℤ"
+  :float         "ℝ"
+  :str           "σ"
+  :bool          "±"
+  :list          "ƛ"
+  ;; Flow
+  :not           "￢"
+  :in            "∈"
+  :not-in        "∉"
+  :and           "∧"
+  :or            "∨"
+  :for           "∀"
+  :some          "∃"
+  :return        "⟼"
+  :yield         "⟻"
+  ;; Other
+  :union         "⋃"
+  :intersect     "∩"
+  :diff          "∖"
+  :tuple         "⨂"
+  :pipe          "" ;; FIXME: find a non-private char
+  :dot           "•")
 
 ;; (use-package! rigpa
 

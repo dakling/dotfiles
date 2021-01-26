@@ -13,17 +13,6 @@
 ;;
 ;;      Alternatively, press 'gd' (or 'C-c g d') on a module to browse its
 ;;      directory (for easy access to its source code).
-;;
-;;
-;; for native-comp branch
-;; (when (fboundp 'native-compile-async)
-;;   (if (or (daemonp) (y-or-n-p "async compile?"))
-;;       (setq comp-async-jobs-number 4 ;; not using all cores
-;;             comp-deferred-compilation t
-;;             ;; comp-deferred-compilation-black-list
-;;             ;; '()
-;;             )
-;;     (setq comp-deferred-compilation nil)))
 
 (doom! :input
        ;;chinese
@@ -50,7 +39,7 @@
        ;;neotree           ; a project drawer, like NERDTree for vim
        ophints                    ; highlight the region an operation acts on
        (popup +defaults)          ; tame sudden yet inevitable temporary windows
-       (ligatures +fira)
+       (ligatures +extra +fira)
        ;;tabs              ; an tab bar for Emacs
        ;; treemacs                 ; a project drawer, like neotree but cooler
        unicode                  ; extended unicode support for various languages

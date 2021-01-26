@@ -257,7 +257,7 @@
 (define-key *top-map* (kbd "s-C-c") "remove-split")
 (define-key *top-map* (kbd "s-m") "maximize-window-and-emacs-window")
 ;; (define-key *top-map* (kbd "s-d") "colon1 exec ")
-(define-key *top-map* (kbd "s-d") "exec dmenu_run")
+(define-key *top-map* (kbd "s-d") "exec rofi -show combi")
 (define-key *top-map* (kbd "s-x") "emacs-M-x")
 (define-key *top-map* (kbd "s-P") "emacs-pass")
 (define-key *top-map* (kbd "s-e") "run-emacs-client %s")

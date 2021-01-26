@@ -28,6 +28,7 @@
 
 (use-package-modules
  certs
+ freedesktop
  gnome
  pulseaudio
  gcc
@@ -127,6 +128,7 @@ root ALL=(ALL) ALL
     font-fira-code
     font-fira-mono
     font-fira-sans
+    xdg-utils
     sbcl-stumpwm-pass
     sbcl-stumpwm-wifi
     sbcl-stumpwm-stumptray
@@ -216,8 +218,8 @@ root ALL=(ALL) ALL
    %setuid-programs))
  (kernel
   ;; linux
-  ;; (specification->package "linux@5.4")
-  (specification->package "linux@5.4.90")
+  (specification->package "linux@5.4")
+  ;; (specification->package "linux@5.4.90")
   )
  (initrd microcode-initrd)
  (firmware

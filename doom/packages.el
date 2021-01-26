@@ -92,6 +92,8 @@
 
 (package! el-igo :recipe (:host github :repo "misohena/el-igo"))
 
+;; (package! fira-code-mode)
+
 ;; (package! edit-server)
 
 (disable-packages! org-msg)

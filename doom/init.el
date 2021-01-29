@@ -13,17 +13,6 @@
 ;;
 ;;      Alternatively, press 'gd' (or 'C-c g d') on a module to browse its
 ;;      directory (for easy access to its source code).
-;;
-;;
-;; for native-comp branch
-;; (when (fboundp 'native-compile-async)
-;;   (if (or (daemonp) (y-or-n-p "async compile?"))
-;;       (setq comp-async-jobs-number 4 ;; not using all cores
-;;             comp-deferred-compilation t
-;;             ;; comp-deferred-compilation-black-list
-;;             ;; '()
-;;             )
-;;     (setq comp-deferred-compilation nil)))
 
 (doom! :input
        ;;chinese
@@ -50,9 +39,9 @@
        ;;neotree           ; a project drawer, like NERDTree for vim
        ophints                    ; highlight the region an operation acts on
        (popup +defaults)          ; tame sudden yet inevitable temporary windows
-       ;; pretty-code       ; ligatures or substitute text with pretty symbols
+       (ligatures +extra +fira)
        ;;tabs              ; an tab bar for Emacs
-       treemacs                 ; a project drawer, like neotree but cooler
+       ;; treemacs                 ; a project drawer, like neotree but cooler
        unicode                  ; extended unicode support for various languages
        vc-gutter                ; vcs diff in the fringe
        vi-tilde-fringe          ; fringe tildes to mark beyond EOB
@@ -89,7 +78,7 @@
 
        :checkers
        syntax                        ; tasing you for every semicolon you forget
-       spell                         ; tasing you for misspelling mispelling
+       (spell +flyspell +aspell +everywhere)                         ; tasing you for misspelling mispelling
        grammar                       ; tasing grammar mistake every you make
 
        :os
@@ -101,13 +90,13 @@
        ;;direnv
        ;;docker
        editorconfig      ; let someone else argue about tabs vs spaces
-       ein               ; tame Jupyter notebooks with emacs
+       ;; ein               ; tame Jupyter notebooks with emacs
        (eval +overlay)       ; run code, run (also, repls)
        ;;gist              ; interacting with github gists
        (lookup +dictionary +offline +docsets)                         ; navigate your code and its documentation
        lsp
        ;;macos             ; MacOS-specific commands
-       (magit +forge)           ; a git porcelain for Emacs
+       (magit -forge)           ; a git porcelain for Emacs
        ;; make              ; run make tasks from Emacs
        pass                             ; password manager for nerds
        pdf                              ; pdf enhancements
@@ -120,8 +109,8 @@
 
        :lang
        ;;agda              ; types of types of types of types...
-       (cc +lsp)                ; C/C++/Obj-C madness
-       clojure                  ; java with a lisp
+       ;; (cc +lsp)                ; C/C++/Obj-C madness
+       ;; clojure                  ; java with a lisp
        common-lisp              ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
        ;;crystal           ; ruby at the speed of c
@@ -134,7 +123,7 @@
        ;;erlang            ; an elegant language for a more civilized age
        ;;ess               ; emacs speaks statistics
        ;;faust             ; dsp, but you get to keep your soul
-       (fsharp +lsp)                    ; ML stands for Microsoft's Language
+       ;; (fsharp +lsp)                    ; ML stands for Microsoft's Language
        ;;fstar             ; (dependent) types and (monadic) effects and Z3
        ;;(go +lsp)         ; the hipster dialect
        ;;(haskell +dante)  ; a language that's lazier than I am
@@ -161,7 +150,7 @@
        ;;purescript        ; javascript, but functional
        python              ; beautiful is better than ugly
        ;;qt                ; the 'cutest' gui framework ever
-       racket                       ; a DSL for DSLs
+       ;; racket                       ; a DSL for DSLs
        ;;rest              ; Emacs as a REST client
        ;;rst               ; ReST in peace
        ;;(ruby +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
@@ -174,7 +163,7 @@
        ;;swift             ; who asked for emoji variables?
        ;;terra             ; Earth and Moon in alignment for performance.
        ;;web               ; the tubes
-       yaml                             ; JSON, but readable
+       ;; yaml                             ; JSON, but readable
 
        :email
        (mu4e +gmail)
@@ -184,7 +173,7 @@
        :app
 
        calendar
-       irc      ; how neckbeards socialize
+       ;; irc      ; how neckbeards socialize
        rss      ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought
 

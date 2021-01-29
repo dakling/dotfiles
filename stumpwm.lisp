@@ -19,7 +19,7 @@
 
 ;; (sb-posix:putenv "SBCL_HOME=")
 
-(sb-posix:putenv "SBCL_HOME=/home/klingenberg/.guix-profile/lib/sbcl")
+;; (sb-posix:putenv "SBCL_HOME=/home/klingenberg/.guix-profile/lib/sbcl")
 ;; (sb-posix:putenv "SBCL_HOME=/run/current-system/profile/lib/sbcl/")
 ;; (require "asdf")
 ;; (load "/home/klingenberg/.guix-profile/share/emacs/site-lisp/")
@@ -31,15 +31,16 @@
 ;; (slynk:create-server :dont-close t)
 
 ;; fonts
-(require :ttf-fonts)
-(setf xft:*font-dirs* '("/run/current-system/profile/share/fonts/"))
-(setf clx-truetype:+font-cache-filename+ (concat (getenv "HOME") "/.fonts/font-cache.sexp"))
-(xft:cache-fonts)
-(set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Book" :size 10))
+;; (require :ttf-fonts)
+;; (xft:cache-fonts)
+;; (setf xft:*font-dirs* '("/run/current-system/profile/share/fonts/"))
+;; (setf clx-truetype:+font-cache-filename+ (concat (getenv "HOME") "/.fonts/font-cache.sexp"))
+;; (xft:cache-fonts)
+;; (set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Book" :size 10))
 
 ;; (require "xembed")
 ;; (load-module "stumptray")
-(require "stumptray")
+;; (require "stumptray")
 
 ;; (require "maildir")
 
@@ -390,4 +391,4 @@
 ;; (toggle-mode-line (stumpwm:current-screen)
 ;;                   (stumpwm::head-by-number (stumpwm:current-screen) 0) t)
 
-(stumptray::stumptray)
+;; (stumptray::stumptray)

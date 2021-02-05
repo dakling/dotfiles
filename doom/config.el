@@ -1329,6 +1329,7 @@ limitations under the License.
   (setq epg-pinentry-mode 'loopback))
 
 (use-package! stumpwm-mode
+  :when (system-name= "klingenberg-tablet")
   :load-path "/run/current-system/profile/share/emacs/site-lisp/"
   :hook #'lisp-mode
   :config

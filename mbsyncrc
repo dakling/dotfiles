@@ -109,7 +109,7 @@ SSLType IMAPS
 # CertificateFile /etc/ssl/certs/ca-certificates.crt
 # CertificateFile ~/.cert/imap.gmail.com.pem
 #CertificateFile ~/.cert/Equifax_Secure_CA.pem
-CertificateFile ~/.cert/gsc.imap.server.pem
+#CertificateFile ~/.cert/gsc.imap.server.pem <- uncomment this one
 
 IMAPStore gsc-remote
 Account gsc

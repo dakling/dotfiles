@@ -32,14 +32,18 @@
 
 ;; fonts
 ;; (require :ttf-fonts)
-;; (xft:cache-fonts)
+(ql:quickload "clx-truetype")
+(load-module "ttf-fonts")
+;; (set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Book" :size 11))
+(xft:cache-fonts)
+(set-font (make-instance 'xft:font :family "Fira Mono" :subfamily "Regular" :size 10))
 ;; (setf xft:*font-dirs* '("/run/current-system/profile/share/fonts/"))
 ;; (setf clx-truetype:+font-cache-filename+ (concat (getenv "HOME") "/.fonts/font-cache.sexp"))
 ;; (xft:cache-fonts)
-;; (set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Book" :size 10))
 
 ;; (require "xembed")
-;; (load-module "stumptray")
+(ql:quickload "stumptray")
+(load-module "stumptray")
 ;; (require "stumptray")
 
 ;; (require "maildir")
@@ -385,10 +389,9 @@
 (refresh-heads)
 
 ;; turn on the mode line
-;; TODO check if numbers persist across X-restarts/reboots -> if so, wrap the following in a function -> seems that way
 (enable-mode-line (stumpwm:current-screen)
                   (stumpwm::head-by-number (stumpwm:current-screen) 0) t)
 ;; (toggle-mode-line (stumpwm:current-screen)
 ;;                   (stumpwm::head-by-number (stumpwm:current-screen) 0) t)
 
-;; (stumptray::stumptray)
+(stumptray::stumptray)

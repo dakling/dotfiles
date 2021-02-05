@@ -570,6 +570,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
   (setq mu4e-enable-notifications t)
   (customize-set-variable 'mu4e-headers-leave-behavior 'apply)
   (setq mu4e-view-use-gnus t)
+  ;; (remove-hook 'mu4e-compose-mode-hook 'mml-secure-sign-pgpmime)
   (add-hook 'mu4e-compose-mode-hook 'mml-secure-sign-pgpmime)
   ;; (add-hook 'org-msg-edit-mode-hook 'mml-secure-sign-pgpmime)
   (setq mml-secure-message-openpgp-sign-with-sender t)
@@ -1156,6 +1157,7 @@ limitations under the License.
    "aD" #'pdf-annot-delete))
 
 (use-package! pulseaudio-control
+  :when (system-name= "klingenberg-tablet")
   :custom
   (pulseaudio-control-volume-step "5%")
   :config

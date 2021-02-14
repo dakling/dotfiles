@@ -21,12 +21,15 @@
 ;; font string. You generally only need these two:
 ;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
 ;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
+(setq doom-font (font-spec :family "Fira Code Light")
+      doom-variable-pitch-font (font-spec :family "Fira Code Light"))
+;; (setq doom-font (font-spec :family "DejaVu Sans Mono"))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 ;; (setq doom-theme 'doom-solarized-dark)
-(setq doom-theme 'doom-city-lights)
+(setq doom-theme 'doom-one)
 
 
 ;; If you use `org' and don't want your org files in the default location below,
@@ -35,7 +38,7 @@
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type t)
+(setq display-line-numbers-type nil)
 
 
 ;; Here are some additional functions/macros that could help you configure Doom:
@@ -63,180 +66,42 @@
      (string-equal name (system-name)))
    names))
 
-(unless (system-name= "lina")
-    (progn
-      (use-package! exwm
-        :init
-        (server-start)
-        :config
-        ;; Add workspace to modeline
-        (add-to-list 'global-mode-string
-                     '(:eval (format (concat "<%s> "
-                                             (unless (null (my/exwm-get-other-workspace)) "[%s] "))
-                                     exwm-workspace-current-index
-                                     (my/exwm-get-other-workspace))))
-        (defun +exwm/rename-buffer-to-title-h ()
-          "Make sure that the exwm buffers name convays its content."
-          (exwm-workspace-rename-buffer
-           (format "%s - %s" exwm-class-name exwm-title)))
-        (defun +exwm/update-class-h ()
-          (unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
-                      (string= "gimp" exwm-instance-name)
-                      (string= "Firefox" exwm-class-name))
-            (exwm-workspace-rename-buffer exwm-class-name)))
-        (defun +exwm/update-title-h ()
-          (cond ((or (not exwm-instance-name)
-                     (string-prefix-p "sun-awt-X11-" exwm-instance-name)
-                     (string= "gimp" exwm-instance-name)
-                     (string= "Firefox" exwm-class-name))
-                 (exwm-workspace-rename-buffer exwm-title))))
-        (evil-set-initial-state 'exwm-mode 'emacs)
-        (add-hook 'exwm-floating-exit-hook #'exwm-layout-show-mode-line)
-        (add-hook 'exwm-floating-setup-hook #'exwm-layout-hide-mode-line)
-        (add-hook 'exwm-update-title-hook #'+exwm/rename-buffer-to-title-h)
-        (add-hook 'exwm-update-class-hook #'+exwm/update-class-h)
-        (add-hook 'exwm-update-title-hook #'+exwm/update-title-h)
-        (add-hook 'exwm-mode #'doom-mark-buffer-as-real-h)
-        (setq mouse-autoselect-window nil
-              focus-follows-mouse nil)
-        (exwm-enable))
-
-      (use-package! exwm-input
-        ;; :after-call exwm-randr
-        :config
-        (define-key exwm-mode-map (kbd "C-c") nil)
-        (setq exwm-input-global-keys
-              `(([?\s-r] . exwm-reset)
-                ([?\s-e] . exwm-input-release-keyboard)
-                ([?\s-F] . exwm-layout-set-fullscreen)
-                ([?\s-a] . exwm-workspace-switch)
-                ([?\s-A] . exwm-workspace-move-window)
-                (\,@(mapcar (lambda (i)
-                              `(,(kbd (format "s-%d" i)) .
-                                (lambda () (interactive)
-                                  (exwm-workspace-switch-create ,i))))
-                            (number-sequence 0 9)))
-                ;; ,@(mapcar (lambda (i)
-                ;; 	      `(,(kbd (format "s-%s" i)) .
-                ;; 		(lambda () (interactive)
-                ;; 		  (exwm-workspace-move-window ,i))))
-                ;; 	    (list '! \" § $ % & / ( ) =))
-                ;; (number-sequence 0 9))
-                ([?\s-o] . my/exwm-switch-to-other-workspace)
-                ([?\s-O] . my/exwm-move-window-to-other-workspace)
-                ([?\s-w] . other-window)
-                ([?\s-d] . dmenu)
-                ([?\s-x] . helm-M-x)
-                ([?\s-f] . helm-find-files)
-                ([?\s-p] . helm-projectile)
-                ([?\s-b] . helm-buffers-list)
-                ([?\s-l] . evil-window-right)
-                ([?\s-h] . evil-window-left)
-                ([?\s-j] . evil-window-down)
-                ([?\s-k] . evil-window-up)
-                ([?\s-v] . split-window-right)
-                ([?\s-s] . split-window-below)
-                ([?\s-c] . my/close-buffer)
-                ([?\s-q] . my/get-rid-of-mouse)
-                ([?\s-m] . delete-other-windows)
-                ([s-f1] . (lambda () (interactive) (eshell 'N)))
-                ([C-s-f1] . eshell)
-                ([s-f2] . (lambda () (interactive) (start-process "" nil browser)))
-                ([s-f3] . deer)
-                ([s-f4] . (lambda () (interactive) (mu4e)))
-                ([s-f12] . (lambda () (interactive) (start-process "" nil "/usr/bin/slock")))))
-        (push ?\s-\  exwm-input-prefix-keys)
-        ;; (push ?\M-m  exwm-input-prefix-keys)
-        (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
-                            #'my/brightness+)
-        (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
-                            #'my/brightness-)
-        (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
-                            'pulseaudio-control-decrease-volume)
-        (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
-                            'pulseaudio-control-increase-volume)
-        (exwm-input-set-key (kbd "<XF86AudioMute>")
-                            'pulseaudio-control-toggle-current-sink-mute))
-
-      (use-package! exwm-systemtray
-        ;; :after-call exwm-mode-hook
-        :config (exwm-systemtray-enable))
-
-      (use-package! exwm-randr
-        ;; :after-call exwm-mode-hook
-        :init
-        (cond
-         ((system-name= "klingenberg-tablet") (progn (set 'monitor1 "eDP1")
-                                                     (set 'monitor2 "HDMI2")
-                                                     (set 'placement "below")))
-         ((system-name= "klingenbergLaptop") (progn (set 'monitor1 "LVDS1")
-                                                    (set 'monitor2 "VGA1")
-                                                    (set 'placement "below")))
-         ((system-name= "klingenberg-laptop") (progn (set 'monitor1 "LVDS1")
-                                                     (set 'monitor2 "VGA1")
-                                                     (set 'placement "below")))
-         (t (progn (set 'monitor2 "VGA-1")
-                   (set 'monitor1 "HDMI-1")
-                   (set 'placement "left-of"))))
-        (setq exwm-randr-workspace-monitor-plist (list 0 monitor1
-                                                       2 monitor1
-                                                       4 monitor1
-                                                       6 monitor1
-                                                       8 monitor1
-                                                       1 monitor2
-                                                       3 monitor2
-                                                       5 monitor2
-                                                       7 monitor2
-                                                       9 monitor2))
-        :config
-        (defun my/exwm-get-other-workspace ()
-          (cond ((not (= 2 (length (seq-filter #'identity (mapcar #'exwm-workspace--active-p exwm-workspace--list))))) nil) ;currently only works for two monitors
-                ((= exwm-workspace-current-index
-                    (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))
-                 (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
-                ((= exwm-workspace-current-index
-                    (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
-                 (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))))
-        (defun my/exwm-switch-to-other-workspace () (interactive)
-               (exwm-workspace-switch (my/exwm-get-other-workspace)))
-        (defun my/exwm-move-window-to-other-workspace () (interactive)
-               (exwm-workspace-move-window (my/exwm-get-other-workspace)))
-
-
-        (defun my/exwm-xrandr ()
-          "Configure screen with xrandr."
-          (shell-command
-           (if (file-exists-p "~/.screenlayout/default.sh")
-               "~/.screenlayout/default.sh" ; prefer saved command by arandr by default
-             (concat "xrandr --output "
-                     monitor1
-                     " --primary --auto --"
-                     placement
-                     " "
-                     monitor2
-                     " --auto")))
-          (my/fix-touchscreen))
-
-        (add-hook 'exwm-randr-screen-change-hook #'my/exwm-xrandr)
-        (progn
-          (exwm-randr-enable)))
-
-      (use-package! exwm-workspace
-        ;; :after-call exwm-mode-hook
-        :init
-        (progn
-          (setq exwm-workspace-number 10)
-          (setq exwm-workspace-show-all-buffers t)
-          (setq exwm-layout-show-all-buffers t)))))
-
 ;;; Setting some variables
+(set-language-environment "UTF-8")
+(set-default-coding-systems 'utf-8)
+(setq evil-respect-visual-line-mode t)  ; TODO check if this must be moved to init.el
 (setq evil-collection-setup-minibuffer t)
+
+(setq +evil-want-o/O-to-continue-comments nil)
 
 (setq display-time-24hr-format t
       display-time-default-load-average nil)
 (display-time-mode 1)
 
-(setq initial-major-mode 'lisp-interaction-mode)
+(setq initial-major-mode 'lisp-interaction-mode
+      doom-scratch-initial-major-mode 'lisp-interaction-mode)
+
+(setq +lookup-provider-url-alist
+      '(("DuckDuckGo" "https://duckduckgo.com/?q=%s")
+        ("Google Translate" "https://translate.google.com/?sl=auto&tl=de&text=%s")
+        ("Wikipedia" "https://wikipedia.org/search-redirect.php?language=en&go=Go&search=%s")
+        ("Wolfram alpha" "https://wolframalpha.com/input/?i=%s")
+        ("Google" +lookup--online-backend-google "https://google.com/search?q=%s")
+        ("Google (direct)" "https://google.com/search?q=%s")
+        ("Google images" "https://www.google.com/images?q=%s")
+        ("Google maps" "https://maps.google.com/maps?q=%s")
+        ("DevDocs.io" "https://devdocs.io/#q=%s")
+        ("StackOverflow" "https://stackoverflow.com/search?q=%s")
+        ("Csharp (.Net)" "https://docs.microsoft.com/en-us/search/?terms=%s&scope=.NET")
+        ("Github" "https://github.com/search?ref=simplesearch&q=%s")
+        ("Youtube" "https://youtube.com/results?aq=f&oq=&search_query=%s")
+        ("Doom Emacs issues" "https://github.com/hlissner/doom-emacs/issues?q=is%%3Aissue+%s")))
+
+(setq browse-url-browser-function 'browse-url-firefox)
+
+(setq-default abbrev-mode t)
+(setq abbrev-file-name "~/Dropbox/Dario/abbrev.el")
+
 
 (cond
  ((system-name= "klingenberg-pi")
@@ -244,37 +109,15 @@
  ((system-name= "klingenberg-tablet")
   (add-load-path! "/run/current-system/profile/share/emacs/site-lisp/")))
 
-
-;; TODO plover avtivation/deactivation can probably be done in a more elegant way
-(defun my/plover-activate ()
-  (interactive)
-  (start-process "plover" nil "plover" "-g" "none"))
-
-(defun my/plover-deactivate ()
-  (interactive)
-  (shell-command "killall plover"))
-
-(defun my/auto-plover-on ()
-  (interactive)
-  (add-hook 'evil-insert-state-entry-hook #'my/plover-activate)
-  (add-hook 'evil-insert-state-exit-hook #'my/plover-deactivate))
-
-(defun my/auto-plover-off ()
-  (interactive)
-  (remove-hook 'evil-insert-state-entry-hook #'my/plover-activate)
-  (remove-hook 'evil-insert-state-exit-hook #'my/plover-deactivate))
-
-(setq doom-scratch-initial-major-mode 'lisp-interaction-mode)
-
+(after! undo-fu
+  (setq undo-fu-allow-undo-in-region t))
 
 (after! sly
-  (setq inferior-lisp-program "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp"))
-
-(setq browse-url-browser-function 'browse-url-firefox)
+  (setq inferior-lisp-program (cond
+                               ((system-name= "klingenberg-tablet")  "~/.local/bin/.run-sbcl.sh")
+                               (t "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp"))))
 
 (customize-set-variable 'compilation-scroll-output t)
-
-(setq helm-swoop-pre-input-function (lambda () (car evil-ex-search-pattern)))
 
 (after! evil-snipe (evil-snipe-mode -1))
 
@@ -282,18 +125,62 @@
 
 (customize-set-variable 'avy-single-candidate-jump t)
 
+(setq magit-repository-directories '(("~/" . 1)))
+
+
+
 (after! org
- (setq org-file-apps
-       (remove (assoc "\\.pdf\\'" org-file-apps)
-               org-file-apps)))
+  (setq org-id-link-to-org-use-id t)
+  (setq org-file-apps
+        (remove (assoc "\\.pdf\\'" org-file-apps)
+                org-file-apps))
+  (setq org-todo-keywords (list "TODO" "SCOP" "PROG" "|" "DONE" "BLOC" "KILL"))
+  (setq org-todo-keyword-faces
+        '(("DONE" . font-lock-comment-face)
+          ("SCOP" . +org-todo-onhold)))
+  (setq org-capture-templates
+        `(("t" "Personal todo" entry (file+headline +org-capture-todo-file "Inbox") "* TODO %?
+%i
+%a" :prepend t) ("n" "Personal notes" entry (file+headline +org-capture-notes-file "Inbox") "* %u %?
+%i
+%a" :prepend t) ("j" "Journal" entry (file+olp+datetree +org-capture-journal-file) "* %U %?
+%i
+%a" :prepend t) ("b" "BoSSS calculation" entry (file+headline "~/Documents-work/bosss/calculation-log.org" ,(with-temp-buffer
+                                                                                                              (org-insert-time-stamp (current-time)))) "** RUNNING %T %(my/bosss-worksheet-get-project-name \"%f\")
+- %(org-link-make-string (concat (bosss-get-most-recent-deploy-directory) \"/stdout.txt\")  \"stdout.txt\")
+- PID: %(bosss-get-most-recent-pid)
+- previous calculation:
+- %?
+%i" :prepend nil) ("p" "Templates for projects") ("pt" "Project-local todo" entry (file+headline +org-capture-project-todo-file "Inbox") "* TODO %?
+%i
+%a" :prepend t) ("pn" "Project-local notes" entry (file+headline +org-capture-project-notes-file "Inbox") "* %U %?
+%i
+%a" :prepend t) ("pc" "Project-local changelog" entry (file+headline +org-capture-project-changelog-file "Unreleased") "* %U %?
+%i
+%a" :prepend t) ("o" "Centralized templates for projects") ("ot" "Project todo" entry #'+org-capture-central-project-todo-file "* TODO %?
+ %i
+ %a" :heading "Tasks" :prepend nil) ("on" "Project notes" entry #'+org-capture-central-project-notes-file "* %U %?
+ %i
+ %a" :heading "Notes" :prepend t) ("oc" "Project changelog" entry #'+org-capture-central-project-changelog-file "* %U %?
+ %i
+ %a" :heading "Changelog" :prepend t))))
 
 (map!
    :localleader
    :after org
    :map org-mode-map
+   :n "ll" #'org-insert-link
+   :n "lf" (lambda () (interactive)
+             (let ((current-prefix-arg '-)) ; simulate pressing C-u
+               (org-insert-link)))
    :n "x" (lambda () (interactive)
              (let ((current-prefix-arg '-)) ; simulate pressing C-u
                (call-interactively 'org-export-dispatch))))
+
+(map!
+ :after org
+ :map org-mode-map
+ :n "gb" 'org-mark-ring-goto)
 
 (setq org-roam-capture-templates
       '(("d" "default" plain #'org-roam-capture--get-point "%? \n %i \n %a"
@@ -301,31 +188,38 @@
          :head "#+TITLE: ${title}\n"
          :unnarrowed t)))
 
+(use-package! org-super-links
+  :after org
+  :config
+  (map! :localleader
+        :map org-mode-map
+        ("ss" #'org-super-links-link)
+        ("ls" #'org-super-links-store-link)
+        ("lS" #'org-super-links-insert-link)))
+
 (setq smerge-command-prefix "+")
 
-;; don't pop up async shell commnand buffers by default
-(add-to-list 'display-buffer-alist
-             (cons "\\*Async Shell Command\\*.*" (cons #'display-buffer-no-window nil)))
+(set-popup-rules!
+  '(("^\\*bosss\\*" :slot -1 :size 20 :select nil) ; popup bosss process buffer
+    ("^\\*Async Shell Command\\*" :slot -1 :size 20)))
 
-(after! format-all-mode
-  ;; (remhash 'c++-mode format-all--mode-table)
-  (setq +format-on-save-enabled-modes 'omnisharp-mode))
+;; TODO should not be needed
+;; (after! format-all-mode
+;;   ;; (remhash 'c++-mode format-all--mode-table)
+;;   (setq +format-on-save-enabled-modes 'omnisharp-mode))
+
 ;;; Defining some useful functions
 (defun shutdown ()
   (interactive)
+  (run-hook-with-args-until-failure 'kill-emacs-query-functions)
   (cond
-   ((system-name= "klingenberg-laptop") (async-shell-command "sudo shutdown"))
+   ((system-name= "klingenberg-laptop" "klingenberg-tablet") (async-shell-command "sudo shutdown"))
    (t (shell-command "shutdown now"))))
 
 (defun reboot ()
+  (run-hook-with-args-until-failure 'kill-emacs-query-functions)
   (interactive)
-  (async-shell-command "sudo reboot now"))
-
-(defvar browser
-  (cond
-   ;; ((system-name= "klingenberg-tablet") "next")
-   ((system-name= "klingenberg-laptop") "epiphany")
-   (t "firefox")))
+  (async-shell-command "sudo reboot"))
 
 (defun my/brightness+ ()
   (interactive)
@@ -337,21 +231,40 @@
 
 (defun my/fix-touchscreen ()
   (when (system-name= "klingenberg-tablet")
-    (shell-command "xinput --map-to-output $(xinput list --id-only \"ELAN Touchscreen\") eDP1")
-    ;; (shell-command "xinput --map-to-output $(xinput list --id-only \"HDX HDX DIGITIZER Pen (0)\") eDP1")
-    ))
+    (shell-command "xinput --map-to-output $(xinput list --id-only \"ELAN Touchscreen\") eDP-1")
+    (ignore-errors
+      (shell-command "xinput --map-to-output $(xinput list --id-only \"HDX HDX DIGITIZER Pen (0)\") eDP-1"))))
 
 (defun my/eww-open-league-table ()
-    "Do an internet search for soccer league table."
-    (interactive)
-    (let* ((country-search-string-table
-            '(("germany" "bundesliga tabelle")
-              ("spain" "la liga tabelle")
-              ("italy" "seria a tabelle")
-              ("france" "ligue 1 tabelle")
-              ("england" "premier league tabelle")))
-           (country (completing-read "which country? " (mapcar #'car country-search-string-table))))
-      (eww (cadr (assoc country country-search-string-table)))))
+  "Do an internet search for soccer league table."
+  (interactive)
+  (let* ((country-search-string-table
+          '(("germany" "bundesliga tabelle")
+            ("spain" "la liga tabelle")
+            ("italy" "seria a tabelle")
+            ("france" "ligue 1 tabelle")
+            ("england" "premier league table")
+            ("england 2nd tier" "english championship table")))
+         (country (completing-read "which country? " (mapcar #'car country-search-string-table))))
+    (eww (cadr (assoc country country-search-string-table)))))
+
+(defun my/make-alert (time mesg)
+  (run-at-time
+   time
+   nil
+   (lambda ()
+     (let ((ans (y-or-n-p (concat "Reminder: " mesg " Dismiss reminder (y) or remind again in 30 seconds (n)?"))))
+       (unless ans
+         (my/make-alert 30 mesg)))))
+  (message "Made alert for %s at %s" mesg time))
+
+(defun eshell/nonguixupdate ()
+  (shell-command "nix-channel --update")
+  (shell-command "nix-env -u")
+  (shell-command "flatpak --user update"))
+
+(after! bash-completion
+  (setq bash-completion-nospace t))     ; TODO does not have any effect
 
 (use-package! async-await)
 ;; adapted from snippet by oremacs
@@ -382,10 +295,11 @@
       (concat "-o " download-dir "%\\(title\\)s%\\(id\\)s")
       (concat "\"" str "\""))
      (lambda (_ _)
-       (helm-open-file-with-default-tool (car (directory-files
-                                               "~/Videos/"
-                                               ;; download-dir
-                                               t str)))))))
+       (helm-open-file-with-default-tool
+        (car (directory-files
+              "~/Videos/"
+              ;; download-dir
+              t str)))))))
 
 (defun fdy-mount (source target)
   "Mount a directory from fdy windows remote server."
@@ -395,25 +309,69 @@
                         " "
                         target
                         " -t cifs -o username=klingenberg,noexec,uid=klingenberg")))
-(defun my/close-buffer ()
-  (interactive)
-  (unless (equalp (buffer-name) "*scratch*")
-    (kill-this-buffer))
-  (when (< 1 (length (window-list)))
-    (evil-window-delete)))
 
-(defun qmount (location)
+(defun qmount ()
   "Shortcuts for mounting frequent locations,"
   (interactive)
-  (apply #'fdy-mount
-         (cond ((string= location "lectures") '("misc/fdy-lectures.git" "~/git/mnt/fdy-lectures.git"))
-               ((string= location "klausuren") '("lehre/TM1/Klausuren.git" "~/git/mnt/Klausuren.git"))
-               ((string= location "bosss") '("bosss/users/klingenberg/root.git" "~/git/mnt/bosss.git"))
-               ((string= location "publications") '("misc/fdy-publications.git" "~/git/mnt/fdy-publications.git"))
-               ((string= location "misc") '("misc" "~/misc"))
-               ((string= location "scratch") '("scratch" "~/scratch"))
-               ((string= location "backup") '("backup" "~/backup"))
-               ((string= location "lehre") '("lehre" "~/lehre")))))
+  (let*
+      ((mount-options
+        '((lectures . ("misc/fdy-lectures.git" "~/git/mnt/fdy-lectures.git"))
+          (klausuren . ("lehre/TM1/Klausuren.git" "~/git/mnt/Klausuren.git"))
+          (bosss . ("bosss/users/klingenberg/root.git" "~/git/mnt/bosss.git"))
+          (publications . ("misc/fdy-publications.git" "~/git/mnt/fdy-publications.git"))
+          (misc . ("misc" "~/misc"))
+          (scratch . ("scratch" "~/scratch"))
+          (backup . ("backup" "~/backup"))
+          (lehre . ("lehre" "~/lehre"))))
+       (location (intern
+                  (completing-read
+                   "What to mount"
+                   (mapcar #'car mount-options)))))
+    (apply #'fdy-mount (alist-get location mount-options))))
+
+(defun my/close-buffer ()
+  (interactive)
+  ;; (unless (equalp (buffer-name) "*scratch*")
+  ;;   (kill-this-buffer))
+  (if (< 1 (length (window-list)))
+      (evil-window-delete)
+    (stump/window-close)))
+
+(defun my/run-command-ssh (server &rest cmds)
+  "Run COMMAND on SERVER, assumes that you set it up properly"
+  (async-shell-command (concat "ssh " server " '" (mapconcat 'identity cmds "; ")"'")))
+
+(defun stump/move-focus (direction)
+  (with-current-buffer "*scratch*"
+      (shell-command-to-string (format "stumpish eval \\\(move-focus :%s\\\)" direction))))
+
+(defun stump/emacs-window-right ()
+  (interactive)
+  (condition-case nil
+      (evil-window-right 1)
+    (error (stump/move-focus "right"))))
+
+(defun stump/emacs-window-left ()
+  (interactive)
+  (condition-case nil
+      (evil-window-left 1)
+    (error (stump/move-focus "left"))))
+
+(defun stump/emacs-window-up ()
+  (interactive)
+  (condition-case nil
+      (evil-window-up 1)
+    (error (stump/move-focus "up"))))
+
+(defun stump/emacs-window-down ()
+  (interactive)
+  (condition-case nil
+      (evil-window-down 1)
+    (error (stump/move-focus "down"))))
+
+(defun stump/window-close ()
+  (with-current-buffer "*scratch*"
+      (shell-command-to-string "stumpish delete")))
 
 (defun my/create-super-bindings ()
   "Create bindings starting with super for use outside exwm."
@@ -422,14 +380,10 @@
    ;; :states '(insert emacs hybrid normal visual motion operator replace)
    "s-w" '(other-window :which-key "other window")
    "s-d" 'dmenu
-   "s-x" 'helm-M-x
-   "s-f" 'helm-find-files
-   "s-p" 'helm-projectile
-   "s-b" 'helm-mini
-   "s-l" 'evil-window-right
-   "s-h" 'evil-window-left
-   "s-j" 'evil-window-down
-   "s-k" 'evil-window-up
+   "s-l" 'stump/emacs-window-right
+   "s-h" 'stump/emacs-window-left
+   "s-j" 'stump/emacs-window-down
+   "s-k" 'stump/emacs-window-up
    "s-L" 'enlarge-window-horizontally
    "s-H" 'shrink-window-horizontally
    "s-J" 'enlarge-window
@@ -439,28 +393,34 @@
    "s-c" 'my/close-buffer
    "s-q" 'my/get-rid-of-mouse
    "s-m" 'delete-other-windows
-   "s-n" 'my/plover-activate
-   "s-N" 'my/plover-deactivate
+   "s-g" 'guix
    "s-<f1>" '(lambda () (interactive) (eshell 'N))
    "C-s-<f1>" 'eshell
    "s-<f2>" '(lambda () (interactive)
-               (start-process "" nil browser))
+               (funcall browse-url-browser-function "" "-new-tab"))
    "s-<f3>" 'deer
    "s-<f4>" '(lambda () (interactive)
                (mu4e))
    "s-<f12>" '(lambda () (interactive)
-                (start-process "" nil "/usr/bin/slock"))))
+                (start-process "" nil "/usr/bin/slock")))
+  (when t
+    (map!
+     :n
+     "s-x" 'counsel-M-x
+     "s-f" 'counsel-find-file
+     "s-p" 'counsel-projectile
+     "s-b" 'ivy-switch-buffer
+     "s-P" 'ivy-pass))
+  (when nil
+    (map!
+     :n
+     "s-x" 'helm-M-x
+     "s-f" 'helm-find-files
+     "s-p" 'helm-projectile
+     "s-b" 'helm-mini
+     "s-P" 'helm-pass)))
 
 (my/create-super-bindings)
-
-;; (use-package! mu4e-conversation)
-
-;; (global-mu4e-conversation-mode)
-
-;; disable mu4e-org
-;; (remove-hook 'message-send-hook #'doom--setq-org-mu4e-convert-to-html-for-message-send-h)
-;; (remove-hook 'mu4e-compose-mode-hook #'org-mu4e-compose-org-mode)
-;; (setq org-mu4e-convert-to-html nil)
 
 (defun my/mu4e-set-account ()
   "Set the account for composing a message."
@@ -484,11 +444,7 @@
 ;; ask for account when composing mail
 (add-hook 'mu4e-compose-pre-hook 'my/mu4e-set-account)
 
-(setq my/mu4e-account-alist
-      '(("fdy"
-         (mu4e-sent-messages-behavior sent)
-         (mu4e-compose-signature-auto-include t)
-         (mu4e-compose-signature
+(setq fdy-signature
           "Technische Universität Darmstadt
 Dario Klingenberg, M.Sc.
 Fachgebiet für Strömungsdynamik
@@ -500,18 +456,10 @@ Otto-Berndt-Straße 2 (L1|01 322)
 E-Mail: klingenberg@fdy.tu-darmstadt.de
 Telefon: +49 6151 16-26207
 Fax: +49 6151 16-26203
-Web: http://www.fdy.tu-darmstadt.de")
-         (mu4e-sent-folder "/fdy/Sent Items")
-         (mu4e-drafts-folder "/fdy/Drafts")
-         (smtpmail-smtp-server "smtp.tu-darmstadt.de")
-         (smtpmail-smtp-service 465)
-         (smtpmail-stream-type ssl)
-         (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
-         (user-full-name "Dario Klingenberg"))
-        ("gsc"
-         (mu4e-sent-messages-behavior sent)
-         (mu4e-compose-signature-auto-include t)
-         (mu4e-compose-signature
+Web: https://www.fdy.tu-darmstadt.de
+")
+
+(setq gsc-signature
           "Technische Universität Darmstadt
 Dario Klingenberg, M.Sc.
 Graduate School Computational Engineering
@@ -521,7 +469,35 @@ Dolivostraße 15
 E-Mail: klingenberg@gsc.tu-darmstadt.de
 Telefon: +49 6151 16-24381
 Fax: +49 6151 16-24404
-Web: http://www.gsc.ce.tu-darmstadt.de/")
+Web: https://www.gsc.ce.tu-darmstadt.de/
+")
+
+(setq my/mu4e-account-alist
+      `(("fdy"
+         (mu4e-sent-messages-behavior sent)
+         ;; (mu4e-compose-signature-auto-include nil)
+         (mu4e-compose-signature ,fdy-signature)
+         ;; (org-msg-signature
+;;           ,(concat
+;;            "#+begin_signature
+;; --" fdy-signature "
+;; #+end_signature"))
+         (mu4e-sent-folder "/fdy/Sent Items")
+         (mu4e-drafts-folder "/fdy/Drafts")
+         (smtpmail-smtp-server "smtp.tu-darmstadt.de")
+         (smtpmail-smtp-service 465)
+         (smtpmail-stream-type ssl)
+         (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
+         (user-full-name "Dario Klingenberg"))
+        ("gsc"
+         (mu4e-sent-messages-behavior sent)
+         ;; (mu4e-compose-signature-auto-include nil)
+         (mu4e-compose-signature ,gsc-signature)
+         ;; (org-msg-signature
+;;           ,(concat
+;;             "#+begin_signature
+;; --" gsc-signature "
+;; #+end_signature"))
          (mu4e-sent-folder "/gsc/Sent Items")
          (mu4e-drafts-folder "/gsc/Drafts")
          (smtpmail-smtp-server "smtp.tu-darmstadt.de")
@@ -532,24 +508,28 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
         ("gmail"
          ;; Under each account, set the account-specific variables you want.
          (mu4e-sent-messages-behavior delete)
-         (mu4e-compose-signature-auto-include nil)
+         ;; (mu4e-compose-signature-auto-include nil)
          (mu4e-sent-folder "/gmail/sent")
          (mu4e-drafts-folder "/gmail/Drafts")
          (user-mail-address "dario.klingenberg@gmail.com")
          (smtpmail-smtp-server "smtp.gmail.com")
          (smtpmail-smtp-service 465)
          (smtpmail-stream-type ssl)
-         (user-full-name "Dario Klingenberg"))
+         (user-full-name "Dario Klingenberg")
+         ;; (org-msg-signature nil)
+         )
         ("web"
          (mu4e-sent-messages-behavior sent)
-         (mu4e-compose-signature-auto-include nil)
+         ;; (mu4e-compose-signature-auto-include nil)
          (mu4e-sent-folder "/web/Sent Items")
          (mu4e-drafts-folder "/web/Drafts")
          (smtpmail-smtp-server "smtp.web.de")
          (smtpmail-smtp-service 587)
          (smtpmail-stream-type starttls)
          (user-mail-address "dario.klingenberg@web.de")
-         (user-full-name "dario"))))
+         (user-full-name "dario")
+         ;; (org-msg-signature nil)
+         )))
 
 ;; taken from reddit
 (use-package! mu4e-alert
@@ -565,25 +545,51 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
    :continue t))
 
 (after! mu4e
+  (setq shr-use-colors nil)
+  (setq message-subject-re-regexp
+        (concat
+         "^[ \t]*"
+         "\\("
+         "\\("
+         "[Aa][Nn][Tt][Ww]\\.?\\|"     ; antw
+         "[Aa][Ww]\\|"                 ; aw
+         "[Ff][Ww][Dd]?\\|"            ; fwd
+         "[Ww][Gg]?\\|"                ; wg
+         "[Rr][Ee]\\|"                 ; re
+         "[Rr][\311\351][Ff]\\.?\\|"   ; ref
+         "\\)"
+         "\\(\\[[0-9]*\\]\\)"
+         "*:[ \t]*"
+         "\\)"
+         "*[ \t]*"
+         ))
+  (remove-hook 'mu4e-compose-pre-hook 'org-msg-mode)
+  (setq mu4e-get-mail-command (format "INSIDE_EMACS=%s mbsync -a" emacs-version))
   (setq mu4e-update-interval 120)
   (setq mu4e-compose-signature-auto-include t)
   (setq mu4e-enable-notifications t)
   (customize-set-variable 'mu4e-headers-leave-behavior 'apply)
   (setq mu4e-view-use-gnus t)
+  (add-hook 'mu4e-compose-mode-hook 'mml-secure-sign-pgpmime)
+  ;; (add-hook 'org-msg-edit-mode-hook 'mml-secure-sign-pgpmime)
+  (setq mml-secure-message-openpgp-sign-with-sender t)
   (require 'mu4e-icalendar)
   (mu4e-icalendar-setup)
-  ;; (progn
-  ;;   ;; For org-mu4e-compose-mode
-  ;;   (add-hook 'org-mode-hook
-  ;;             #'evil-collection-mu4e-org-set-header-to-normal-mode)
-  ;;   (add-hook 'mu4e-compose-pre-hook
-  ;;             #'evil-collection-mu4e-org-set-header-to-insert-mode))
+  (require 'org-agenda)
+  (setq gnus-icalendar-org-capture-file "~/org/notes.org")
+  (setq gnus-icalendar-org-capture-headline '("Inbox"))
+  (gnus-icalendar-org-setup)
+;;;    org-msg
+  ;; (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
+  ;;       ;; org-msg-startup "hidestars indent inlineimages"
+  ;;       ;; org-msg-greeting-fmt "Hallo %s,\n\n\n"
+  ;;       org-msg-default-alternatives '(html text))
   )
 
 ;; keybindings
 ;;
 ;; alternative leader for exwm
-(setq doom-leader-alt-key "s-SPC")
+;; (setq doom-leader-alt-key "s-SPC")
 
 (setq doom-localleader-key "-")
 
@@ -594,9 +600,7 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
       "++" #'+popup/toggle
       "+ RET" #'+popup/other
       "lm" #'bookmark-set
-      "ll" #'bookmark-jump
       "er" #'eval-expression
-      "ss" #'helm-swoop
       "SS" #'shutdown
       "SR" #'reboot
       "w TAB" #'evil-switch-to-windows-last-buffer)
@@ -609,6 +613,14 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 (map! :leader :map (elisp)
       "ef" #'eval-defun
       "ep" #'eval-print-last-sexp)
+
+;; outline-minor-mode messes with some of my lispy bindings
+;; (remove-hook! 'emacs-lisp-mode-hook #'outline-minor-mode)
+(map! :map outline-minor-mode-map       ;TODO check if this messes up other situtations
+      "M-j" nil
+      "M-k" nil
+      "M-h" nil
+      "M-l" nil)
 
 (after!
   lispy
@@ -652,13 +664,16 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 (use-package! geiser
   :commands (run-geiser)
   :config
-  (with-eval-after-load 'geiser-guile
-    (add-to-list 'geiser-guile-load-path "~/src/guix"))
+  ;; (with-eval-after-load 'geiser-guile
+  ;;   (add-to-list 'geiser-guile-load-path "~/guix"))
   (with-eval-after-load 'yasnippet
-    (add-to-list 'yas-snippet-dirs "~/src/guix/etc/snippets"))
+    (add-to-list 'yas-snippet-dirs "~/guix/etc/snippets"))
+
+  ;; (advice-add 'geiser-impl--set-buffer-implementation :after #'guix-geiser--set-project)
+  ;; HACK END
   (setq flycheck-scheme-chicken-executable "chicken-csc")
   (setq geiser-chicken-binary "chicken-csi")
-  (setq geiser-active-implementations '(chicken))
+  (setq geiser-active-implementations '(guile chicken))
   (map!
    :localleader
    :map scheme-mode-map
@@ -669,7 +684,13 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
 
 ;; latex
 (setq +latex-viewers '(pdf-tools))
-(setq reftex-default-bibliography "~/Documents/programming/latex_macros/bibliography.bib")
+(setq reftex-default-bibliography
+      (cond
+       ((system-name= "klingenberg-tablet") "~/Documents-work/conferences/latex_macros/bibliography.bib")
+       ((system-name= "klingenberg-pc") "~/Documents/conferences/latex_macros/bibliography.bib")))
+
+(add-hook! (TeX-mode-hook LaTeX-mode-hook) #'auto-fill-mode)
+
 (map!
  :localleader
  :map (TeX-mode-map LaTeX-mode-map)
@@ -695,14 +716,25 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
  "rt" #'reftex-toc
  "rr" #'reftex-cleveref-cref
  "rc" #'reftex-citation
- "ol" (lambda () (interactive) (find-file "definLocal.tex"))
  "og" (lambda () (interactive) (find-file (getenv "LatexGlobalConfig")))
- "ob" (lambda () (interactive) (find-file "bibliography.bib")))
+ "ob" (lambda () (interactive) (find-file reftex-default-bibliography)))
 
 (use-package! evil-tex
   :after-call LaTeX-mode-hook
   :config
   (add-hook 'LaTeX-mode-hook #'evil-tex-mode))
+
+;; octave
+(setq auto-mode-alist
+      (cons '("\\.m$" . octave-mode) auto-mode-alist))
+
+(map! :localleader
+      :map octave-mode-map
+      "el" #'octave-send-line
+      "ef" #'octave-send-defun
+      "eb" #'octave-send-block
+      "er" #'octave-send-region
+      "ee" #'octave-send-buffer)
 
 ;; f#
 (map! :localleader
@@ -717,12 +749,46 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
       :n "cc" #'recompile)
 
 ;;c#
+;; (after! lsp
+;;   (progn
+;;     (let ((version "v1.37.4"))
+;;      (defun my/create-lsp-custom-executable ()
+;;        "Modify the omnisharp-server run-script as needed for Guix"
+;;        (when (system-name= "klingenberg-tablet")
+;;          (with-temp-file (concat (lsp-csharp--server-dir version) "/run-custom")
+;;            (goto-char (point-min))
+;;            (insert-file-contents (lsp-csharp--server-bin version))
+;;            (search-forward "mono_cmd")
+;;            (kill-line)
+;;            (insert "=mono"))))
+;;      (my/create-lsp-custom-executable)
+;;      (cond
+;;       ((system-name= "klingenberg-pi")
+;;        (setq omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
+;;       ((system-name= "klingenberg-tablet")
+;;        ;; (setq omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp/")
+;;        (setq lsp-csharp-server-path (concat (lsp-csharp--server-dir version) "/run-custom")))))))
 
-(cond
- ((system-name= "klingenberg-pi")
-  (setq omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
- ((system-name= "klingenberg-tablet")
-  (setq omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp")))
+;; (after! omnisharp
+;;   (progn
+;;     (defun my/create-omnisharp-custom-executable ()
+;;       "Modify the omnisharp-server run-script as needed for Guix"
+;;       (when (system-name= "klingenberg-tablet")
+;;         (with-temp-file (concat (omnisharp--server-installation-dir) "/run-custom")
+;;           (goto-char (point-min))
+;;           (insert-file-contents (omnisharp--server-installation-path))
+;;           (search-forward "mono_cmd")
+;;           (kill-line)
+;;           (insert "=mono"))))
+;;     (my/create-omnisharp-custom-executable)
+;;     (cond
+;;      ((system-name= "klingenberg-pi")
+;;       (setq omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
+;;      ((system-name= "klingenberg-tablet")
+;;       ;; (setq omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp/")
+;;       (setq omnisharp-server-executable-path (concat (omnisharp--server-installation-dir) "/run-custom"))
+;;       ;; (setq omnisharp-server-executable-path nil)
+;;       ))))
 
 (defun my/csharp-list-to-array ()
   (replace-regexp "List<\\(.*\\)>" "\\1[]"
@@ -749,17 +815,23 @@ Web: http://www.gsc.ce.tu-darmstadt.de/")
              (my/csharp-array-to-list))
             (t (message "neither array nor string found on current line"))))))
 
-;; (use-package! csharp-repl
-;;   :load-path "~/Documents/programming/elisp/emacs-csharp-repl/")
+(use-package! csharp-repl
+  :when (system-name= "klingenberg-tablet" "klingenberg-pc")
+  :load-path "~/Documents/programming/elisp/emacs-csharp-repl/")
 
 (defun my/personal-bosss-file-p ()
   (and (buffer-file-name)
-       (file-in-directory-p (buffer-file-name) "~/BoSSS-experimental/internal/src/private-kli/")))
+       (cl-search "private-kli" (buffer-file-name))))
+
+(defun my/personal-bosss-control-file-p ()
+  (and (buffer-file-name)
+       (my/personal-bosss-file-p)
+       (cl-search "Controlfiles" (buffer-file-name))))
 
 (defun my/bosss-file-p ()
   (or
    (and (buffer-file-name)
-        (file-in-directory-p (buffer-file-name) "~/BoSSS/"))
+        (file-in-directory-p (buffer-file-name) "~/BoSSS-experimental/"))
    (my/personal-bosss-file-p)))
 
 (defun my/add-header ()
@@ -790,18 +862,22 @@ limitations under the License.
                     (derived-mode-p #'bosss-mode)) ; check if this is just a worksheet
           (princ header-text (current-buffer)))))))
 
+;; (defun my/omnisharp-code-format-entire-file ()
+;;   (when (and (my/personal-bosss-file-p) (not (my/personal-bosss-control-file-p)))
+;;     (omnisharp-code-format-entire-file)))
+
 (defun my/format-on-save-enable ()
   "Code-format the entire buffen on save."
   (interactive)
-  (if (my/personal-bosss-file-p)
-      ;; (format-all-mode 1)               ; not really necessary
-      (add-hook 'before-save-hook #'omnisharp-code-format-entire-file)
-    (format-all-mode -1)))
+  (format-all-mode -1)
+  ;; (add-hook 'before-save-hook #'my/omnisharp-code-format-entire-file)
+  )
 
 (defun my/format-on-save-disable ()
   "Disable Code-formatting of the entire buffen on save."
   (interactive)
-  (remove-hook 'before-save-hook #'omnisharp-code-format-entire-file)
+  ;; (remove-hook 'before-save-hook #'my/omnisharp-code-format-entire-file)
+  ;; (remove-hook 'before-save-hook #'omnisharp-code-format-entire-file)
   (format-all-mode -1))
 
 (defun my/indent-buffer-without-bosss-header ()
@@ -861,12 +937,35 @@ limitations under the License.
   (interactive)
   (async-shell-command (concat "nunit3-console " path-to-assembly)))
 
-(add-hook 'csharp-mode-hook (lambda ()
-                              (push '(?< . ("< " . " >")) evil-surround-pairs-alist)))
+(defun my/bosss-worksheet-get-project-name (file)
+  "In a BoSSS worksheet FILE, obtain the project name of the current calculation. Warning: This function is not very sophisticated."
+  (save-excursion
+    (progn
+      (find-file file)
+      (goto-char (point-min))
+      (when
+          (search-forward-regexp "^string ProjName = " nil t)
+        (end-of-line)
+        (backward-word)
+        (thing-at-point 'word t)))))
+
+(defun my/scancel-lichtenberg ()
+  "Scancel (kill) process with pid on lichtenberg, assumes that pid is (thing-at-point)."
+  (interactive)
+  (let ((sid (thing-at-point 'word t)))
+    (my/run-command-ssh "lcluster" (concat "scancel " sid))))
+
+(defun my/squeue-lichtenberg ()
+  "List process state on lichtenberg."
+  (interactive)
+  (my/run-command-ssh "lcluster" "squeue" "sacct --format=\"JobID,JobName%30,State\" | grep RUNNING"))
+
 (add-hook 'csharp-mode-hook #'my/add-header)
-(add-hook 'csharp-mode-hook #'my/format-on-save-enable)
+(add-hook 'csharp-mode-hook #'my/format-on-save-disable)
+;; (add-hook 'omnisharp-mode-hook #'my/omnisharp-code-format-entire-file)
 
 (setq bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
+
 (defun my/csharp-find-current-project ()
   "Find the closest csproj file relative to the current directory."
   (cl-labels
@@ -881,13 +980,12 @@ limitations under the License.
               (t (iter (concat dir "/../")))))) ; if there is no .csproj file, look one directory higher
     (iter (file-name-directory (buffer-file-name)))))
 
-
 (map!
  :localleader
  :map csharp-mode-map
- "cd" (lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " (my/csharp-find-current-project))))
- "cr" (lambda () (interactive) (compile (concat "msbuild /p:Configuration=Release " bosss-master-solution)))
- "ce" (lambda () (interactive) (compile (concat "msbuild /p:Configuration=Debug " bosss-master-solution)))
+ "cd" (lambda () (interactive) (compile (concat "msbuild /p:WarningLevel=0 /p:Configuration=Debug " (my/csharp-find-current-project))))
+ "cr" (lambda () (interactive) (compile (concat "msbuild /p:WarningLevel=0 /p:Configuration=Release " bosss-master-solution)))
+ "ce" (lambda () (interactive) (compile (concat "msbuild /p:WarningLevel=0 /p:Configuration=Debug " bosss-master-solution)))
  ;; "cc" #'recompile
  "=" #'my/indent-buffer-without-bosss-header
  "et" (lambda () (interactive) (my/run-tests (my/csharp-find-current-project)))
@@ -897,30 +995,39 @@ limitations under the License.
  "eb" #'csharp-repl-send-buffer)
 
 ;; bosss
-;; (use-package! bosss
-;;   :load-path "~/Documents/programming/elisp/emacs-bosss/"
-;;   :init
-;;   (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
-;;   (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Release/BoSSSpad.exe")
-;;   (setq bosss-path-reference (mapcar (lambda (proj) (concat "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/" proj))
-;;                                      '("RANSCommon/bin/Release/RANS_Solver.dll"
-;;                                        "KOmegaModelSolver/bin/Release/KOmegaSolver.exe"
-;;                                        "KOmegaStatSymmModelSolver/bin/Release/KOmegaSSSolver.exe"
-;;                                        "TurbulenceModelParameterOptimization/bin/Release/ParameterOptimization.exe")))
-;;   :config
-;;   (map!
-;;    :localleader
-;;    :map bosss-mode-map
-;;    "j" '(bosss-next-field :which-key "next field")
-;;    "k" '(bosss-previous-field :which-key "previous field")
-;;    "ro" '(run-bosss-repl-other-window :which-key "start repl in other window")
-;;    "rn" '(bosss-repl-start-bosss-pad :which-key "run bossspad")
-;;    "ef" '(bosss-repl-send-current-field :which-key "send region to repl")
-;;    "ee" '(bosss-repl-send-region :which-key "send region to repl")
-;;    "eb" '(bosss-repl-send-buffer :which-key "send buffer to repl")
-;;    "en" '(bosss-eval-and-next-field :which-key "eval and next field")
-;;    "lp" '(bosss-repl-load-my-assembly :which-key "load my assembly")
-;;    "in" '(bosss-create-new-field :which-key "create new input field")))
+(use-package! bosss
+  :when (system-name= "klingenberg-tablet" "klingenberg-pc")
+  :load-path "~/Documents/programming/elisp/emacs-bosss/"
+  :init
+  (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
+  (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Release/BoSSSpad.exe")
+  (setq bosss-path-reference (mapcar (lambda (proj) (concat "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/" proj))
+                                     '("RANSCommon/bin/Release/RANS_Solver.dll"
+                                       "KOmegaModelSolver/bin/Release/KOmegaSolver.exe"
+                                       ;; "KOmegaStatSymmModelSolver/bin/Release/KOmegaSSSolver.exe"
+                                       "TurbulenceModelParameterOptimization/bin/Release/ParameterOptimization.exe")))
+  :config
+  (map! :map bosss-mode-map
+        :n "M-j" '(bosss-next-field :which-key "next field")
+        :n "M-k" '(bosss-previous-field :which-key "previous field"))
+  (map!
+   :localleader
+   :map #'bosss-mode-map
+   :n "ro" #'run-bosss-repl-other-window
+   :n "rq" #'bosss-repl-quit
+   :n "R"  #'run-bosss-repl-other-window
+   :n "rn" #'bosss-repl-start-bosss-pad
+   :n "ef" #'bosss-repl-send-current-field
+   :n "ee" #'bosss-repl-send-region
+   :n "eb" #'bosss-repl-send-buffer
+   :n "en" #'bosss-eval-and-next-field
+   :n "lp" #'bosss-repl-load-my-assembly
+   :n "in" #'bosss-create-new-field))
+
+;; org-kanban
+(use-package! kanban
+  :unless (system-name= "klingenberg-pc" "klingenberg-pi" "hla0001" "hla0002" "hla0003" "hla0004")
+  :load-path  "~/Documents/programming/elisp/kanban.el/")
 
 (map! :map company-mode-map
       :i "M-l" #'company-complete-selection
@@ -931,18 +1038,45 @@ limitations under the License.
  :after evil-snipe
  :v "s" #'evil-surround-region)
 
+(after! ivy
+  (setq ivy-extra-directories nil)
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-use-selectable-prompt t)
+  (setq counsel-find-file-at-point t)
+  (map!
+   :map ivy-minibuffer-map
+   "M-j" #'ivy-next-line
+   "M-k" #'ivy-previous-line
+   "M-h" #'ivy-backward-delete-char
+   "M-l" #'ivy-alt-done
+   "M-H" #'left-char
+   "M-L" #'right-char)
+  (map!
+   :map counsel-find-file-map
+   :ni "DEL" #'backward-delete-char
+   "M-s" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-as-root))
+   "M-y" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-copy))
+   "M-r" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-move))
+   "M-D" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-delete))
+   "M-RET" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-extern))))
+
 (use-package! helm
+  :when (featurep 'helm)
   :diminish helm-mode
   :config
+  (map!
+   :map doom-leader-buffer-map
+   "b" #'helm-mini)
   (map!
    :map helm-map
    "M-j" #'helm-next-line
    "M-k" #'helm-previous-line
    "M-h" #'helm-find-files-up-one-level
    "M-l" #'helm-execute-persistent-action
+   "M-w" #'helm-select-action
    "M-H" #'left-char
    "M-L" #'right-char
-   "M-SPC" #'helm-toggle-visible-mark-forward)
+   "M-TAB" #'helm-toggle-visible-mark-forward)
   (map!
    :map helm-find-files-map
    "M-l" #'helm-ff-RET
@@ -950,77 +1084,68 @@ limitations under the License.
    "M-y" #'helm-ff-run-copy-file
    "M-r" #'helm-ff-run-rename-file
    "M-s" #'helm-ff-run-find-file-as-root
+   "M--" #'helm-ff-run-marked-files-in-dired
    "M-o" #'helm-ff-run-switch-other-window
    "M-O" #'helm-ff-run-switch-other-frame
    "M-RET" #'helm-ff-run-open-file-with-default-tool)
   (map!
    :map helm-buffer-map
    "M-d" #'helm-buffer-run-kill-persistent)
-  (setq completion-styles `(basic partial-completion emacs22 initials
-                                  ,(if (version<= emacs-version "27.0") 'helm-flex 'flex)))
-  (setq helm-mode-fuzzy-match t)
-  (setq helm-completion-in-region-fuzzy-match t)
-  (setq helm-M-x-fuzzy-match t)
-  (setq helm-buffers-fuzzy-matching t)
-  (setq helm-completion-in-region-fuzzy-match t)
-  (setq helm-file-cache-fuzzy-match t)
-  (setq helm-imenu-fuzzy-match t)
-  (setq helm-mode-fuzzy-match t)
-  (setq helm-locate-fuzzy-match t)
-  (setq helm-quick-update t)
-  (setq helm-recentf-fuzzy-match t))
+  ;; TODO check if this is needed with doom
+  ;; (setq completion-styles `(basic partial-completion emacs22 initials
+  ;;                                 ,(if (version<= emacs-version "27.0") 'helm-flex 'flex)))
+  ;; (setq helm-mode-fuzzy-match t)
+  ;; (setq helm-completion-in-region-fuzzy-match t)
+  ;; (setq helm-M-x-fuzzy-match t)
+  ;; (setq helm-buffers-fuzzy-matching t)
+  ;; (setq helm-completion-in-region-fuzzy-match t)
+  ;; (setq helm-file-cache-fuzzy-match t)
+  ;; (setq helm-imenu-fuzzy-match t)
+  ;; (setq helm-mode-fuzzy-match t)
+  ;; (setq helm-locate-fuzzy-match t)
+  ;; (setq helm-quick-update t)
+  ;; (setq helm-recentf-fuzzy-match t)
+  ;; END TODO check if this is needed with doom
+  )
 
 (use-package! helm-swoop
+  :when (featurep 'helm)
   :after-call helm-mode-hook
   :config
-  (define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-current-mode-from-helm-swoop))
+  (setq helm-swoop-pre-input-function (lambda () (car evil-ex-search-pattern)))
+  (map!
+   :map
+   helm-swoop-map
+   "M-i" #'helm-multi-swoop-current-mode-from-helm-swoop))
 
-(use-package! org-roam-server
-  :after-call org-roam-mode-hook
-  :config
-  (map! :map doom-leader-notes-map
-        "rg" (lambda () (interactive) (org-roam-server-mode 1) (browse-url-firefox "127.0.0.1:8080")))
-  (setq org-roam-server-host "127.0.0.1"
-        org-roam-server-port 8080
-        org-roam-server-export-inline-images t
-        org-roam-server-authenticate nil
-        org-roam-server-label-truncate t
-        org-roam-server-label-truncate-length 60
-        org-roam-server-label-wrap-length 20))
-
-(use-package! smooth-scrolling
-  :config
-  (smooth-scrolling-mode 1))
-
-;; (use-package! mini-modeline
-;;   :after doom-modeline
+;; TODO check if this is needed with doom
+;; (use-package! org-roam-server
+;;   :after-call org-roam-mode-hook
 ;;   :config
-;;   (defun my-setup-mini-modeline()
-;;     (add-hook 'minibuffer-inactive-mode-hook
-;;               (lambda ()
-;;                 (make-local-variable 'face-remapping-alist)
-;;                 (add-to-list 'face-remapping-alist '(default (:background "#21252b")))))
-;;     (doom-modeline-def-modeline 'minibuffer-line
-;;       '(modals workspace-name window-number matches buffer-info remote-host buffer-position word-count selection-info)
-;;       '(misc-info major-mode process vcs lsp checker " \n"))
-;;     (setq mini-modeline-l-format '(:eval (doom-modeline-format--minibuffer-line))))
-;;   (add-hook 'mini-modeline-mode-hook 'my-setup-mini-modeline)
-;;   (add-hook 'after-init-hook 'mini-modeline-mode))
+;;   (map! :map doom-leader-notes-map
+;;         "rg" (lambda () (interactive) (org-roam-server-mode 1) (browse-url-firefox "127.0.0.1:8080")))
+;;   (setq org-roam-server-host "127.0.0.1"
+;;         org-roam-server-port 8080
+;;         org-roam-server-export-inline-images t
+;;         org-roam-server-authenticate nil
+;;         org-roam-server-label-truncate t
+;;         org-roam-server-label-truncate-length 60
+;;         org-roam-server-label-wrap-length 20))
+;; END TODO check if this is needed with doom
 
-(use-package! pulseaudio-control
-  :custom
-  (pulseaudio-control-volume-step "5%")
-  :config
-  (setq pulseaudio-control--volume-maximum '(("percent" . 110)
-                                             ("decibels" . 2.5)
-                                             ("raw" . 72000))))
+;; (use-package! edit-server
+;;   :config (edit-server-start))
+
 (use-package! pdf-tools
   :config
+  (add-hook 'pdf-view-mode-hook 'pdf-view-auto-slice-minor-mode)
   (add-hook 'pdf-view-mode-hook 'pdf-view-midnight-minor-mode)
   (evil-collection-init 'pdf)
   (setq pdf-view-midnight-colors '("WhiteSmoke" . "gray16"))
   (map!
    :map pdf-view-mode-map
+   :n "J" #'pdf-view-next-page
+   :n "K" #'pdf-view-previous-page
    :n "-" nil)
   (map!
    :localleader
@@ -1029,6 +1154,14 @@ limitations under the License.
    "ah" #'pdf-annot-add-highlight-markup-annotation
    "ao" #'pdf-annot-add-strikeout-markup-annotation
    "aD" #'pdf-annot-delete))
+
+(use-package! pulseaudio-control
+  :custom
+  (pulseaudio-control-volume-step "5%")
+  :config
+  (setq pulseaudio-control--volume-maximum '(("percent" . 110)
+                                             ("decibels" . 2.5)
+                                             ("raw" . 72000))))
 
 (use-package! telega
   :commands telega
@@ -1046,9 +1179,11 @@ limitations under the License.
           ("https://liebling-bosman.podigee.io/feed/mp3" podcast liebling bosman fussball)
           ("https://tribuenengespraech.podigee.io/feed/vorbis" podcast rasenfunk tribünengespräch fussball)
           ("https://feeds.feedburner.com/hacks-on-tap" podcast hacks on tap politics)
+          ("https://lexfridman.com/feed/podcast" podcast lex friedman)
           ("https://ambrevar.xyz/atom.xml" blog emacs programming)
           ("https://nyxt.atlas.engineer/feed" lisp programming nyxt next)
           ("https://guix.gnu.org/feeds/blog/arm.atom" lisp programming guix blog)
+          ("https://www.kernel.org/feeds/kdist.xml" linux kernel updates)
           ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
           ("http://www.reddit.com/r/DoomEmacs/.rss" emacs reddit)
           ("http://www.reddit.com/r/lisp/.rss" programming reddit)
@@ -1058,6 +1193,7 @@ limitations under the License.
           ("http://www.reddit.com/r/archlinux/.rss" programming reddit)
           ("http://www.reddit.com/r/nixos/.rss" programming reddit)
           ("http://www.reddit.com/r/Plover/.rss" programming reddit)
+          ("http://www.reddit.com/r/baduk/.rss" go baduk reddit)
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UCyHDQ5C6z1NDmJ4g6SerW8g" youtube mailab)
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UChkVOG0PqkXIHHmkBGG15Ig" youtube walulis)
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UCo4693Ony4slDY5hR0ny-bw" youtube walulis)
@@ -1163,7 +1299,7 @@ limitations under the License.
         :n "d" #'elfeed-youtube-dl))
 
 (after! eww
- (map!
+  (map!
    :map eww-mode-map
    :n "M-h" #'eww-back-url
    :n "M-l" #'eww-forward-url
@@ -1184,7 +1320,39 @@ limitations under the License.
 
 (use-package! pinentry
   :init
-  (pinentry-start))
+  (pinentry-start)
+  :config
+  (setenv "GPG_AGENT_INFO" nil)
+  ;; (setq epg-pinentry-mode 'ask)
+  (setq epg-pinentry-mode 'loopback))
+
+(use-package! stumpwm-mode
+  :load-path "/run/current-system/profile/share/emacs/site-lisp/"
+  :hook #'lisp-mode
+  :config
+  (defun my/activate-stump-mode ()
+    (when (equalp
+           (buffer-file-name)
+           "/home/klingenberg/.dotfiles/stumpwm.lisp")
+      (stumpwm-mode 1)))
+  ;; (add-hook 'lisp-mode-hook #'my/activate-stump-mode)
+  (map! :localleader :map stumpwm-mode-map
+        "ef" #'stumpwm-eval-defun
+        "ee" #'stumpwm-eval-last-sexp))
+
+;; (use-package! eaf
+;;   :defer t
+;;   :config
+;;   ;; (setq eaf-enable-debug t) ; should only be used when eaf is wigging out
+;;   (eaf-setq eaf-browser-dark-mode "true") ; dark mode is overrated
+;;   (setq eaf-browser-default-search-engine "duckduckgo")
+;;   (eaf-setq eaf-browse-blank-page-url "https://duckduckgo.com"))
+
+;; (use-package! eaf-evil ;; evil bindings in my browser
+;;   :after eaf
+;;   :config
+;;   (setq eaf-evil-leader-keymap doom-leader-map)
+;;   (setq eaf-evil-leader-key "SPC"))
 
 (use-package! diminish
   :config
@@ -1197,17 +1365,154 @@ limitations under the License.
                        flyspell-mode
                        defining-kbd-macro)))
 
+(use-package! igo-org
+  :config
+  (igo-org-setup)
+  (autoload 'igo-sgf-mode "igo-sgf-mode")
+  (add-to-list 'auto-mode-alist '("\\.sgf$" . igo-sgf-mode)))
 
-;; eshell
-;; (defun my-eshell/setup ()
-;;   (add-hook 'evil-insert-state-entry-hook #'+eshell-goto-prompt-on-insert-a nil t))
+;; (use-package! fira-code-mode
+;;   :custom (fira-code-mode-disabled-ligatures (list "[]" "#{" "#(" "#_" "#_(" "x"))
+;;   :config (global-fira-code-mode -1))
 
-;; (after! eshell
-;;   (add-hook 'eshell-mode-hook #'my-eshell/setup))
+(plist-put! +ligatures-extra-symbols
+  ;; org
+  :name          "»"
+  :src_block     "»"
+  :src_block_end "«"
+  :quote         "“"
+  :quote_end     "”"
+  ;; Functional
+  :lambda        "λ"
+  :def           "ƒ"
+  :composition   "∘"
+  :map           "↦"
+  ;; Types
+  :null          "∅"
+  :true          "✓"
+  :false         "✗"
+  :int           "ℤ"
+  :float         "ℝ"
+  :str           "σ"
+  :bool          "±"
+  :list          "ƛ"
+  ;; Flow
+  :not           "￢"
+  :in            "∈"
+  :not-in        "∉"
+  :and           "∧"
+  :or            "∨"
+  :for           "∀"
+  :some          "∃"
+  :return        "⟼"
+  :yield         "⟻"
+  ;; Other
+  :union         "⋃"
+  :intersect     "∩"
+  :diff          "∖"
+  :tuple         "⨂"
+  :pipe          "" ;; FIXME: find a non-private char
+  :dot           "•")
+
+;; (use-package! rigpa
+
+;;   :after (evil parsec symex)
+
+;;   :config
+;;   (setq rigpa-mode t)
+
+;;   ;; custom config
+;;   (setq rigpa-show-menus t)
+
+;;   ;; navigating meta modes
+;;   (map!
+;;    :no "s-m s-m" 'rigpa-flashback-to-last-tower
+;;     :n "C-<escape>" 'my-enter-tower-mode
+;;     :n "M-<escape>" 'my-enter-mode-mode
+;;     :n "s-<escape>" 'my-enter-mode-mode
+;;     :n "M-<return>"
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-selected-level)
+;;                      (let ((ground (rigpa--get-ground-buffer)))
+;;                        (my-exit-mode-mode)
+;;                        (switch-to-buffer ground)))
+;;     :n "s-<return>"
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-selected-level)
+;;                      (let ((ground (rigpa--get-ground-buffer)))
+;;                        (my-exit-mode-mode)
+;;                        (switch-to-buffer ground)))
+;;     :n "C-<return>"
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (my-exit-tower-mode)
+;;                      (my-enter-mode-mode))
+
+;;    ;; indexed entry to various modes
+;;     :n "s-n" 'evil-normal-state
+;;     :n "s-y"        ; symex mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "symex"))
+;;     "s-w"        ; window mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "window"))
+;;     "s-v"        ; view mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "view"))
+;;     "s-x"        ; char mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "char"))
+;;     "s-a"        ; activity mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "activity"))
+;;     "s-z"        ; text mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "text"))
+;;     "s-g"        ; history mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "history"))
+;;     "s-i"        ; system mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "system"))
+;;     "s-b"        ; buffer mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "buffer"))
+;;     "s-f"        ; file mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "file"))
+;;     "s-t"        ; tab mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "tab"))
+;;     "s-l"        ; line mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "line"))
+;;    "s-e"        ; application mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "application"))
+;;    "s-r"        ; word mode
+;;                    (lambda ()
+;;                      (interactive)
+;;                      (rigpa-enter-mode "word"))))
 
 ;; load my custom scripts
 (load "~/Dropbox/Helen+Dario/washing-machine-timer.el" t t)
 (load "~/Dropbox/Helen+Dario/einkaufsliste/interactiveEnterLisp.el" t t)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

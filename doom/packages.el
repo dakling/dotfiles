@@ -52,23 +52,17 @@
 ;; Beginning of my packages
 
 ;; exwm
-(package! xelb)
-(package! exwm)
-(package! dmenu)
+;; (package! xelb)
+;; (package! exwm)
+;; (package! dmenu)
 
 (package! mu4e-alert)
 
-;; (package! modus-vivendi-theme)
-
 (package! smooth-scrolling)
 
-;; (package! auto-dim-other-buffers)
-
-(package! pulseaudio-control)
+;; (package! pulseaudio-control)
 
 (package! telega)
-
-(package! elfeed)
 
 (package! pinentry)
 
@@ -80,11 +74,7 @@
 
 (package! async-await)
 
-(package! helm-swoop)
-
 (package! evil-tex :recipe (:host github :repo "itai33/evil-tex"))
-
-(package! org-roam-server)
 
 (package! wgrep)
 
@@ -94,6 +84,26 @@
 
 (package! ace-link)
 
-(package! key-chord)
+(package! org-super-links :recipe (:host github :repo "toshism/org-super-links"))
 
-;; (package! mini-modeline)
+;; (package! omnisharp :recipe (:no-native-compile t))
+
+;; (package! rigpa
+;;   :recipe (:host github
+;;            :repo "countvajhula/rigpa"))
+
+(unpin! sly)
+
+(package! el-igo :recipe (:host github :repo "misohena/el-igo"))
+
+;; (package! fira-code-mode)
+
+;; (package! edit-server)
+
+(disable-packages! org-msg)
+
+;; (package! eaf :recipe
+;;   (:host github
+;;    :repo "manateelazycat/emacs-application-framework"
+;;    :files ("*.el" "*.py" "core" "app")
+;;    :no-byte-compile t))

@@ -3,7 +3,8 @@ IMAPAccount gmail
 Host imap.gmail.com
 User dario.klingenberg@gmail.com
 # To store the password in an encrypted file use PassCmd instead of Pass
-PassCmd "gpg -q --for-your-eyes-only --no-tty -d ~/.password-store/gmail.gpg"
+# PassCmd "gpg -q --for-your-eyes-only --no-tty -d ~/.password-store/gmail.gpg"
+PassCmd "pass gmail"
 #
 # Use SSL
 SSLType IMAPS
@@ -37,8 +38,8 @@ IMAPAccount web
 # Address to connect to
 Host imap.web.de
 User dario.klingenberg@web.de
-# To store the password in an encrypted file use PassCmd instead of Pass
-PassCmd "gpg -q --for-your-eyes-only --no-tty -d ~/.password-store/web.gpg"
+# PassCmd "gpg -q --for-your-eyes-only --no-tty -d ~/.password-store/web.gpg"
+PassCmd "pass web"
 #
 # Use SSL
 SSLType IMAPS
@@ -68,8 +69,8 @@ IMAPAccount fdy
 # Address to connect to
 Host mail.tu-darmstadt.de
 User km88econ
-# To store the password in an encrypted file use PassCmd instead of Pass
-PassCmd "gpg -q --for-your-eyes-only --no-tty -d ~/.password-store/fdy.gpg"
+# PassCmd "gpg -q --for-your-eyes-only --no-tty -d ~/.password-store/fdy.gpg"
+PassCmd "pass fdy"
 #
 # Use SSL
 SSLType IMAPS
@@ -99,8 +100,8 @@ IMAPAccount gsc
 # Address to connect to
 Host mail.gsc.ce.tu-darmstadt.de
 User klingenberg
-# To store the password in an encrypted file use PassCmd instead of Pass
-PassCmd "gpg -q --for-your-eyes-only --no-tty -d ~/.password-store/gsc.gpg"
+# PassCmd "gpg -q --for-your-eyes-only --no-tty -d ~/.password-store/gsc.gpg"
+PassCmd "pass gsc"
 #
 # Use SSL
 SSLType IMAPS

@@ -68,13 +68,18 @@
 
 ;; define my own commands
 (defcommand start-emacs-daemon () ()
-  (stumpwm::eval-command "exec emacs --daemon=instance1"))
+  (eval-command "exec emacs --daemon=instance1")
+  (eval-command "exec emacs --daemon"))
 
 (defcommand run-emacs-client (&optional command) (:rest)
   (eval-command
+   ;; (if command
+   ;;     (format nil "exec emacsclient -nc -e \"(~a)\"" command)
+   ;;   "exec emacsclient -nc")
    (if command
        (format nil "exec emacsclient -nc -s instance1 -e \"(~a)\"" command)
-       "exec emacsclient -nc -s instance1")))
+       "exec emacsclient -nc -s instance1")
+   ))
 
 (defcommand stop-emacs-daemon () ()
   (run-emacs-client "save-buffers-kill-emacs"))
@@ -176,6 +181,16 @@
       (meta (kbd "s-b"))
       (run-emacs-client "ivy-switch-buffer")))
 
+(defcommand emacs-terminal () ()
+  (if (emacs-is-current-window-p)
+      (meta (kbd "s-F1"))
+      (run-emacs-client "+vterm/here t")))
+
+(defcommand emacs-everywhere () ()
+  (eval-command "exec emacsclient -e \"(emacs-everywhere)\"")
+  ;; (run-emacs-client "emacs-everywhere")
+  )
+
 (defcommand my/pause () ()
   (when (current-window)
     (cond
@@ -202,6 +217,7 @@
 (define-key *top-map* (kbd "s-S") "vsplit")
 (define-key *top-map* (kbd "s-f") "emacs-find-file")
 (define-key *top-map* (kbd "s-b") "emacs-find-buffer")
+(define-key *top-map* (kbd "s-a") "emacs-everywhere")
 ;; spacemacsy style
 (define-key *root-map* (kbd "M") "lastmsg")
 ;; audio keys
@@ -262,8 +278,8 @@
 (define-key *top-map* (kbd "s-P") "emacs-pass")
 (define-key *top-map* (kbd "s-e") "run-emacs-client %s")
 (define-key *top-map* (kbd "s-E") "exec emacs")
+(define-key *top-map* (kbd "s-F1") "emacs-terminal")
 (define-key *top-map* (kbd "s-S-F1") "run-terminal")
-(define-key *top-map* (kbd "s-F1") "run-emacs-client eshell")
 (define-key *top-map* (kbd "s-F2") "exec firefox")
 (define-key *top-map* (kbd "s-F3") "run-emacs-client deer")
 (define-key *top-map* (kbd "s-S-F3") "exec pcmanfm")

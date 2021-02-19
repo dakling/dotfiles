@@ -80,16 +80,12 @@
   (plain-file "sudoers" "\
 root ALL=(ALL) ALL
 %wheel ALL=(ALL) ALL
+%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/sbin/shutdown
+%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/sbin/reboot
 %wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/cpupower
-%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/mount --bind /run/user/1000/intellij/caches /home/MYSELF/.IntelliJIdea2019.3/system/caches
-%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/mount --bind /run/user/1000/intellij/index /home/MYSELF/.IntelliJIdea2019.3/system/index
-%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/umount /home/MYSELF/.IntelliJIdea2019.3/system/caches
-%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/umount /home/MYSELF/.IntelliJIdea2019.3/system/index
+%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/mount
 %wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/umount
-%wheel ALL=(ALL) NOPASSWD: /home/klingenberg/.guix-profile/bin/mount --bind /run/user/1000/intellij/caches /home/MYSELF/.IntelliJIdea2019.3/system/caches
-%wheel ALL=(ALL) NOPASSWD: /home/klingenberg/.guix-profile/bin/mount --bind /run/user/1000/intellij/index /home/MYSELF/.IntelliJIdea2019.3/system/index
-%wheel ALL=(ALL) NOPASSWD: /home/klingenberg/.guix-profile/bin/umount /home/MYSELF/.IntelliJIdea2019.3/system/caches
-%wheel ALL=(ALL) NOPASSWD: /home/klingenberg/.guix-profile/bin/umount /home/MYSELF/.IntelliJIdea2019.3/system/index
+%wheel ALL=(ALL) NOPASSWD: /home/klingenberg/.guix-profile/bin/mount
 %wheel ALL=(ALL) NOPASSWD: /home/klingenberg/.guix-profile/bin/umount
 "))
 
@@ -112,7 +108,7 @@ root ALL=(ALL) ALL
     (supplementary-groups
      '("wheel" "netdev" "audio" "video" "lp" "dialout" "docker")))
    %base-user-accounts))
- (sudoers-file %sudoers-specification)
+;; (sudoers-file %sudoers-specification)
  (packages
   (append
    (list
@@ -138,8 +134,9 @@ root ALL=(ALL) ALL
     ;; emacs-exwm
     emacs-guix
     ;; emacs-pdf-tools
-    guile-gcrypt
     emacs-pulseaudio-control
+    emacs-vterm
+    guile-gcrypt
     acpi
     mu
     isync
@@ -165,7 +162,8 @@ root ALL=(ALL) ALL
     gvfs
     xinput
     git
-    docker)
+    ;; docker
+    )
    %base-packages))
  (services
   (append

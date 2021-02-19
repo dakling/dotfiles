@@ -72,9 +72,9 @@
 
        :term
        eshell            ; the elisp shell that works everywhere
-       ;;shell             ; simple shell REPL for Emacs
+       ;; shell             ; simple shell REPL for Emacs
        ;;term              ; basic terminal emulator for Emacs
-       ;; vterm                            ; the best terminal emulation in Emacs
+       vterm                            ; the best terminal emulation in Emacs
 
        :checkers
        syntax                        ; tasing you for every semicolon you forget
@@ -109,13 +109,13 @@
 
        :lang
        ;;agda              ; types of types of types of types...
-       ;; (cc +lsp)                ; C/C++/Obj-C madness
+       (cc +lsp)                ; C/C++/Obj-C madness
        ;; clojure                  ; java with a lisp
        common-lisp              ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
        ;;crystal           ; ruby at the speed of c
        (csharp +lsp)            ; unity, .NET, and mono shenanigans
-       ;;data              ; config/data formats
+       data              ; config/data formats
        ;;(dart +flutter)   ; paint ui and not much else
        ;;elixir            ; erlang done right
        ;;elm               ; care for a cup of TEA?
@@ -171,8 +171,8 @@
        ;;(wanderlust +gmail)
 
        :app
-
        calendar
+       everywhere
        ;; irc      ; how neckbeards socialize
        rss      ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought

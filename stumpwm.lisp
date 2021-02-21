@@ -219,6 +219,10 @@
 (define-key *top-map* (kbd "s-f") "emacs-find-file")
 (define-key *top-map* (kbd "s-b") "emacs-find-buffer")
 (define-key *top-map* (kbd "s-a") "emacs-everywhere")
+(define-key *top-map* (kbd "s-Right") "move-focus right")
+(define-key *top-map* (kbd "s-Left") "move-focus left")
+(define-key *top-map* (kbd "s-Up") "move-focus up")
+(define-key *top-map* (kbd "s-Down") "move-focus down")
 ;; spacemacsy style
 (define-key *root-map* (kbd "M") "lastmsg")
 ;; audio keys

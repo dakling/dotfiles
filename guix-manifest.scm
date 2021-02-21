@@ -8,7 +8,6 @@
    "xset"
    "xdpyinfo"
    "xprop"
-   ;; "emacs-native-comp"
    "xlsfonts"
    "font-google-noto"
    ;; "font-iosevka"
@@ -19,6 +18,7 @@
    "fish"                               ; for emacs completion support
    "vim"
    ;; "guile-ncurses"
+   "racket"
    "ncurses"
    "octave"
    "python"
@@ -47,7 +47,12 @@
    "ffmpeg"
    "mpv"
    ;; "gimp"
+    "emacs-pgtk-native-comp"
    "emacs-telega"
+    "emacs-guix"
+    ;; emacs-pdf-tools
+    "emacs-pulseaudio-control"
+    "emacs-vterm"
    ;; "emacs-sly"
    "lua"
    "lxqt-themes"

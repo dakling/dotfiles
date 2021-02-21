@@ -184,7 +184,8 @@
 (defcommand emacs-terminal () ()
   (if (emacs-is-current-window-p)
       (meta (kbd "s-F1"))
-      (run-emacs-client "+vterm/here t")))
+      ;; (run-emacs-client "+vterm/here t")
+      (run-emacs-client "+eshell/here")))
 
 (defcommand emacs-everywhere () ()
   (eval-command "exec emacsclient -e \"(emacs-everywhere)\"")

@@ -419,8 +419,10 @@
    "s-m" 'delete-other-windows
    "s-g" 'guix
    "s-t" 'my/tuxi
-   "s-<f1>" '+vterm/here
-   "C-s-<f1>" '+vterm/toggle
+   ;; "s-<f1>" '+vterm/here
+   ;; "C-s-<f1>" '+vterm/toggle
+   "s-<f1>" '+eshell/here
+   "C-s-<f1>" '+eshell/toggle
    "s-<f2>" '(lambda () (interactive)
                (funcall browse-url-browser-function "" "-new-tab"))
    "s-<f3>" 'deer

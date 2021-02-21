@@ -108,7 +108,7 @@ root ALL=(ALL) ALL
     (supplementary-groups
      '("wheel" "netdev" "audio" "video" "lp" "dialout" "docker")))
    %base-user-accounts))
-;; (sudoers-file %sudoers-specification)
+ ;; (sudoers-file %sudoers-specification)
  (packages
   (append
    (list
@@ -215,10 +215,28 @@ root ALL=(ALL) ALL
     "/run/current-sytem/profile/sbin/reboot")
    %setuid-programs))
  (kernel
-  ;; linux
-  (specification->package "linux@5.4")
-  ;; (specification->package "linux@5.4.90")
-  )
+  (list
+   linux-libre
+   ;; (let*
+   ;;     ((channels
+   ;;       (list
+   ;;        (channel
+   ;;         (name 'flat)
+   ;;         (url "https://github.com/flatwhatson/guix-channel.git")
+   ;;         (commit "529e53dd416821245a78d30eee03d37f473be351"))
+   ;;        (channel
+   ;;         (name 'nonguix)
+   ;;         (url "https://gitlab.com/nonguix/nonguix")
+   ;;         (commit "840a891dbafdc05e38d661acadbfc8ad326317ed"))
+   ;;        (channel
+   ;;         (name 'guix)
+   ;;         (url "https://git.savannah.gnu.org/git/guix.git")
+   ;;         (commit "d4d0a1551b3989790c4fb342c4e44c7f11cc3db2"))))
+   ;;      (inferior
+   ;;       (inferior-for-channels channels)))
+   ;;   (first (lookup-inferior-packages inferior "linux" "5.4.99")))
+   ;; (specification->package "linux@5.4")
+   ))
  (initrd microcode-initrd)
  (firmware
-   (list linux-firmware)))
+  (list linux-firmware)))

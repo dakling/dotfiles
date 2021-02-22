@@ -1194,6 +1194,7 @@ limitations under the License.
    "aD" #'pdf-annot-delete))
 
 (use-package! pulseaudio-control
+  :when (system-name= "klingenberg-tablet")
   :custom
   (pulseaudio-control-volume-step "5%")
   :config
@@ -1410,6 +1411,7 @@ limitations under the License.
   (setq epg-pinentry-mode 'loopback))
 
 (use-package! stumpwm-mode
+  :when (system-name= "klingenberg-tablet" "klingenberg-pc")
   :load-path "/run/current-system/profile/share/emacs/site-lisp/"
   :config
   (defun my/activate-stump-mode ()

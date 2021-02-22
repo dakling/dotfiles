@@ -127,8 +127,6 @@
 
 (setq magit-repository-directories '(("~/" . 1)))
 
-
-
 (after! org
   (setq org-id-link-to-org-use-id t)
   (setq org-file-apps
@@ -234,6 +232,33 @@
     (shell-command "xinput --map-to-output $(xinput list --id-only \"ELAN Touchscreen\") eDP-1")
     (ignore-errors
       (shell-command "xinput --map-to-output $(xinput list --id-only \"HDX HDX DIGITIZER Pen (0)\") eDP-1"))))
+
+(defun my/tuxi ()
+  (interactive)
+  (cl-labels
+      ((read-lines (filePath)
+                   "Return a list of lines of a file at filePath."
+                   (with-temp-buffer
+                     (insert-file-contents filePath)
+                     (split-string (buffer-string) "\n" t)))
+       (write-lines (filename data)
+                    (with-temp-file filename
+                      (mapcar
+                       (lambda (item)
+                         (princ (concat item "\n") (current-buffer)))
+                       data)))
+       (update-cache (query old-cache-list)
+                     (if (member query old-cache-list)
+                         old-cache-list
+                       (cons query old-cache-list))))
+    (let*
+        ((cache-file "~/.config/emacs/.local/cache/tuxi")
+         (cache (read-lines cache-file))
+         (query (completing-read "Enter query: " cache))
+         (updated-cache (update-cache query cache))
+         (result (shell-command-to-string (concat "tuxi -r " query))))
+      (write-lines cache-file updated-cache)
+      (message result))))
 
 (defun my/eww-open-league-table ()
   "Do an internet search for soccer league table."
@@ -379,7 +404,6 @@
    :n
    ;; :states '(insert emacs hybrid normal visual motion operator replace)
    "s-w" '(other-window :which-key "other window")
-   "s-d" 'dmenu
    "s-l" 'stump/emacs-window-right
    "s-h" 'stump/emacs-window-left
    "s-j" 'stump/emacs-window-down
@@ -394,8 +418,11 @@
    "s-q" 'my/get-rid-of-mouse
    "s-m" 'delete-other-windows
    "s-g" 'guix
-   "s-<f1>" '(lambda () (interactive) (eshell 'N))
-   "C-s-<f1>" 'eshell
+   "s-t" 'my/tuxi
+   ;; "s-<f1>" '+vterm/here
+   ;; "C-s-<f1>" '+vterm/toggle
+   "s-<f1>" '+eshell/here
+   "C-s-<f1>" '+eshell/toggle
    "s-<f2>" '(lambda () (interactive)
                (funcall browse-url-browser-function "" "-new-tab"))
    "s-<f3>" 'deer
@@ -579,7 +606,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
   (setq gnus-icalendar-org-capture-file "~/org/notes.org")
   (setq gnus-icalendar-org-capture-headline '("Inbox"))
   (gnus-icalendar-org-setup)
-;;;    org-msg
+  ;;     org-msg
   ;; (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
   ;;       ;; org-msg-startup "hidestars indent inlineimages"
   ;;       ;; org-msg-greeting-fmt "Hallo %s,\n\n\n"
@@ -615,12 +642,16 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
       "ep" #'eval-print-last-sexp)
 
 ;; outline-minor-mode messes with some of my lispy bindings
-;; (remove-hook! 'emacs-lisp-mode-hook #'outline-minor-mode)
-(map! :map outline-minor-mode-map       ;TODO check if this messes up other situtations
-      "M-j" nil
-      "M-k" nil
-      "M-h" nil
-      "M-l" nil)
+;; TODO why doesnt the map! macro work?
+(evil-define-minor-mode-key 'normal 'outline-minor-mode (kbd "M-j") nil)
+(evil-define-minor-mode-key 'normal 'outline-minor-mode (kbd "M-k") nil)
+(evil-define-minor-mode-key 'normal 'outline-minor-mode (kbd "M-h") nil)
+(evil-define-minor-mode-key 'normal 'outline-minor-mode (kbd "M-l") nil)
+;; (map! :map outline-minor-mode-map ;TODO check if this messes up other situtations
+;;       :n "M-j" nil
+;;       :n "M-k" nil
+;;       :n "M-h" nil
+;;       :n "M-l" nil)
 
 (after!
   lispy
@@ -689,7 +720,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
        ((system-name= "klingenberg-tablet") "~/Documents-work/conferences/latex_macros/bibliography.bib")
        ((system-name= "klingenberg-pc") "~/Documents/conferences/latex_macros/bibliography.bib")))
 
-(add-hook! (TeX-mode-hook LaTeX-mode-hook) #'auto-fill-mode)
+(add-hook! (TeX-mode-hook LaTeX-mode-hook) (lamdbda () (auto-fill-mode 1)))
 
 (map!
  :localleader
@@ -789,6 +820,9 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 ;;       (setq omnisharp-server-executable-path (concat (omnisharp--server-installation-dir) "/run-custom"))
 ;;       ;; (setq omnisharp-server-executable-path nil)
 ;;       ))))
+
+(after! lsp
+  (setq lsp-file-watch-threshold 1000))
 
 (defun my/csharp-list-to-array ()
   (replace-regexp "List<\\(.*\\)>" "\\1[]"
@@ -1049,6 +1083,10 @@ limitations under the License.
    "M-k" #'ivy-previous-line
    "M-h" #'ivy-backward-delete-char
    "M-l" #'ivy-alt-done
+   "TAB" #'ivy-partial
+   "M-RET" #'ivy-call
+   "M-TAB" #'ivy-mark
+   "C-TAB" #'ivy-unmark
    "M-H" #'left-char
    "M-L" #'right-char)
   (map!
@@ -1058,7 +1096,7 @@ limitations under the License.
    "M-y" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-copy))
    "M-r" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-move))
    "M-D" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-delete))
-   "M-RET" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-extern))))
+   "M-o" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-extern))))
 
 (use-package! helm
   :when (featurep 'helm)
@@ -1167,6 +1205,51 @@ limitations under the License.
   :commands telega
   :config
   (telega-notifications-mode 1))
+
+(use-package! slack
+  :commands (slack-start)
+  :init
+  (setq slack-buffer-emojify t) ;; if you want to enable emoji, default nil
+  (setq slack-prefer-current-team t)
+  :config
+  (slack-register-team
+   :name "2021-ZIH"
+   :default t
+   :token (auth-source-pick-first-password
+         :host "2021-zih.slack.com"
+         :user "klingenberg@fdy.tu-darmstadt.de")
+   :subscribed-channels '(allgemein)
+   :full-and-display-names t)
+
+  (evil-define-key 'normal slack-info-mode-map
+    ",u" 'slack-room-update-messages)
+  (evil-define-key 'normal slack-mode-map
+    ",c" 'slack-buffer-kill
+    ",ra" 'slack-message-add-reaction
+    ",rr" 'slack-message-remove-reaction
+    ",rs" 'slack-message-show-reaction-users
+    ",pl" 'slack-room-pins-list
+    ",pa" 'slack-message-pins-add
+    ",pr" 'slack-message-pins-remove
+    ",mm" 'slack-message-write-another-buffer
+    ",me" 'slack-message-edit
+    ",md" 'slack-message-delete
+    ",u" 'slack-room-update-messages
+    ",2" 'slack-message-embed-mention
+    ",3" 'slack-message-embed-channel
+    "\C-n" 'slack-buffer-goto-next-message
+    "\C-p" 'slack-buffer-goto-prev-message)
+   (evil-define-key 'normal slack-edit-message-mode-map
+    ",k" 'slack-message-cancel-edit
+    ",s" 'slack-message-send-from-buffer
+    ",2" 'slack-message-embed-mention
+    ",3" 'slack-message-embed-channel))
+
+(use-package! alert
+  :commands (alert)
+  :init
+  (setq alert-default-style 'notifier))
+
 
 (use-package! elfeed
   :commands (elfeed elfeed-update)
@@ -1328,14 +1411,13 @@ limitations under the License.
 
 (use-package! stumpwm-mode
   :load-path "/run/current-system/profile/share/emacs/site-lisp/"
-  :hook #'lisp-mode
   :config
   (defun my/activate-stump-mode ()
     (when (equalp
            (buffer-file-name)
            "/home/klingenberg/.dotfiles/stumpwm.lisp")
       (stumpwm-mode 1)))
-  ;; (add-hook 'lisp-mode-hook #'my/activate-stump-mode)
+  (add-hook 'lisp-mode-hook #'my/activate-stump-mode)
   (map! :localleader :map stumpwm-mode-map
         "ef" #'stumpwm-eval-defun
         "ee" #'stumpwm-eval-last-sexp))

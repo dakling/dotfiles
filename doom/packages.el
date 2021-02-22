@@ -64,6 +64,10 @@
 
 (package! telega)
 
+(package! slack)
+
+(package! alert)
+
 (package! pinentry)
 
 (package! elfeed)

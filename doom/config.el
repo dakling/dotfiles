@@ -403,41 +403,41 @@
   (map!
    :n
    ;; :states '(insert emacs hybrid normal visual motion operator replace)
-   "s-w" '(other-window :which-key "other window")
-   "s-l" 'stump/emacs-window-right
-   "s-h" 'stump/emacs-window-left
-   "s-j" 'stump/emacs-window-down
-   "s-k" 'stump/emacs-window-up
-   "s-L" 'enlarge-window-horizontally
-   "s-H" 'shrink-window-horizontally
-   "s-J" 'enlarge-window
-   "s-K" 'shrink-window
-   "s-v" 'split-window-right
-   "s-s" 'split-window-below
-   "s-c" 'my/close-buffer
-   "s-q" 'my/get-rid-of-mouse
-   "s-m" 'delete-other-windows
-   "s-g" 'guix
-   "s-t" 'my/tuxi
+   "H-s-w" '(other-window :which-key "other window")
+   "H-s-l" 'stump/emacs-window-right
+   "H-s-h" 'stump/emacs-window-left
+   "H-s-j" 'stump/emacs-window-down
+   "H-s-k" 'stump/emacs-window-up
+   "H-s-L" 'enlarge-window-horizontally
+   "H-s-H" 'shrink-window-horizontally
+   "H-s-J" 'enlarge-window
+   "H-s-K" 'shrink-window
+   "H-s-v" 'split-window-right
+   "H-s-s" 'split-window-below
+   "H-s-c" 'my/close-buffer
+   "H-s-q" 'my/get-rid-of-mouse
+   "H-s-m" 'delete-other-windows
+   "H-s-g" 'guix
+   "H-s-t" 'my/tuxi
    ;; "s-<f1>" '+vterm/here
    ;; "C-s-<f1>" '+vterm/toggle
-   "s-<f1>" '+eshell/here
-   "C-s-<f1>" '+eshell/toggle
-   "s-<f2>" '(lambda () (interactive)
+   "H-s-<f1>" '+eshell/here
+   "H-C-s-<f1>" '+eshell/toggle
+   "H-s-<f2>" '(lambda () (interactive)
                (funcall browse-url-browser-function "" "-new-tab"))
-   "s-<f3>" 'deer
-   "s-<f4>" '(lambda () (interactive)
+   "H-s-<f3>" 'deer
+   "H-s-<f4>" '(lambda () (interactive)
                (mu4e))
-   "s-<f12>" '(lambda () (interactive)
+   "H-s-<f12>" '(lambda () (interactive)
                 (start-process "" nil "/usr/bin/slock")))
   (when t
     (map!
      :n
-     "s-x" 'counsel-M-x
-     "s-f" 'counsel-find-file
-     "s-p" 'counsel-projectile
-     "s-b" 'ivy-switch-buffer
-     "s-P" 'ivy-pass))
+     "H-s-x" 'counsel-M-x
+     "H-s-f" 'counsel-find-file
+     "H-s-p" 'counsel-projectile
+     "H-s-b" 'ivy-switch-buffer
+     "H-s-P" 'ivy-pass))
   (when nil
     (map!
      :n
@@ -850,7 +850,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
             (t (message "neither array nor string found on current line"))))))
 
 (use-package! csharp-repl
-  :unless (system-name= "klingenberg-pi" "hla0001" "hla0002" "hla0003" "hla0004")
+  :when (system-name= "klingenberg-tablet" "klingenberg-pc")
   :load-path "~/Documents/programming/elisp/emacs-csharp-repl/")
 
 (defun my/personal-bosss-file-p ()
@@ -1030,7 +1030,7 @@ limitations under the License.
 
 ;; bosss
 (use-package! bosss
-  :unless (system-name= "klingenberg-pi" "hla0001" "hla0002" "hla0003" "hla0004")
+  :when (system-name= "klingenberg-pc" "klingenberg-tablet")
   :load-path "~/Documents/programming/elisp/emacs-bosss/"
   :init
   (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
@@ -1060,7 +1060,7 @@ limitations under the License.
 
 ;; org-kanban
 (use-package! kanban
-  :unless (system-name= "klingenberg-pc" "klingenberg-pi" "hla0001" "hla0002" "hla0003" "hla0004")
+  :when (system-name= "klingenberg-tablet")
   :load-path  "~/Documents/programming/elisp/kanban.el/")
 
 (map! :map company-mode-map

@@ -215,8 +215,7 @@ root ALL=(ALL) ALL
     "/run/current-sytem/profile/sbin/reboot")
    %setuid-programs))
  (kernel
-  (list
-   linux-libre
+  (specification->package "linux-libre@5.4")
    ;; (let*
    ;;     ((channels
    ;;       (list
@@ -236,7 +235,7 @@ root ALL=(ALL) ALL
    ;;       (inferior-for-channels channels)))
    ;;   (first (lookup-inferior-packages inferior "linux" "5.4.99")))
    ;; (specification->package "linux@5.4")
-   ))
+   )
  (initrd microcode-initrd)
  (firmware
   (list linux-firmware)))

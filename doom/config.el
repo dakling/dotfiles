@@ -695,8 +695,8 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 (use-package! geiser
   :commands (run-geiser)
   :config
-  ;; (with-eval-after-load 'geiser-guile
-  ;;   (add-to-list 'geiser-guile-load-path "~/guix"))
+  (with-eval-after-load 'geiser-guile
+    (add-to-list 'geiser-guile-load-path "~/guix"))
   (with-eval-after-load 'yasnippet
     (add-to-list 'yas-snippet-dirs "~/guix/etc/snippets"))
 
@@ -712,6 +712,23 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    :n "ef" #'geiser-eval-definition
    :n "ee" #'geiser-eval-last-sexp
    :n "eb" #'geiser-eval-buffer))
+
+(use-package! guix
+  :config
+  (defun my/activate-guix-devel-mode ()
+    (when (file-in-directory-p (buffer-file-name) "~/guix")
+      (guix-devel-mode 1)))
+  (add-hook 'scheme-mode-hook #'my/activate-guix-devel-mode)
+  (map!
+   :localleader
+   :map guix-devel-mode-map
+   :n "b" 'guix-devel-build-package-definition
+   :n "s" 'guix-devel-build-package-source
+   :n "d" 'guix-devel-download-package-source
+   :n "l" 'guix-devel-lint-package
+   :n "k" 'guix-devel-copy-module-as-kill
+   :n "u" 'guix-devel-use-module
+   :n "." 'guix-devel-code-block-edit))
 
 ;; latex
 (setq +latex-viewers '(pdf-tools))
@@ -1245,6 +1262,13 @@ limitations under the License.
     ",s" 'slack-message-send-from-buffer
     ",2" 'slack-message-embed-mention
     ",3" 'slack-message-embed-channel))
+
+(after! circe
+  (set-irc-server! "chat.freenode.net"
+    `(:tls t
+      :port 6697
+      :nick "dakling"
+      :channels ("#emacs" "#guix"))))
 
 (use-package! alert
   :commands (alert)

@@ -62,7 +62,7 @@
 
 ;; (package! pulseaudio-control)
 
-(package! telega)
+;; (package! telega) ;use from guix
 
 (package! slack)
 

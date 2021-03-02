@@ -21,9 +21,9 @@
 ;; font string. You generally only need these two:
 ;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
 ;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
-(setq doom-font (font-spec :family "Fira Code Light")
-      doom-variable-pitch-font (font-spec :family "Fira Code Light"))
-;; (setq doom-font (font-spec :family "DejaVu Sans Mono"))
+;; (setq doom-font (font-spec :family "Fira Code Light")
+;;       doom-variable-pitch-font (font-spec :family "Fira Code Light"))
+(setq doom-font (font-spec :family "DejaVu Sans Mono"))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -403,41 +403,41 @@
   (map!
    :n
    ;; :states '(insert emacs hybrid normal visual motion operator replace)
-   "H-s-w" '(other-window :which-key "other window")
-   "H-s-l" 'stump/emacs-window-right
-   "H-s-h" 'stump/emacs-window-left
-   "H-s-j" 'stump/emacs-window-down
-   "H-s-k" 'stump/emacs-window-up
-   "H-s-L" 'enlarge-window-horizontally
-   "H-s-H" 'shrink-window-horizontally
-   "H-s-J" 'enlarge-window
-   "H-s-K" 'shrink-window
-   "H-s-v" 'split-window-right
-   "H-s-s" 'split-window-below
-   "H-s-c" 'my/close-buffer
-   "H-s-q" 'my/get-rid-of-mouse
-   "H-s-m" 'delete-other-windows
-   "H-s-g" 'guix
-   "H-s-t" 'my/tuxi
+   "s-w" '(other-window :which-key "other window")
+   "s-l" 'stump/emacs-window-right
+   "s-h" 'stump/emacs-window-left
+   "s-j" 'stump/emacs-window-down
+   "s-k" 'stump/emacs-window-up
+   "s-L" 'enlarge-window-horizontally
+   "s-H" 'shrink-window-horizontally
+   "s-J" 'enlarge-window
+   "s-K" 'shrink-window
+   "s-v" 'split-window-right
+   "s-s" 'split-window-below
+   "s-c" 'my/close-buffer
+   "s-q" 'my/get-rid-of-mouse
+   "s-m" 'delete-other-windows
+   "s-g" 'guix
+   "s-t" 'my/tuxi
    ;; "s-<f1>" '+vterm/here
    ;; "C-s-<f1>" '+vterm/toggle
-   "H-s-<f1>" '+eshell/here
-   "H-C-s-<f1>" '+eshell/toggle
-   "H-s-<f2>" '(lambda () (interactive)
-               (funcall browse-url-browser-function "" "-new-tab"))
-   "H-s-<f3>" 'deer
-   "H-s-<f4>" '(lambda () (interactive)
-               (mu4e))
-   "H-s-<f12>" '(lambda () (interactive)
+   "s-<f1>" '+eshell/here
+   "C-s-<f1>" '+eshell/toggle
+   "s-<f2>" '(lambda () (interactive)
+             (funcall browse-url-browser-function "" "-new-tab"))
+   "s-<f3>" 'deer
+   "s-<f4>" '(lambda () (interactive)
+             (mu4e))
+   "s-<f12>" '(lambda () (interactive)
                 (start-process "" nil "/usr/bin/slock")))
   (when t
     (map!
      :n
-     "H-s-x" 'counsel-M-x
-     "H-s-f" 'counsel-find-file
-     "H-s-p" 'counsel-projectile
-     "H-s-b" 'ivy-switch-buffer
-     "H-s-P" 'ivy-pass))
+     "s-x" 'counsel-M-x
+     "s-f" 'counsel-find-file
+     "s-p" 'counsel-projectile
+     "s-b" 'ivy-switch-buffer
+     "s-P" 'ivy-pass))
   (when nil
     (map!
      :n
@@ -796,6 +796,8 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
       :n "cr" #'recompile
       :n "cc" #'recompile)
 
+(use-package! gnu-apl-mode)
+
 ;;c#
 ;; (after! lsp
 ;;   (progn
@@ -1034,10 +1036,10 @@ limitations under the License.
 (map!
  :localleader
  :map csharp-mode-map
- "cd" (lambda () (interactive) (compile (concat "msbuild /p:WarningLevel=0 /p:Configuration=Debug " (my/csharp-find-current-project))))
- "cr" (lambda () (interactive) (compile (concat "msbuild /p:WarningLevel=0 /p:Configuration=Release " bosss-master-solution)))
- "ce" (lambda () (interactive) (compile (concat "msbuild /p:WarningLevel=0 /p:Configuration=Debug " bosss-master-solution)))
- ;; "cc" #'recompile
+ "cd" (lambda () (interactive) (compile (concat "msbuild -verbosity:quiet -maxCpuCount /p:WarningLevel=0 /p:Configuration=Debug " (my/csharp-find-current-project))))
+ "cr" (lambda () (interactive) (compile (concat "msbuild -verbosity:quiet -maxCpuCount /p:WarningLevel=0 /p:Configuration=Release " bosss-master-solution)))
+ "ce" (lambda () (interactive) (compile (concat "msbuild -verbosity:quiet -maxCpuCount /p:WarningLevel=0 /p:Configuration=Debug " bosss-master-solution)))
+ "cc" #'recompile
  "=" #'my/indent-buffer-without-bosss-header
  "et" (lambda () (interactive) (my/run-tests (my/csharp-find-current-project)))
  "eo" #'run-csharp-repl-other-frame
@@ -1483,44 +1485,44 @@ limitations under the License.
 ;;   :custom (fira-code-mode-disabled-ligatures (list "[]" "#{" "#(" "#_" "#_(" "x"))
 ;;   :config (global-fira-code-mode -1))
 
-(plist-put! +ligatures-extra-symbols
-  ;; org
-  :name          "»"
-  :src_block     "»"
-  :src_block_end "«"
-  :quote         "“"
-  :quote_end     "”"
-  ;; Functional
-  :lambda        "λ"
-  :def           "ƒ"
-  :composition   "∘"
-  :map           "↦"
-  ;; Types
-  :null          "∅"
-  :true          "✓"
-  :false         "✗"
-  :int           "ℤ"
-  :float         "ℝ"
-  :str           "σ"
-  :bool          "±"
-  :list          "ƛ"
-  ;; Flow
-  :not           "￢"
-  :in            "∈"
-  :not-in        "∉"
-  :and           "∧"
-  :or            "∨"
-  :for           "∀"
-  :some          "∃"
-  :return        "⟼"
-  :yield         "⟻"
-  ;; Other
-  :union         "⋃"
-  :intersect     "∩"
-  :diff          "∖"
-  :tuple         "⨂"
-  :pipe          "" ;; FIXME: find a non-private char
-  :dot           "•")
+;; (plist-put! +ligatures-extra-symbols
+;;   ;; org
+;;   :name          "»"
+;;   :src_block     "»"
+;;   :src_block_end "«"
+;;   :quote         "“"
+;;   :quote_end     "”"
+;;   ;; Functional
+;;   :lambda        "λ"
+;;   :def           "ƒ"
+;;   :composition   "∘"
+;;   :map           "↦"
+;;   ;; Types
+;;   :null          "∅"
+;;   :true          "✓"
+;;   :false         "✗"
+;;   :int           "ℤ"
+;;   :float         "ℝ"
+;;   :str           "σ"
+;;   :bool          "±"
+;;   :list          "ƛ"
+;;   ;; Flow
+;;   :not           "￢"
+;;   :in            "∈"
+;;   :not-in        "∉"
+;;   :and           "∧"
+;;   :or            "∨"
+;;   :for           "∀"
+;;   :some          "∃"
+;;   :return        "⟼"
+;;   :yield         "⟻"
+;;   ;; Other
+;;   :union         "⋃"
+;;   :intersect     "∩"
+;;   :diff          "∖"
+;;   :tuple         "⨂"
+;;   :pipe          "" ;; FIXME: find a non-private char
+;;   :dot           "•")
 
 ;; (use-package! rigpa
 

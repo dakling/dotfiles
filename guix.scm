@@ -216,26 +216,25 @@ root ALL=(ALL) ALL
    %setuid-programs))
  (kernel
   ;; (specification->package "linux-libre@5.4")
+  ;; (specification->package "linux@5.4")
    (let*
        ((channels
          (list
           (channel
            (name 'flat)
            (url "https://github.com/flatwhatson/guix-channel.git")
-           (commit "529e53dd416821245a78d30eee03d37f473be351"))
+           (commit "b7b05b808db571b7d0cb41d5f4a5f88ad41d173d"))
           (channel
            (name 'nonguix)
            (url "https://gitlab.com/nonguix/nonguix")
-           (commit "840a891dbafdc05e38d661acadbfc8ad326317ed"))
+           (commit "d28a3d8ae7c2f1bbf5887d8b619fedbf3c40e05c"))
           (channel
            (name 'guix)
            (url "https://git.savannah.gnu.org/git/guix.git")
-           (commit "d4d0a1551b3989790c4fb342c4e44c7f11cc3db2"))))
+           (commit "decd0dc6bcf88669d272e61f95de0a4d0649fbf8"))))
         (inferior
          (inferior-for-channels channels)))
-     (first (lookup-inferior-packages inferior "linux" "5.4.99")))
-   ;; (specification->package "linux@5.4")
-   )
+     (first (lookup-inferior-packages inferior "linux" "5.4.99"))))
  (initrd microcode-initrd)
  (firmware
   (list linux-firmware)))

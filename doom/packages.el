@@ -98,6 +98,8 @@
 
 (unpin! sly)
 
+(package! gnu-apl-mode :recipe (:host github :repo "lokedhs/gnu-apl-mode"))
+
 (package! el-igo :recipe (:host github :repo "misohena/el-igo"))
 
 ;; (package! fira-code-mode)

@@ -286,6 +286,7 @@
 (define-key *top-map* (kbd "s-F1") "emacs-terminal")
 (define-key *top-map* (kbd "s-S-F1") "run-terminal")
 (define-key *top-map* (kbd "s-F2") "exec firefox")
+;; (define-key *top-map* (kbd "s-F2") "exec nyxt")
 (define-key *top-map* (kbd "s-F3") "run-emacs-client deer")
 (define-key *top-map* (kbd "s-S-F3") "exec pcmanfm")
 (define-key *top-map* (kbd "s-F4") "run-emacs-client mu4e")

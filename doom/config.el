@@ -543,6 +543,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
          (smtpmail-smtp-service 465)
          (smtpmail-stream-type ssl)
          (user-full-name "Dario Klingenberg")
+         (mu4e-compose-signature nil)
          ;; (org-msg-signature nil)
          )
         ("web"
@@ -555,6 +556,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
          (smtpmail-stream-type starttls)
          (user-mail-address "dario.klingenberg@web.de")
          (user-full-name "dario")
+         (mu4e-compose-signature nil)
          ;; (org-msg-signature nil)
          )))
 
@@ -776,6 +778,10 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 (setq auto-mode-alist
       (cons '("\\.m$" . octave-mode) auto-mode-alist))
 
+(use-package asy-mode
+  :when (system-name= "klingenberg-tablet")
+  :load-path "~/.guix-profile/share/asymptote/")
+
 (map! :localleader
       :map octave-mode-map
       "el" #'octave-send-line
@@ -841,7 +847,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 ;;       ))))
 
 (after! lsp
-  (setq lsp-file-watch-threshold 1000))
+  (setq lsp-file-watch-threshold 30000))
 
 (defun my/csharp-list-to-array ()
   (replace-regexp "List<\\(.*\\)>" "\\1[]"

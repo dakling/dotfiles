@@ -72,7 +72,7 @@
 
 (package! elfeed)
 
-(package! emms)
+(package! elfeed-goodies)
 
 (package! diminish)
 
@@ -81,6 +81,12 @@
 (package! evil-tex :recipe (:host github :repo "itai33/evil-tex"))
 
 (package! wgrep)
+
+(package! ytdious)
+
+;; (package! ytel)
+
+;; (package! ytel-show)
 
 (package! md4rd)
 

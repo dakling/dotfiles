@@ -419,6 +419,7 @@
    "s-m" 'delete-other-windows
    "s-g" 'guix
    "s-t" 'my/tuxi
+   "s-y" 'ytdious
    ;; "s-<f1>" '+vterm/here
    ;; "C-s-<f1>" '+vterm/toggle
    "s-<f1>" '+eshell/here
@@ -847,7 +848,8 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 ;;       ))))
 
 (after! lsp
-  (setq lsp-file-watch-threshold 30000))
+  ;; (setq lsp-file-watch-threshold 30000)
+  (setq lsp-file-watch-threshold nil))
 
 (defun my/csharp-list-to-array ()
   (replace-regexp "List<\\(.*\\)>" "\\1[]"
@@ -1414,6 +1416,11 @@ limitations under the License.
         :n "v" #'elfeed-view-mpv
         :n "d" #'elfeed-youtube-dl))
 
+(use-package! elfeed-goodies
+  :after elfeed
+  :config
+  (elfeed-goodies/setup))
+
 (after! eww
   (map!
    :map eww-mode-map
@@ -1421,6 +1428,31 @@ limitations under the License.
    :n "M-l" #'eww-forward-url
    :n "M-y" #'eww-copy-page-url
    :n "f" #'ace-link-eww))
+
+;; (use-package! ytel
+;;   :config
+;;   (setq ytel-invidious-api-url "https://invidious.site/"))
+
+(use-package! ytdious
+  :config
+  (setq ytdious-invidious-api-url
+        "https://invidious.tube"
+        ;; "https://invidious.zee.li"
+        )
+  (map!
+   :map ytdious-mode-map
+   :n "s" #'ytdious-search
+   :n "S" #'ytdious-search-recent
+   :n "c" #'ytdious-view-channel-at-point
+   :n "RET" #'ytdious-play
+   :n "o" #'ytdious-play
+   :n "O" #'ytdious-play-continious
+   :n "Q" #'ytdious-stop-continious))
+
+;; (use-package! ytel-show
+;;   :after ytel
+;;   :bind (:map ytel-mode-map ("RET" . ytel-show)))
+
 
 (use-package! md4rd
   :commands (md4rd md4rd--fetch-comments)

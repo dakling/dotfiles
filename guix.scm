@@ -23,8 +23,7 @@
  ssh
  nix
  xorg
- desktop
- docker)
+ desktop)
 
 (use-package-modules
  certs
@@ -69,10 +68,9 @@
  lisp
  lisp-xyz
  wm
- package-management
- docker)
+ package-management)
 
-; setup custom sudo rules so some clearly specified commands can be
+                                        ; setup custom sudo rules so some clearly specified commands can be
 ;; run without password, ALWAYS use absolute filenames here! To
 ;; continue working when I install a tool as user, I setup sudo-rules
 ;; for both the system-tools and my user-tools.
@@ -97,7 +95,7 @@ root ALL=(ALL) ALL
                    "nodeadkeys"
                    #:options
                    '("ctrl:nocaps")))
- (host-name "klingenberg-tablet")
+ (host-name "klingenberg-laptop")
  (users
   (cons*
    (user-account
@@ -106,13 +104,14 @@ root ALL=(ALL) ALL
     (group "users")
     (home-directory "/home/klingenberg")
     (supplementary-groups
-     '("wheel" "netdev" "audio" "video" "lp" "dialout" "docker")))
+     '("wheel" "netdev" "audio" "video" "lp" "dialout")))
    %base-user-accounts))
  ;; (sudoers-file %sudoers-specification)
  (packages
   (append
    (list
     (specification->package "nss-certs")
+    xf86-video-intel
     sbcl
     sbcl-slynk
     stumpwm
@@ -161,14 +160,13 @@ root ALL=(ALL) ALL
     curl
     gvfs
     xinput
-    git
-    ;; docker
-    )
+    git)
    %base-packages))
  (services
   (append
    (list
     ;; (service xfce-desktop-service-type)
+    (service openssh-service-type)
     (service slim-service-type
              (slim-configuration
               (display ":1")
@@ -182,32 +180,31 @@ root ALL=(ALL) ALL
     (service openvpn-client-service-type
              (openvpn-client-configuration))
     (bluetooth-service
-     #:auto-enable? #t)
-    (service docker-service-type))
+     #:auto-enable? #t))
    (remove (lambda (service)
              (eq? (service-kind service) gdm-service-type))
-           %desktop-services)))
+           %desktop-services)
+   ;; %desktop-services
+   ))
  (bootloader
   (bootloader-configuration
    (bootloader grub-efi-bootloader)
    (target "/boot/efi")
    (keyboard-layout keyboard-layout)))
  (swap-devices
-  (list "/dev/sda2"))
+  (list (uuid "1865ada0-a67d-47ac-b4fa-8403981404c9")))
  (file-systems
-  (cons*
-   (file-system
-    (mount-point "/boot/efi")
-    (device
-     (uuid "CEFA-D25C" 'fat32))
-    (type "vfat"))
-   (file-system
-    (mount-point "/")
-    (device
-     (uuid "de52c9b8-e250-4707-807d-38f66bef1383"
-           'ext4))
-    (type "ext4"))
-   %base-file-systems))
+    (cons* (file-system
+             (mount-point "/boot/efi")
+             (device (uuid "F62F-24CC" 'fat32))
+             (type "vfat"))
+           (file-system
+             (mount-point "/")
+             (device
+               (uuid "1a912f56-30f5-4eeb-b275-456446dfd5af"
+                     'ext4))
+             (type "ext4"))
+           %base-file-systems))
  (setuid-programs
   (append
    (list
@@ -215,26 +212,27 @@ root ALL=(ALL) ALL
     "/run/current-sytem/profile/sbin/reboot")
    %setuid-programs))
  (kernel
-  ;; (specification->package "linux-libre@5.4")
-  ;; (specification->package "linux@5.4")
-   (let*
-       ((channels
-         (list
-          (channel
-           (name 'nonguix)
-           (url "https://gitlab.com/nonguix/nonguix")
-           (commit "0a0e8d0db63210d45f79196769dfda9f2b2355dd"))
-          (channel
-           (name 'flat)
-           (url "https://github.com/flatwhatson/guix-channel.git")
-           (commit "944cedf6cee80e643c79ed3eeab7068d040c2580"))
-          (channel
-           (name 'guix)
-           (url "https://git.savannah.gnu.org/git/guix.git")
-           (commit "57853d69fe14ea97ea1eb084a74944c44998a4bb"))))
-        (inferior
-         (inferior-for-channels channels)))
-     (first (lookup-inferior-packages inferior "linux" "5.4.99"))))
+  (specification->package "linux")
+  ;; (specification->package "linux-libre")
+  ;; (let*
+  ;;     ((channels
+  ;;       (list
+  ;;        (channel
+  ;;         (name 'nonguix)
+  ;;         (url "https://gitlab.com/nonguix/nonguix")
+  ;;         (commit ""))
+  ;;        (channel
+  ;;         (name 'flat)
+  ;;         (url "https://github.com/flatwhatson/guix-channel.git")
+  ;;         (commit ""))
+  ;;        (channel
+  ;;         (name 'guix)
+  ;;         (url "https://git.savannah.gnu.org/git/guix.git")
+  ;;         (commit ""))))
+  ;;      (inferior
+  ;;       (inferior-for-channels channels)))
+  ;;   				(first (lookup-inferior-packages inferior "linux" "5.4.100")))
+  )
  (initrd microcode-initrd)
  (firmware
   (list linux-firmware)))

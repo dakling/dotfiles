@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 
 # sudo ln -sf $(pwd)/binCustom/* /usr/bin/
-# sudo ln -sf $(pwd)/binCustom/* /usr/bin/
+# sudo ln -sf $(pwd)/binCustom/*
 
 # sudo ln -sf $(pwd)/desktopFiles/* /usr/share/applications/
 
@@ -20,10 +20,10 @@
 ## mkdir -p ~/.config/vimb
 ## mkdir -p ~/.config/dmenu-extended/
 #mkdir -p ~/.config/termite/
-#mkdir -p ~/.config/rofi/
+mkdir -p ~/.config/rofi/
 # mkdir -p ~/.config/lf/
 #mkdir -p ~/.mutt
-## mkdir -p ~/.config/termite/
+mkdir -p ~/.config/termite/
 ## mkdir -p ~/.mutt
 # mkdir -p ~/.nvimshell
 
@@ -40,14 +40,14 @@
 #ln -sf $(pwd)/xmonad.hs ~/.xmonad/
 #ln -sf $(pwd)/xmobarrc ~/.xmobarrc
 #ln -sf $(pwd)/stalonetrayrc ~/.stalonetrayrc
-#ln -sf $(pwd)/zshrc ~/.zshrc
+# ln -sf $(pwd)/zshrc ~/.zshrc
 ## ln -sf $(pwd)/conkyrc ~/.conkyrc
 ## ln -sf $(pwd)/dmenurc ~/.dmenurc
 ## ln -sf $(pwd)/vimb/* ~/.config/vimb/
 #ln -sf $(pwd)/wyeb./* ~/.config/wyeb./
 ## ln -sf $(pwd)/dmenu-extended/dmenuExtended_preferences.txt ~/.config/dmenu-extended/config/dmenuExtended_preferences.txt
-#ln -sf $(pwd)/termite ~/.config/termite/config
-#ln -sf $(pwd)/rofi ~/.config/rofi/config.rasi
+ln -sf $(pwd)/termite ~/.config/termite/config
+ln -sf $(pwd)/rofi.rasi ~/.config/rofi/config.rasi
 # ln -sf $(pwd)/lfrc ~/.config/lf/lfrc
 #ln -sf $(pwd)/mutt/account* ~/.mutt/
 #ln -sf $(pwd)/mutt/muttrc ~/.muttrc
@@ -59,8 +59,13 @@
 ## sudo ln -sf $(pwd)/mutt/muttAll /usr/bin/muttAll
 
 # ln -sf $(pwd)/emacs ~/.emacs
-ln -sf $(pwd)/offlineimap/offlineimaprc ~/.offlineimaprc
-ln -sf $(pwd)/offlineimap/offlineimap.py ~/.offlineimap.py
+# ln -sf $(pwd)/offlineimap/offlineimaprc ~/.offlineimaprc
+# ln -sf $(pwd)/offlineimap/offlineimap.py ~/.offlineimap.py
 # ln -sf $(pwd)/xinitrc ~/.xinitrc
 # ln -sf $(pwd)/guix-manifest.scm ~/.guix-manifest.scm
 
+ln -sf $(pwd)/mbsyncrc ~/.mbsyncrc
+
+mkdir -p ~/.config/nyxt/
+ln -sf $(pwd)/next.lisp ~/.config/nyxt/config.lisp
+ln -sf $(pwd)/vimrc ~/.vimrc

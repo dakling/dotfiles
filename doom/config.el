@@ -106,7 +106,7 @@
 (cond
  ((system-name= "klingenberg-pi")
   (add-load-path! "/run/current-system/sw/share/emacs/site-lisp/mu4e"))
- ((system-name= "klingenberg-tablet")
+ ((system-name= "klingenberg-laptop" "klingenberg-tablet")
   (add-load-path! "/run/current-system/profile/share/emacs/site-lisp/")))
 
 (after! undo-fu
@@ -698,10 +698,11 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 (use-package! geiser
   :commands (run-geiser)
   :config
-  (with-eval-after-load 'geiser-guile
-    (add-to-list 'geiser-guile-load-path "~/guix"))
-  (with-eval-after-load 'yasnippet
-    (add-to-list 'yas-snippet-dirs "~/guix/etc/snippets"))
+  (when (system-name= "klingenberg-laptop" "klingenberg-tablet")
+    (with-eval-after-load 'geiser-guile
+      (add-to-list 'geiser-guile-load-path "~/guix"))
+    (with-eval-after-load 'yasnippet
+      (add-to-list 'yas-snippet-dirs "~/guix/etc/snippets")))
 
   ;; (advice-add 'geiser-impl--set-buffer-implementation :after #'guix-geiser--set-project)
   ;; HACK END
@@ -717,6 +718,8 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    :n "eb" #'geiser-eval-buffer))
 
 (use-package! guix
+  :when (system-name= "klingenberg-laptop" "klingenberg-tablet")
+  :commands (guix scheme-mode)
   :config
   (defun my/activate-guix-devel-mode ()
     (when (file-in-directory-p (buffer-file-name) "~/guix")
@@ -737,7 +740,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 (setq +latex-viewers '(pdf-tools))
 (setq reftex-default-bibliography
       (cond
-       ((system-name= "klingenberg-tablet") "~/Documents-work/conferences/latex_macros/bibliography.bib")
+       ((system-name= "klingenberg-laptop" "klingenberg-tablet") "~/Documents-work/conferences/latex_macros/bibliography.bib")
        ((system-name= "klingenberg-pc") "~/Documents/conferences/latex_macros/bibliography.bib")))
 
 (add-hook! (TeX-mode-hook LaTeX-mode-hook) (lamdbda () (auto-fill-mode 1)))
@@ -780,7 +783,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
       (cons '("\\.m$" . octave-mode) auto-mode-alist))
 
 (use-package asy-mode
-  :when (system-name= "klingenberg-tablet")
+  :when (system-name= "klingenberg-laptop" "klingenberg-tablet")
   :load-path "~/.guix-profile/share/asymptote/")
 
 (map! :localleader
@@ -811,7 +814,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 ;;     (let ((version "v1.37.4"))
 ;;      (defun my/create-lsp-custom-executable ()
 ;;        "Modify the omnisharp-server run-script as needed for Guix"
-;;        (when (system-name= "klingenberg-tablet")
+;;        (when (system-name= "klingenberg-laptop" "klingenberg-tablet")
 ;;          (with-temp-file (concat (lsp-csharp--server-dir version) "/run-custom")
 ;;            (goto-char (point-min))
 ;;            (insert-file-contents (lsp-csharp--server-bin version))
@@ -822,7 +825,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 ;;      (cond
 ;;       ((system-name= "klingenberg-pi")
 ;;        (setq omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
-;;       ((system-name= "klingenberg-tablet")
+;;       ((system-name= "klingenberg-laptop" "klingenberg-tablet")
 ;;        ;; (setq omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp/")
 ;;        (setq lsp-csharp-server-path (concat (lsp-csharp--server-dir version) "/run-custom")))))))
 
@@ -830,7 +833,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 ;;   (progn
 ;;     (defun my/create-omnisharp-custom-executable ()
 ;;       "Modify the omnisharp-server run-script as needed for Guix"
-;;       (when (system-name= "klingenberg-tablet")
+;;       (when (system-name= "klingenberg-laptop" "klingenberg-tablet")
 ;;         (with-temp-file (concat (omnisharp--server-installation-dir) "/run-custom")
 ;;           (goto-char (point-min))
 ;;           (insert-file-contents (omnisharp--server-installation-path))
@@ -841,7 +844,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 ;;     (cond
 ;;      ((system-name= "klingenberg-pi")
 ;;       (setq omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
-;;      ((system-name= "klingenberg-tablet")
+;;      ((system-name= "klingenberg-laptop" "klingenberg-tablet")
 ;;       ;; (setq omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp/")
 ;;       (setq omnisharp-server-executable-path (concat (omnisharp--server-installation-dir) "/run-custom"))
 ;;       ;; (setq omnisharp-server-executable-path nil)
@@ -1230,6 +1233,8 @@ limitations under the License.
                                              ("raw" . 72000))))
 
 (use-package! telega
+  :when (system-name= "klingenberg-laptop" "klingenberg-tablet")
+  :load-path "~/.guix-profile/share/emacs/site-lisp"
   :commands telega
   :config
   (telega-notifications-mode 1))
@@ -1475,7 +1480,7 @@ limitations under the License.
   (setq epg-pinentry-mode 'loopback))
 
 (use-package! stumpwm-mode
-  :when (system-name= "klingenberg-tablet" "klingenberg-pc")
+  :when (system-name= "klingenberg-laptop" "klingenberg-tablet" "klingenberg-pc")
   :load-path "/run/current-system/profile/share/emacs/site-lisp/"
   :config
   (defun my/activate-stump-mode ()

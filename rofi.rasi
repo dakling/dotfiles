@@ -1,5 +1,5 @@
 configuration {
-    modi: "combi,ssh,file-browser,run,drun,window";
+    modi: "combi,ssh,run,drun,window";
     combi-modi: "window,run,drun";
     fake-transparency: true;
     font: "Fira Mono 12";

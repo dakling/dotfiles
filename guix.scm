@@ -169,6 +169,7 @@ root ALL=(ALL) ALL
   (append
    (list
     ;; (service xfce-desktop-service-type)
+    (service openssh-service-type)
     (service slim-service-type
              (slim-configuration
               (display ":1")
@@ -215,26 +216,27 @@ root ALL=(ALL) ALL
     "/run/current-sytem/profile/sbin/reboot")
    %setuid-programs))
  (kernel
-  ;; (specification->package "linux-libre@5.4")
+  (specification->package "linux-libre@5.4")
   ;; (specification->package "linux@5.4")
-   (let*
-       ((channels
-         (list
-          (channel
-           (name 'nonguix)
-           (url "https://gitlab.com/nonguix/nonguix")
-           (commit "0a0e8d0db63210d45f79196769dfda9f2b2355dd"))
-          (channel
-           (name 'flat)
-           (url "https://github.com/flatwhatson/guix-channel.git")
-           (commit "944cedf6cee80e643c79ed3eeab7068d040c2580"))
-          (channel
-           (name 'guix)
-           (url "https://git.savannah.gnu.org/git/guix.git")
-           (commit "57853d69fe14ea97ea1eb084a74944c44998a4bb"))))
-        (inferior
-         (inferior-for-channels channels)))
-     (first (lookup-inferior-packages inferior "linux" "5.4.99"))))
+   ;; (let*
+   ;;     ((channels
+   ;;       (list
+   ;;        (channel
+   ;;         (name 'nonguix)
+   ;;         (url "https://gitlab.com/nonguix/nonguix")
+   ;;         (commit "0a0e8d0db63210d45f79196769dfda9f2b2355dd"))
+   ;;        (channel
+   ;;         (name 'flat)
+   ;;         (url "https://github.com/flatwhatson/guix-channel.git")
+   ;;         (commit "944cedf6cee80e643c79ed3eeab7068d040c2580"))
+   ;;        (channel
+   ;;         (name 'guix)
+   ;;         (url "https://git.savannah.gnu.org/git/guix.git")
+   ;;         (commit "57853d69fe14ea97ea1eb084a74944c44998a4bb"))))
+   ;;      (inferior
+   ;;       (inferior-for-channels channels)))
+   ;;   (first (lookup-inferior-packages inferior "linux" "5.4.100")))
+   )
  (initrd microcode-initrd)
  (firmware
   (list linux-firmware)))

@@ -23,11 +23,13 @@
  ssh
  nix
  xorg
- desktop)
+ desktop
+ pm)
 
 (use-package-modules
  certs
  freedesktop
+ gl
  gnome
  pulseaudio
  gcc
@@ -78,14 +80,12 @@
   (plain-file "sudoers" "\
 root ALL=(ALL) ALL
 %wheel ALL=(ALL) ALL
-%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/sbin/shutdown
-%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/sbin/reboot
-%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/cpupower
-%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/mount
-%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/umount
-%wheel ALL=(ALL) NOPASSWD: /home/klingenberg/.guix-profile/bin/mount
-%wheel ALL=(ALL) NOPASSWD: /home/klingenberg/.guix-profile/bin/umount
-"))
+%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/sbin/shutdown,\
+ /run/current-system/profile/sbin/reboot,\
+ /run/current-system/profile/bin/light,\
+ /run/current-system/profile/bin/mount,\
+ /run/current-system/profile/bin/umount"))
+
 
 (operating-system
  (locale "en_US.utf8")
@@ -106,12 +106,17 @@ root ALL=(ALL) ALL
     (supplementary-groups
      '("wheel" "netdev" "audio" "video" "lp" "dialout")))
    %base-user-accounts))
- ;; (sudoers-file %sudoers-specification)
+ (sudoers-file %sudoers-specification)
  (packages
   (append
    (list
     (specification->package "nss-certs")
-    xf86-video-intel
+    ;; xf86-video-intel
+    intel-vaapi-driver
+    mesa
+    mesa-opencl
+    mesa-utils
+    light
     sbcl
     sbcl-slynk
     stumpwm
@@ -131,9 +136,9 @@ root ALL=(ALL) ALL
     ;; emacs-native-comp
     emacs
     ;; emacs-exwm
-    emacs-guix
+    ;; emacs-guix
     ;; emacs-pdf-tools
-    emacs-pulseaudio-control
+    ;; emacs-pulseaudio-control
     emacs-vterm
     guile-gcrypt
     acpi
@@ -177,6 +182,7 @@ root ALL=(ALL) ALL
                (xorg-configuration
                 (keyboard-layout keyboard-layout)))))
     (service nix-service-type)
+    (service thermald-service-type)
     (service openvpn-client-service-type
              (openvpn-client-configuration))
     (bluetooth-service
@@ -220,19 +226,34 @@ root ALL=(ALL) ALL
   ;;        (channel
   ;;         (name 'nonguix)
   ;;         (url "https://gitlab.com/nonguix/nonguix")
-  ;;         (commit ""))
+  ;;         (commit "0a5cd133a3097b192702c8b806f2a6f54182118d"))
   ;;        (channel
   ;;         (name 'flat)
   ;;         (url "https://github.com/flatwhatson/guix-channel.git")
-  ;;         (commit ""))
+  ;;         (commit "c93cbe457c23709350a6e432e0e196263eb4fc08"))
   ;;        (channel
   ;;         (name 'guix)
   ;;         (url "https://git.savannah.gnu.org/git/guix.git")
-  ;;         (commit ""))))
+  ;;         (commit "37d8def701839200c44c76cb2fa2abfb27a7b88b"))))
   ;;      (inferior
   ;;       (inferior-for-channels channels)))
-  ;;   				(first (lookup-inferior-packages inferior "linux" "5.4.100")))
+  ;;   (first (lookup-inferior-packages inferior "linux" "5.11.10")))
   )
+ ;; (kernel-arguments
+;;   (append '(
+
+;; "i915" "enable_dc=2"
+
+;; "i915" "disable_power_well=0"
+
+;; "i915" "enable_fbc=1"
+
+;; "i915" "enable_guc=3"
+
+;; "i915" "enable_dpcd_backlight=1"
+
+;;             )
+;;          %default-kernel-arguments))
  (initrd microcode-initrd)
  (firmware
   (list linux-firmware)))

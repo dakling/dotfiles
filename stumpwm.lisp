@@ -226,11 +226,13 @@
 ;; spacemacsy style
 (define-key *root-map* (kbd "M") "lastmsg")
 ;; audio keys
-(define-key *top-map* (kbd "XF86AudioLowerVolume") "exec amixer set Master 5%-")
-(define-key *top-map* (kbd "XF86AudioRaiseVolume") "exec amixer set Master 5%+")
-(define-key *top-map* (kbd "XF86AudioMute") "exec amixer set Master toggle")
+(define-key *top-map* (kbd "XF86AudioLowerVolume") "exec pamixer --increase 5")
+(define-key *top-map* (kbd "XF86AudioRaiseVolume") "exec pamixer --decrease 5")
+(define-key *top-map* (kbd "XF86AudioMute") "exec pamixer --toggle-mute")
 (define-key *top-map* (kbd "XF86AudioPause") "my/pause")
 (define-key *top-map* (kbd "XF86AudioPlay") "my/pause")
+(define-key *top-map* (kbd "XF86MonBrightnessDown") "exec sudo light -U 5")
+(define-key *top-map* (kbd "XF86MonBrightnessUp") "exec sudo light -A 5")
 ;;misc
 (define-key *root-map* (kbd ",") "colon")
 (define-key *root-map* (kbd ".") "eval")
@@ -285,7 +287,8 @@
 (define-key *top-map* (kbd "s-E") "exec emacs")
 (define-key *top-map* (kbd "s-F1") "emacs-terminal")
 (define-key *top-map* (kbd "s-S-F1") "run-terminal")
-(define-key *top-map* (kbd "s-F2") "exec firefox")
+(define-key *top-map* (kbd "s-F2") "exec icecat")
+;; (define-key *top-map* (kbd "s-F2") "exec firefox")
 ;; (define-key *top-map* (kbd "s-F2") "exec nyxt")
 (define-key *top-map* (kbd "s-F3") "run-emacs-client deer")
 (define-key *top-map* (kbd "s-S-F3") "exec pcmanfm")

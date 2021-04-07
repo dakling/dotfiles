@@ -55,12 +55,11 @@
 ;; (package! xelb)
 ;; (package! exwm)
 ;; (package! dmenu)
+;; (package! pulseaudio-control)
 
 (package! mu4e-alert)
 
 (package! smooth-scrolling)
-
-;; (package! pulseaudio-control)
 
 ;; (package! telega) ;use from guix
 
@@ -108,11 +107,20 @@
 
 (package! el-igo :recipe (:host github :repo "misohena/el-igo"))
 
+(package! csharp-repl :recipe (:host github :repo "dakling/emacs-csharp-repl"))
+
+(package! bosss :recipe (:host github :repo "dakling/emacs-bosss"))
+
 ;; (package! fira-code-mode)
 
 ;; (package! edit-server)
 
 (disable-packages! org-msg)
+
+;; installed by guix
+(package! guix)
+
+;; (package! chez :recipe (:host gitlab :repo "emacs-geiser/chez"))
 
 ;; (package! eaf :recipe
 ;;   (:host github

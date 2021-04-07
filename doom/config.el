@@ -114,7 +114,7 @@
 
 (after! sly
   (setq inferior-lisp-program (cond
-                               ((system-name= "klingenberg-tablet")  "~/.local/bin/.run-sbcl.sh")
+                               ((system-name= "klingenberg-laptop" "klingenberg-tablet")  "~/.local/bin/.run-sbcl.sh")
                                (t "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp"))))
 
 (customize-set-variable 'compilation-scroll-output t)
@@ -600,9 +600,8 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
   (setq mu4e-enable-notifications t)
   (customize-set-variable 'mu4e-headers-leave-behavior 'apply)
   (setq mu4e-view-use-gnus t)
-  (add-hook 'mu4e-compose-mode-hook 'mml-secure-sign-pgpmime)
-  ;; (add-hook 'org-msg-edit-mode-hook 'mml-secure-sign-pgpmime)
-  (setq mml-secure-message-openpgp-sign-with-sender t)
+  ;; (add-hook 'mu4e-compose-mode-hook 'mml-secure-sign-pgpmime)
+  ;; (setq mml-secure-message-openpgp-sign-with-sender t)
   (require 'mu4e-icalendar)
   (mu4e-icalendar-setup)
   (require 'org-agenda)
@@ -610,6 +609,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
   (setq gnus-icalendar-org-capture-headline '("Inbox"))
   (gnus-icalendar-org-setup)
   ;;     org-msg
+  ;; (add-hook 'org-msg-edit-mode-hook 'mml-secure-sign-pgpmime)
   ;; (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
   ;;       ;; org-msg-startup "hidestars indent inlineimages"
   ;;       ;; org-msg-greeting-fmt "Hallo %s,\n\n\n"
@@ -683,6 +683,8 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    :ni "C-M-l" #'lispy-move-right
    :ni "M-r" #'lispy-raise-sexp
    :ni "M-d" #'lispyville-wrap-round
+   :ni "[" nil
+   :ni "]" nil
    :ni "C-<return>" #'lispy-split
    :n "gc" #'lispyville-comment-or-uncomment)
 
@@ -696,7 +698,8 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 
 ;; scheme
 (use-package! geiser
-  :commands (run-geiser)
+  ;; :load-path "/run/current-system/profile/share/emacs/site-lisp/"
+  ;; :commands (run-geiser)
   :config
   (when (system-name= "klingenberg-laptop" "klingenberg-tablet")
     (with-eval-after-load 'geiser-guile
@@ -708,7 +711,26 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
   ;; HACK END
   (setq flycheck-scheme-chicken-executable "chicken-csc")
   (setq geiser-chicken-binary "chicken-csi")
-  (setq geiser-active-implementations '(guile chicken))
+  (setq geiser-active-implementations '(chicken guile racket chez))
+  (setq geiser-default-implementation 'guile)
+  ;; (defun chicken-doc (&optional obtain-function)
+  ;;   (interactive)
+  ;;   (let ((func (funcall (or obtain-function 'current-word))))
+  ;;     (when func
+  ;;       (process-send-string (scheme-proc)
+  ;;                            (format "(require-library chicken-doc) ,doc %S\n" func))
+  ;;       (save-selected-window
+  ;;         (select-window (display-buffer (get-buffer scheme-buffer) t))
+  ;;         (goto-char (point-max))))))
+  ;; (after! geiser
+  ;;   (add-to-list 'geiser-implementations-alist '((regexp "\\.sc$") chez))
+  ;;   (add-to-list 'geiser-implementations-alist '((regexp "\\.sls$") chez)))
+  ;; (setq scheme-program-name "~/.guix-profile/bin/csi -:c")
+  (add-to-list 'auto-mode-alist
+               '("\\.sls\\'" . scheme-mode)
+               '("\\.sc\\'" . scheme-mode))
+  (add-to-list 'auto-mode-alist
+               '("\\.egg\\'" . scheme-mode))
   (map!
    :localleader
    :map scheme-mode-map
@@ -717,9 +739,22 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    :n "ee" #'geiser-eval-last-sexp
    :n "eb" #'geiser-eval-buffer))
 
+;; (use-package! racket-mode
+;;   :config
+;;   (map!
+;;    :localleader
+;;    :map racket-mode-map
+;;    :n "'" #'racket-repl
+;;    :n "ef" #'racket-send-definition
+;;    :n "ee" #'racket-eval-last-sexp
+;;    :n "eb" #'racket-send-buffer))
+
+;; (use-package geiser-chez
+;;   :after geiser)
+
 (use-package! guix
   :when (system-name= "klingenberg-laptop" "klingenberg-tablet")
-  :commands (guix scheme-mode)
+  ;; :commands (guix scheme-mode)
   :config
   (defun my/activate-guix-devel-mode ()
     (when (file-in-directory-p (buffer-file-name) "~/guix")
@@ -809,25 +844,28 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 (use-package! gnu-apl-mode)
 
 ;;c#
-;; (after! lsp
-;;   (progn
-;;     (let ((version "v1.37.4"))
-;;      (defun my/create-lsp-custom-executable ()
-;;        "Modify the omnisharp-server run-script as needed for Guix"
-;;        (when (system-name= "klingenberg-laptop" "klingenberg-tablet")
-;;          (with-temp-file (concat (lsp-csharp--server-dir version) "/run-custom")
-;;            (goto-char (point-min))
-;;            (insert-file-contents (lsp-csharp--server-bin version))
-;;            (search-forward "mono_cmd")
-;;            (kill-line)
-;;            (insert "=mono"))))
-;;      (my/create-lsp-custom-executable)
-;;      (cond
-;;       ((system-name= "klingenberg-pi")
-;;        (setq omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
-;;       ((system-name= "klingenberg-laptop" "klingenberg-tablet")
-;;        ;; (setq omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp/")
-;;        (setq lsp-csharp-server-path (concat (lsp-csharp--server-dir version) "/run-custom")))))))
+(use-package! lsp
+  :config
+  (progn
+    (let*
+        ((version "v1.37.7")
+         (server-dir (concat "~/.config/emacs/.local/etc/lsp/omnisharp-roslyn/" version "/")))
+      (defun my/create-lsp-custom-executable ()
+        "Modify the omnisharp-server run-script as needed for Guix"
+        (when (system-name= "klingenberg-laptop" "klingenberg-tablet")
+          (with-temp-file (concat server-dir "run-custom")
+            (goto-char (point-min))
+            (insert-file-contents (concat server-dir "run"))
+            (search-forward "mono_cmd")
+            (kill-line)
+            (insert "=mono"))))
+      (my/create-lsp-custom-executable)
+      (cond
+       ((system-name= "klingenberg-pi")
+        (setq omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
+       ((system-name= "klingenberg-laptop" "klingenberg-tablet")
+        ;; (setq omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp/")
+        (setq lsp-csharp-server-path (concat server-dir "/run-custom")))))))
 
 ;; (after! omnisharp
 ;;   (progn
@@ -880,8 +918,9 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
             (t (message "neither array nor string found on current line"))))))
 
 (use-package! csharp-repl
-  :when (system-name= "klingenberg-tablet" "klingenberg-pc")
-  :load-path "~/Documents/programming/elisp/emacs-csharp-repl/")
+  :when (system-name= "klingenberg-laptop" "klingenberg-tablet" "klingenberg-pc")
+  ;; :load-path "~/Documents/programming/elisp/emacs-csharp-repl/"
+  )
 
 (defun my/personal-bosss-file-p ()
   (and (buffer-file-name)
@@ -1060,15 +1099,15 @@ limitations under the License.
 
 ;; bosss
 (use-package! bosss
-  :when (system-name= "klingenberg-tablet" "klingenberg-pc")
-  :load-path "~/Documents/programming/elisp/emacs-bosss/"
+  :when (system-name= "klingenberg-laptop" "klingenberg-tablet" "klingenberg-pc")
+  ;; :load-path "~/Documents/programming/elisp/emacs-bosss/"
   :init
   (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
   (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Release/BoSSSpad.exe")
   (setq bosss-path-reference (mapcar (lambda (proj) (concat "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/" proj))
                                      '("RANSCommon/bin/Release/RANS_Solver.dll"
                                        "KOmegaModelSolver/bin/Release/KOmegaSolver.exe"
-                                       ;; "KOmegaStatSymmModelSolver/bin/Release/KOmegaSSSolver.exe"
+                                       "KOmegaStatSymmModelSolver/bin/Release/KOmegaSSSolver.exe"
                                        "TurbulenceModelParameterOptimization/bin/Release/ParameterOptimization.exe")))
   :config
   (map! :map bosss-mode-map
@@ -1249,8 +1288,8 @@ limitations under the License.
    :name "2021-ZIH"
    :default t
    :token (auth-source-pick-first-password
-         :host "2021-zih.slack.com"
-         :user "klingenberg@fdy.tu-darmstadt.de")
+           :host "2021-zih.slack.com"
+           :user "klingenberg@fdy.tu-darmstadt.de")
    :subscribed-channels '(allgemein)
    :full-and-display-names t)
 
@@ -1272,7 +1311,7 @@ limitations under the License.
     ",3" 'slack-message-embed-channel
     "\C-n" 'slack-buffer-goto-next-message
     "\C-p" 'slack-buffer-goto-prev-message)
-   (evil-define-key 'normal slack-edit-message-mode-map
+  (evil-define-key 'normal slack-edit-message-mode-map
     ",k" 'slack-message-cancel-edit
     ",s" 'slack-message-send-from-buffer
     ",2" 'slack-message-embed-mention
@@ -1280,10 +1319,10 @@ limitations under the License.
 
 (after! circe
   (set-irc-server! "chat.freenode.net"
-    `(:tls t
-      :port 6697
-      :nick "dakling"
-      :channels ("#emacs" "#guix"))))
+                   `(:tls t
+                     :port 6697
+                     :nick "dakling"
+                     :channels ("#emacs" "#guix"))))
 
 (use-package! alert
   :commands (alert)
@@ -1434,15 +1473,12 @@ limitations under the License.
    :n "M-y" #'eww-copy-page-url
    :n "f" #'ace-link-eww))
 
-;; (use-package! ytel
-;;   :config
-;;   (setq ytel-invidious-api-url "https://invidious.site/"))
-
 (use-package! ytdious
   :config
   (setq ytdious-invidious-api-url
-        "https://invidious.tube"
+        ;; "https://invidious.tube"
         ;; "https://invidious.zee.li"
+        "https://invidious.tinfoil-hat.net"
         )
   (map!
    :map ytdious-mode-map

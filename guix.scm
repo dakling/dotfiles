@@ -136,7 +136,7 @@ root ALL=(ALL) ALL
     ;; emacs-native-comp
     emacs
     ;; emacs-exwm
-    ;; emacs-guix
+    emacs-guix
     ;; emacs-pdf-tools
     ;; emacs-pulseaudio-control
     emacs-vterm

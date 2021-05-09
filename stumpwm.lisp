@@ -93,8 +93,8 @@
 (defcommand run-terminal (&optional command) (:rest)
   (eval-command
    (if command
-       (format nil "exec termite -e \"~a\"" command)
-       "exec termite")))
+       (format nil "exec alacritty -e \"~a\"" command)
+       "exec alacritty")))
 
 (defcommand shutdown () ()
   (stop-emacs-daemon)
@@ -226,8 +226,8 @@
 ;; spacemacsy style
 (define-key *root-map* (kbd "M") "lastmsg")
 ;; audio keys
-(define-key *top-map* (kbd "XF86AudioLowerVolume") "exec pamixer --increase 5")
-(define-key *top-map* (kbd "XF86AudioRaiseVolume") "exec pamixer --decrease 5")
+(define-key *top-map* (kbd "XF86AudioLowerVolume") "exec pamixer --decrease 5")
+(define-key *top-map* (kbd "XF86AudioRaiseVolume") "exec pamixer --increase 5")
 (define-key *top-map* (kbd "XF86AudioMute") "exec pamixer --toggle-mute")
 (define-key *top-map* (kbd "XF86AudioPause") "my/pause")
 (define-key *top-map* (kbd "XF86AudioPlay") "my/pause")
@@ -291,7 +291,7 @@
 ;; (define-key *top-map* (kbd "s-F2") "exec firefox")
 ;; (define-key *top-map* (kbd "s-F2") "exec nyxt")
 (define-key *top-map* (kbd "s-F3") "run-emacs-client deer")
-(define-key *top-map* (kbd "s-S-F3") "exec pcmanfm")
+(define-key *top-map* (kbd "s-S-F3") "exec spacefm")
 (define-key *top-map* (kbd "s-F4") "run-emacs-client mu4e")
 
 (define-key *top-map* (kbd "s-n") "gnew")
@@ -313,7 +313,7 @@
 ;; (defvar *program-map*
 ;;   (let ((m (stumpwm:make-sparse-keymap)))
 ;;     (stumpwm:define-key m (stumpwm:kbd "i") "exec firefox")
-;;     (stumpwm:define-key m (stumpwm:kbd "d") "exec pcmanfm")
+;;     (stumpwm:define-key m (stumpwm:kbd "d") "exec spacefm")
 ;;     m ; NOTE: this is important
 ;;     ))
 ;; (stumpwm:define-key stumpwm:*top-map* (stumpwm:kbd "s-x") '*program-map*)

@@ -71,8 +71,6 @@
 
 (package! elfeed)
 
-(package! elfeed-goodies)
-
 (package! diminish)
 
 (package! async-await)
@@ -117,10 +115,10 @@
 
 (disable-packages! org-msg)
 
+(package! nov)
+
 ;; installed by guix
 (package! guix)
-
-;; (package! chez :recipe (:host gitlab :repo "emacs-geiser/chez"))
 
 ;; (package! eaf :recipe
 ;;   (:host github

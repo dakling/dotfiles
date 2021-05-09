@@ -109,6 +109,10 @@
  ((system-name= "klingenberg-laptop" "klingenberg-tablet")
   (add-load-path! "/run/current-system/profile/share/emacs/site-lisp/")))
 
+(after! dired
+  (setq ranger-cleanup-on-disable nil
+        ranger-cleanup-eagerly t))
+
 (after! undo-fu
   (setq undo-fu-allow-undo-in-region t))
 
@@ -278,7 +282,7 @@
    time
    nil
    (lambda ()
-     (let ((ans (y-or-n-p (concat "Reminder: " mesg " Dismiss reminder (y) or remind again in 30 seconds (n)?"))))
+     (let ((ans (y-or-n-p (concat "Reminder: " mesg " Remind again in 30 seconds (n) or dismiss reminder (y)?"))))
        (unless ans
          (my/make-alert 30 mesg)))))
   (message "Made alert for %s at %s" mesg time))
@@ -683,10 +687,14 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    :ni "C-M-l" #'lispy-move-right
    :ni "M-r" #'lispy-raise-sexp
    :ni "M-d" #'lispyville-wrap-round
-   :ni "[" nil
-   :ni "]" nil
+   "[" nil
+   "]" nil
    :ni "C-<return>" #'lispy-split
    :n "gc" #'lispyville-comment-or-uncomment)
+  (map!
+   :map lispy-mode-map
+   "[" nil
+   "]" nil)
 
   (map!
    :localleader
@@ -701,27 +709,24 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
   ;; :load-path "/run/current-system/profile/share/emacs/site-lisp/"
   ;; :commands (run-geiser)
   :config
-  (when (system-name= "klingenberg-laptop" "klingenberg-tablet")
-    (with-eval-after-load 'geiser-guile
-      (add-to-list 'geiser-guile-load-path "~/guix"))
-    (with-eval-after-load 'yasnippet
-      (add-to-list 'yas-snippet-dirs "~/guix/etc/snippets")))
-
-  ;; (advice-add 'geiser-impl--set-buffer-implementation :after #'guix-geiser--set-project)
-  ;; HACK END
+  ;; (when (system-name= "klingenberg-laptop" "klingenberg-tablet")
+  ;;   (with-eval-after-load 'geiser-guile
+  ;;     (add-to-list 'geiser-guile-load-path "~/guix"))
+  ;;   (with-eval-after-load 'yasnippet
+  ;;     (add-to-list 'yas-snippet-dirs "~/guix/etc/snippets")))
   (setq flycheck-scheme-chicken-executable "chicken-csc")
   (setq geiser-chicken-binary "chicken-csi")
   (setq geiser-active-implementations '(chicken guile racket chez))
   (setq geiser-default-implementation 'guile)
-  ;; (defun chicken-doc (&optional obtain-function)
-  ;;   (interactive)
-  ;;   (let ((func (funcall (or obtain-function 'current-word))))
-  ;;     (when func
-  ;;       (process-send-string (scheme-proc)
-  ;;                            (format "(require-library chicken-doc) ,doc %S\n" func))
-  ;;       (save-selected-window
-  ;;         (select-window (display-buffer (get-buffer scheme-buffer) t))
-  ;;         (goto-char (point-max))))))
+  (defun chicken-doc (&optional obtain-function)
+    (interactive)
+    (let ((func (funcall (or obtain-function 'current-word))))
+      (when func
+        (process-send-string (scheme-proc)
+                             (format "(require-library chicken-doc) ,doc %S\n" func))
+        (save-selected-window
+          (select-window (display-buffer (get-buffer scheme-buffer) t))
+          (goto-char (point-max))))))
   ;; (after! geiser
   ;;   (add-to-list 'geiser-implementations-alist '((regexp "\\.sc$") chez))
   ;;   (add-to-list 'geiser-implementations-alist '((regexp "\\.sls$") chez)))
@@ -738,19 +743,6 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    :n "ef" #'geiser-eval-definition
    :n "ee" #'geiser-eval-last-sexp
    :n "eb" #'geiser-eval-buffer))
-
-;; (use-package! racket-mode
-;;   :config
-;;   (map!
-;;    :localleader
-;;    :map racket-mode-map
-;;    :n "'" #'racket-repl
-;;    :n "ef" #'racket-send-definition
-;;    :n "ee" #'racket-eval-last-sexp
-;;    :n "eb" #'racket-send-buffer))
-
-;; (use-package geiser-chez
-;;   :after geiser)
 
 (use-package! guix
   :when (system-name= "klingenberg-laptop" "klingenberg-tablet")
@@ -770,6 +762,14 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    :n "k" 'guix-devel-copy-module-as-kill
    :n "u" 'guix-devel-use-module
    :n "." 'guix-devel-code-block-edit))
+
+(use-package! cider
+  :config
+  (map!
+   :localleader
+   :map clojure-mode-map
+   :n "'" '+eval/open-repl-other-window
+   :n "ef" 'cider-eval-defun-at-point))
 
 ;; latex
 (setq +latex-viewers '(pdf-tools))
@@ -816,10 +816,6 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 ;; octave
 (setq auto-mode-alist
       (cons '("\\.m$" . octave-mode) auto-mode-alist))
-
-(use-package asy-mode
-  :when (system-name= "klingenberg-laptop" "klingenberg-tablet")
-  :load-path "~/.guix-profile/share/asymptote/")
 
 (map! :localleader
       :map octave-mode-map
@@ -1126,6 +1122,16 @@ limitations under the License.
    :n "en" #'bosss-eval-and-next-field
    :n "lp" #'bosss-repl-load-my-assembly
    :n "in" #'bosss-create-new-field))
+
+(use-package! maxima
+  :load-path "~/.guix-profile/share/emacs/site-lisp/"
+  :config
+  (add-to-list 'auto-mode-alist '("\\.ma[cx]\\'" . maxima-mode))
+  (map! :localleader :map maxima-mode-map
+        "ef" #'maxima-send-full-line
+        "ee" #'maxima-send-previous-form
+        "er" #'maxima-send-region
+        "eb" #'maxima-send-buffer))
 
 ;; org-kanban
 (use-package! kanban
@@ -1460,11 +1466,6 @@ limitations under the License.
         :n "v" #'elfeed-view-mpv
         :n "d" #'elfeed-youtube-dl))
 
-(use-package! elfeed-goodies
-  :after elfeed
-  :config
-  (elfeed-goodies/setup))
-
 (after! eww
   (map!
    :map eww-mode-map
@@ -1477,8 +1478,8 @@ limitations under the License.
   :config
   (setq ytdious-invidious-api-url
         ;; "https://invidious.tube"
-        ;; "https://invidious.zee.li"
-        "https://invidious.tinfoil-hat.net"
+        "https://invidious.zee.li"
+        ;; "https://invidious.tinfoil-hat.net"
         )
   (map!
    :map ytdious-mode-map

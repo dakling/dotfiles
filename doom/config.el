@@ -107,7 +107,8 @@
  ((system-name= "klingenberg-pi")
   (add-load-path! "/run/current-system/sw/share/emacs/site-lisp/mu4e"))
  ((system-name= "klingenberg-laptop" "klingenberg-tablet")
-  (add-load-path! "/run/current-system/profile/share/emacs/site-lisp/")))
+  (add-load-path! "/run/current-system/profile/share/emacs/site-lisp/")
+  (add-load-path! "~/.guix-profile/share/emacs/site-lisp/")))
 
 (after! dired
   (setq ranger-cleanup-on-disable nil
@@ -223,6 +224,12 @@
   (interactive)
   (async-shell-command "sudo reboot"))
 
+(defun my/open-in-external-app ()
+  (interactive)
+  (let ((process-connection-type nil))
+    (counsel-find-file-extern (buffer-file-name))))
+
+
 (defun my/brightness+ ()
   (interactive)
   (shell-command "xbacklight -inc 10"))
@@ -308,10 +315,10 @@
                 "\\&list.*"
                 ""
                 (replace-regexp-in-string
-                 "https://www.invidio.us/watch\\?v="
+                 "https://w*invidio.us/watch\\?v="
                  ""
                  (replace-regexp-in-string
-                  "https://www.youtube.com/watch\\?v="
+                  "https://w*youtube.com/watch\\?v="
                   ""
                   url)))))
          (download-dir "~/Videos/"))
@@ -324,11 +331,27 @@
       (concat "-o " download-dir "%\\(title\\)s%\\(id\\)s")
       (concat "\"" str "\""))
      (lambda (_ _)
-       (helm-open-file-with-default-tool
+       (counsel-find-file-extern
         (car (directory-files
               "~/Videos/"
               ;; download-dir
               t str)))))))
+
+(defun my/youtube-watch ()
+  (interactive)
+  (let* ((url (or (plist-get eww-data :url)
+                  (current-kill 0)))
+         (str (replace-regexp-in-string
+               "-"
+               "-"
+               (replace-regexp-in-string
+                "\\&list.*"
+                ""
+                (replace-regexp-in-string
+                 "https://w*invidio.us/watch\\?v="
+                 "https://youtube.com/watch\\?v="
+                 url)))))
+    (elfeed-v-mpv str)))
 
 (defun fdy-mount (source target)
   "Mount a directory from fdy windows remote server."
@@ -644,6 +667,12 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
  :n "s" #'avy-goto-char-timer
  :n "S" #'avy-goto-char-timer)
 
+(map!
+ :map doom-leader-open-map
+ "w" #'eww
+ "d" #'dired-jump
+ "D" #'+debugger/start)
+
 (map! :leader :map (elisp)
       "ef" #'eval-defun
       "ep" #'eval-print-last-sexp)
@@ -716,8 +745,9 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
   ;;     (add-to-list 'yas-snippet-dirs "~/guix/etc/snippets")))
   (setq flycheck-scheme-chicken-executable "chicken-csc")
   (setq geiser-chicken-binary "chicken-csi")
-  (setq geiser-active-implementations '(chicken guile racket chez))
+  (setq geiser-active-implementations '(chicken guile chez))
   (setq geiser-default-implementation 'guile)
+  ;; (setq geiser-scheme-dir "~/")
   (defun chicken-doc (&optional obtain-function)
     (interactive)
     (let ((func (funcall (or obtain-function 'current-word))))
@@ -763,13 +793,54 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    :n "u" 'guix-devel-use-module
    :n "." 'guix-devel-code-block-edit))
 
-(use-package! cider
-  :config
-  (map!
-   :localleader
-   :map clojure-mode-map
-   :n "'" '+eval/open-repl-other-window
-   :n "ef" 'cider-eval-defun-at-point))
+;; (use-package! cider
+;;   :config
+;;   (map!
+;;    :localleader
+;;    :map clojure-mode-map
+;;    :n "'" '+eval/open-repl-other-window
+;;    :n "ef" 'cider-eval-defun-at-point))
+
+;; doc-view mode
+(map!
+ :map 'doc-view-mode-map
+ :n "j" #'doc-view-next-page
+ :n "k" #'doc-view-previous-page
+ :n "<down>" #'doc-view-next-page
+ :n "<up>" #'doc-view-previous-page)
+
+;; open docx as text
+(defun my/docx->markdown (&optional file)
+  (let ((pandoc (executable-find "pandoc")))
+    (shell-command-to-string
+     (concat pandoc " --wrap=none " (shell-quote-argument (or file (buffer-file-name))) " -t markdown"))))
+
+(defun my/docx->markdown! ()
+  (interactive)
+  (read-only-mode -1)
+  (erase-buffer)
+  (insert (my/docx->markdown (buffer-file-name)))
+  (not-modified)
+  (read-only-mode 1))
+
+(define-derived-mode
+  pandoc-view-mode
+  markdown-mode
+  "pandoc-view-mode"
+  "View pandoc processing of docx file using markdown mode."
+  (my/docx->markdown!))
+(map!
+ :localleader
+ :map doc-view-mode-map
+ :n "p" #'pandoc-view-mode
+ :n "t" #'pandoc-view-mode
+ :n "l" #'my/open-in-external-app)
+(map!
+ :localleader
+ :map pandoc-view-mode-map
+ :n "d" #'doc-view-mode
+ :n "t" #'doc-view-mode
+ :n "l" #'my/open-in-external-app)
 
 ;; latex
 (setq +latex-viewers '(pdf-tools))
@@ -805,7 +876,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
  "rt" #'reftex-toc
  "rr" #'reftex-cleveref-cref
  "rc" #'reftex-citation
- "og" (lambda () (interactive) (find-file (getenv "LatexGlobalConfig")))
+ "og" (lambda () (interactive) (find-file "~/texmf/tex/latex/local/dakling.sty"))
  "ob" (lambda () (interactive) (find-file reftex-default-bibliography)))
 
 (use-package! evil-tex
@@ -1277,12 +1348,22 @@ limitations under the License.
                                              ("decibels" . 2.5)
                                              ("raw" . 72000))))
 
+;; TODO start
 (use-package! telega
+  :after (rainbow-identifiers)
   :when (system-name= "klingenberg-laptop" "klingenberg-tablet")
-  :load-path "~/.guix-profile/share/emacs/site-lisp"
+  :load-path "~/.guix-profile/share/emacs/site-lisp/telega-0.7.1-1.1d28dc2/"
   :commands telega
   :config
   (telega-notifications-mode 1))
+
+(use-package rainbow-identifiers
+  :after (visual-fill-column)
+  :load-path "~/.guix-profile/share/emacs/site-lisp/rainbow-identifiers-0.2.2")
+
+(use-package visual-fill-column
+  :load-path "~/.guix-profile/share/emacs/site-lisp/visual-fill-column-2.2")
+;; TODO end
 
 (use-package! slack
   :commands (slack-start)
@@ -1472,13 +1553,18 @@ limitations under the License.
    :n "M-h" #'eww-back-url
    :n "M-l" #'eww-forward-url
    :n "M-y" #'eww-copy-page-url
-   :n "f" #'ace-link-eww))
+   :n "f" #'ace-link-eww)
+  (map!
+   :localleader
+   :map eww-mode-map
+   :n "v" #'my/youtube-watch
+   :n "d" #'my/youtube-dl))
 
 (use-package! ytdious
   :config
   (setq ytdious-invidious-api-url
-        ;; "https://invidious.tube"
-        "https://invidious.zee.li"
+        "https://invidious.tube"
+        ;; "https://invidious.zee.li"
         ;; "https://invidious.tinfoil-hat.net"
         )
   (map!
@@ -1555,9 +1641,12 @@ limitations under the License.
                        flyspell-mode
                        defining-kbd-macro)))
 
+(use-package! shelldon)
+
 (use-package! igo-org
+  :after org
   :config
-  (igo-org-setup)
+  ;; (igo-org-setup)
   (autoload 'igo-sgf-mode "igo-sgf-mode")
   (add-to-list 'auto-mode-alist '("\\.sgf$" . igo-sgf-mode)))
 

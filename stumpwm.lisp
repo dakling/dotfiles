@@ -93,7 +93,7 @@
 (defcommand run-terminal (&optional command) (:rest)
   (eval-command
    (if command
-       (format nil "exec alacritty -e \"~a\"" command)
+       (format nil "exec alacritty -e ~a" command)
        "exec alacritty")))
 
 (defcommand shutdown () ()
@@ -103,6 +103,15 @@
 (defcommand reboot () ()
   (stop-emacs-daemon)
   (run-terminal "sudo reboot"))
+
+(defun map-tablet-to-screen (&optional (screen "eDP-1"))
+  (run-terminal (format nil "xinput --map-to-output $(xinput --list --id-only \"Wacom One by Wacom M Pen Pen (0)\") ~a" screen)))
+
+(defcommand map-tablet-to-laptop-screen () ()
+  (map-tablet-to-screen "eDP-1"))
+
+(defcommand map-tablet-to-external-screen () ()
+  (map-tablet-to-screen "HDMI-1"))
 
 (defun emacs-is-current-window-p ()
   (and (current-window)
@@ -288,7 +297,7 @@
 (define-key *top-map* (kbd "s-F1") "emacs-terminal")
 (define-key *top-map* (kbd "s-S-F1") "run-terminal")
 (define-key *top-map* (kbd "s-F2") "exec icecat")
-;; (define-key *top-map* (kbd "s-F2") "exec firefox")
+(define-key *top-map* (kbd "s-S-F2") "exec firefox")
 ;; (define-key *top-map* (kbd "s-F2") "exec nyxt")
 (define-key *top-map* (kbd "s-F3") "run-emacs-client deer")
 (define-key *top-map* (kbd "s-S-F3") "exec spacefm")

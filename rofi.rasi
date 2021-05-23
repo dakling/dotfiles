@@ -4,10 +4,10 @@ configuration {
     fake-transparency: true;
     font: "Fira Mono 12";
     monitor: "-4"; // the monitor with the focused window
-    terminal: "termite";
+    terminal: "alacritty";
     ssh-client: "ssh";
     ssh-command: "{terminal} -e \" {ssh-client} {host} [-p {port}]\"";
-    run-shell-command: "{terminal} --hold -e \"{cmd}\"";
+    run-shell-command: "{terminal} --hold -e {cmd}";
     show-icons: true;
     /* theme: "glue_pro_blue"; */
     /* theme: "Monokai"; */

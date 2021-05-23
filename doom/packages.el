@@ -101,6 +101,8 @@
 
 (unpin! sly)
 
+;; (unpin! org-mode)
+
 (package! gnu-apl-mode :recipe (:host github :repo "lokedhs/gnu-apl-mode"))
 
 (package! el-igo :recipe (:host github :repo "misohena/el-igo"))
@@ -116,6 +118,11 @@
 (disable-packages! org-msg)
 
 (package! nov)
+
+(package! shelldon
+  :recipe (:host github
+           :repo "Overdr0ne/shelldon"
+           :branch "master"))
 
 ;; installed by guix
 (package! guix)

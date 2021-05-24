@@ -104,14 +104,17 @@
 
 
 (cond
+ ((system-name= "klingenberg-laptop")
+  (add-load-path! "/usr/share/emacs/site-lisp/")
+  (add-load-path! "/usr/share/stumpwm/contrib/util/swm-emacs/"))
  ((system-name= "klingenberg-pi")
   (add-load-path! "/run/current-system/sw/share/emacs/site-lisp/mu4e"))
- ((system-name= "klingenberg-laptop" "klingenberg-tablet")
+ ((system-name= "klingenberg-tablet")
   (add-load-path! "/run/current-system/profile/share/emacs/site-lisp/")
   (add-load-path! "~/.guix-profile/share/emacs/site-lisp/")))
 
 (after! dired
-  (setq ranger-cleanup-on-disable nil
+  (setq ranger-cleanup-on-disable t
         ranger-cleanup-eagerly t))
 
 (after! undo-fu
@@ -294,10 +297,6 @@
          (my/make-alert 30 mesg)))))
   (message "Made alert for %s at %s" mesg time))
 
-(defun eshell/nonguixupdate ()
-  (shell-command "nix-channel --update")
-  (shell-command "nix-env -u")
-  (shell-command "flatpak --user update"))
 
 (after! bash-completion
   (setq bash-completion-nospace t))     ; TODO does not have any effect
@@ -444,7 +443,6 @@
    "s-c" 'my/close-buffer
    "s-q" 'my/get-rid-of-mouse
    "s-m" 'delete-other-windows
-   "s-g" 'guix
    "s-t" 'my/tuxi
    "s-y" 'ytdious
    ;; "s-<f1>" '+vterm/here
@@ -738,11 +736,6 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
   ;; :load-path "/run/current-system/profile/share/emacs/site-lisp/"
   ;; :commands (run-geiser)
   :config
-  ;; (when (system-name= "klingenberg-laptop" "klingenberg-tablet")
-  ;;   (with-eval-after-load 'geiser-guile
-  ;;     (add-to-list 'geiser-guile-load-path "~/guix"))
-  ;;   (with-eval-after-load 'yasnippet
-  ;;     (add-to-list 'yas-snippet-dirs "~/guix/etc/snippets")))
   (setq flycheck-scheme-chicken-executable "chicken-csc")
   (setq geiser-chicken-binary "chicken-csi")
   (setq geiser-active-implementations '(chicken guile chez))
@@ -760,7 +753,6 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
   ;; (after! geiser
   ;;   (add-to-list 'geiser-implementations-alist '((regexp "\\.sc$") chez))
   ;;   (add-to-list 'geiser-implementations-alist '((regexp "\\.sls$") chez)))
-  ;; (setq scheme-program-name "~/.guix-profile/bin/csi -:c")
   (add-to-list 'auto-mode-alist
                '("\\.sls\\'" . scheme-mode)
                '("\\.sc\\'" . scheme-mode))
@@ -775,7 +767,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    :n "eb" #'geiser-eval-buffer))
 
 (use-package! guix
-  :when (system-name= "klingenberg-laptop" "klingenberg-tablet")
+  :when (system-name= "klingenberg-tablet")
   ;; :commands (guix scheme-mode)
   :config
   (defun my/activate-guix-devel-mode ()
@@ -913,26 +905,27 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 ;;c#
 (use-package! lsp
   :config
-  (progn
-    (let*
-        ((version "v1.37.7")
-         (server-dir (concat "~/.config/emacs/.local/etc/lsp/omnisharp-roslyn/" version "/")))
-      (defun my/create-lsp-custom-executable ()
-        "Modify the omnisharp-server run-script as needed for Guix"
-        (when (system-name= "klingenberg-laptop" "klingenberg-tablet")
-          (with-temp-file (concat server-dir "run-custom")
-            (goto-char (point-min))
-            (insert-file-contents (concat server-dir "run"))
-            (search-forward "mono_cmd")
-            (kill-line)
-            (insert "=mono"))))
-      (my/create-lsp-custom-executable)
-      (cond
-       ((system-name= "klingenberg-pi")
-        (setq omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
-       ((system-name= "klingenberg-laptop" "klingenberg-tablet")
-        ;; (setq omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp/")
-        (setq lsp-csharp-server-path (concat server-dir "/run-custom")))))))
+  ;;(progn
+    ;;(let*
+        ;;((version "v1.37.7")
+         ;;(server-dir (concat "~/.config/emacs/.local/etc/lsp/omnisharp-roslyn/" version "/")))
+      ;;(defun my/create-lsp-custom-executable ()
+        ;;"Modify the omnisharp-server run-script as needed for Guix"
+        ;;(when (system-name= "klingenberg-laptop" "klingenberg-tablet")
+          ;;(with-temp-file (concat server-dir "run-custom")
+            ;;(goto-char (point-min))
+            ;;(insert-file-contents (concat server-dir "run"))
+            ;;(search-forward "mono_cmd")
+            ;;(kill-line)
+            ;;(insert "=mono"))))
+      ;;(my/create-lsp-custom-executable)
+      ;;(cond
+       ;;((system-name= "klingenberg-pi")
+        ;;(setq omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
+       ;;((system-name= "klingenberg-laptop" "klingenberg-tablet")
+        ;;;; (setq omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp/")
+        ;;(setq lsp-csharp-server-path (concat server-dir "/run-custom"))))))
+  )
 
 ;; (after! omnisharp
 ;;   (progn
@@ -1194,15 +1187,14 @@ limitations under the License.
    :n "lp" #'bosss-repl-load-my-assembly
    :n "in" #'bosss-create-new-field))
 
-(use-package! maxima
-  :load-path "~/.guix-profile/share/emacs/site-lisp/"
-  :config
-  (add-to-list 'auto-mode-alist '("\\.ma[cx]\\'" . maxima-mode))
-  (map! :localleader :map maxima-mode-map
-        "ef" #'maxima-send-full-line
-        "ee" #'maxima-send-previous-form
-        "er" #'maxima-send-region
-        "eb" #'maxima-send-buffer))
+;;(use-package! maxima
+  ;;:config
+  ;;(add-to-list 'auto-mode-alist '("\\.ma[cx]\\'" . maxima-mode))
+  ;;(map! :localleader :map maxima-mode-map
+        ;;"ef" #'maxima-send-full-line
+        ;;"ee" #'maxima-send-previous-form
+        ;;"er" #'maxima-send-region
+        ;;"eb" #'maxima-send-buffer))
 
 ;; org-kanban
 (use-package! kanban
@@ -1352,17 +1344,10 @@ limitations under the License.
 (use-package! telega
   :after (rainbow-identifiers)
   :when (system-name= "klingenberg-laptop" "klingenberg-tablet")
-  :load-path "~/.guix-profile/share/emacs/site-lisp/telega-0.7.1-1.1d28dc2/"
   :commands telega
   :config
   (telega-notifications-mode 1))
 
-(use-package rainbow-identifiers
-  :after (visual-fill-column)
-  :load-path "~/.guix-profile/share/emacs/site-lisp/rainbow-identifiers-0.2.2")
-
-(use-package visual-fill-column
-  :load-path "~/.guix-profile/share/emacs/site-lisp/visual-fill-column-2.2")
 ;; TODO end
 
 (use-package! slack
@@ -1604,7 +1589,6 @@ limitations under the License.
 
 (use-package! stumpwm-mode
   :when (system-name= "klingenberg-laptop" "klingenberg-tablet" "klingenberg-pc")
-  :load-path "/run/current-system/profile/share/emacs/site-lisp/"
   :config
   (defun my/activate-stump-mode ()
     (when (equalp
@@ -1640,6 +1624,8 @@ limitations under the License.
                        subword-mode
                        flyspell-mode
                        defining-kbd-macro)))
+
+(use-package! system-packages)
 
 (use-package! shelldon)
 

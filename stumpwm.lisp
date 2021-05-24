@@ -10,7 +10,7 @@
 
 (in-package :stumpwm)
 
-;; (load "~/.sbclrc")
+(load "~/.sbclrc")
 
 ;; (let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp"
 ;;                                        (user-homedir-pathname))))
@@ -25,7 +25,7 @@
 
 ; (load-module "ttf-fonts")
 
-(sb-posix:putenv "SBCL_HOME=/home/klingenberg/.guix-profile/lib/sbcl")
+;;(sb-posix:putenv "SBCL_HOME=/home/klingenberg/.guix-profile/lib/sbcl")
 ;; (sb-posix:putenv "SBCL_HOME=/run/current-system/profile/lib/sbcl/")
 ;; (require "asdf")
 ;; (load "/home/klingenberg/.guix-profile/share/emacs/site-lisp/")
@@ -37,16 +37,15 @@
 ;; (slynk:create-server :dont-close t)
 
 ;; fonts
-(require :ttf-fonts)
-(setf xft:*font-dirs* '("/run/current-system/profile/share/fonts/"))
-(setf clx-truetype:+font-cache-filename+ (concat (getenv "HOME") "/.fonts/font-cache.sexp"))
+(ql:quickload "clx-truetype")
+(load-module "ttf-fonts")
+(setf clx-truetype::+font-cache-filename+ (concat (getenv "HOME") "/.fonts/font-cache.sexp"))
 (xft:cache-fonts)
 ;; (set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Book" :size 10))
-(set-font (make-instance 'xft:font :family "Fira Mono" :subfamily "Regular" :size 10))
+;; (set-font (make-instance 'xft:font :family "Fira Mono" :subfamily "Regular" :size 10))
 
-;; (require "xembed")
-; (load-module "stumptray")
-(require "stumptray")
+(ql:quickload "xembed")
+(load-module "stumptray")
 
 ;; (require "maildir")
 
@@ -98,11 +97,11 @@
 
 (defcommand shutdown () ()
   (stop-emacs-daemon)
-  (run-terminal "sudo shutdown"))
+  (run-terminal "shutdown now"))
 
 (defcommand reboot () ()
   (stop-emacs-daemon)
-  (run-terminal "sudo reboot"))
+  (run-terminal "reboot"))
 
 (defun map-tablet-to-screen (&optional (screen "eDP-1"))
   (run-terminal (format nil "xinput --map-to-output $(xinput --list --id-only \"Wacom One by Wacom M Pen Pen (0)\") ~a" screen)))
@@ -296,7 +295,7 @@
 (define-key *top-map* (kbd "s-E") "exec emacs")
 (define-key *top-map* (kbd "s-F1") "emacs-terminal")
 (define-key *top-map* (kbd "s-S-F1") "run-terminal")
-(define-key *top-map* (kbd "s-F2") "exec icecat")
+(define-key *top-map* (kbd "s-F2") "exec firefox")
 (define-key *top-map* (kbd "s-S-F2") "exec firefox")
 ;; (define-key *top-map* (kbd "s-F2") "exec nyxt")
 (define-key *top-map* (kbd "s-F3") "run-emacs-client deer")
@@ -400,11 +399,11 @@
   "pkill dropbox"
   "dropbox"
   "nm-applet"
-  "blueman-applet"
+  ;; "blueman-applet"
+  "pa-applet"
   "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
   "setxkbmap de -option ctrl:nocaps nodeadkeys"
   "xcape -e 'Control_L=Escape'"
-  "fix_touchscreen"
   "bash ~/.screenlayout/default.sh")))
   (dolist (cmd autostart-command-list)
     (run-shell-command cmd)))

@@ -61,7 +61,7 @@
 
 (package! smooth-scrolling)
 
-;; (package! telega) ;use from guix
+(package! telega) ;use from guix
 
 (package! slack)
 
@@ -118,6 +118,8 @@
 (disable-packages! org-msg)
 
 (package! nov)
+
+(package! system-packages)
 
 (package! shelldon
   :recipe (:host github

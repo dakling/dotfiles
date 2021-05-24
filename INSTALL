@@ -23,7 +23,7 @@
 mkdir -p ~/.config/rofi/
 # mkdir -p ~/.config/lf/
 #mkdir -p ~/.mutt
-mkdir -p ~/.config/termite/
+# mkdir -p ~/.config/termite/
 ## mkdir -p ~/.mutt
 # mkdir -p ~/.nvimshell
 
@@ -46,7 +46,7 @@ mkdir -p ~/.config/termite/
 ## ln -sf $(pwd)/vimb/* ~/.config/vimb/
 #ln -sf $(pwd)/wyeb./* ~/.config/wyeb./
 ## ln -sf $(pwd)/dmenu-extended/dmenuExtended_preferences.txt ~/.config/dmenu-extended/config/dmenuExtended_preferences.txt
-ln -sf $(pwd)/termite ~/.config/termite/config
+# ln -sf $(pwd)/termite ~/.config/termite/config
 ln -sf $(pwd)/rofi.rasi ~/.config/rofi/config.rasi
 # ln -sf $(pwd)/lfrc ~/.config/lf/lfrc
 #ln -sf $(pwd)/mutt/account* ~/.mutt/
@@ -66,6 +66,14 @@ ln -sf $(pwd)/rofi.rasi ~/.config/rofi/config.rasi
 
 ln -sf $(pwd)/mbsyncrc ~/.mbsyncrc
 
-mkdir -p ~/.config/nyxt/
-ln -sf $(pwd)/next.lisp ~/.config/nyxt/config.lisp
+# mkdir -p ~/.config/nyxt/
+# ln -sf $(pwd)/next.lisp ~/.config/nyxt/config.lisp
 ln -sf $(pwd)/vimrc ~/.vimrc
+
+
+mkdir -p ~/.config/doom/
+ln -sf ~/.dotfiles/doom/* ~/.config/doom/
+
+mkdir -p ~/.config/pacmanfile/
+ln -sf ~/.dotfiles/pacmanfile.txt ~/.config/pacmanfile/
+

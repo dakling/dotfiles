@@ -120,6 +120,7 @@
 (package! nov)
 
 (package! system-packages)
+(package! helm-system-packages)
 
 (package! shelldon
   :recipe (:host github

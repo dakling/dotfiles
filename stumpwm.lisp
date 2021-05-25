@@ -401,7 +401,7 @@
   "nm-applet"
   ;; "blueman-applet"
   "pa-applet"
-  "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
+  "/usr/bin/polkit-dumb-agent"
   "setxkbmap de -option ctrl:nocaps nodeadkeys"
   "xcape -e 'Control_L=Escape'"
   "bash ~/.screenlayout/default.sh")))

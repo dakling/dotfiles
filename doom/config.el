@@ -230,7 +230,9 @@
 (defun my/open-in-external-app ()
   (interactive)
   (let ((process-connection-type nil))
-    (counsel-find-file-extern (buffer-file-name))))
+    (helm-find-file-extern (buffer-file-name))
+    ;; (counsel-find-file-extern (buffer-file-name))
+    ))
 
 
 (defun my/brightness+ ()
@@ -456,7 +458,7 @@
              (mu4e))
    "s-<f12>" '(lambda () (interactive)
                 (start-process "" nil "/usr/bin/slock")))
-  (when t
+  (when nil
     (map!
      :n
      "s-x" 'counsel-M-x
@@ -464,12 +466,13 @@
      "s-p" 'counsel-projectile
      "s-b" 'ivy-switch-buffer
      "s-P" 'ivy-pass))
-  (when nil
+  (when t
     (map!
      :n
      "s-x" 'helm-M-x
      "s-f" 'helm-find-files
      "s-p" 'helm-projectile
+     "s-g" 'helm-system-packages
      "s-b" 'helm-mini
      "s-P" 'helm-pass)))
 
@@ -1210,31 +1213,31 @@ limitations under the License.
  :after evil-snipe
  :v "s" #'evil-surround-region)
 
-(after! ivy
-  (setq ivy-extra-directories nil)
-  (setq ivy-use-virtual-buffers t)
-  (setq ivy-use-selectable-prompt t)
-  (setq counsel-find-file-at-point t)
-  (map!
-   :map ivy-minibuffer-map
-   "M-j" #'ivy-next-line
-   "M-k" #'ivy-previous-line
-   "M-h" #'ivy-backward-delete-char
-   "M-l" #'ivy-alt-done
-   "TAB" #'ivy-partial
-   "M-RET" #'ivy-call
-   "M-TAB" #'ivy-mark
-   "C-TAB" #'ivy-unmark
-   "M-H" #'left-char
-   "M-L" #'right-char)
-  (map!
-   :map counsel-find-file-map
-   :ni "DEL" #'backward-delete-char
-   "M-s" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-as-root))
-   "M-y" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-copy))
-   "M-r" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-move))
-   "M-D" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-delete))
-   "M-o" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-extern))))
+;; (after! ivy
+;;   (setq ivy-extra-directories nil)
+;;   (setq ivy-use-virtual-buffers t)
+;;   (setq ivy-use-selectable-prompt t)
+;;   (setq counsel-find-file-at-point t)
+;;   (map!
+;;    :map ivy-minibuffer-map
+;;    "M-j" #'ivy-next-line
+;;    "M-k" #'ivy-previous-line
+;;    "M-h" #'ivy-backward-delete-char
+;;    "M-l" #'ivy-alt-done
+;;    "TAB" #'ivy-partial
+;;    "M-RET" #'ivy-call
+;;    "M-TAB" #'ivy-mark
+;;    "C-TAB" #'ivy-unmark
+;;    "M-H" #'left-char
+;;    "M-L" #'right-char)
+;;   (map!
+;;    :map counsel-find-file-map
+;;    :ni "DEL" #'backward-delete-char
+;;    "M-s" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-as-root))
+;;    "M-y" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-copy))
+;;    "M-r" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-move))
+;;    "M-D" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-delete))
+;;    "M-o" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-extern))))
 
 (use-package! helm
   :when (featurep 'helm)
@@ -1284,15 +1287,16 @@ limitations under the License.
   ;; END TODO check if this is needed with doom
   )
 
-(use-package! helm-swoop
-  :when (featurep 'helm)
-  :after-call helm-mode-hook
-  :config
-  (setq helm-swoop-pre-input-function (lambda () (car evil-ex-search-pattern)))
-  (map!
-   :map
-   helm-swoop-map
-   "M-i" #'helm-multi-swoop-current-mode-from-helm-swoop))
+;; use helm-swiper
+;; (use-package! helm-swoop
+;;   :when (featurep 'helm)
+;;   :after-call helm-mode-hook
+;;   :config
+;;   (setq helm-swoop-pre-input-function (lambda () (car evil-ex-search-pattern)))
+;;   (map!
+;;    :map
+;;    helm-swoop-map
+;;    "M-i" #'helm-multi-swoop-current-mode-from-helm-swoop))
 
 ;; TODO check if this is needed with doom
 ;; (use-package! org-roam-server
@@ -1625,7 +1629,53 @@ limitations under the License.
                        flyspell-mode
                        defining-kbd-macro)))
 
-(use-package! system-packages)
+(use-package! system-packages
+  :config
+  (setq my/pacmanfile-file "~/.dotfiles/pacmanfile.txt")
+  (defun my/pacmanfile-visit ()
+    (interactive)
+    (find-file my/pacmanfile-file))
+  (defun my/pacmanfile-sync ()
+    (interactive)
+    (async-shell-command "pacmanfile sync"))
+  (add-to-list 'system-packages-supported-package-managers
+               '(yay .
+                        ((default-sudo . nil)
+                         (install . "yay -S")
+                         (search . "yay -Ss")
+                         (uninstall . "yay -Rs")
+                         (update . "yay -Syu")
+                         (clean-cache . "yay -Sc")
+                         (log . "cat /var/log/pacman.log")
+                         (get-info . "yay -Qi")
+                         (get-info-remote . "yay -Si")
+                         (list-files-provided-by . "yay -Ql")
+                         (verify-all-packages . "yay -Qkk")
+                         (verify-all-dependencies . "yay -Dk")
+                         (remove-orphaned . "yay -Rns $(pacman -Qtdq)")
+                         (list-installed-packages . "yay -Qe")
+                         (list-installed-packages-all . "yay -Q")
+                         (list-dependencies-of . "yay -Qi")
+                         (noconfirm . "--noconfirm"))))
+  (setq system-packages-use-sudo t)
+  (setq system-packages-package-manager 'yay))
+
+(use-package! helm-system-packages
+  :config
+  (defun my/add-package-to-pacfile ()
+    (interactive)
+    (write-region (helm-get-selection) nil my/pacmanfile-file 'append)
+    (my/pacmanfile-sync))
+  (map!
+   :map (helm-system-packages-pacman-map)
+   "M-i" #'my/add-package-to-pacfile
+   "M-I" #'helm-system-packages-toggle-explicit
+   "M-N" #'helm-system-packages-toggle-uninstalled
+   "M-D" #'helm-system-packages-toggle-dependencies
+   "M-O" #'helm-system-packages-toggle-orphans
+   "M-L" #'helm-system-packages-toggle-locals
+   "M-G" #'helm-system-packages-toggle-groups
+   "C-]" #'helm-system-packages-toggle-descriptions))
 
 (use-package! shelldon)
 

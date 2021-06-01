@@ -122,7 +122,7 @@
 
 (after! sly
   (setq inferior-lisp-program (cond
-                               ((system-name= "klingenberg-laptop" "klingenberg-tablet")  "~/.local/bin/.run-sbcl.sh")
+                               ((system-name= "klingenberg-tablet")  "~/.local/bin/.run-sbcl.sh")
                                (t "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp"))))
 
 (customize-set-variable 'compilation-scroll-output t)
@@ -1638,6 +1638,9 @@ limitations under the License.
   (defun my/pacmanfile-sync ()
     (interactive)
     (async-shell-command "pacmanfile sync"))
+  (defun my/pacman-update ()
+    (interactive)
+    (async-shell-command "yay -Syu"))
   (add-to-list 'system-packages-supported-package-managers
                '(yay .
                         ((default-sudo . nil)
@@ -1662,13 +1665,29 @@ limitations under the License.
 
 (use-package! helm-system-packages
   :config
-  (defun my/add-package-to-pacfile ()
+  (defun my//add-package-to-pacfile (&optional install?)
+    (let ((package (helm-get-selection)))
+      (find-file my/pacmanfile-file)
+      (goto-line 0)
+      ;; check if package is already listed
+      (if (search-forward-regexp (concat "^" package "$") nil t)
+          (progn
+            (message "package already installed"))
+        (progn
+          (write-region (format "%s\n" package) nil my/pacmanfile-file 'append)
+          (save-buffer)
+          (when install? (my/pacmanfile-sync))))
+      (kill-buffer (current-buffer))))
+  (defun my/add-package-to-pacfile-and-install ()
     (interactive)
-    (write-region (helm-get-selection) nil my/pacmanfile-file 'append)
-    (my/pacmanfile-sync))
+    (my//add-package-to-pacfile t))
+  (defun my/add-package-to-pacfile-no-install ()
+    (interactive)
+    (my//add-package-to-pacfile nil))
   (map!
    :map (helm-system-packages-pacman-map)
-   "M-i" #'my/add-package-to-pacfile
+   "M-i" #'my/add-package-to-pacfile-and-install
+   "M-A" #'my/add-package-to-pacfile-no-install
    "M-I" #'helm-system-packages-toggle-explicit
    "M-N" #'helm-system-packages-toggle-uninstalled
    "M-D" #'helm-system-packages-toggle-dependencies

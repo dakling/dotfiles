@@ -61,7 +61,8 @@
 
 (package! smooth-scrolling)
 
-(package! telega) ;use from guix
+(package! telega
+  :pin "9187e6e3d903474645f3e64806bc62ef687ec205")
 
 (package! slack)
 

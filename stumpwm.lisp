@@ -41,7 +41,7 @@
 (load-module "ttf-fonts")
 (setf clx-truetype::+font-cache-filename+ (concat (getenv "HOME") "/.fonts/font-cache.sexp"))
 (xft:cache-fonts)
-;; (set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Book" :size 10))
+(set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Book" :size 10))
 ;; (set-font (make-instance 'xft:font :family "Fira Mono" :subfamily "Regular" :size 10))
 
 (ql:quickload "xembed")
@@ -381,7 +381,7 @@
             ;; " | Vol. "
             ;; '(:eval (run-shell-command *vol-status-command* t))
             " | %d |"
-            "         "))
+            "             "))
 
 (setf *window-format* "%m%n%s%c")
 
@@ -393,18 +393,20 @@
 
 (let ((autostart-command-list
         (list
-  "xmodmap -e 'clear mod4'"
-  "xmodmap -e 'add mod4 = Super_L'"
-  "emacs --daemon=instance1"
-  "pkill dropbox"
-  "dropbox"
-  "nm-applet"
-  ;; "blueman-applet"
-  "pa-applet"
-  "/usr/bin/polkit-dumb-agent"
-  "setxkbmap de -option ctrl:nocaps nodeadkeys"
-  "xcape -e 'Control_L=Escape'"
-  "bash ~/.screenlayout/default.sh")))
+         "xmodmap -e 'clear mod4'"
+         "xmodmap -e 'add mod4 = Super_L'"
+         "emacs --daemon=instance1"
+         "pkill dropbox"
+         "dropbox"
+         "nm-applet"
+         "udiskie --tray"
+         "blueman-applet"
+         "pa-applet"
+         "/usr/bin/polkit-dumb-agent"
+         "setxkbmap de -option ctrl:nocaps nodeadkeys"
+         "xcape -e 'Control_L=Escape'"
+         "bash ~/.screenlayout/default.sh"
+         "feh --bg-scale ~/Pictures/arch-bg.jpg")))
   (dolist (cmd autostart-command-list)
     (run-shell-command cmd)))
 
@@ -424,10 +426,7 @@
 (refresh-heads)
 
 ;; turn on the mode line
-;; TODO check if numbers persist across X-restarts/reboots -> if so, wrap the following in a function -> seems that way
 (enable-mode-line (stumpwm:current-screen)
                   (stumpwm::head-by-number (stumpwm:current-screen) 0) t)
-;; (toggle-mode-line (stumpwm:current-screen)
-;;                   (stumpwm::head-by-number (stumpwm:current-screen) 0) t)
 
 (stumptray::stumptray)

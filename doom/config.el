@@ -1381,7 +1381,7 @@ limitations under the License.
 
 
 (use-package! elfeed
-  :commands (elfeed elfeed-update)
+  :commands (eww elfeed elfeed-update)
   :config
   (setq elfeed-feeds
         '(("https://www.zeitsprung.fm/feed/ogg/" podcast zeitsprung)

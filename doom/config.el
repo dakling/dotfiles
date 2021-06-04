@@ -1270,33 +1270,7 @@ limitations under the License.
   (map!
    :map helm-buffer-map
    "M-d" #'helm-buffer-run-kill-persistent)
-  ;; TODO check if this is needed with doom
-  ;; (setq completion-styles `(basic partial-completion emacs22 initials
-  ;;                                 ,(if (version<= emacs-version "27.0") 'helm-flex 'flex)))
-  ;; (setq helm-mode-fuzzy-match t)
-  ;; (setq helm-completion-in-region-fuzzy-match t)
-  ;; (setq helm-M-x-fuzzy-match t)
-  ;; (setq helm-buffers-fuzzy-matching t)
-  ;; (setq helm-completion-in-region-fuzzy-match t)
-  ;; (setq helm-file-cache-fuzzy-match t)
-  ;; (setq helm-imenu-fuzzy-match t)
-  ;; (setq helm-mode-fuzzy-match t)
-  ;; (setq helm-locate-fuzzy-match t)
-  ;; (setq helm-quick-update t)
-  ;; (setq helm-recentf-fuzzy-match t)
-  ;; END TODO check if this is needed with doom
-  )
-
-;; use helm-swiper
-;; (use-package! helm-swoop
-;;   :when (featurep 'helm)
-;;   :after-call helm-mode-hook
-;;   :config
-;;   (setq helm-swoop-pre-input-function (lambda () (car evil-ex-search-pattern)))
-;;   (map!
-;;    :map
-;;    helm-swoop-map
-;;    "M-i" #'helm-multi-swoop-current-mode-from-helm-swoop))
+  (setq helm-move-to-line-cycle-in-source t))
 
 ;; TODO check if this is needed with doom
 ;; (use-package! org-roam-server

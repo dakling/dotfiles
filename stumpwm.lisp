@@ -67,21 +67,16 @@
 
 ;; define my own commands
 (defcommand start-emacs-daemon () ()
-  (eval-command "exec emacs --daemon=instance1")
-  (eval-command "exec emacs --daemon"))
+  (eval-command "exec systemctl --user start emacs"))
 
 (defcommand run-emacs-client (&optional command) (:rest)
   (eval-command
-   ;; (if command
-   ;;     (format nil "exec emacsclient -nc -e \"(~a)\"" command)
-   ;;   "exec emacsclient -nc")
    (if command
-       (format nil "exec emacsclient -nc -s instance1 -e \"(~a)\"" command)
-       "exec emacsclient -nc -s instance1")
-   ))
+       (format nil "exec emacsclient -nc -e \"(~a)\"" command)
+       "exec emacsclient -nc")))
 
 (defcommand stop-emacs-daemon () ()
-  (run-emacs-client "save-buffers-kill-emacs"))
+  (eval-command "exec systemctl --user stop emacs"))
 
 (defcommand run-emacs (&optional command) (:rest)
   (eval-command
@@ -89,19 +84,22 @@
        (format nil "exec emacs --eval \"(~a)\"" command)
        "exec emacs")))
 
-(defcommand run-terminal (&optional command) (:rest)
+(defcommand run-terminal (&optional command wait-for-user-input) (:rest)
   (eval-command
-   (if command
-       (format nil "exec alacritty -e ~a" command)
-       "exec alacritty")))
+   (concatenate
+    'string
+    "exec alacritty "
+    (when wait-for-user-input
+      "-e read -n 1; ")
+    (when command command))))
 
 (defcommand shutdown () ()
   (stop-emacs-daemon)
-  (run-terminal "shutdown now"))
+  (run-terminal "shutdown now" t))
 
 (defcommand reboot () ()
   (stop-emacs-daemon)
-  (run-terminal "reboot"))
+  (run-terminal "reboot" t))
 
 (defun map-tablet-to-screen (&optional (screen "eDP-1"))
   (run-terminal (format nil "xinput --map-to-output $(xinput --list --id-only \"Wacom One by Wacom M Pen Pen (0)\") ~a" screen)))
@@ -125,10 +123,6 @@
 
 (defun emacs-evil-window-move (direction)
   (meta (kbd (format nil "s-~a" (direction-to-evil-key direction)))))
-
-;; (defun emacs-evil-window-move (direction)
-;;   (let ((cmd-string (concatenate 'string "emacsclient -s instance1 -e \"(evil-window-" (subseq (string-downcase (format nil "~s" direction)) 1) " 1)\"")))
-;;     (run-shell-command cmd-string t)))
 
 (defun emacs-window-close ()
   (meta (kbd "s-c")))
@@ -395,7 +389,7 @@
         (list
          "xmodmap -e 'clear mod4'"
          "xmodmap -e 'add mod4 = Super_L'"
-         "emacs --daemon=instance1"
+         ;; "emacs --daemon=instance1"
          "pkill dropbox"
          "dropbox"
          "nm-applet"

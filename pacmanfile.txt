@@ -16,6 +16,7 @@ bison
 blueman
 bluez
 cgoban3
+clinfo
 cuda
 dhcp
 discord
@@ -31,6 +32,7 @@ feh
 file
 findutils
 firefox
+fish
 flex
 flex
 freerdp
@@ -105,11 +107,14 @@ man-pages
 maxima
 mono
 mono-msbuild
+monodevelop-bin
 mpv
 mu
 network-manager-applet
 networkmanager
 networkmanager-openconnect
+nuget
+nunit3-console
 ocl-icd
 openal
 openarena

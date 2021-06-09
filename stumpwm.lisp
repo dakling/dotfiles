@@ -84,22 +84,22 @@
        (format nil "exec emacs --eval \"(~a)\"" command)
        "exec emacs")))
 
-(defcommand run-terminal (&optional command wait-for-user-input) (:rest)
+(defcommand run-terminal (&optional command) (:rest)
   (eval-command
    (concatenate
     'string
     "exec alacritty "
-    (when wait-for-user-input
-      "-e read -n 1; ")
-    (when command command))))
+    (if command
+        (concatenate 'string " -e " command)
+        ""))))
 
 (defcommand shutdown () ()
-  (stop-emacs-daemon)
-  (run-terminal "shutdown now" t))
+  (let ((_ (stop-emacs-daemon)))
+   (run-terminal "shutdown now")))
 
 (defcommand reboot () ()
-  (stop-emacs-daemon)
-  (run-terminal "reboot" t))
+  (let ((_ (stop-emacs-daemon)))
+   (run-terminal "reboot")))
 
 (defun map-tablet-to-screen (&optional (screen "eDP-1"))
   (run-terminal (format nil "xinput --map-to-output $(xinput --list --id-only \"Wacom One by Wacom M Pen Pen (0)\") ~a" screen)))
@@ -190,7 +190,7 @@
       (run-emacs-client "+eshell/here")))
 
 (defcommand emacs-everywhere () ()
-  (eval-command "exec emacsclient -e \"(emacs-everywhere)\"")
+  (eval-command "exec doom everywhere")
   ;; (run-emacs-client "emacs-everywhere")
   )
 

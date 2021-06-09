@@ -209,11 +209,6 @@
   '(("^\\*bosss\\*" :slot -1 :size 20 :select nil) ; popup bosss process buffer
     ("^\\*Async Shell Command\\*" :slot -1 :size 20)))
 
-;; TODO should not be needed
-;; (after! format-all-mode
-;;   ;; (remhash 'c++-mode format-all--mode-table)
-;;   (setq +format-on-save-enabled-modes 'omnisharp-mode))
-
 ;;; Defining some useful functions
 (defun shutdown ()
   (interactive)
@@ -230,10 +225,8 @@
 (defun my/open-in-external-app ()
   (interactive)
   (let ((process-connection-type nil))
-    (helm-find-file-extern (buffer-file-name))
-    ;; (counsel-find-file-extern (buffer-file-name))
-    ))
-
+    ;; (helm-find-file-extern (buffer-file-name))
+    (counsel-find-file-extern (buffer-file-name))))
 
 (defun my/brightness+ ()
   (interactive)
@@ -458,15 +451,16 @@
              (mu4e))
    "s-<f12>" '(lambda () (interactive)
                 (start-process "" nil "/usr/bin/slock")))
-  (when nil
+  (when t
     (map!
      :n
      "s-x" 'counsel-M-x
      "s-f" 'counsel-find-file
      "s-p" 'counsel-projectile
      "s-b" 'ivy-switch-buffer
-     "s-P" 'ivy-pass))
-  (when t
+     "s-g" 'helm-system-packages
+     "s-P" '+pass/ivy))
+  (when nil
     (map!
      :n
      "s-x" 'helm-M-x
@@ -1213,64 +1207,64 @@ limitations under the License.
  :after evil-snipe
  :v "s" #'evil-surround-region)
 
-;; (after! ivy
-;;   (setq ivy-extra-directories nil)
-;;   (setq ivy-use-virtual-buffers t)
-;;   (setq ivy-use-selectable-prompt t)
-;;   (setq counsel-find-file-at-point t)
-;;   (map!
-;;    :map ivy-minibuffer-map
-;;    "M-j" #'ivy-next-line
-;;    "M-k" #'ivy-previous-line
-;;    "M-h" #'ivy-backward-delete-char
-;;    "M-l" #'ivy-alt-done
-;;    "TAB" #'ivy-partial
-;;    "M-RET" #'ivy-call
-;;    "M-TAB" #'ivy-mark
-;;    "C-TAB" #'ivy-unmark
-;;    "M-H" #'left-char
-;;    "M-L" #'right-char)
-;;   (map!
-;;    :map counsel-find-file-map
-;;    :ni "DEL" #'backward-delete-char
-;;    "M-s" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-as-root))
-;;    "M-y" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-copy))
-;;    "M-r" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-move))
-;;    "M-D" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-delete))
-;;    "M-o" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-extern))))
-
-(use-package! helm
-  :when (featurep 'helm)
-  :diminish helm-mode
-  :config
+(after! ivy
+  (setq ivy-extra-directories nil)
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-use-selectable-prompt t)
+  (setq counsel-find-file-at-point t)
   (map!
-   :map doom-leader-buffer-map
-   "b" #'helm-mini)
-  (map!
-   :map helm-map
-   "M-j" #'helm-next-line
-   "M-k" #'helm-previous-line
-   "M-h" #'helm-find-files-up-one-level
-   "M-l" #'helm-execute-persistent-action
-   "M-w" #'helm-select-action
+   :map ivy-minibuffer-map
+   "M-j" #'ivy-next-line
+   "M-k" #'ivy-previous-line
+   "M-h" #'ivy-backward-delete-char
+   "M-l" #'ivy-alt-done
+   "TAB" #'ivy-partial
+   "M-RET" #'ivy-call
+   "M-TAB" #'ivy-mark
+   "C-TAB" #'ivy-unmark
    "M-H" #'left-char
-   "M-L" #'right-char
-   "M-TAB" #'helm-toggle-visible-mark-forward)
+   "M-L" #'right-char)
   (map!
-   :map helm-find-files-map
-   "M-l" #'helm-ff-RET
-   "C-l" nil
-   "M-y" #'helm-ff-run-copy-file
-   "M-r" #'helm-ff-run-rename-file
-   "M-s" #'helm-ff-run-find-file-as-root
-   "M--" #'helm-ff-run-marked-files-in-dired
-   "M-o" #'helm-ff-run-switch-other-window
-   "M-O" #'helm-ff-run-switch-other-frame
-   "M-RET" #'helm-ff-run-open-file-with-default-tool)
-  (map!
-   :map helm-buffer-map
-   "M-d" #'helm-buffer-run-kill-persistent)
-  (setq helm-move-to-line-cycle-in-source t))
+   :map counsel-find-file-map
+   :ni "DEL" #'backward-delete-char
+   "M-s" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-as-root))
+   "M-y" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-copy))
+   "M-r" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-move))
+   "M-D" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-delete))
+   "M-o" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-extern))))
+
+;; (use-package! helm
+;;   :when (featurep 'helm)
+;;   :diminish helm-mode
+;;   :config
+;;   (map!
+;;    :map doom-leader-buffer-map
+;;    "b" #'helm-mini)
+;;   (map!
+;;    :map helm-map
+;;    "M-j" #'helm-next-line
+;;    "M-k" #'helm-previous-line
+;;    "M-h" #'helm-find-files-up-one-level
+;;    "M-l" #'helm-execute-persistent-action
+;;    "M-w" #'helm-select-action
+;;    "M-H" #'left-char
+;;    "M-L" #'right-char
+;;    "M-TAB" #'helm-toggle-visible-mark-forward)
+;;   (map!
+;;    :map helm-find-files-map
+;;    "M-l" #'helm-ff-RET
+;;    "C-l" nil
+;;    "M-y" #'helm-ff-run-copy-file
+;;    "M-r" #'helm-ff-run-rename-file
+;;    "M-s" #'helm-ff-run-find-file-as-root
+;;    "M--" #'helm-ff-run-marked-files-in-dired
+;;    "M-o" #'helm-ff-run-switch-other-window
+;;    "M-O" #'helm-ff-run-switch-other-frame
+;;    "M-RET" #'helm-ff-run-open-file-with-default-tool)
+;;   (map!
+;;    :map helm-buffer-map
+;;    "M-d" #'helm-buffer-run-kill-persistent)
+;;   (setq helm-move-to-line-cycle-in-source t))
 
 ;; TODO check if this is needed with doom
 ;; (use-package! org-roam-server
@@ -1639,6 +1633,16 @@ limitations under the License.
 
 (use-package! helm-system-packages
   :config
+  (map!
+   :map helm-map
+   "M-j" #'helm-next-line
+   "M-k" #'helm-previous-line
+   "M-h" #'helm-find-files-up-one-level
+   "M-l" #'helm-execute-persistent-action
+   "M-w" #'helm-select-action
+   "M-H" #'left-char
+   "M-L" #'right-char
+   "M-TAB" #'helm-toggle-visible-mark-forward)
   (defun my//add-package-to-pacfile (&optional install?)
     (let ((package (helm-get-selection)))
       (find-file my/pacmanfile-file)

@@ -19,10 +19,10 @@
        ;;japanese
 
        :completion
-       company          ; the ultimate code completion backend
-       (helm +fuzzy +icons)    ; the *other* search engine for love and life
+       (company +tng)          ; the ultimate code completion backend
+       ;; (helm +fuzzy +icons)    ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
-       ;; (ivy +fuzzy +icons)               ; a search engine for love and life
+       (ivy +fuzzy +icons +prescient)               ; a search engine for love and life
 
        :ui
        ;;deft              ; notational velocity for Emacs

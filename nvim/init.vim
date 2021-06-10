@@ -1,6 +1,6 @@
 " Manage Plugins using vim-plug
-" call plug#begin('~/.config/nvim/plugged')
-call plug#begin('~/.vim/plugged')
+call plug#begin('~/.config/nvim/plugged')
+" call plug#begin('~/.vim/plugged')
 " Plug 'cocopon/iceberg.vim'
 " Plug 'joshdick/onedark.vim'
 " Plug 'morhetz/gruvbox'

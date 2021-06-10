@@ -381,6 +381,13 @@
 
 (setf *mode-line-timeout* 1)
 
+(set-bg-color "#1C1E24")
+(set-fg-color "#468DBF")
+(set-border-color "#468DBF")
+(set-focus-color "#468DBF")
+(setf *mode-line-background-color* "#1C1E24")
+(setf *mode-line-foreground-color* "#468DBF")
+
 (setf *mouse-focus-policy* :click)
 
 ;; autostart
@@ -420,6 +427,7 @@
 (refresh-heads)
 
 ;; turn on the mode line
+
 (enable-mode-line (stumpwm:current-screen)
                   (stumpwm::head-by-number (stumpwm:current-screen) 0) t)
 

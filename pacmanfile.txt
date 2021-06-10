@@ -106,9 +106,7 @@ make
 man-db
 man-pages
 maxima
-mono
-mono-msbuild
-monodevelop-bin
+dotnet-sdk
 mpv
 mu
 network-manager-applet
@@ -161,7 +159,7 @@ texlive-latexextra
 ttf-dejavu
 tuxedo-control-center
 udiskie
-vim
+neovim
 vlc
 vulkan-intel
 which
@@ -196,3 +194,6 @@ scrot
 shellcheck
 xorg-xwininfo
 tuxi-git
+sshfs
+xorg-xinput
+colorpicker

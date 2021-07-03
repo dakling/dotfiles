@@ -14,8 +14,8 @@ configuration {
     theme: "sidebar";
     /* theme: "slate"; */
     matching: "fuzzy";
-    kb-row-down: "Alt+j";
-    kb-row-up: "Alt+k";
+    kb-row-down: "Alt+j,Down";
+    kb-row-up: "Alt+k,Up";
     kb-mode-previous: "Alt+H";
     kb-mode-next: "Alt+L";
     kb-accept-entry: "Alt+l,Return,KP_Enter";

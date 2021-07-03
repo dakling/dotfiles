@@ -1,75 +1,17 @@
 #!/bin/sh
 
-# sudo ln -sf $(pwd)/binCustom/* /usr/bin/
-# sudo ln -sf $(pwd)/binCustom/*
 
-# sudo ln -sf $(pwd)/desktopFiles/* /usr/share/applications/
+mkdir -p ~/.config/nvim
+ln -sf $(pwd)/nvim/init.vim ~/.config/nvim/init.vim
 
-##mkdir -p ~/.config/i3/
-##mkdir -p ~/.config/i3status
-# curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
-#     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-#mkdir -p ~/.config/nvim
-#mkdir -p ~/.config/ranger
-##mkdir -p ~/.config/awesome
-# mkdir -p ~/.config/qutebrowser
-## mkdir -p ~/.config/sway
-#mkdir -p ~/.config/surfraw
-#mkdir -p ~/.config/wyeb.
-#mkdir -p ~/.xmonad
-## mkdir -p ~/.config/vimb
-## mkdir -p ~/.config/dmenu-extended/
-#mkdir -p ~/.config/termite/
 mkdir -p ~/.config/rofi/
-# mkdir -p ~/.config/lf/
-#mkdir -p ~/.mutt
-# mkdir -p ~/.config/termite/
-## mkdir -p ~/.mutt
-# mkdir -p ~/.nvimshell
-
-###ln -sf $(pwd)/i3/config ~/.config/i3/
-###ln -sf $(pwd)/i3status/config ~/.config/i3status/
-#ln -sf $(pwd)/nvim/init.vim ~/.config/nvim/init.vim
-#ln -sf $(pwd)/spacemacs ~/.spacemacs
-##ln -sf $(pwd)/awesome/* ~/.config/awesome
-#ln -sf $(pwd)/ranger/* ~/.config/ranger/
-# ln -sf $(pwd)/qutebrowser/* ~/.config/qutebrowser/
-## ln -sf $(pwd)/sway/config ~/.config/sway/
-#ln -sf $(pwd)/surfraw ~/.config/surfraw/conf
-#ln -sf $(pwd)/wyeb./* ~/.config/wyeb./
-#ln -sf $(pwd)/xmonad.hs ~/.xmonad/
-#ln -sf $(pwd)/xmobarrc ~/.xmobarrc
-#ln -sf $(pwd)/stalonetrayrc ~/.stalonetrayrc
-# ln -sf $(pwd)/zshrc ~/.zshrc
-## ln -sf $(pwd)/conkyrc ~/.conkyrc
-## ln -sf $(pwd)/dmenurc ~/.dmenurc
-## ln -sf $(pwd)/vimb/* ~/.config/vimb/
-#ln -sf $(pwd)/wyeb./* ~/.config/wyeb./
-## ln -sf $(pwd)/dmenu-extended/dmenuExtended_preferences.txt ~/.config/dmenu-extended/config/dmenuExtended_preferences.txt
-# ln -sf $(pwd)/termite ~/.config/termite/config
 ln -sf $(pwd)/rofi.rasi ~/.config/rofi/config.rasi
-# ln -sf $(pwd)/lfrc ~/.config/lf/lfrc
-#ln -sf $(pwd)/mutt/account* ~/.mutt/
-#ln -sf $(pwd)/mutt/muttrc ~/.muttrc
-#sudo ln -sf $(pwd)/mutt/muttAll /usr/bin/muttAll
-## ln -sf $(pwd)/termite ~/.config/termite/config
-## ln -sf $(pwd)/mutt/account* ~/.mutt/
-## ln -sf $(pwd)/mutt/muttrc ~/.muttrc
-# ln -sf $(pwd)/nvimshell/* ~/.nvimshell/
-## sudo ln -sf $(pwd)/mutt/muttAll /usr/bin/muttAll
-
-# ln -sf $(pwd)/emacs ~/.emacs
-# ln -sf $(pwd)/offlineimap/offlineimaprc ~/.offlineimaprc
-# ln -sf $(pwd)/offlineimap/offlineimap.py ~/.offlineimap.py
-# ln -sf $(pwd)/xinitrc ~/.xinitrc
-# ln -sf $(pwd)/guix-manifest.scm ~/.guix-manifest.scm
 
 ln -sf $(pwd)/mbsyncrc ~/.mbsyncrc
 
-# mkdir -p ~/.config/nyxt/
-# ln -sf $(pwd)/next.lisp ~/.config/nyxt/config.lisp
-ln -sf $(pwd)/vimrc ~/.vimrc
-
+mkdir -p ~/.config/nyxt/
+ln -sf $(pwd)/nyxt.lisp ~/.config/nyxt/init.lisp
+ln -sf $(pwd)/my-slynk.lisp ~/.config/nyxt/
 
 mkdir -p ~/.config/doom/
 ln -sf ~/.dotfiles/doom/* ~/.config/doom/

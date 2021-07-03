@@ -21,9 +21,9 @@
 ;; font string. You generally only need these two:
 ;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
 ;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
-;; (setq doom-font (font-spec :family "Fira Code Light")
-;;       doom-variable-pitch-font (font-spec :family "Fira Code Light"))
-(setq doom-font (font-spec :family "DejaVu Sans Mono"))
+(setq doom-font (font-spec :family "Fira Code")
+      doom-variable-pitch-font (font-spec :family "Fira Code"))
+;; (setq doom-font (font-spec :family "DejaVu Sans Mono"))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -123,7 +123,19 @@
 (after! sly
   (setq inferior-lisp-program (cond
                                ((system-name= "klingenberg-tablet")  "~/.local/bin/.run-sbcl.sh")
-                               (t "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp"))))
+                               (t "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")))
+  (defun my/connect-to-nyxt ()
+    (when (equalp
+           (buffer-file-name)
+           "/home/klingenberg/.dotfiles/nyxt.lisp")
+      (sly-connect "localhost" 4006)))
+  (add-hook 'lisp-mode-hook #'my/connect-to-nyxt)
+  (map! :map sly-mrepl-mode-map
+        :ni "M-k" #'sly-mrepl-previous-prompt
+        :ni "M-j" #'sly-mrepl-next-prompt)
+  (map! :localleader
+        :map sly-mrepl-mode-map
+        :n "g" #'helm-comint-prompts-all))
 
 (customize-set-variable 'compilation-scroll-output t)
 
@@ -203,7 +215,7 @@
         ("ls" #'org-super-links-store-link)
         ("lS" #'org-super-links-insert-link)))
 
-(setq smerge-command-prefix "+")
+(setq smerge-command-prefix "#")
 
 (set-popup-rules!
   '(("^\\*bosss\\*" :slot -1 :size 20 :select nil) ; popup bosss process buffer
@@ -645,7 +657,12 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 
 (setq doom-localleader-key "-")
 
-(map! "C-g" #'keyboard-quit)
+(map!
+ "C-g" #'keyboard-quit
+ :n "gb" #'pop-tag-mark
+ :n "s" #'avy-goto-char-timer
+ :n "S" #'avy-goto-char-timer
+ :n "+" #'evil-goto-mark)
 
 (map! :leader
       "SPC" #'execute-extended-command
@@ -656,11 +673,6 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
       "SS" #'shutdown
       "SR" #'reboot
       "w TAB" #'evil-switch-to-windows-last-buffer)
-
-(map!
- :n "gb" #'pop-tag-mark
- :n "s" #'avy-goto-char-timer
- :n "S" #'avy-goto-char-timer)
 
 (map!
  :map doom-leader-open-map
@@ -686,7 +698,8 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 
 (after!
   lispy
-  (lispy-set-key-theme '(lispy c-digits))) ;; disable single-key bindings
+  (lispy-set-key-theme '(lispy c-digits))
+  (setq lispy-colon-p nil)) ;; disable single-key bindings
 
 (after!
   lispyville
@@ -1212,26 +1225,57 @@ limitations under the License.
   (setq ivy-use-virtual-buffers t)
   (setq ivy-use-selectable-prompt t)
   (setq counsel-find-file-at-point t)
+  ;; (defun my/open-shell-here (dir)
+  ;;   (sly)
+  ;;   (sly-mrepl-sync nil (directory-file-name dir)))
   (map!
    :map ivy-minibuffer-map
    "M-j" #'ivy-next-line
    "M-k" #'ivy-previous-line
    "M-h" #'ivy-backward-delete-char
    "M-l" #'ivy-alt-done
+   "M-o" #'ivy-dispatching-call
    "TAB" #'ivy-partial
    "M-RET" #'ivy-call
    "M-TAB" #'ivy-mark
    "C-TAB" #'ivy-unmark
    "M-H" #'left-char
    "M-L" #'right-char)
+  ;; (ivy-add-actions
+  ;;  'counsel-find-file
+  ;;  '(("y" counsel-find-file-copy "copy file(s)"
+  ;;     (lambda (x)
+  ;;       (counsel-find-file-copy (mapconcat 'identity x "\n"))))
+  ;;    ("r" counsel-find-file-move "move file(s)"
+  ;;     (lambda (x)
+  ;;       (counsel-find-file-move (mapconcat 'identity x "\n"))))
+  ;;    ("D" counsel-find-file-delete "delete file(s)"
+  ;;     (lambda (x)
+  ;;       (counsel-find-file-delete (mapconcat 'identity x "\n"))))
+  ;;    ("m" ivy-mark "mark")
+  ;;    ("u" ivy-ummark "unmark")
+  ;;    ;; ("t" ivy-toggle-marks "toggle marks")
+  ;;    ))
   (map!
    :map counsel-find-file-map
    :ni "DEL" #'backward-delete-char
+   "M-e" (lambda () (interactive) (ivy-exit-with-action
+                                   (lambda (dir-or-file)
+                                     (let ((default-directory (file-name-directory dir-or-file)))
+                                       (eshell t)))))
    "M-s" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-as-root))
-   "M-y" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-copy))
-   "M-r" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-move))
+   "M-y" (lambda () (interactive) (ivy-exit-with-action
+                                   (lambda (x) (interactive) (if (listp x)
+                                                                 (counsel-find-file-copy (mapconcat 'identity x "\n"))
+                                                               (counsel-find-file-copy x)))))
+   "M-r" (lambda () (interactive) (ivy-exit-with-action
+                                   (lambda (x) (interactive) (if (listp x)
+                                                                 (counsel-find-file-move (mapconcat 'identity x "\n"))
+                                                               (counsel-find-file-move x)))))
    "M-D" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-delete))
-   "M-o" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-extern))))
+   "M-Y" (lambda () (interactive) (ivy-exit-with-action (lambda (x) (interactive) (kill-new (directory-file-name x)))))
+   "M-c" (lambda () (interactive) (ivy-exit-with-action (lambda (x) (interactive) (dired-compress-file x))))
+   "M-RET" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-extern))))
 
 ;; (use-package! helm
 ;;   :when (featurep 'helm)
@@ -1284,16 +1328,27 @@ limitations under the License.
 ;; (use-package! edit-server
 ;;   :config (edit-server-start))
 
+(use-package! vterm
+  :config
+  (map!
+   :map vterm-mode-map
+   :ni "M-p" #'vterm-send-C-p
+   :ni "M-n" #'vterm-send-C-n
+   :ni "M-k" #'vterm-previous-prompt
+   :ni "M-j" #'vterm-next-prompt))
+
 (use-package! pdf-tools
   :config
   (add-hook 'pdf-view-mode-hook 'pdf-view-auto-slice-minor-mode)
   (add-hook 'pdf-view-mode-hook 'pdf-view-midnight-minor-mode)
   (evil-collection-init 'pdf)
+  (add-to-list 'desktop-locals-to-save 'pdf-view-register-alist)
   (setq pdf-view-midnight-colors '("WhiteSmoke" . "gray16"))
   (map!
    :map pdf-view-mode-map
    :n "J" #'pdf-view-next-page
    :n "K" #'pdf-view-previous-page
+   :n "+" #'pdf-view-jump-to-register
    :n "-" nil)
   (map!
    :localleader
@@ -1377,38 +1432,41 @@ limitations under the License.
 (use-package! elfeed
   :commands (eww elfeed elfeed-update)
   :config
-  (setq elfeed-feeds
-        '(("https://www.zeitsprung.fm/feed/ogg/" podcast zeitsprung)
-          ("https://kickermeetsdazn.podigee.io/feed/mp3/" podcast kmd fussball)
-          ("https://audioboom.com/channels/2399216.rss" podcast nstaaf)
-          ("http://fokus-fussball.de/feed/mp3/" podcast collina erben fussball)
-          ("https://liebling-bosman.podigee.io/feed/mp3" podcast liebling bosman fussball)
-          ("https://tribuenengespraech.podigee.io/feed/vorbis" podcast rasenfunk tribünengespräch fussball)
-          ("https://feeds.feedburner.com/hacks-on-tap" podcast hacks on tap politics)
-          ("https://lexfridman.com/feed/podcast" podcast lex friedman)
-          ("https://ambrevar.xyz/atom.xml" blog emacs programming)
-          ("https://nyxt.atlas.engineer/feed" lisp programming nyxt next)
-          ("https://guix.gnu.org/feeds/blog/arm.atom" lisp programming guix blog)
-          ("https://www.kernel.org/feeds/kdist.xml" linux kernel updates)
-          ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
-          ("http://www.reddit.com/r/DoomEmacs/.rss" emacs reddit)
-          ("http://www.reddit.com/r/lisp/.rss" programming reddit)
-          ("http://www.reddit.com/r/common_lisp/.rss" programming reddit)
-          ("http://www.reddit.com/r/scheme/.rss" programming reddit)
-          ("http://www.reddit.com/r/linux/.rss" programming reddit)
-          ("http://www.reddit.com/r/archlinux/.rss" programming reddit)
-          ("http://www.reddit.com/r/nixos/.rss" programming reddit)
-          ("http://www.reddit.com/r/Plover/.rss" programming reddit)
-          ("http://www.reddit.com/r/baduk/.rss" go baduk reddit)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCyHDQ5C6z1NDmJ4g6SerW8g" youtube mailab)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UChkVOG0PqkXIHHmkBGG15Ig" youtube walulis)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCo4693Ony4slDY5hR0ny-bw" youtube walulis)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVTyTA7-g9nopHeHbeuvpRA" youtube meyers)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3XTzVzaHQEd30rQbuvCtTQ" youtube lastweektonight)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCYO_jab_esuFRV4b17AJtAw" youtube math 3blue1brown 3b1b)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCoxcjq-8xIDTYp3uz647V5A" youtube math numberphile)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCSju5G2aFaWMqn-_0YBtq5A" youtube math standupmaths matt parker)
-          ("https://www.youtube.com/feeds/videos.xml?playlist_id=PL8FB14A2200B87185" youtube playlist yale economics)))
+  (setq
+   elfeed-search-filter "+youtube"
+   elfeed-feeds
+   '(("https://www.zeitsprung.fm/feed/ogg/" podcast zeitsprung)
+     ("https://kickermeetsdazn.podigee.io/feed/mp3/" podcast kmd fussball)
+     ("https://audioboom.com/channels/2399216.rss" podcast nstaaf)
+     ("http://fokus-fussball.de/feed/mp3/" podcast collina erben fussball)
+     ("https://liebling-bosman.podigee.io/feed/mp3" podcast liebling bosman fussball)
+     ("https://tribuenengespraech.podigee.io/feed/vorbis" podcast rasenfunk tribünengespräch fussball)
+     ("https://feeds.feedburner.com/hacks-on-tap" podcast hacks on tap politics)
+     ("https://lexfridman.com/feed/podcast" podcast lex friedman)
+     ("https://ambrevar.xyz/atom.xml" blog emacs programming)
+     ("https://nyxt.atlas.engineer/feed" lisp programming nyxt next)
+     ("https://guix.gnu.org/feeds/blog/arm.atom" lisp programming guix blog)
+     ("https://www.kernel.org/feeds/kdist.xml" linux kernel updates)
+     ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
+     ("http://www.reddit.com/r/DoomEmacs/.rss" emacs reddit)
+     ("http://www.reddit.com/r/lisp/.rss" programming reddit)
+     ("http://www.reddit.com/r/common_lisp/.rss" programming reddit)
+     ("http://www.reddit.com/r/scheme/.rss" programming reddit)
+     ("http://www.reddit.com/r/linux/.rss" programming reddit)
+     ("http://www.reddit.com/r/archlinux/.rss" programming reddit)
+     ("http://www.reddit.com/r/nixos/.rss" programming reddit)
+     ("http://www.reddit.com/r/Plover/.rss" programming reddit)
+     ("http://www.reddit.com/r/baduk/.rss" go baduk reddit)
+     ("http://tv.dfb.de/rss.php" dfb futsal fussball)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCyHDQ5C6z1NDmJ4g6SerW8g" youtube mailab)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UChkVOG0PqkXIHHmkBGG15Ig" youtube walulis)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCo4693Ony4slDY5hR0ny-bw" youtube walulis)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVTyTA7-g9nopHeHbeuvpRA" youtube meyers)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3XTzVzaHQEd30rQbuvCtTQ" youtube lastweektonight)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCYO_jab_esuFRV4b17AJtAw" youtube math 3blue1brown 3b1b)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCoxcjq-8xIDTYp3uz647V5A" youtube math numberphile)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCSju5G2aFaWMqn-_0YBtq5A" youtube math standupmaths matt parker)
+     ("https://www.youtube.com/feeds/videos.xml?playlist_id=PL8FB14A2200B87185" youtube playlist yale economics)))
 
   ;; Taken from https://joshrollinswrites.com/help-desk-head-desk/20200611/
   (defun elfeed-v-mpv (url)
@@ -1562,6 +1620,9 @@ limitations under the License.
 (use-package! stumpwm-mode
   :when (system-name= "klingenberg-laptop" "klingenberg-tablet" "klingenberg-pc")
   :config
+  (defun my/stumpwm-connect ()
+    (interactive)
+    (sly-connect "localhost" 4005))
   (defun my/activate-stump-mode ()
     (when (equalp
            (buffer-file-name)
@@ -1569,8 +1630,9 @@ limitations under the License.
       (stumpwm-mode 1)))
   (add-hook 'lisp-mode-hook #'my/activate-stump-mode)
   (map! :localleader :map stumpwm-mode-map
-        "ef" #'stumpwm-eval-defun
-        "ee" #'stumpwm-eval-last-sexp))
+        ;; "ef" #'stumpwm-eval-defun
+        ;; "ee" #'stumpwm-eval-last-sexp
+        "'" #'my/stumpwm-connect))
 
 ;; (use-package! eaf
 ;;   :defer t
@@ -1628,7 +1690,7 @@ limitations under the License.
                          (list-installed-packages-all . "yay -Q")
                          (list-dependencies-of . "yay -Qi")
                          (noconfirm . "--noconfirm"))))
-  (setq system-packages-use-sudo t)
+  (setq system-packages-use-sudo nil)
   (setq system-packages-package-manager 'yay))
 
 (use-package! helm-system-packages

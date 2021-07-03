@@ -2,47 +2,24 @@
 ;;
 ;; Here is a sample .stumpwmrc file
 
-;; TODOs
-;; - DONE(?) default set of groups at startup
-;; - DONE(?) ensure that emacsclient cmds are sent to emacs instance of the active window
-;; - DONE(?)shutdown cmds
-;; - DONE(?)  enable modeline on one/both screens in a controlled way
-
 (in-package :stumpwm)
 
 (load "~/.sbclrc")
 
-;; (let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp"
-;;                                        (user-homedir-pathname))))
-;;   (when (probe-file quicklisp-init)
-;;     (load quicklisp-init)))
-
-; (sb-posix:putenv "SBCL_HOME=")
-
-;; (let* ((guix-profile (pathname-as-directory (getenv "GUIX_PROFILE")))
-;;        (module-dir (merge-pathnames "share/common-lisp/sbcl/" guix-profile)))
-;;   (set-module-dir module-dir))
-
-; (load-module "ttf-fonts")
-
-;;(sb-posix:putenv "SBCL_HOME=/home/klingenberg/.guix-profile/lib/sbcl")
-;; (sb-posix:putenv "SBCL_HOME=/run/current-system/profile/lib/sbcl/")
-;; (require "asdf")
-;; (load "/home/klingenberg/.guix-profile/share/emacs/site-lisp/")
-;; (load "/run/current-system/profile/share/common-lisp/sbcl-bundle-systems/slynk.asd")
-;; (load "/run/current-system/profile/share/common-lisp/sbcl-bundle-systems/stumpwm.asd")
-;; (asdf:load-asd "/home/klingenberg/.emacs.d/.local/straight/build/sly/slynk/slynk.asd")
-;; (require "slynk")
-;; (asdf:load-system "slynk")
-;; (slynk:create-server :dont-close t)
+(ql:quickload :slynk)
+(slynk:create-server :dont-close t)
 
 ;; fonts
 (ql:quickload "clx-truetype")
 (load-module "ttf-fonts")
 (setf clx-truetype::+font-cache-filename+ (concat (getenv "HOME") "/.fonts/font-cache.sexp"))
 (xft:cache-fonts)
-(set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Book" :size 10))
-;; (set-font (make-instance 'xft:font :family "Fira Mono" :subfamily "Regular" :size 10))
+
+; (set-font (make-instance 'xft:font :family "Fira Code" :subfamily "Medium" :size 10))
+
+(unless
+    (ignore-errors (set-font (make-instance 'xft:font :family "Fira Code" :subfamily "Light" :size 10)))
+  (set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Book" :size 10)))
 
 (ql:quickload "xembed")
 (load-module "stumptray")
@@ -67,39 +44,40 @@
 
 ;; define my own commands
 (defcommand start-emacs-daemon () ()
-  (eval-command "exec systemctl --user start emacs"))
+  (run-shell-command "systemctl --user start emacs"))
 
-(defcommand run-emacs-client (&optional command) (:rest)
-  (eval-command
+(defcommand run-emacs-client (&optional command wait-for-result?) (:rest)
+  (run-shell-command
    (if command
-       (format nil "exec emacsclient -nc -e \"(~a)\"" command)
-       "exec emacsclient -nc")))
+       (format nil "emacsclient -nc -e \"(~a)\"" command)
+       "emacsclient -nc")
+   wait-for-result?))
 
-(defcommand stop-emacs-daemon () ()
-  (eval-command "exec systemctl --user stop emacs"))
+(defcommand stop-emacs-daemon (&optional wait?) ()
+  (run-emacs-client "save-buffers-kill-emacs" wait?))
 
 (defcommand run-emacs (&optional command) (:rest)
-  (eval-command
+  (run-shell-command
    (if command
-       (format nil "exec emacs --eval \"(~a)\"" command)
-       "exec emacs")))
+       (format nil "emacs --eval \"(~a)\"" command)
+       "emacs")))
 
 (defcommand run-terminal (&optional command) (:rest)
-  (eval-command
+  (run-shell-command
    (concatenate
     'string
-    "exec alacritty "
+    "alacritty "
     (if command
         (concatenate 'string " -e " command)
         ""))))
 
 (defcommand shutdown () ()
-  (let ((_ (stop-emacs-daemon)))
-   (run-terminal "shutdown now")))
+  (stop-emacs-daemon t)
+  (run-terminal "shutdown now"))
 
 (defcommand reboot () ()
-  (let ((_ (stop-emacs-daemon)))
-   (run-terminal "reboot")))
+  (stop-emacs-daemon t)
+  (run-terminal "reboot"))
 
 (defun map-tablet-to-screen (&optional (screen "eDP-1"))
   (run-terminal (format nil "xinput --map-to-output $(xinput --list --id-only \"Wacom One by Wacom M Pen Pen (0)\") ~a" screen)))
@@ -176,7 +154,7 @@
 (defcommand emacs-find-file () ()
   (if (emacs-is-current-window-p)
       (meta (kbd "s-f"))
-      (run-emacs-client "counsel-find-files nil")))
+      (run-emacs-client "counsel-find-file nil")))
 
 (defcommand emacs-find-buffer () ()
   (if (emacs-is-current-window-p)
@@ -190,7 +168,7 @@
       (run-emacs-client "+eshell/here")))
 
 (defcommand emacs-everywhere () ()
-  (eval-command "exec doom everywhere")
+  (run-shell-command "doom everywhere")
   ;; (run-emacs-client "emacs-everywhere")
   )
 
@@ -277,7 +255,11 @@
 (define-key *top-map* (kbd "s-H") "move-window left")
 (define-key *top-map* (kbd "s-K") "move-window up")
 (define-key *top-map* (kbd "s-J") "move-window down")
-(define-key *top-map* (kbd "s-c") "close-window-or-emacs-buffer")
+(define-key *top-map* (kbd "s-C-l") "move-window right")
+(define-key *top-map* (kbd "s-C-h") "move-window left")
+(define-key *top-map* (kbd "s-C-k") "move-window up")
+(define-key *top-map* (kbd "s-C-j") "move-window down")
+(define-key *top-map* (kbd "s-C-c") "close-window-or-emacs-buffer")
 (define-key *top-map* (kbd "s-C") "delete")
 (define-key *top-map* (kbd "s-C-c") "remove-split")
 (define-key *top-map* (kbd "s-m") "maximize-window-and-emacs-window")
@@ -287,6 +269,7 @@
 (define-key *top-map* (kbd "s-P") "emacs-pass")
 (define-key *top-map* (kbd "s-e") "run-emacs-client %s")
 (define-key *top-map* (kbd "s-E") "exec emacs")
+;;; reduce dependency on function row keys
 (define-key *top-map* (kbd "s-F1") "emacs-terminal")
 (define-key *top-map* (kbd "s-S-F1") "run-terminal")
 (define-key *top-map* (kbd "s-F2") "exec firefox")
@@ -296,11 +279,23 @@
 (define-key *top-map* (kbd "s-S-F3") "exec spacefm")
 (define-key *top-map* (kbd "s-F4") "run-emacs-client mu4e")
 
+(defvar *program-map*
+  (let ((m (stumpwm:make-sparse-keymap)))
+    (stumpwm:define-key m (stumpwm:kbd "i") "exec firefox")
+    (stumpwm:define-key m (stumpwm:kbd "d") "exec spacefm")
+    (stumpwm:define-key m (stumpwm:kbd "t") "run-terminal")
+    (stumpwm:define-key m (stumpwm:kbd "m") "run-emacs-client mu4e")
+    m))
+(stumpwm:define-key stumpwm:*top-map* (stumpwm:kbd "s-C-SPC") '*program-map*)
+
+
 (define-key *top-map* (kbd "s-n") "gnew")
 (define-key *top-map* (kbd "s-w") "grouplist")
 
 (loop for i from 1 upto 9
-      do (define-key *top-map* (kbd (format nil "s-~a" i)) (format nil "gselect ~a" i)))
+      do (progn
+           (define-key *top-map* (kbd (format nil "s-~a" i)) (format nil "gselect ~a" i))
+           (define-key *top-map* (kbd (format nil "s-C-~a" i)) (format nil "gmove ~a" i))))
 (define-key *top-map* (kbd "s-!") "gmove 1")
 (define-key *top-map* (kbd "s-\"") "gmove 2")
 (define-key *top-map* (kbd "s-section") "gmove 3")

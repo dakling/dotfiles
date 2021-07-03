@@ -112,11 +112,9 @@
 
 (package! bosss :recipe (:host github :repo "dakling/emacs-bosss"))
 
-;; (package! fira-code-mode)
-
-;; (package! edit-server)
-
 (disable-packages! org-msg)
+
+;; (package! solaire-mode :disable t)
 
 (package! nov)
 
@@ -128,8 +126,8 @@
            :repo "Overdr0ne/shelldon"
            :branch "master"))
 
-;; installed by guix
-(package! guix)
+; ;; installed by guix
+; (package! guix)
 
 ;; (package! eaf :recipe
 ;;   (:host github

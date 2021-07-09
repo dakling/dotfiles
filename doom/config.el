@@ -1618,7 +1618,7 @@ limitations under the License.
   (setq epg-pinentry-mode 'loopback))
 
 (use-package! stumpwm-mode
-  :when (system-name= "klingenberg-laptop" "klingenberg-tablet" "klingenberg-pc")
+  :when (system-name= "klingenberg-laptop" "klingenberg-tablet" "klingenberg-pc" "helensInfinitybook")
   :config
   (defun my/stumpwm-connect ()
     (interactive)

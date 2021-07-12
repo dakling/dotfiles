@@ -21,9 +21,9 @@
 ;; font string. You generally only need these two:
 ;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
 ;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
-(setq doom-font (font-spec :family "Fira Code Light")
-      doom-variable-pitch-font (font-spec :family "Fira Code Light"))
-;; (setq doom-font (font-spec :family "DejaVu Sans Mono"))
+;; (setq doom-font (font-spec :family "Fira Code Light")
+;;       doom-variable-pitch-font (font-spec :family "Fira Code Light"))
+(setq doom-font (font-spec :family "DejaVu Sans Mono"))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -126,8 +126,6 @@
 (customize-set-variable 'avy-single-candidate-jump t)
 
 (setq magit-repository-directories '(("~/" . 1)))
-
-
 
 (after! org
   (setq org-id-link-to-org-use-id t)
@@ -234,6 +232,33 @@
     (shell-command "xinput --map-to-output $(xinput list --id-only \"ELAN Touchscreen\") eDP-1")
     (ignore-errors
       (shell-command "xinput --map-to-output $(xinput list --id-only \"HDX HDX DIGITIZER Pen (0)\") eDP-1"))))
+
+(defun my/tuxi ()
+  (interactive)
+  (cl-labels
+      ((read-lines (filePath)
+                   "Return a list of lines of a file at filePath."
+                   (with-temp-buffer
+                     (insert-file-contents filePath)
+                     (split-string (buffer-string) "\n" t)))
+       (write-lines (filename data)
+                    (with-temp-file filename
+                      (mapcar
+                       (lambda (item)
+                         (princ (concat item "\n") (current-buffer)))
+                       data)))
+       (update-cache (query old-cache-list)
+                     (if (member query old-cache-list)
+                         old-cache-list
+                       (cons query old-cache-list))))
+    (let*
+        ((cache-file "~/.config/emacs/.local/cache/tuxi")
+         (cache (read-lines cache-file))
+         (query (completing-read "Enter query: " cache))
+         (updated-cache (update-cache query cache))
+         (result (shell-command-to-string (concat "tuxi -r " query))))
+      (write-lines cache-file updated-cache)
+      (message result))))
 
 (defun my/eww-open-league-table ()
   "Do an internet search for soccer league table."
@@ -379,7 +404,6 @@
    :n
    ;; :states '(insert emacs hybrid normal visual motion operator replace)
    "s-w" '(other-window :which-key "other window")
-   "s-d" 'dmenu
    "s-l" 'stump/emacs-window-right
    "s-h" 'stump/emacs-window-left
    "s-j" 'stump/emacs-window-down
@@ -394,13 +418,16 @@
    "s-q" 'my/get-rid-of-mouse
    "s-m" 'delete-other-windows
    "s-g" 'guix
-   "s-<f1>" '(lambda () (interactive) (eshell 'N))
-   "C-s-<f1>" 'eshell
+   "s-t" 'my/tuxi
+   ;; "s-<f1>" '+vterm/here
+   ;; "C-s-<f1>" '+vterm/toggle
+   "s-<f1>" '+eshell/here
+   "C-s-<f1>" '+eshell/toggle
    "s-<f2>" '(lambda () (interactive)
-               (funcall browse-url-browser-function "" "-new-tab"))
+             (funcall browse-url-browser-function "" "-new-tab"))
    "s-<f3>" 'deer
    "s-<f4>" '(lambda () (interactive)
-               (mu4e))
+             (mu4e))
    "s-<f12>" '(lambda () (interactive)
                 (start-process "" nil "/usr/bin/slock")))
   (when t
@@ -580,7 +607,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
   (setq gnus-icalendar-org-capture-file "~/org/notes.org")
   (setq gnus-icalendar-org-capture-headline '("Inbox"))
   (gnus-icalendar-org-setup)
-;;;    org-msg
+  ;;     org-msg
   ;; (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
   ;;       ;; org-msg-startup "hidestars indent inlineimages"
   ;;       ;; org-msg-greeting-fmt "Hallo %s,\n\n\n"
@@ -616,12 +643,16 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
       "ep" #'eval-print-last-sexp)
 
 ;; outline-minor-mode messes with some of my lispy bindings
-;; (remove-hook! 'emacs-lisp-mode-hook #'outline-minor-mode)
-(map! :map outline-minor-mode-map       ;TODO check if this messes up other situtations
-      "M-j" nil
-      "M-k" nil
-      "M-h" nil
-      "M-l" nil)
+;; TODO why doesnt the map! macro work?
+(evil-define-minor-mode-key 'normal 'outline-minor-mode (kbd "M-j") nil)
+(evil-define-minor-mode-key 'normal 'outline-minor-mode (kbd "M-k") nil)
+(evil-define-minor-mode-key 'normal 'outline-minor-mode (kbd "M-h") nil)
+(evil-define-minor-mode-key 'normal 'outline-minor-mode (kbd "M-l") nil)
+;; (map! :map outline-minor-mode-map ;TODO check if this messes up other situtations
+;;       :n "M-j" nil
+;;       :n "M-k" nil
+;;       :n "M-h" nil
+;;       :n "M-l" nil)
 
 (after!
   lispy
@@ -665,8 +696,8 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 (use-package! geiser
   :commands (run-geiser)
   :config
-  ;; (with-eval-after-load 'geiser-guile
-  ;;   (add-to-list 'geiser-guile-load-path "~/guix"))
+  (with-eval-after-load 'geiser-guile
+    (add-to-list 'geiser-guile-load-path "~/guix"))
   (with-eval-after-load 'yasnippet
     (add-to-list 'yas-snippet-dirs "~/guix/etc/snippets"))
 
@@ -683,6 +714,24 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    :n "ee" #'geiser-eval-last-sexp
    :n "eb" #'geiser-eval-buffer))
 
+(use-package! guix
+  :when (system-name= "klingenberg-tablet")
+  :config
+  (defun my/activate-guix-devel-mode ()
+    (when (file-in-directory-p (buffer-file-name) "~/guix")
+      (guix-devel-mode 1)))
+  (add-hook 'scheme-mode-hook #'my/activate-guix-devel-mode)
+  (map!
+   :localleader
+   :map guix-devel-mode-map
+   :n "b" 'guix-devel-build-package-definition
+   :n "s" 'guix-devel-build-package-source
+   :n "d" 'guix-devel-download-package-source
+   :n "l" 'guix-devel-lint-package
+   :n "k" 'guix-devel-copy-module-as-kill
+   :n "u" 'guix-devel-use-module
+   :n "." 'guix-devel-code-block-edit))
+
 ;; latex
 (setq +latex-viewers '(pdf-tools))
 (setq reftex-default-bibliography
@@ -690,7 +739,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
        ((system-name= "klingenberg-tablet") "~/Documents-work/conferences/latex_macros/bibliography.bib")
        ((system-name= "klingenberg-pc") "~/Documents/conferences/latex_macros/bibliography.bib")))
 
-(add-hook! (TeX-mode-hook LaTeX-mode-hook) #'auto-fill-mode)
+(add-hook! (TeX-mode-hook LaTeX-mode-hook) (lamdbda () (auto-fill-mode 1)))
 
 (map!
  :localleader
@@ -749,6 +798,8 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
       :n "cr" #'recompile
       :n "cc" #'recompile)
 
+(use-package! gnu-apl-mode)
+
 ;;c#
 ;; (after! lsp
 ;;   (progn
@@ -791,6 +842,9 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 ;;       ;; (setq omnisharp-server-executable-path nil)
 ;;       ))))
 
+(after! lsp
+  (setq lsp-file-watch-threshold 1000))
+
 (defun my/csharp-list-to-array ()
   (replace-regexp "List<\\(.*\\)>" "\\1[]"
                   nil
@@ -817,7 +871,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
             (t (message "neither array nor string found on current line"))))))
 
 (use-package! csharp-repl
-  :unless (system-name= "klingenberg-pi" "hla0001" "hla0002" "hla0003" "hla0004")
+  :when (system-name= "klingenberg-tablet" "klingenberg-pc")
   :load-path "~/Documents/programming/elisp/emacs-csharp-repl/")
 
 (defun my/personal-bosss-file-p ()
@@ -984,10 +1038,10 @@ limitations under the License.
 (map!
  :localleader
  :map csharp-mode-map
- "cd" (lambda () (interactive) (compile (concat "msbuild /p:WarningLevel=0 /p:Configuration=Debug " (my/csharp-find-current-project))))
- "cr" (lambda () (interactive) (compile (concat "msbuild /p:WarningLevel=0 /p:Configuration=Release " bosss-master-solution)))
- "ce" (lambda () (interactive) (compile (concat "msbuild /p:WarningLevel=0 /p:Configuration=Debug " bosss-master-solution)))
- ;; "cc" #'recompile
+ "cd" (lambda () (interactive) (compile (concat "msbuild -verbosity:quiet -maxCpuCount /p:WarningLevel=0 /p:Configuration=Debug " (my/csharp-find-current-project))))
+ "cr" (lambda () (interactive) (compile (concat "msbuild -verbosity:quiet -maxCpuCount /p:WarningLevel=0 /p:Configuration=Release " bosss-master-solution)))
+ "ce" (lambda () (interactive) (compile (concat "msbuild -verbosity:quiet -maxCpuCount /p:WarningLevel=0 /p:Configuration=Debug " bosss-master-solution)))
+ "cc" #'recompile
  "=" #'my/indent-buffer-without-bosss-header
  "et" (lambda () (interactive) (my/run-tests (my/csharp-find-current-project)))
  "eo" #'run-csharp-repl-other-frame
@@ -997,7 +1051,7 @@ limitations under the License.
 
 ;; bosss
 (use-package! bosss
-  :unless (system-name= "klingenberg-pi" "hla0001" "hla0002" "hla0003" "hla0004")
+  :when (system-name= "klingenberg-tablet" "klingenberg-pc")
   :load-path "~/Documents/programming/elisp/emacs-bosss/"
   :init
   (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
@@ -1027,7 +1081,7 @@ limitations under the License.
 
 ;; org-kanban
 (use-package! kanban
-  :unless (system-name= "klingenberg-pc" "klingenberg-pi" "hla0001" "hla0002" "hla0003" "hla0004")
+  :when (system-name= "klingenberg-tablet")
   :load-path  "~/Documents/programming/elisp/kanban.el/")
 
 (map! :map company-mode-map
@@ -1050,6 +1104,10 @@ limitations under the License.
    "M-k" #'ivy-previous-line
    "M-h" #'ivy-backward-delete-char
    "M-l" #'ivy-alt-done
+   "TAB" #'ivy-partial
+   "M-RET" #'ivy-call
+   "M-TAB" #'ivy-mark
+   "C-TAB" #'ivy-unmark
    "M-H" #'left-char
    "M-L" #'right-char)
   (map!
@@ -1059,7 +1117,7 @@ limitations under the License.
    "M-y" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-copy))
    "M-r" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-move))
    "M-D" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-delete))
-   "M-RET" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-extern))))
+   "M-o" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-extern))))
 
 (use-package! helm
   :when (featurep 'helm)
@@ -1169,6 +1227,58 @@ limitations under the License.
   :commands telega
   :config
   (telega-notifications-mode 1))
+
+(use-package! slack
+  :commands (slack-start)
+  :init
+  (setq slack-buffer-emojify t) ;; if you want to enable emoji, default nil
+  (setq slack-prefer-current-team t)
+  :config
+  (slack-register-team
+   :name "2021-ZIH"
+   :default t
+   :token (auth-source-pick-first-password
+         :host "2021-zih.slack.com"
+         :user "klingenberg@fdy.tu-darmstadt.de")
+   :subscribed-channels '(allgemein)
+   :full-and-display-names t)
+
+  (evil-define-key 'normal slack-info-mode-map
+    ",u" 'slack-room-update-messages)
+  (evil-define-key 'normal slack-mode-map
+    ",c" 'slack-buffer-kill
+    ",ra" 'slack-message-add-reaction
+    ",rr" 'slack-message-remove-reaction
+    ",rs" 'slack-message-show-reaction-users
+    ",pl" 'slack-room-pins-list
+    ",pa" 'slack-message-pins-add
+    ",pr" 'slack-message-pins-remove
+    ",mm" 'slack-message-write-another-buffer
+    ",me" 'slack-message-edit
+    ",md" 'slack-message-delete
+    ",u" 'slack-room-update-messages
+    ",2" 'slack-message-embed-mention
+    ",3" 'slack-message-embed-channel
+    "\C-n" 'slack-buffer-goto-next-message
+    "\C-p" 'slack-buffer-goto-prev-message)
+   (evil-define-key 'normal slack-edit-message-mode-map
+    ",k" 'slack-message-cancel-edit
+    ",s" 'slack-message-send-from-buffer
+    ",2" 'slack-message-embed-mention
+    ",3" 'slack-message-embed-channel))
+
+(after! circe
+  (set-irc-server! "chat.freenode.net"
+    `(:tls t
+      :port 6697
+      :nick "dakling"
+      :channels ("#emacs" "#guix"))))
+
+(use-package! alert
+  :commands (alert)
+  :init
+  (setq alert-default-style 'notifier))
+
 
 (use-package! elfeed
   :commands (elfeed elfeed-update)
@@ -1331,14 +1441,13 @@ limitations under the License.
 (use-package! stumpwm-mode
   :when (system-name= "klingenberg-tablet")
   :load-path "/run/current-system/profile/share/emacs/site-lisp/"
-  :hook #'lisp-mode
   :config
   (defun my/activate-stump-mode ()
     (when (equalp
            (buffer-file-name)
            "/home/klingenberg/.dotfiles/stumpwm.lisp")
       (stumpwm-mode 1)))
-  ;; (add-hook 'lisp-mode-hook #'my/activate-stump-mode)
+  (add-hook 'lisp-mode-hook #'my/activate-stump-mode)
   (map! :localleader :map stumpwm-mode-map
         "ef" #'stumpwm-eval-defun
         "ee" #'stumpwm-eval-last-sexp))
@@ -1378,44 +1487,44 @@ limitations under the License.
 ;;   :custom (fira-code-mode-disabled-ligatures (list "[]" "#{" "#(" "#_" "#_(" "x"))
 ;;   :config (global-fira-code-mode -1))
 
-(plist-put! +ligatures-extra-symbols
-  ;; org
-  :name          "»"
-  :src_block     "»"
-  :src_block_end "«"
-  :quote         "“"
-  :quote_end     "”"
-  ;; Functional
-  :lambda        "λ"
-  :def           "ƒ"
-  :composition   "∘"
-  :map           "↦"
-  ;; Types
-  :null          "∅"
-  :true          "✓"
-  :false         "✗"
-  :int           "ℤ"
-  :float         "ℝ"
-  :str           "σ"
-  :bool          "±"
-  :list          "ƛ"
-  ;; Flow
-  :not           "￢"
-  :in            "∈"
-  :not-in        "∉"
-  :and           "∧"
-  :or            "∨"
-  :for           "∀"
-  :some          "∃"
-  :return        "⟼"
-  :yield         "⟻"
-  ;; Other
-  :union         "⋃"
-  :intersect     "∩"
-  :diff          "∖"
-  :tuple         "⨂"
-  :pipe          "" ;; FIXME: find a non-private char
-  :dot           "•")
+;; (plist-put! +ligatures-extra-symbols
+;;   ;; org
+;;   :name          "»"
+;;   :src_block     "»"
+;;   :src_block_end "«"
+;;   :quote         "“"
+;;   :quote_end     "”"
+;;   ;; Functional
+;;   :lambda        "λ"
+;;   :def           "ƒ"
+;;   :composition   "∘"
+;;   :map           "↦"
+;;   ;; Types
+;;   :null          "∅"
+;;   :true          "✓"
+;;   :false         "✗"
+;;   :int           "ℤ"
+;;   :float         "ℝ"
+;;   :str           "σ"
+;;   :bool          "±"
+;;   :list          "ƛ"
+;;   ;; Flow
+;;   :not           "￢"
+;;   :in            "∈"
+;;   :not-in        "∉"
+;;   :and           "∧"
+;;   :or            "∨"
+;;   :for           "∀"
+;;   :some          "∃"
+;;   :return        "⟼"
+;;   :yield         "⟻"
+;;   ;; Other
+;;   :union         "⋃"
+;;   :intersect     "∩"
+;;   :diff          "∖"
+;;   :tuple         "⨂"
+;;   :pipe          "" ;; FIXME: find a non-private char
+;;   :dot           "•")
 
 ;; (use-package! rigpa
 

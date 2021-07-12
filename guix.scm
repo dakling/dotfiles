@@ -80,16 +80,12 @@
   (plain-file "sudoers" "\
 root ALL=(ALL) ALL
 %wheel ALL=(ALL) ALL
+%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/sbin/shutdown
+%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/sbin/reboot
 %wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/cpupower
-%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/mount --bind /run/user/1000/intellij/caches /home/MYSELF/.IntelliJIdea2019.3/system/caches
-%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/mount --bind /run/user/1000/intellij/index /home/MYSELF/.IntelliJIdea2019.3/system/index
-%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/umount /home/MYSELF/.IntelliJIdea2019.3/system/caches
-%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/umount /home/MYSELF/.IntelliJIdea2019.3/system/index
+%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/mount
 %wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/umount
-%wheel ALL=(ALL) NOPASSWD: /home/klingenberg/.guix-profile/bin/mount --bind /run/user/1000/intellij/caches /home/MYSELF/.IntelliJIdea2019.3/system/caches
-%wheel ALL=(ALL) NOPASSWD: /home/klingenberg/.guix-profile/bin/mount --bind /run/user/1000/intellij/index /home/MYSELF/.IntelliJIdea2019.3/system/index
-%wheel ALL=(ALL) NOPASSWD: /home/klingenberg/.guix-profile/bin/umount /home/MYSELF/.IntelliJIdea2019.3/system/caches
-%wheel ALL=(ALL) NOPASSWD: /home/klingenberg/.guix-profile/bin/umount /home/MYSELF/.IntelliJIdea2019.3/system/index
+%wheel ALL=(ALL) NOPASSWD: /home/klingenberg/.guix-profile/bin/mount
 %wheel ALL=(ALL) NOPASSWD: /home/klingenberg/.guix-profile/bin/umount
 "))
 
@@ -112,7 +108,7 @@ root ALL=(ALL) ALL
     (supplementary-groups
      '("wheel" "netdev" "audio" "video" "lp" "dialout" "docker")))
    %base-user-accounts))
- (sudoers-file %sudoers-specification)
+ ;; (sudoers-file %sudoers-specification)
  (packages
   (append
    (list
@@ -138,8 +134,9 @@ root ALL=(ALL) ALL
     ;; emacs-exwm
     emacs-guix
     ;; emacs-pdf-tools
-    guile-gcrypt
     emacs-pulseaudio-control
+    emacs-vterm
+    guile-gcrypt
     acpi
     mu
     isync
@@ -165,7 +162,8 @@ root ALL=(ALL) ALL
     gvfs
     xinput
     git
-    docker)
+    ;; docker
+    )
    %base-packages))
  (services
   (append
@@ -217,10 +215,26 @@ root ALL=(ALL) ALL
     "/run/current-sytem/profile/sbin/reboot")
    %setuid-programs))
  (kernel
-  ;; linux
-  (specification->package "linux@5.4")
-  ;; (specification->package "linux@5.4.90")
-  )
+  ;; (specification->package "linux-libre@5.4")
+  ;; (specification->package "linux@5.4")
+   (let*
+       ((channels
+         (list
+          (channel
+           (name 'flat)
+           (url "https://github.com/flatwhatson/guix-channel.git")
+           (commit "b7b05b808db571b7d0cb41d5f4a5f88ad41d173d"))
+          (channel
+           (name 'nonguix)
+           (url "https://gitlab.com/nonguix/nonguix")
+           (commit "d28a3d8ae7c2f1bbf5887d8b619fedbf3c40e05c"))
+          (channel
+           (name 'guix)
+           (url "https://git.savannah.gnu.org/git/guix.git")
+           (commit "decd0dc6bcf88669d272e61f95de0a4d0649fbf8"))))
+        (inferior
+         (inferior-for-channels channels)))
+     (first (lookup-inferior-packages inferior "linux" "5.4.99"))))
  (initrd microcode-initrd)
  (firmware
-   (list linux-firmware)))
+  (list linux-firmware)))

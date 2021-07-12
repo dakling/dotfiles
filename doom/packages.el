@@ -62,9 +62,17 @@
 
 ;; (package! pulseaudio-control)
 
-(package! telega)
+;; (package! telega) ;use from guix
+
+(package! slack)
+
+(package! alert)
 
 (package! pinentry)
+
+(package! elfeed)
+
+(package! emms)
 
 (package! diminish)
 
@@ -89,6 +97,8 @@
 ;;            :repo "countvajhula/rigpa"))
 
 (unpin! sly)
+
+(package! gnu-apl-mode :recipe (:host github :repo "lokedhs/gnu-apl-mode"))
 
 (package! el-igo :recipe (:host github :repo "misohena/el-igo"))
 

@@ -18,8 +18,8 @@
 ; (set-font (make-instance 'xft:font :family "Fira Code" :subfamily "Medium" :size 10))
 
 (unless
-    (ignore-errors (set-font (make-instance 'xft:font :family "Fira Code" :subfamily "Light" :size 10)))
-  (set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Book" :size 10)))
+   (ignore-errors (set-font (make-instance 'xft:font :family "Fira Code" :subfamily "Light" :size 10)))
+ (set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Book" :size 10)))
 
 (ql:quickload "xembed")
 (load-module "stumptray")
@@ -272,6 +272,7 @@
 ;;; reduce dependency on function row keys
 (define-key *top-map* (kbd "s-F1") "emacs-terminal")
 (define-key *top-map* (kbd "s-S-F1") "run-terminal")
+(define-key *top-map* (kbd "s-RET") "run-terminal")
 (define-key *top-map* (kbd "s-F2") "exec firefox")
 (define-key *top-map* (kbd "s-S-F2") "exec firefox")
 ;; (define-key *top-map* (kbd "s-F2") "exec nyxt")

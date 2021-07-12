@@ -4,18 +4,21 @@
 mkdir -p ~/.config/nvim
 ln -sf $(pwd)/nvim/init.vim ~/.config/nvim/init.vim
 
-mkdir -p ~/.config/rofi/
-ln -sf $(pwd)/rofi.rasi ~/.config/rofi/config.rasi
+#mkdir -p ~/.config/rofi/
+#ln -sf $(pwd)/rofi.rasi ~/.config/rofi/config.rasi
 
-ln -sf $(pwd)/mbsyncrc ~/.mbsyncrc
+#ln -sf $(pwd)/mbsyncrc ~/.mbsyncrc
 
-mkdir -p ~/.config/nyxt/
-ln -sf $(pwd)/nyxt.lisp ~/.config/nyxt/init.lisp
-ln -sf $(pwd)/my-slynk.lisp ~/.config/nyxt/
+#mkdir -p ~/.config/nyxt/
+#ln -sf $(pwd)/nyxt.lisp ~/.config/nyxt/init.lisp
+#ln -sf $(pwd)/my-slynk.lisp ~/.config/nyxt/
 
 mkdir -p ~/.config/doom/
 ln -sf ~/.dotfiles/doom/* ~/.config/doom/
 
-mkdir -p ~/.config/pacmanfile/
-ln -sf ~/.dotfiles/pacmanfile.txt ~/.config/pacmanfile/
+mkdir -p ~/.config/stumpwm
+ln -sf ~/.dotfiles/stumpwm.lisp ~/.config/stumpwm/config
+
+#mkdir -p ~/.config/pacmanfile/
+#ln -sf ~/.dotfiles/pacmanfile.txt ~/.config/pacmanfile/
 

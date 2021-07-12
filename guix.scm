@@ -24,11 +24,12 @@
  nix
  xorg
  desktop
- docker)
+ pm)
 
 (use-package-modules
  certs
  freedesktop
+ gl
  gnome
  pulseaudio
  gcc
@@ -69,10 +70,9 @@
  lisp
  lisp-xyz
  wm
- package-management
- docker)
+ package-management)
 
-; setup custom sudo rules so some clearly specified commands can be
+                                        ; setup custom sudo rules so some clearly specified commands can be
 ;; run without password, ALWAYS use absolute filenames here! To
 ;; continue working when I install a tool as user, I setup sudo-rules
 ;; for both the system-tools and my user-tools.
@@ -80,14 +80,12 @@
   (plain-file "sudoers" "\
 root ALL=(ALL) ALL
 %wheel ALL=(ALL) ALL
-%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/sbin/shutdown
-%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/sbin/reboot
-%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/cpupower
-%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/mount
-%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/bin/umount
-%wheel ALL=(ALL) NOPASSWD: /home/klingenberg/.guix-profile/bin/mount
-%wheel ALL=(ALL) NOPASSWD: /home/klingenberg/.guix-profile/bin/umount
-"))
+%wheel ALL=(ALL) NOPASSWD: /run/current-system/profile/sbin/shutdown,\
+ /run/current-system/profile/sbin/reboot,\
+ /run/current-system/profile/bin/light,\
+ /run/current-system/profile/bin/mount,\
+ /run/current-system/profile/bin/umount"))
+
 
 (operating-system
  (locale "en_US.utf8")
@@ -97,7 +95,7 @@ root ALL=(ALL) ALL
                    "nodeadkeys"
                    #:options
                    '("ctrl:nocaps")))
- (host-name "klingenberg-tablet")
+ (host-name "klingenberg-laptop")
  (users
   (cons*
    (user-account
@@ -106,13 +104,19 @@ root ALL=(ALL) ALL
     (group "users")
     (home-directory "/home/klingenberg")
     (supplementary-groups
-     '("wheel" "netdev" "audio" "video" "lp" "dialout" "docker")))
+     '("wheel" "netdev" "audio" "video" "lp" "dialout")))
    %base-user-accounts))
- ;; (sudoers-file %sudoers-specification)
+ (sudoers-file %sudoers-specification)
  (packages
   (append
    (list
     (specification->package "nss-certs")
+    ;; xf86-video-intel
+    intel-vaapi-driver
+    mesa
+    mesa-opencl
+    mesa-utils
+    light
     sbcl
     sbcl-slynk
     stumpwm
@@ -134,7 +138,7 @@ root ALL=(ALL) ALL
     ;; emacs-exwm
     emacs-guix
     ;; emacs-pdf-tools
-    emacs-pulseaudio-control
+    ;; emacs-pulseaudio-control
     emacs-vterm
     guile-gcrypt
     acpi
@@ -161,14 +165,13 @@ root ALL=(ALL) ALL
     curl
     gvfs
     xinput
-    git
-    ;; docker
-    )
+    git)
    %base-packages))
  (services
   (append
    (list
     ;; (service xfce-desktop-service-type)
+    (service openssh-service-type)
     (service slim-service-type
              (slim-configuration
               (display ":1")
@@ -179,35 +182,35 @@ root ALL=(ALL) ALL
                (xorg-configuration
                 (keyboard-layout keyboard-layout)))))
     (service nix-service-type)
+    (service thermald-service-type)
     (service openvpn-client-service-type
              (openvpn-client-configuration))
     (bluetooth-service
-     #:auto-enable? #t)
-    (service docker-service-type))
+     #:auto-enable? #t))
    (remove (lambda (service)
              (eq? (service-kind service) gdm-service-type))
-           %desktop-services)))
+           %desktop-services)
+   ;; %desktop-services
+   ))
  (bootloader
   (bootloader-configuration
    (bootloader grub-efi-bootloader)
    (target "/boot/efi")
    (keyboard-layout keyboard-layout)))
  (swap-devices
-  (list "/dev/sda2"))
+  (list (uuid "1865ada0-a67d-47ac-b4fa-8403981404c9")))
  (file-systems
-  (cons*
-   (file-system
-    (mount-point "/boot/efi")
-    (device
-     (uuid "CEFA-D25C" 'fat32))
-    (type "vfat"))
-   (file-system
-    (mount-point "/")
-    (device
-     (uuid "de52c9b8-e250-4707-807d-38f66bef1383"
-           'ext4))
-    (type "ext4"))
-   %base-file-systems))
+    (cons* (file-system
+             (mount-point "/boot/efi")
+             (device (uuid "F62F-24CC" 'fat32))
+             (type "vfat"))
+           (file-system
+             (mount-point "/")
+             (device
+               (uuid "1a912f56-30f5-4eeb-b275-456446dfd5af"
+                     'ext4))
+             (type "ext4"))
+           %base-file-systems))
  (setuid-programs
   (append
    (list
@@ -215,26 +218,42 @@ root ALL=(ALL) ALL
     "/run/current-sytem/profile/sbin/reboot")
    %setuid-programs))
  (kernel
-  ;; (specification->package "linux-libre@5.4")
-  ;; (specification->package "linux@5.4")
-   (let*
-       ((channels
-         (list
-          (channel
-           (name 'flat)
-           (url "https://github.com/flatwhatson/guix-channel.git")
-           (commit "b7b05b808db571b7d0cb41d5f4a5f88ad41d173d"))
-          (channel
-           (name 'nonguix)
-           (url "https://gitlab.com/nonguix/nonguix")
-           (commit "d28a3d8ae7c2f1bbf5887d8b619fedbf3c40e05c"))
-          (channel
-           (name 'guix)
-           (url "https://git.savannah.gnu.org/git/guix.git")
-           (commit "decd0dc6bcf88669d272e61f95de0a4d0649fbf8"))))
-        (inferior
-         (inferior-for-channels channels)))
-     (first (lookup-inferior-packages inferior "linux" "5.4.99"))))
+  (specification->package "linux")
+  ;; (specification->package "linux-libre")
+  ;; (let*
+  ;;     ((channels
+  ;;       (list
+  ;;        (channel
+  ;;         (name 'nonguix)
+  ;;         (url "https://gitlab.com/nonguix/nonguix")
+  ;;         (commit "0a5cd133a3097b192702c8b806f2a6f54182118d"))
+  ;;        (channel
+  ;;         (name 'flat)
+  ;;         (url "https://github.com/flatwhatson/guix-channel.git")
+  ;;         (commit "c93cbe457c23709350a6e432e0e196263eb4fc08"))
+  ;;        (channel
+  ;;         (name 'guix)
+  ;;         (url "https://git.savannah.gnu.org/git/guix.git")
+  ;;         (commit "37d8def701839200c44c76cb2fa2abfb27a7b88b"))))
+  ;;      (inferior
+  ;;       (inferior-for-channels channels)))
+  ;;   (first (lookup-inferior-packages inferior "linux" "5.11.10")))
+  )
+ ;; (kernel-arguments
+;;   (append '(
+
+;; "i915" "enable_dc=2"
+
+;; "i915" "disable_power_well=0"
+
+;; "i915" "enable_fbc=1"
+
+;; "i915" "enable_guc=3"
+
+;; "i915" "enable_dpcd_backlight=1"
+
+;;             )
+;;          %default-kernel-arguments))
  (initrd microcode-initrd)
  (firmware
   (list linux-firmware)))

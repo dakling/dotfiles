@@ -2,55 +2,27 @@
 ;;
 ;; Here is a sample .stumpwmrc file
 
-;; TODOs
-;; - DONE(?) default set of groups at startup
-;; - DONE(?) ensure that emacsclient cmds are sent to emacs instance of the active window
-;; - DONE(?)shutdown cmds
-;; - DONE(?)  enable modeline on one/both screens in a controlled way
-
 (in-package :stumpwm)
 
-;; (load "~/.sbclrc")
+(load "~/.sbclrc")
 
-;; (let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp"
-;;                                        (user-homedir-pathname))))
-;;   (when (probe-file quicklisp-init)
-;;     (load quicklisp-init)))
-
-; (sb-posix:putenv "SBCL_HOME=")
-
-;; (let* ((guix-profile (pathname-as-directory (getenv "GUIX_PROFILE")))
-;;        (module-dir (merge-pathnames "share/common-lisp/sbcl/" guix-profile)))
-;;   (set-module-dir module-dir))
-
-; (load-module "ttf-fonts")
-
-(sb-posix:putenv "SBCL_HOME=/home/klingenberg/.guix-profile/lib/sbcl")
-;; (sb-posix:putenv "SBCL_HOME=/run/current-system/profile/lib/sbcl/")
-;; (require "asdf")
-;; (load "/home/klingenberg/.guix-profile/share/emacs/site-lisp/")
-;; (load "/run/current-system/profile/share/common-lisp/sbcl-bundle-systems/slynk.asd")
-;; (load "/run/current-system/profile/share/common-lisp/sbcl-bundle-systems/stumpwm.asd")
-;; (asdf:load-asd "/home/klingenberg/.emacs.d/.local/straight/build/sly/slynk/slynk.asd")
-;; (require "slynk")
-;; (asdf:load-system "slynk")
-;; (slynk:create-server :dont-close t)
+(ql:quickload :slynk)
+(slynk:create-server :dont-close t)
 
 ;; fonts
-;; (require :ttf-fonts)
 (ql:quickload "clx-truetype")
 (load-module "ttf-fonts")
-;; (set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Book" :size 11))
+(setf clx-truetype::+font-cache-filename+ (concat (getenv "HOME") "/.fonts/font-cache.sexp"))
 (xft:cache-fonts)
-(set-font (make-instance 'xft:font :family "Fira Mono" :subfamily "Regular" :size 10))
-;; (setf xft:*font-dirs* '("/run/current-system/profile/share/fonts/"))
-;; (setf clx-truetype:+font-cache-filename+ (concat (getenv "HOME") "/.fonts/font-cache.sexp"))
-;; (xft:cache-fonts)
 
-;; (require "xembed")
-(ql:quickload "stumptray")
+; (set-font (make-instance 'xft:font :family "Fira Code" :subfamily "Medium" :size 10))
+
+(unless
+   (ignore-errors (set-font (make-instance 'xft:font :family "Fira Code" :subfamily "Light" :size 10)))
+ (set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Book" :size 10)))
+
+(ql:quickload "xembed")
 (load-module "stumptray")
-;; (require "stumptray")
 
 ;; (require "maildir")
 
@@ -72,41 +44,49 @@
 
 ;; define my own commands
 (defcommand start-emacs-daemon () ()
-  (eval-command "exec emacs --daemon=instance1")
-  (eval-command "exec emacs --daemon"))
+  (run-shell-command "systemctl --user start emacs"))
 
-(defcommand run-emacs-client (&optional command) (:rest)
-  (eval-command
-   ;; (if command
-   ;;     (format nil "exec emacsclient -nc -e \"(~a)\"" command)
-   ;;   "exec emacsclient -nc")
+(defcommand run-emacs-client (&optional command wait-for-result?) (:rest)
+  (run-shell-command
    (if command
-       (format nil "exec emacsclient -nc -s instance1 -e \"(~a)\"" command)
-       "exec emacsclient -nc -s instance1")
-   ))
+       (format nil "emacsclient -nc -e \"(~a)\"" command)
+       "emacsclient -nc")
+   wait-for-result?))
 
-(defcommand stop-emacs-daemon () ()
-  (run-emacs-client "save-buffers-kill-emacs"))
+(defcommand stop-emacs-daemon (&optional wait?) ()
+  (run-emacs-client "save-buffers-kill-emacs" wait?))
 
 (defcommand run-emacs (&optional command) (:rest)
-  (eval-command
+  (run-shell-command
    (if command
-       (format nil "exec emacs --eval \"(~a)\"" command)
-       "exec emacs")))
+       (format nil "emacs --eval \"(~a)\"" command)
+       "emacs")))
 
 (defcommand run-terminal (&optional command) (:rest)
-  (eval-command
-   (if command
-       (format nil "exec termite -e \"~a\"" command)
-       "exec termite")))
+  (run-shell-command
+   (concatenate
+    'string
+    "alacritty "
+    (if command
+        (concatenate 'string " -e " command)
+        ""))))
 
 (defcommand shutdown () ()
-  (stop-emacs-daemon)
-  (run-terminal "sudo shutdown"))
+  (stop-emacs-daemon t)
+  (run-terminal "shutdown now"))
 
 (defcommand reboot () ()
-  (stop-emacs-daemon)
-  (run-terminal "sudo reboot"))
+  (stop-emacs-daemon t)
+  (run-terminal "reboot"))
+
+(defun map-tablet-to-screen (&optional (screen "eDP-1"))
+  (run-terminal (format nil "xinput --map-to-output $(xinput --list --id-only \"Wacom One by Wacom M Pen Pen (0)\") ~a" screen)))
+
+(defcommand map-tablet-to-laptop-screen () ()
+  (map-tablet-to-screen "eDP-1"))
+
+(defcommand map-tablet-to-external-screen () ()
+  (map-tablet-to-screen "HDMI-1"))
 
 (defun emacs-is-current-window-p ()
   (and (current-window)
@@ -121,10 +101,6 @@
 
 (defun emacs-evil-window-move (direction)
   (meta (kbd (format nil "s-~a" (direction-to-evil-key direction)))))
-
-;; (defun emacs-evil-window-move (direction)
-;;   (let ((cmd-string (concatenate 'string "emacsclient -s instance1 -e \"(evil-window-" (subseq (string-downcase (format nil "~s" direction)) 1) " 1)\"")))
-;;     (run-shell-command cmd-string t)))
 
 (defun emacs-window-close ()
   (meta (kbd "s-c")))
@@ -178,7 +154,7 @@
 (defcommand emacs-find-file () ()
   (if (emacs-is-current-window-p)
       (meta (kbd "s-f"))
-      (run-emacs-client "counsel-find-files nil")))
+      (run-emacs-client "counsel-find-file nil")))
 
 (defcommand emacs-find-buffer () ()
   (if (emacs-is-current-window-p)
@@ -192,7 +168,7 @@
       (run-emacs-client "+eshell/here")))
 
 (defcommand emacs-everywhere () ()
-  (eval-command "exec emacsclient -e \"(emacs-everywhere)\"")
+  (run-shell-command "doom everywhere")
   ;; (run-emacs-client "emacs-everywhere")
   )
 
@@ -230,11 +206,13 @@
 ;; spacemacsy style
 (define-key *root-map* (kbd "M") "lastmsg")
 ;; audio keys
-(define-key *top-map* (kbd "XF86AudioLowerVolume") "exec amixer set Master 5%-")
-(define-key *top-map* (kbd "XF86AudioRaiseVolume") "exec amixer set Master 5%+")
-(define-key *top-map* (kbd "XF86AudioMute") "exec amixer set Master toggle")
+(define-key *top-map* (kbd "XF86AudioLowerVolume") "exec pamixer --decrease 5")
+(define-key *top-map* (kbd "XF86AudioRaiseVolume") "exec pamixer --increase 5")
+(define-key *top-map* (kbd "XF86AudioMute") "exec pamixer --toggle-mute")
 (define-key *top-map* (kbd "XF86AudioPause") "my/pause")
 (define-key *top-map* (kbd "XF86AudioPlay") "my/pause")
+(define-key *top-map* (kbd "XF86MonBrightnessDown") "exec sudo light -U 5")
+(define-key *top-map* (kbd "XF86MonBrightnessUp") "exec sudo light -A 5")
 ;;misc
 (define-key *root-map* (kbd ",") "colon")
 (define-key *root-map* (kbd ".") "eval")
@@ -277,6 +255,10 @@
 (define-key *top-map* (kbd "s-H") "move-window left")
 (define-key *top-map* (kbd "s-K") "move-window up")
 (define-key *top-map* (kbd "s-J") "move-window down")
+(define-key *top-map* (kbd "s-C-l") "move-window right")
+(define-key *top-map* (kbd "s-C-h") "move-window left")
+(define-key *top-map* (kbd "s-C-k") "move-window up")
+(define-key *top-map* (kbd "s-C-j") "move-window down")
 (define-key *top-map* (kbd "s-c") "close-window-or-emacs-buffer")
 (define-key *top-map* (kbd "s-C") "delete")
 (define-key *top-map* (kbd "s-C-c") "remove-split")
@@ -287,19 +269,34 @@
 (define-key *top-map* (kbd "s-P") "emacs-pass")
 (define-key *top-map* (kbd "s-e") "run-emacs-client %s")
 (define-key *top-map* (kbd "s-E") "exec emacs")
+;;; reduce dependency on function row keys
 (define-key *top-map* (kbd "s-F1") "emacs-terminal")
 (define-key *top-map* (kbd "s-S-F1") "run-terminal")
+(define-key *top-map* (kbd "s-RET") "run-terminal")
 (define-key *top-map* (kbd "s-F2") "exec firefox")
+(define-key *top-map* (kbd "s-S-F2") "exec firefox")
 ;; (define-key *top-map* (kbd "s-F2") "exec nyxt")
 (define-key *top-map* (kbd "s-F3") "run-emacs-client deer")
-(define-key *top-map* (kbd "s-S-F3") "exec pcmanfm")
+(define-key *top-map* (kbd "s-S-F3") "exec spacefm")
 (define-key *top-map* (kbd "s-F4") "run-emacs-client mu4e")
+
+(defvar *program-map*
+  (let ((m (stumpwm:make-sparse-keymap)))
+    (stumpwm:define-key m (stumpwm:kbd "i") "exec firefox")
+    (stumpwm:define-key m (stumpwm:kbd "d") "exec spacefm")
+    (stumpwm:define-key m (stumpwm:kbd "t") "run-terminal")
+    (stumpwm:define-key m (stumpwm:kbd "m") "run-emacs-client mu4e")
+    m))
+(stumpwm:define-key stumpwm:*top-map* (stumpwm:kbd "s-C-SPC") '*program-map*)
+
 
 (define-key *top-map* (kbd "s-n") "gnew")
 (define-key *top-map* (kbd "s-w") "grouplist")
 
 (loop for i from 1 upto 9
-      do (define-key *top-map* (kbd (format nil "s-~a" i)) (format nil "gselect ~a" i)))
+      do (progn
+           (define-key *top-map* (kbd (format nil "s-~a" i)) (format nil "gselect ~a" i))
+           (define-key *top-map* (kbd (format nil "s-C-~a" i)) (format nil "gmove ~a" i))))
 (define-key *top-map* (kbd "s-!") "gmove 1")
 (define-key *top-map* (kbd "s-\"") "gmove 2")
 (define-key *top-map* (kbd "s-section") "gmove 3")
@@ -314,7 +311,7 @@
 ;; (defvar *program-map*
 ;;   (let ((m (stumpwm:make-sparse-keymap)))
 ;;     (stumpwm:define-key m (stumpwm:kbd "i") "exec firefox")
-;;     (stumpwm:define-key m (stumpwm:kbd "d") "exec pcmanfm")
+;;     (stumpwm:define-key m (stumpwm:kbd "d") "exec spacefm")
 ;;     m ; NOTE: this is important
 ;;     ))
 ;; (stumpwm:define-key stumpwm:*top-map* (stumpwm:kbd "s-x") '*program-map*)
@@ -374,11 +371,18 @@
             ;; " | Vol. "
             ;; '(:eval (run-shell-command *vol-status-command* t))
             " | %d |"
-            "         "))
+            "             "))
 
 (setf *window-format* "%m%n%s%c")
 
 (setf *mode-line-timeout* 1)
+
+(set-bg-color "#1C1E24")
+(set-fg-color "#468DBF")
+(set-border-color "#468DBF")
+(set-focus-color "#468DBF")
+(setf *mode-line-background-color* "#1C1E24")
+(setf *mode-line-foreground-color* "#468DBF")
 
 (setf *mouse-focus-policy* :click)
 
@@ -386,18 +390,20 @@
 
 (let ((autostart-command-list
         (list
-  "xmodmap -e 'clear mod4'"
-  "xmodmap -e 'add mod4 = Super_L'"
-  "emacs --daemon=instance1"
-  "pkill dropbox"
-  "dropbox"
-  "nm-applet"
-  "blueman-applet"
-  "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
-  "setxkbmap de -option ctrl:nocaps nodeadkeys"
-  "xcape -e 'Control_L=Escape'"
-  "fix_touchscreen"
-  "bash ~/.screenlayout/default.sh")))
+         "xmodmap -e 'clear mod4'"
+         "xmodmap -e 'add mod4 = Super_L'"
+         ;; "emacs --daemon=instance1"
+         "pkill dropbox"
+         "dropbox"
+         "nm-applet"
+         "udiskie --tray"
+         "blueman-applet"
+         "pa-applet"
+         "/usr/bin/polkit-dumb-agent"
+         "setxkbmap de -option ctrl:nocaps nodeadkeys"
+         "xcape -e 'Control_L=Escape'"
+         "bash ~/.screenlayout/default.sh"
+         "feh --bg-scale ~/Pictures/arch-bg.jpg")))
   (dolist (cmd autostart-command-list)
     (run-shell-command cmd)))
 
@@ -417,9 +423,8 @@
 (refresh-heads)
 
 ;; turn on the mode line
+
 (enable-mode-line (stumpwm:current-screen)
                   (stumpwm::head-by-number (stumpwm:current-screen) 0) t)
-;; (toggle-mode-line (stumpwm:current-screen)
-;;                   (stumpwm::head-by-number (stumpwm:current-screen) 0) t)
 
 (stumptray::stumptray)

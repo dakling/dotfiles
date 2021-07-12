@@ -55,14 +55,14 @@
 ;; (package! xelb)
 ;; (package! exwm)
 ;; (package! dmenu)
+;; (package! pulseaudio-control)
 
 (package! mu4e-alert)
 
 (package! smooth-scrolling)
 
-;; (package! pulseaudio-control)
-
-;; (package! telega) ;use from guix
+(package! telega
+  :pin "9187e6e3d903474645f3e64806bc62ef687ec205")
 
 (package! slack)
 
@@ -72,8 +72,6 @@
 
 (package! elfeed)
 
-(package! emms)
-
 (package! diminish)
 
 (package! async-await)
@@ -81,6 +79,12 @@
 (package! evil-tex :recipe (:host github :repo "itai33/evil-tex"))
 
 (package! wgrep)
+
+(package! ytdious)
+
+;; (package! ytel)
+
+;; (package! ytel-show)
 
 (package! md4rd)
 
@@ -98,15 +102,32 @@
 
 (unpin! sly)
 
+;; (unpin! org-mode)
+
 (package! gnu-apl-mode :recipe (:host github :repo "lokedhs/gnu-apl-mode"))
 
 (package! el-igo :recipe (:host github :repo "misohena/el-igo"))
 
-;; (package! fira-code-mode)
+(package! csharp-repl :recipe (:host github :repo "dakling/emacs-csharp-repl"))
 
-;; (package! edit-server)
+(package! bosss :recipe (:host github :repo "dakling/emacs-bosss"))
 
 (disable-packages! org-msg)
+
+;; (package! solaire-mode :disable t)
+
+(package! nov)
+
+(package! system-packages)
+(package! helm-system-packages)
+
+(package! shelldon
+  :recipe (:host github
+           :repo "Overdr0ne/shelldon"
+           :branch "master"))
+
+; ;; installed by guix
+; (package! guix)
 
 ;; (package! eaf :recipe
 ;;   (:host github

@@ -21,9 +21,9 @@
 ;; font string. You generally only need these two:
 ;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
 ;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
-;; (setq doom-font (font-spec :family "Fira Code Light")
-;;       doom-variable-pitch-font (font-spec :family "Fira Code Light"))
-(setq doom-font (font-spec :family "DejaVu Sans Mono"))
+(setq doom-font (font-spec :family "Fira Code")
+      doom-variable-pitch-font (font-spec :family "Fira Code"))
+;; (setq doom-font (font-spec :family "DejaVu Sans Mono"))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -104,10 +104,18 @@
 
 
 (cond
+ ((system-name= "klingenberg-laptop")
+  (add-load-path! "/usr/share/emacs/site-lisp/")
+  (add-load-path! "/usr/share/stumpwm/contrib/util/swm-emacs/"))
  ((system-name= "klingenberg-pi")
   (add-load-path! "/run/current-system/sw/share/emacs/site-lisp/mu4e"))
  ((system-name= "klingenberg-tablet")
-  (add-load-path! "/run/current-system/profile/share/emacs/site-lisp/")))
+  (add-load-path! "/run/current-system/profile/share/emacs/site-lisp/")
+  (add-load-path! "~/.guix-profile/share/emacs/site-lisp/")))
+
+(after! dired
+  (setq ranger-cleanup-on-disable t
+        ranger-cleanup-eagerly t))
 
 (after! undo-fu
   (setq undo-fu-allow-undo-in-region t))
@@ -115,7 +123,19 @@
 (after! sly
   (setq inferior-lisp-program (cond
                                ((system-name= "klingenberg-tablet")  "~/.local/bin/.run-sbcl.sh")
-                               (t "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp"))))
+                               (t "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")))
+  (defun my/connect-to-nyxt ()
+    (when (equalp
+           (buffer-file-name)
+           "/home/klingenberg/.dotfiles/nyxt.lisp")
+      (sly-connect "localhost" 4006)))
+  (add-hook 'lisp-mode-hook #'my/connect-to-nyxt)
+  (map! :map sly-mrepl-mode-map
+        :ni "M-k" #'sly-mrepl-previous-prompt
+        :ni "M-j" #'sly-mrepl-next-prompt)
+  (map! :localleader
+        :map sly-mrepl-mode-map
+        :n "g" #'helm-comint-prompts-all))
 
 (customize-set-variable 'compilation-scroll-output t)
 
@@ -195,16 +215,11 @@
         ("ls" #'org-super-links-store-link)
         ("lS" #'org-super-links-insert-link)))
 
-(setq smerge-command-prefix "+")
+(setq smerge-command-prefix "#")
 
 (set-popup-rules!
   '(("^\\*bosss\\*" :slot -1 :size 20 :select nil) ; popup bosss process buffer
     ("^\\*Async Shell Command\\*" :slot -1 :size 20)))
-
-;; TODO should not be needed
-;; (after! format-all-mode
-;;   ;; (remhash 'c++-mode format-all--mode-table)
-;;   (setq +format-on-save-enabled-modes 'omnisharp-mode))
 
 ;;; Defining some useful functions
 (defun shutdown ()
@@ -218,6 +233,12 @@
   (run-hook-with-args-until-failure 'kill-emacs-query-functions)
   (interactive)
   (async-shell-command "sudo reboot"))
+
+(defun my/open-in-external-app ()
+  (interactive)
+  (let ((process-connection-type nil))
+    ;; (helm-find-file-extern (buffer-file-name))
+    (counsel-find-file-extern (buffer-file-name))))
 
 (defun my/brightness+ ()
   (interactive)
@@ -278,15 +299,11 @@
    time
    nil
    (lambda ()
-     (let ((ans (y-or-n-p (concat "Reminder: " mesg " Dismiss reminder (y) or remind again in 30 seconds (n)?"))))
+     (let ((ans (y-or-n-p (concat "Reminder: " mesg " Remind again in 30 seconds (n) or dismiss reminder (y)?"))))
        (unless ans
          (my/make-alert 30 mesg)))))
   (message "Made alert for %s at %s" mesg time))
 
-(defun eshell/nonguixupdate ()
-  (shell-command "nix-channel --update")
-  (shell-command "nix-env -u")
-  (shell-command "flatpak --user update"))
 
 (after! bash-completion
   (setq bash-completion-nospace t))     ; TODO does not have any effect
@@ -304,10 +321,10 @@
                 "\\&list.*"
                 ""
                 (replace-regexp-in-string
-                 "https://www.invidio.us/watch\\?v="
+                 "https://w*invidio.us/watch\\?v="
                  ""
                  (replace-regexp-in-string
-                  "https://www.youtube.com/watch\\?v="
+                  "https://w*youtube.com/watch\\?v="
                   ""
                   url)))))
          (download-dir "~/Videos/"))
@@ -320,11 +337,27 @@
       (concat "-o " download-dir "%\\(title\\)s%\\(id\\)s")
       (concat "\"" str "\""))
      (lambda (_ _)
-       (helm-open-file-with-default-tool
+       (counsel-find-file-extern
         (car (directory-files
               "~/Videos/"
               ;; download-dir
               t str)))))))
+
+(defun my/youtube-watch ()
+  (interactive)
+  (let* ((url (or (plist-get eww-data :url)
+                  (current-kill 0)))
+         (str (replace-regexp-in-string
+               "-"
+               "-"
+               (replace-regexp-in-string
+                "\\&list.*"
+                ""
+                (replace-regexp-in-string
+                 "https://w*invidio.us/watch\\?v="
+                 "https://youtube.com/watch\\?v="
+                 url)))))
+    (elfeed-v-mpv str)))
 
 (defun fdy-mount (source target)
   "Mount a directory from fdy windows remote server."
@@ -417,8 +450,8 @@
    "s-c" 'my/close-buffer
    "s-q" 'my/get-rid-of-mouse
    "s-m" 'delete-other-windows
-   "s-g" 'guix
    "s-t" 'my/tuxi
+   "s-y" 'ytdious
    ;; "s-<f1>" '+vterm/here
    ;; "C-s-<f1>" '+vterm/toggle
    "s-<f1>" '+eshell/here
@@ -437,13 +470,15 @@
      "s-f" 'counsel-find-file
      "s-p" 'counsel-projectile
      "s-b" 'ivy-switch-buffer
-     "s-P" 'ivy-pass))
+     "s-g" 'helm-system-packages
+     "s-P" '+pass/ivy))
   (when nil
     (map!
      :n
      "s-x" 'helm-M-x
      "s-f" 'helm-find-files
      "s-p" 'helm-projectile
+     "s-g" 'helm-system-packages
      "s-b" 'helm-mini
      "s-P" 'helm-pass)))
 
@@ -543,6 +578,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
          (smtpmail-smtp-service 465)
          (smtpmail-stream-type ssl)
          (user-full-name "Dario Klingenberg")
+         (mu4e-compose-signature nil)
          ;; (org-msg-signature nil)
          )
         ("web"
@@ -555,6 +591,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
          (smtpmail-stream-type starttls)
          (user-mail-address "dario.klingenberg@web.de")
          (user-full-name "dario")
+         (mu4e-compose-signature nil)
          ;; (org-msg-signature nil)
          )))
 
@@ -597,10 +634,8 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
   (setq mu4e-enable-notifications t)
   (customize-set-variable 'mu4e-headers-leave-behavior 'apply)
   (setq mu4e-view-use-gnus t)
-  ;; (remove-hook 'mu4e-compose-mode-hook 'mml-secure-sign-pgpmime)
-  (add-hook 'mu4e-compose-mode-hook 'mml-secure-sign-pgpmime)
-  ;; (add-hook 'org-msg-edit-mode-hook 'mml-secure-sign-pgpmime)
-  (setq mml-secure-message-openpgp-sign-with-sender t)
+  ;; (add-hook 'mu4e-compose-mode-hook 'mml-secure-sign-pgpmime)
+  ;; (setq mml-secure-message-openpgp-sign-with-sender t)
   (require 'mu4e-icalendar)
   (mu4e-icalendar-setup)
   (require 'org-agenda)
@@ -608,6 +643,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
   (setq gnus-icalendar-org-capture-headline '("Inbox"))
   (gnus-icalendar-org-setup)
   ;;     org-msg
+  ;; (add-hook 'org-msg-edit-mode-hook 'mml-secure-sign-pgpmime)
   ;; (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
   ;;       ;; org-msg-startup "hidestars indent inlineimages"
   ;;       ;; org-msg-greeting-fmt "Hallo %s,\n\n\n"
@@ -621,7 +657,12 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 
 (setq doom-localleader-key "-")
 
-(map! "C-g" #'keyboard-quit)
+(map!
+ "C-g" #'keyboard-quit
+ :n "gb" #'pop-tag-mark
+ :n "s" #'avy-goto-char-timer
+ :n "S" #'avy-goto-char-timer
+ :n "+" #'evil-goto-mark)
 
 (map! :leader
       "SPC" #'execute-extended-command
@@ -634,9 +675,10 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
       "w TAB" #'evil-switch-to-windows-last-buffer)
 
 (map!
- :n "gb" #'pop-tag-mark
- :n "s" #'avy-goto-char-timer
- :n "S" #'avy-goto-char-timer)
+ :map doom-leader-open-map
+ "w" #'eww
+ "d" #'dired-jump
+ "D" #'+debugger/start)
 
 (map! :leader :map (elisp)
       "ef" #'eval-defun
@@ -656,7 +698,8 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 
 (after!
   lispy
-  (lispy-set-key-theme '(lispy c-digits))) ;; disable single-key bindings
+  (lispy-set-key-theme '(lispy c-digits))
+  (setq lispy-colon-p nil)) ;; disable single-key bindings
 
 (after!
   lispyville
@@ -681,8 +724,14 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    :ni "C-M-l" #'lispy-move-right
    :ni "M-r" #'lispy-raise-sexp
    :ni "M-d" #'lispyville-wrap-round
+   "[" nil
+   "]" nil
    :ni "C-<return>" #'lispy-split
    :n "gc" #'lispyville-comment-or-uncomment)
+  (map!
+   :map lispy-mode-map
+   "[" nil
+   "]" nil)
 
   (map!
    :localleader
@@ -694,18 +743,31 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 
 ;; scheme
 (use-package! geiser
-  :commands (run-geiser)
+  ;; :load-path "/run/current-system/profile/share/emacs/site-lisp/"
+  ;; :commands (run-geiser)
   :config
-  (with-eval-after-load 'geiser-guile
-    (add-to-list 'geiser-guile-load-path "~/guix"))
-  (with-eval-after-load 'yasnippet
-    (add-to-list 'yas-snippet-dirs "~/guix/etc/snippets"))
-
-  ;; (advice-add 'geiser-impl--set-buffer-implementation :after #'guix-geiser--set-project)
-  ;; HACK END
   (setq flycheck-scheme-chicken-executable "chicken-csc")
   (setq geiser-chicken-binary "chicken-csi")
-  (setq geiser-active-implementations '(guile chicken))
+  (setq geiser-active-implementations '(chicken guile chez))
+  (setq geiser-default-implementation 'guile)
+  ;; (setq geiser-scheme-dir "~/")
+  (defun chicken-doc (&optional obtain-function)
+    (interactive)
+    (let ((func (funcall (or obtain-function 'current-word))))
+      (when func
+        (process-send-string (scheme-proc)
+                             (format "(require-library chicken-doc) ,doc %S\n" func))
+        (save-selected-window
+          (select-window (display-buffer (get-buffer scheme-buffer) t))
+          (goto-char (point-max))))))
+  ;; (after! geiser
+  ;;   (add-to-list 'geiser-implementations-alist '((regexp "\\.sc$") chez))
+  ;;   (add-to-list 'geiser-implementations-alist '((regexp "\\.sls$") chez)))
+  (add-to-list 'auto-mode-alist
+               '("\\.sls\\'" . scheme-mode)
+               '("\\.sc\\'" . scheme-mode))
+  (add-to-list 'auto-mode-alist
+               '("\\.egg\\'" . scheme-mode))
   (map!
    :localleader
    :map scheme-mode-map
@@ -716,6 +778,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 
 (use-package! guix
   :when (system-name= "klingenberg-tablet")
+  ;; :commands (guix scheme-mode)
   :config
   (defun my/activate-guix-devel-mode ()
     (when (file-in-directory-p (buffer-file-name) "~/guix")
@@ -732,11 +795,60 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    :n "u" 'guix-devel-use-module
    :n "." 'guix-devel-code-block-edit))
 
+;; (use-package! cider
+;;   :config
+;;   (map!
+;;    :localleader
+;;    :map clojure-mode-map
+;;    :n "'" '+eval/open-repl-other-window
+;;    :n "ef" 'cider-eval-defun-at-point))
+
+;; doc-view mode
+(map!
+ :map 'doc-view-mode-map
+ :n "j" #'doc-view-next-page
+ :n "k" #'doc-view-previous-page
+ :n "<down>" #'doc-view-next-page
+ :n "<up>" #'doc-view-previous-page)
+
+;; open docx as text
+(defun my/docx->markdown (&optional file)
+  (let ((pandoc (executable-find "pandoc")))
+    (shell-command-to-string
+     (concat pandoc " --wrap=none " (shell-quote-argument (or file (buffer-file-name))) " -t markdown"))))
+
+(defun my/docx->markdown! ()
+  (interactive)
+  (read-only-mode -1)
+  (erase-buffer)
+  (insert (my/docx->markdown (buffer-file-name)))
+  (not-modified)
+  (read-only-mode 1))
+
+(define-derived-mode
+  pandoc-view-mode
+  markdown-mode
+  "pandoc-view-mode"
+  "View pandoc processing of docx file using markdown mode."
+  (my/docx->markdown!))
+(map!
+ :localleader
+ :map doc-view-mode-map
+ :n "p" #'pandoc-view-mode
+ :n "t" #'pandoc-view-mode
+ :n "l" #'my/open-in-external-app)
+(map!
+ :localleader
+ :map pandoc-view-mode-map
+ :n "d" #'doc-view-mode
+ :n "t" #'doc-view-mode
+ :n "l" #'my/open-in-external-app)
+
 ;; latex
 (setq +latex-viewers '(pdf-tools))
 (setq reftex-default-bibliography
       (cond
-       ((system-name= "klingenberg-tablet") "~/Documents-work/conferences/latex_macros/bibliography.bib")
+       ((system-name= "klingenberg-laptop" "klingenberg-tablet") "~/Documents-work/conferences/latex_macros/bibliography.bib")
        ((system-name= "klingenberg-pc") "~/Documents/conferences/latex_macros/bibliography.bib")))
 
 (add-hook! (TeX-mode-hook LaTeX-mode-hook) (lamdbda () (auto-fill-mode 1)))
@@ -766,7 +878,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
  "rt" #'reftex-toc
  "rr" #'reftex-cleveref-cref
  "rc" #'reftex-citation
- "og" (lambda () (interactive) (find-file (getenv "LatexGlobalConfig")))
+ "og" (lambda () (interactive) (find-file "~/texmf/tex/latex/local/dakling.sty"))
  "ob" (lambda () (interactive) (find-file reftex-default-bibliography)))
 
 (use-package! evil-tex
@@ -801,31 +913,35 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 (use-package! gnu-apl-mode)
 
 ;;c#
-;; (after! lsp
-;;   (progn
-;;     (let ((version "v1.37.4"))
-;;      (defun my/create-lsp-custom-executable ()
-;;        "Modify the omnisharp-server run-script as needed for Guix"
-;;        (when (system-name= "klingenberg-tablet")
-;;          (with-temp-file (concat (lsp-csharp--server-dir version) "/run-custom")
-;;            (goto-char (point-min))
-;;            (insert-file-contents (lsp-csharp--server-bin version))
-;;            (search-forward "mono_cmd")
-;;            (kill-line)
-;;            (insert "=mono"))))
-;;      (my/create-lsp-custom-executable)
-;;      (cond
-;;       ((system-name= "klingenberg-pi")
-;;        (setq omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
-;;       ((system-name= "klingenberg-tablet")
-;;        ;; (setq omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp/")
-;;        (setq lsp-csharp-server-path (concat (lsp-csharp--server-dir version) "/run-custom")))))))
+(use-package! lsp
+  :config
+  ;;(progn
+    ;;(let*
+        ;;((version "v1.37.7")
+         ;;(server-dir (concat "~/.config/emacs/.local/etc/lsp/omnisharp-roslyn/" version "/")))
+      ;;(defun my/create-lsp-custom-executable ()
+        ;;"Modify the omnisharp-server run-script as needed for Guix"
+        ;;(when (system-name= "klingenberg-laptop" "klingenberg-tablet")
+          ;;(with-temp-file (concat server-dir "run-custom")
+            ;;(goto-char (point-min))
+            ;;(insert-file-contents (concat server-dir "run"))
+            ;;(search-forward "mono_cmd")
+            ;;(kill-line)
+            ;;(insert "=mono"))))
+      ;;(my/create-lsp-custom-executable)
+      ;;(cond
+       ;;((system-name= "klingenberg-pi")
+        ;;(setq omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
+       ;;((system-name= "klingenberg-laptop" "klingenberg-tablet")
+        ;;;; (setq omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp/")
+        ;;(setq lsp-csharp-server-path (concat server-dir "/run-custom"))))))
+  )
 
 ;; (after! omnisharp
 ;;   (progn
 ;;     (defun my/create-omnisharp-custom-executable ()
 ;;       "Modify the omnisharp-server run-script as needed for Guix"
-;;       (when (system-name= "klingenberg-tablet")
+;;       (when (system-name= "klingenberg-laptop" "klingenberg-tablet")
 ;;         (with-temp-file (concat (omnisharp--server-installation-dir) "/run-custom")
 ;;           (goto-char (point-min))
 ;;           (insert-file-contents (omnisharp--server-installation-path))
@@ -836,14 +952,15 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 ;;     (cond
 ;;      ((system-name= "klingenberg-pi")
 ;;       (setq omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
-;;      ((system-name= "klingenberg-tablet")
+;;      ((system-name= "klingenberg-laptop" "klingenberg-tablet")
 ;;       ;; (setq omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp/")
 ;;       (setq omnisharp-server-executable-path (concat (omnisharp--server-installation-dir) "/run-custom"))
 ;;       ;; (setq omnisharp-server-executable-path nil)
 ;;       ))))
 
 (after! lsp
-  (setq lsp-file-watch-threshold 1000))
+  ;; (setq lsp-file-watch-threshold 30000)
+  (setq lsp-file-watch-threshold nil))
 
 (defun my/csharp-list-to-array ()
   (replace-regexp "List<\\(.*\\)>" "\\1[]"
@@ -871,8 +988,9 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
             (t (message "neither array nor string found on current line"))))))
 
 (use-package! csharp-repl
-  :when (system-name= "klingenberg-tablet" "klingenberg-pc")
-  :load-path "~/Documents/programming/elisp/emacs-csharp-repl/")
+  :when (system-name= "klingenberg-laptop" "klingenberg-tablet" "klingenberg-pc")
+  ;; :load-path "~/Documents/programming/elisp/emacs-csharp-repl/"
+  )
 
 (defun my/personal-bosss-file-p ()
   (and (buffer-file-name)
@@ -1051,15 +1169,15 @@ limitations under the License.
 
 ;; bosss
 (use-package! bosss
-  :when (system-name= "klingenberg-tablet" "klingenberg-pc")
-  :load-path "~/Documents/programming/elisp/emacs-bosss/"
+  :when (system-name= "klingenberg-laptop" "klingenberg-tablet" "klingenberg-pc")
+  ;; :load-path "~/Documents/programming/elisp/emacs-bosss/"
   :init
   (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
   (setq bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Release/BoSSSpad.exe")
   (setq bosss-path-reference (mapcar (lambda (proj) (concat "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/" proj))
                                      '("RANSCommon/bin/Release/RANS_Solver.dll"
                                        "KOmegaModelSolver/bin/Release/KOmegaSolver.exe"
-                                       ;; "KOmegaStatSymmModelSolver/bin/Release/KOmegaSSSolver.exe"
+                                       "KOmegaStatSymmModelSolver/bin/Release/KOmegaSSSolver.exe"
                                        "TurbulenceModelParameterOptimization/bin/Release/ParameterOptimization.exe")))
   :config
   (map! :map bosss-mode-map
@@ -1078,6 +1196,15 @@ limitations under the License.
    :n "en" #'bosss-eval-and-next-field
    :n "lp" #'bosss-repl-load-my-assembly
    :n "in" #'bosss-create-new-field))
+
+;;(use-package! maxima
+  ;;:config
+  ;;(add-to-list 'auto-mode-alist '("\\.ma[cx]\\'" . maxima-mode))
+  ;;(map! :localleader :map maxima-mode-map
+        ;;"ef" #'maxima-send-full-line
+        ;;"ee" #'maxima-send-previous-form
+        ;;"er" #'maxima-send-region
+        ;;"eb" #'maxima-send-buffer))
 
 ;; org-kanban
 (use-package! kanban
@@ -1098,84 +1225,90 @@ limitations under the License.
   (setq ivy-use-virtual-buffers t)
   (setq ivy-use-selectable-prompt t)
   (setq counsel-find-file-at-point t)
+  ;; (defun my/open-shell-here (dir)
+  ;;   (sly)
+  ;;   (sly-mrepl-sync nil (directory-file-name dir)))
   (map!
    :map ivy-minibuffer-map
    "M-j" #'ivy-next-line
    "M-k" #'ivy-previous-line
    "M-h" #'ivy-backward-delete-char
    "M-l" #'ivy-alt-done
+   "M-o" #'ivy-dispatching-call
    "TAB" #'ivy-partial
    "M-RET" #'ivy-call
    "M-TAB" #'ivy-mark
    "C-TAB" #'ivy-unmark
    "M-H" #'left-char
    "M-L" #'right-char)
+  ;; (ivy-add-actions
+  ;;  'counsel-find-file
+  ;;  '(("y" counsel-find-file-copy "copy file(s)"
+  ;;     (lambda (x)
+  ;;       (counsel-find-file-copy (mapconcat 'identity x "\n"))))
+  ;;    ("r" counsel-find-file-move "move file(s)"
+  ;;     (lambda (x)
+  ;;       (counsel-find-file-move (mapconcat 'identity x "\n"))))
+  ;;    ("D" counsel-find-file-delete "delete file(s)"
+  ;;     (lambda (x)
+  ;;       (counsel-find-file-delete (mapconcat 'identity x "\n"))))
+  ;;    ("m" ivy-mark "mark")
+  ;;    ("u" ivy-ummark "unmark")
+  ;;    ;; ("t" ivy-toggle-marks "toggle marks")
+  ;;    ))
   (map!
    :map counsel-find-file-map
    :ni "DEL" #'backward-delete-char
+   "M-e" (lambda () (interactive) (ivy-exit-with-action
+                                   (lambda (dir-or-file)
+                                     (let ((default-directory (file-name-directory dir-or-file)))
+                                       (eshell t)))))
    "M-s" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-as-root))
-   "M-y" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-copy))
-   "M-r" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-move))
+   "M-y" (lambda () (interactive) (ivy-exit-with-action
+                                   (lambda (x) (interactive) (if (listp x)
+                                                                 (counsel-find-file-copy (mapconcat 'identity x "\n"))
+                                                               (counsel-find-file-copy x)))))
+   "M-r" (lambda () (interactive) (ivy-exit-with-action
+                                   (lambda (x) (interactive) (if (listp x)
+                                                                 (counsel-find-file-move (mapconcat 'identity x "\n"))
+                                                               (counsel-find-file-move x)))))
    "M-D" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-delete))
-   "M-o" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-extern))))
+   "M-Y" (lambda () (interactive) (ivy-exit-with-action (lambda (x) (interactive) (kill-new (directory-file-name x)))))
+   "M-c" (lambda () (interactive) (ivy-exit-with-action (lambda (x) (interactive) (dired-compress-file x))))
+   "M-RET" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-extern))))
 
-(use-package! helm
-  :when (featurep 'helm)
-  :diminish helm-mode
-  :config
-  (map!
-   :map doom-leader-buffer-map
-   "b" #'helm-mini)
-  (map!
-   :map helm-map
-   "M-j" #'helm-next-line
-   "M-k" #'helm-previous-line
-   "M-h" #'helm-find-files-up-one-level
-   "M-l" #'helm-execute-persistent-action
-   "M-w" #'helm-select-action
-   "M-H" #'left-char
-   "M-L" #'right-char
-   "M-TAB" #'helm-toggle-visible-mark-forward)
-  (map!
-   :map helm-find-files-map
-   "M-l" #'helm-ff-RET
-   "C-l" nil
-   "M-y" #'helm-ff-run-copy-file
-   "M-r" #'helm-ff-run-rename-file
-   "M-s" #'helm-ff-run-find-file-as-root
-   "M--" #'helm-ff-run-marked-files-in-dired
-   "M-o" #'helm-ff-run-switch-other-window
-   "M-O" #'helm-ff-run-switch-other-frame
-   "M-RET" #'helm-ff-run-open-file-with-default-tool)
-  (map!
-   :map helm-buffer-map
-   "M-d" #'helm-buffer-run-kill-persistent)
-  ;; TODO check if this is needed with doom
-  ;; (setq completion-styles `(basic partial-completion emacs22 initials
-  ;;                                 ,(if (version<= emacs-version "27.0") 'helm-flex 'flex)))
-  ;; (setq helm-mode-fuzzy-match t)
-  ;; (setq helm-completion-in-region-fuzzy-match t)
-  ;; (setq helm-M-x-fuzzy-match t)
-  ;; (setq helm-buffers-fuzzy-matching t)
-  ;; (setq helm-completion-in-region-fuzzy-match t)
-  ;; (setq helm-file-cache-fuzzy-match t)
-  ;; (setq helm-imenu-fuzzy-match t)
-  ;; (setq helm-mode-fuzzy-match t)
-  ;; (setq helm-locate-fuzzy-match t)
-  ;; (setq helm-quick-update t)
-  ;; (setq helm-recentf-fuzzy-match t)
-  ;; END TODO check if this is needed with doom
-  )
-
-(use-package! helm-swoop
-  :when (featurep 'helm)
-  :after-call helm-mode-hook
-  :config
-  (setq helm-swoop-pre-input-function (lambda () (car evil-ex-search-pattern)))
-  (map!
-   :map
-   helm-swoop-map
-   "M-i" #'helm-multi-swoop-current-mode-from-helm-swoop))
+;; (use-package! helm
+;;   :when (featurep 'helm)
+;;   :diminish helm-mode
+;;   :config
+;;   (map!
+;;    :map doom-leader-buffer-map
+;;    "b" #'helm-mini)
+;;   (map!
+;;    :map helm-map
+;;    "M-j" #'helm-next-line
+;;    "M-k" #'helm-previous-line
+;;    "M-h" #'helm-find-files-up-one-level
+;;    "M-l" #'helm-execute-persistent-action
+;;    "M-w" #'helm-select-action
+;;    "M-H" #'left-char
+;;    "M-L" #'right-char
+;;    "M-TAB" #'helm-toggle-visible-mark-forward)
+;;   (map!
+;;    :map helm-find-files-map
+;;    "M-l" #'helm-ff-RET
+;;    "C-l" nil
+;;    "M-y" #'helm-ff-run-copy-file
+;;    "M-r" #'helm-ff-run-rename-file
+;;    "M-s" #'helm-ff-run-find-file-as-root
+;;    "M--" #'helm-ff-run-marked-files-in-dired
+;;    "M-o" #'helm-ff-run-switch-other-window
+;;    "M-O" #'helm-ff-run-switch-other-frame
+;;    "M-RET" #'helm-ff-run-open-file-with-default-tool)
+;;   (map!
+;;    :map helm-buffer-map
+;;    "M-d" #'helm-buffer-run-kill-persistent)
+;;   (setq helm-move-to-line-cycle-in-source t))
 
 ;; TODO check if this is needed with doom
 ;; (use-package! org-roam-server
@@ -1195,16 +1328,27 @@ limitations under the License.
 ;; (use-package! edit-server
 ;;   :config (edit-server-start))
 
+(use-package! vterm
+  :config
+  (map!
+   :map vterm-mode-map
+   :ni "M-p" #'vterm-send-C-p
+   :ni "M-n" #'vterm-send-C-n
+   :ni "M-k" #'vterm-previous-prompt
+   :ni "M-j" #'vterm-next-prompt))
+
 (use-package! pdf-tools
   :config
   (add-hook 'pdf-view-mode-hook 'pdf-view-auto-slice-minor-mode)
   (add-hook 'pdf-view-mode-hook 'pdf-view-midnight-minor-mode)
   (evil-collection-init 'pdf)
+  (add-to-list 'desktop-locals-to-save 'pdf-view-register-alist)
   (setq pdf-view-midnight-colors '("WhiteSmoke" . "gray16"))
   (map!
    :map pdf-view-mode-map
    :n "J" #'pdf-view-next-page
    :n "K" #'pdf-view-previous-page
+   :n "+" #'pdf-view-jump-to-register
    :n "-" nil)
   (map!
    :localleader
@@ -1223,10 +1367,15 @@ limitations under the License.
                                              ("decibels" . 2.5)
                                              ("raw" . 72000))))
 
+;; TODO start
 (use-package! telega
+  :after (rainbow-identifiers)
+  :when (system-name= "klingenberg-laptop" "klingenberg-tablet")
   :commands telega
   :config
   (telega-notifications-mode 1))
+
+;; TODO end
 
 (use-package! slack
   :commands (slack-start)
@@ -1238,8 +1387,8 @@ limitations under the License.
    :name "2021-ZIH"
    :default t
    :token (auth-source-pick-first-password
-         :host "2021-zih.slack.com"
-         :user "klingenberg@fdy.tu-darmstadt.de")
+           :host "2021-zih.slack.com"
+           :user "klingenberg@fdy.tu-darmstadt.de")
    :subscribed-channels '(allgemein)
    :full-and-display-names t)
 
@@ -1261,7 +1410,7 @@ limitations under the License.
     ",3" 'slack-message-embed-channel
     "\C-n" 'slack-buffer-goto-next-message
     "\C-p" 'slack-buffer-goto-prev-message)
-   (evil-define-key 'normal slack-edit-message-mode-map
+  (evil-define-key 'normal slack-edit-message-mode-map
     ",k" 'slack-message-cancel-edit
     ",s" 'slack-message-send-from-buffer
     ",2" 'slack-message-embed-mention
@@ -1269,10 +1418,10 @@ limitations under the License.
 
 (after! circe
   (set-irc-server! "chat.freenode.net"
-    `(:tls t
-      :port 6697
-      :nick "dakling"
-      :channels ("#emacs" "#guix"))))
+                   `(:tls t
+                     :port 6697
+                     :nick "dakling"
+                     :channels ("#emacs" "#guix"))))
 
 (use-package! alert
   :commands (alert)
@@ -1281,40 +1430,43 @@ limitations under the License.
 
 
 (use-package! elfeed
-  :commands (elfeed elfeed-update)
+  :commands (eww elfeed elfeed-update)
   :config
-  (setq elfeed-feeds
-        '(("https://www.zeitsprung.fm/feed/ogg/" podcast zeitsprung)
-          ("https://kickermeetsdazn.podigee.io/feed/mp3/" podcast kmd fussball)
-          ("https://audioboom.com/channels/2399216.rss" podcast nstaaf)
-          ("http://fokus-fussball.de/feed/mp3/" podcast collina erben fussball)
-          ("https://liebling-bosman.podigee.io/feed/mp3" podcast liebling bosman fussball)
-          ("https://tribuenengespraech.podigee.io/feed/vorbis" podcast rasenfunk tribünengespräch fussball)
-          ("https://feeds.feedburner.com/hacks-on-tap" podcast hacks on tap politics)
-          ("https://lexfridman.com/feed/podcast" podcast lex friedman)
-          ("https://ambrevar.xyz/atom.xml" blog emacs programming)
-          ("https://nyxt.atlas.engineer/feed" lisp programming nyxt next)
-          ("https://guix.gnu.org/feeds/blog/arm.atom" lisp programming guix blog)
-          ("https://www.kernel.org/feeds/kdist.xml" linux kernel updates)
-          ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
-          ("http://www.reddit.com/r/DoomEmacs/.rss" emacs reddit)
-          ("http://www.reddit.com/r/lisp/.rss" programming reddit)
-          ("http://www.reddit.com/r/common_lisp/.rss" programming reddit)
-          ("http://www.reddit.com/r/scheme/.rss" programming reddit)
-          ("http://www.reddit.com/r/linux/.rss" programming reddit)
-          ("http://www.reddit.com/r/archlinux/.rss" programming reddit)
-          ("http://www.reddit.com/r/nixos/.rss" programming reddit)
-          ("http://www.reddit.com/r/Plover/.rss" programming reddit)
-          ("http://www.reddit.com/r/baduk/.rss" go baduk reddit)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCyHDQ5C6z1NDmJ4g6SerW8g" youtube mailab)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UChkVOG0PqkXIHHmkBGG15Ig" youtube walulis)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCo4693Ony4slDY5hR0ny-bw" youtube walulis)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVTyTA7-g9nopHeHbeuvpRA" youtube meyers)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3XTzVzaHQEd30rQbuvCtTQ" youtube lastweektonight)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCYO_jab_esuFRV4b17AJtAw" youtube math 3blue1brown 3b1b)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCoxcjq-8xIDTYp3uz647V5A" youtube math numberphile)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCSju5G2aFaWMqn-_0YBtq5A" youtube math standupmaths matt parker)
-          ("https://www.youtube.com/feeds/videos.xml?playlist_id=PL8FB14A2200B87185" youtube playlist yale economics)))
+  (setq
+   elfeed-search-filter "+youtube"
+   elfeed-feeds
+   '(("https://www.zeitsprung.fm/feed/ogg/" podcast zeitsprung)
+     ("https://kickermeetsdazn.podigee.io/feed/mp3/" podcast kmd fussball)
+     ("https://audioboom.com/channels/2399216.rss" podcast nstaaf)
+     ("http://fokus-fussball.de/feed/mp3/" podcast collina erben fussball)
+     ("https://liebling-bosman.podigee.io/feed/mp3" podcast liebling bosman fussball)
+     ("https://tribuenengespraech.podigee.io/feed/vorbis" podcast rasenfunk tribünengespräch fussball)
+     ("https://feeds.feedburner.com/hacks-on-tap" podcast hacks on tap politics)
+     ("https://lexfridman.com/feed/podcast" podcast lex friedman)
+     ("https://ambrevar.xyz/atom.xml" blog emacs programming)
+     ("https://nyxt.atlas.engineer/feed" lisp programming nyxt next)
+     ("https://guix.gnu.org/feeds/blog/arm.atom" lisp programming guix blog)
+     ("https://www.kernel.org/feeds/kdist.xml" linux kernel updates)
+     ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
+     ("http://www.reddit.com/r/DoomEmacs/.rss" emacs reddit)
+     ("http://www.reddit.com/r/lisp/.rss" programming reddit)
+     ("http://www.reddit.com/r/common_lisp/.rss" programming reddit)
+     ("http://www.reddit.com/r/scheme/.rss" programming reddit)
+     ("http://www.reddit.com/r/linux/.rss" programming reddit)
+     ("http://www.reddit.com/r/archlinux/.rss" programming reddit)
+     ("http://www.reddit.com/r/nixos/.rss" programming reddit)
+     ("http://www.reddit.com/r/Plover/.rss" programming reddit)
+     ("http://www.reddit.com/r/baduk/.rss" go baduk reddit)
+     ("http://tv.dfb.de/rss.php" dfb futsal fussball)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCyHDQ5C6z1NDmJ4g6SerW8g" youtube mailab)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UChkVOG0PqkXIHHmkBGG15Ig" youtube walulis)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCo4693Ony4slDY5hR0ny-bw" youtube walulis)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVTyTA7-g9nopHeHbeuvpRA" youtube meyers)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3XTzVzaHQEd30rQbuvCtTQ" youtube lastweektonight)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCYO_jab_esuFRV4b17AJtAw" youtube math 3blue1brown 3b1b)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCoxcjq-8xIDTYp3uz647V5A" youtube math numberphile)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCSju5G2aFaWMqn-_0YBtq5A" youtube math standupmaths matt parker)
+     ("https://www.youtube.com/feeds/videos.xml?playlist_id=PL8FB14A2200B87185" youtube playlist yale economics)))
 
   ;; Taken from https://joshrollinswrites.com/help-desk-head-desk/20200611/
   (defun elfeed-v-mpv (url)
@@ -1416,7 +1568,34 @@ limitations under the License.
    :n "M-h" #'eww-back-url
    :n "M-l" #'eww-forward-url
    :n "M-y" #'eww-copy-page-url
-   :n "f" #'ace-link-eww))
+   :n "f" #'ace-link-eww)
+  (map!
+   :localleader
+   :map eww-mode-map
+   :n "v" #'my/youtube-watch
+   :n "d" #'my/youtube-dl))
+
+(use-package! ytdious
+  :config
+  (setq ytdious-invidious-api-url
+        "https://invidious.tube"
+        ;; "https://invidious.zee.li"
+        ;; "https://invidious.tinfoil-hat.net"
+        )
+  (map!
+   :map ytdious-mode-map
+   :n "s" #'ytdious-search
+   :n "S" #'ytdious-search-recent
+   :n "c" #'ytdious-view-channel-at-point
+   :n "RET" #'ytdious-play
+   :n "o" #'ytdious-play
+   :n "O" #'ytdious-play-continious
+   :n "Q" #'ytdious-stop-continious))
+
+;; (use-package! ytel-show
+;;   :after ytel
+;;   :bind (:map ytel-mode-map ("RET" . ytel-show)))
+
 
 (use-package! md4rd
   :commands (md4rd md4rd--fetch-comments)
@@ -1439,9 +1618,11 @@ limitations under the License.
   (setq epg-pinentry-mode 'loopback))
 
 (use-package! stumpwm-mode
-  :when (system-name= "klingenberg-tablet")
-  :load-path "/run/current-system/profile/share/emacs/site-lisp/"
+  :when (system-name= "klingenberg-laptop" "klingenberg-tablet" "klingenberg-pc" "helensInfinitybook")
   :config
+  (defun my/stumpwm-connect ()
+    (interactive)
+    (sly-connect "localhost" 4005))
   (defun my/activate-stump-mode ()
     (when (equalp
            (buffer-file-name)
@@ -1449,8 +1630,9 @@ limitations under the License.
       (stumpwm-mode 1)))
   (add-hook 'lisp-mode-hook #'my/activate-stump-mode)
   (map! :localleader :map stumpwm-mode-map
-        "ef" #'stumpwm-eval-defun
-        "ee" #'stumpwm-eval-last-sexp))
+        ;; "ef" #'stumpwm-eval-defun
+        ;; "ee" #'stumpwm-eval-last-sexp
+        "'" #'my/stumpwm-connect))
 
 ;; (use-package! eaf
 ;;   :defer t
@@ -1477,9 +1659,89 @@ limitations under the License.
                        flyspell-mode
                        defining-kbd-macro)))
 
-(use-package! igo-org
+(use-package! system-packages
   :config
-  (igo-org-setup)
+  (setq my/pacmanfile-file "~/.dotfiles/pacmanfile.txt")
+  (defun my/pacmanfile-visit ()
+    (interactive)
+    (find-file my/pacmanfile-file))
+  (defun my/pacmanfile-sync ()
+    (interactive)
+    (async-shell-command "pacmanfile sync"))
+  (defun my/pacman-update ()
+    (interactive)
+    (async-shell-command "yay -Syu"))
+  (add-to-list 'system-packages-supported-package-managers
+               '(yay .
+                        ((default-sudo . nil)
+                         (install . "yay -S")
+                         (search . "yay -Ss")
+                         (uninstall . "yay -Rs")
+                         (update . "yay -Syu")
+                         (clean-cache . "yay -Sc")
+                         (log . "cat /var/log/pacman.log")
+                         (get-info . "yay -Qi")
+                         (get-info-remote . "yay -Si")
+                         (list-files-provided-by . "yay -Ql")
+                         (verify-all-packages . "yay -Qkk")
+                         (verify-all-dependencies . "yay -Dk")
+                         (remove-orphaned . "yay -Rns $(pacman -Qtdq)")
+                         (list-installed-packages . "yay -Qe")
+                         (list-installed-packages-all . "yay -Q")
+                         (list-dependencies-of . "yay -Qi")
+                         (noconfirm . "--noconfirm"))))
+  (setq system-packages-use-sudo nil)
+  (setq system-packages-package-manager 'yay))
+
+(use-package! helm-system-packages
+  :config
+  (map!
+   :map helm-map
+   "M-j" #'helm-next-line
+   "M-k" #'helm-previous-line
+   "M-h" #'helm-find-files-up-one-level
+   "M-l" #'helm-execute-persistent-action
+   "M-w" #'helm-select-action
+   "M-H" #'left-char
+   "M-L" #'right-char
+   "M-TAB" #'helm-toggle-visible-mark-forward)
+  (defun my//add-package-to-pacfile (&optional install?)
+    (let ((package (helm-get-selection)))
+      (find-file my/pacmanfile-file)
+      (goto-line 0)
+      ;; check if package is already listed
+      (if (search-forward-regexp (concat "^" package "$") nil t)
+          (progn
+            (message "package already installed"))
+        (progn
+          (write-region (format "%s\n" package) nil my/pacmanfile-file 'append)
+          (save-buffer)
+          (when install? (my/pacmanfile-sync))))
+      (kill-buffer (current-buffer))))
+  (defun my/add-package-to-pacfile-and-install ()
+    (interactive)
+    (my//add-package-to-pacfile t))
+  (defun my/add-package-to-pacfile-no-install ()
+    (interactive)
+    (my//add-package-to-pacfile nil))
+  (map!
+   :map (helm-system-packages-pacman-map)
+   "M-i" #'my/add-package-to-pacfile-and-install
+   "M-A" #'my/add-package-to-pacfile-no-install
+   "M-I" #'helm-system-packages-toggle-explicit
+   "M-N" #'helm-system-packages-toggle-uninstalled
+   "M-D" #'helm-system-packages-toggle-dependencies
+   "M-O" #'helm-system-packages-toggle-orphans
+   "M-L" #'helm-system-packages-toggle-locals
+   "M-G" #'helm-system-packages-toggle-groups
+   "C-]" #'helm-system-packages-toggle-descriptions))
+
+(use-package! shelldon)
+
+(use-package! igo-org
+  :after org
+  :config
+  ;; (igo-org-setup)
   (autoload 'igo-sgf-mode "igo-sgf-mode")
   (add-to-list 'auto-mode-alist '("\\.sgf$" . igo-sgf-mode)))
 

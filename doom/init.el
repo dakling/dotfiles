@@ -14,15 +14,17 @@
 ;;      Alternatively, press 'gd' (or 'C-c g d') on a module to browse its
 ;;      directory (for easy access to its source code).
 
+(setq evil-respect-visual-line-mode t)
+
 (doom! :input
        ;;chinese
        ;;japanese
 
        :completion
        company          ; the ultimate code completion backend
-       ;; (helm +fuzzy)    ; the *other* search engine for love and life
+       ;; (helm +fuzzy +icons)    ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
-       (ivy +fuzzy +icons)               ; a search engine for love and life
+       (ivy +fuzzy +icons +prescient)               ; a search engine for love and life
 
        :ui
        ;;deft              ; notational velocity for Emacs
@@ -39,7 +41,7 @@
        ;;neotree           ; a project drawer, like NERDTree for vim
        ophints                    ; highlight the region an operation acts on
        (popup +defaults)          ; tame sudden yet inevitable temporary windows
-       ;;(ligatures +extra +fira)
+       (ligatures +extra)
        ;;tabs              ; an tab bar for Emacs
        ;; treemacs                 ; a project drawer, like neotree but cooler
        unicode                  ; extended unicode support for various languages
@@ -86,6 +88,7 @@
 
        :tools
        ;;ansible
+       biblio
        debugger          ; FIXME stepping through code, to help you add bugs
        ;;direnv
        ;;docker
@@ -114,7 +117,7 @@
        common-lisp              ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
        ;;crystal           ; ruby at the speed of c
-       (csharp +lsp)            ; unity, .NET, and mono shenanigans
+       (csharp +lsp +dotnet)            ; unity, .NET, and mono shenanigans
        data              ; config/data formats
        ;;(dart +flutter)   ; paint ui and not much else
        ;;elixir            ; erlang done right
@@ -132,7 +135,7 @@
        ;;json              ; At least it ain't XML
        ;;(java +meghanada) ; the poster child for carpal tunnel syndrome
        ;;javascript        ; all(hope(abandon(ye(who(enter(here))))))
-       ;;julia             ; a better, faster MATLAB
+       julia             ; a better, faster MATLAB
        ;;kotlin            ; a better, slicker Java(Script)
        (latex +lsp +latexmk +fold) ; writing papers in Emacs has never been so fun
        ;;lean
@@ -143,21 +146,21 @@
        ;;nim               ; python + lisp at the speed of c
        ;; nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
-       (org +pretty +dragndrop +gnuplot +pandoc +roam +present +capture) ; organize your plain life in plain text
+       (org +pretty +dragndrop +gnuplot +pandoc +roam +present +capture +jupyter) ; organize your plain life in plain text
        ;;perl              ; write code no one else can comprehend
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
        python              ; beautiful is better than ugly
        ;;qt                ; the 'cutest' gui framework ever
-       (racket +xp)                       ; a DSL for DSLs
+       ;; (racket +xp)        ; a DSL for DSLs
        ;;rest              ; Emacs as a REST client
        ;;rst               ; ReST in peace
        ;;(ruby +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
        ;;rust              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        ;;scala             ; java, but good
-       scheme ; a fully conniving family of lisps
-       sh     ; she sells {ba,z,fi}sh shells on the C xor
+       (scheme +guile +chicken) ; a fully conniving family of lisps
+       (sh +lsp)     ; she sells {ba,z,fi}sh shells on the C xor
        ;;sml
        ;;solidity          ; do you need a blockchain? No.
        ;;swift             ; who asked for emoji variables?

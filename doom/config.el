@@ -104,7 +104,7 @@
 
 
 (cond
- ((system-name= "klingenberg-laptop")
+ ((system-name= "klingenberg-laptop" "klingenberg-pc" "helensInfinitybook")
   (add-load-path! "/usr/share/emacs/site-lisp/")
   (add-load-path! "/usr/share/stumpwm/contrib/util/swm-emacs/"))
  ((system-name= "klingenberg-pi")
@@ -661,8 +661,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
  "C-g" #'keyboard-quit
  :n "gb" #'pop-tag-mark
  :n "s" #'avy-goto-char-timer
- :n "S" #'avy-goto-char-timer
- :n "+" #'evil-goto-mark)
+ :n "S" #'avy-goto-char-timer)
 
 (map! :leader
       "SPC" #'execute-extended-command
@@ -1348,7 +1347,6 @@ limitations under the License.
    :map pdf-view-mode-map
    :n "J" #'pdf-view-next-page
    :n "K" #'pdf-view-previous-page
-   :n "+" #'pdf-view-jump-to-register
    :n "-" nil)
   (map!
    :localleader

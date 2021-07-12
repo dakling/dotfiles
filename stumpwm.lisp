@@ -72,11 +72,11 @@
         ""))))
 
 (defcommand shutdown () ()
-  (stop-emacs-daemon t)
+  ;; (stop-emacs-daemon t)
   (run-terminal "shutdown now"))
 
 (defcommand reboot () ()
-  (stop-emacs-daemon t)
+  ;; (stop-emacs-daemon t)
   (run-terminal "reboot"))
 
 (defun map-tablet-to-screen (&optional (screen "eDP-1"))
@@ -259,7 +259,7 @@
 (define-key *top-map* (kbd "s-C-h") "move-window left")
 (define-key *top-map* (kbd "s-C-k") "move-window up")
 (define-key *top-map* (kbd "s-C-j") "move-window down")
-(define-key *top-map* (kbd "s-C-c") "close-window-or-emacs-buffer")
+(define-key *top-map* (kbd "s-c") "close-window-or-emacs-buffer")
 (define-key *top-map* (kbd "s-C") "delete")
 (define-key *top-map* (kbd "s-C-c") "remove-split")
 (define-key *top-map* (kbd "s-m") "maximize-window-and-emacs-window")
@@ -401,6 +401,7 @@
          "/usr/bin/polkit-dumb-agent"
          "setxkbmap de -option ctrl:nocaps nodeadkeys"
          "xcape -e 'Control_L=Escape'"
+         ;; "xcape -e 'Shift_L=Escape'"
          "bash ~/.screenlayout/default.sh"
          "feh --bg-scale ~/Pictures/arch-bg.jpg")))
   (dolist (cmd autostart-command-list)

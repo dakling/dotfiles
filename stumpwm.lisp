@@ -72,11 +72,11 @@
         ""))))
 
 (defcommand shutdown () ()
-  (stop-emacs-daemon t)
+  ;; (stop-emacs-daemon t)
   (run-terminal "shutdown now"))
 
 (defcommand reboot () ()
-  (stop-emacs-daemon t)
+  ;; (stop-emacs-daemon t)
   (run-terminal "reboot"))
 
 (defun map-tablet-to-screen (&optional (screen "eDP-1"))
@@ -402,6 +402,7 @@
          "/usr/bin/polkit-dumb-agent"
          "setxkbmap de -option ctrl:nocaps nodeadkeys"
          "xcape -e 'Control_L=Escape'"
+         ;; "xcape -e 'Shift_L=Escape'"
          "bash ~/.screenlayout/default.sh"
          "feh --bg-scale ~/Pictures/arch-bg.jpg")))
   (dolist (cmd autostart-command-list)

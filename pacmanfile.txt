@@ -180,3 +180,6 @@ zoom
 bash-language-server
 qmk
 gtypist-single-space
+graphicsmagick
+q5go
+chrysalis-git

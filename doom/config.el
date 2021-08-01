@@ -115,7 +115,9 @@
 
 (after! dired
   (setq ranger-cleanup-on-disable t
-        ranger-cleanup-eagerly t))
+        ranger-cleanup-eagerly t)
+  (map! :map ranger-mode-map
+        "M-RET" (lambda () (interactive) (counsel-find-file-extern (ranger-find-file)))))
 
 (after! undo-fu
   (setq undo-fu-allow-undo-in-region t))
@@ -129,6 +131,11 @@
            (buffer-file-name)
            "/home/klingenberg/.dotfiles/nyxt.lisp")
       (sly-connect "localhost" 4006)))
+  ;; (add-to-list 'sly-filename-translations
+  ;;              (sly-create-filename-translator
+  ;;               :machine-instance "lichtwiese"
+  ;;               :remote-host "lichtwiese"
+  ;;               :username "klingenberg"))
   (add-hook 'lisp-mode-hook #'my/connect-to-nyxt)
   (map! :map sly-mrepl-mode-map
         :ni "M-k" #'sly-mrepl-previous-prompt
@@ -628,6 +635,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
          "*[ \t]*"
          ))
   (remove-hook 'mu4e-compose-pre-hook 'org-msg-mode)
+  (add-hook! mu4e-compose-pre-hook (lambda () (auto-fill-mode 1)))
   (setq mu4e-get-mail-command (format "INSIDE_EMACS=%s mbsync -a" emacs-version))
   (setq mu4e-update-interval 120)
   (setq mu4e-compose-signature-auto-include t)
@@ -728,7 +736,9 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    :ni "C-<return>" #'lispy-split
    :n "gc" #'lispyville-comment-or-uncomment)
   (map!
-   :map lispy-mode-map
+   :map (lispy-mode-map lispy-mode-map-lispy)
+   "M-RET" nil
+   "M-<return>" nil
    "[" nil
    "]" nil)
 
@@ -850,8 +860,27 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
        ((system-name= "klingenberg-laptop" "klingenberg-tablet") "~/Documents-work/conferences/latex_macros/bibliography.bib")
        ((system-name= "klingenberg-pc") "~/Documents/conferences/latex_macros/bibliography.bib")))
 
-(add-hook! (TeX-mode-hook LaTeX-mode-hook) (lamdbda () (auto-fill-mode 1)))
+(add-hook! (TeX-mode-hook LaTeX-mode-hook) (lambda () (auto-fill-mode 1)))
+(add-hook! (TeX-mode-hook LaTeX-mode-hook) (lambda () (visual-line-mode -1)))
+(after! (tex latex)
+  (setq reftex-label-alist '(AMSTeX))
+  (setq reftex-ref-style-alist
+        '(("Cleveref" "cleveref"
+           (("\\cref" 99)
+            ("\\Cref" 67)
+            ("\\labelcref" 108)))
+          ("Default" t
+           (("\\ref" 13)
+            ("\\Ref" 82)
+            ("\\footref" 110)
+            ("\\pageref" 112)))))
+  (remove-hook! (TeX-mode-hook LaTeX-mode-hook) #'visual-line-mode)
+  (add-hook! (TeX-mode-hook LaTeX-mode-hook) (lambda () (visual-line-mode -1))))
 
+(map!
+ :map (TeX-mode-map LaTeX-mode-map)
+ "C-c C-l" #'reftex-cleveref-labelcref
+ "C-c C-r" #'reftex-cleveref-cref)
 (map!
  :localleader
  :map (TeX-mode-map LaTeX-mode-map)
@@ -876,9 +905,22 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
  "xfr" #'latex/font-serif
  "rt" #'reftex-toc
  "rr" #'reftex-cleveref-cref
+ "rl" #'reftex-cleveref-labelcref
  "rc" #'reftex-citation
  "og" (lambda () (interactive) (find-file "~/texmf/tex/latex/local/dakling.sty"))
  "ob" (lambda () (interactive) (find-file reftex-default-bibliography)))
+
+(defun my/latexdiff ()
+  "Create a pdf showing the differences between some old revision and a new git revision of the current file."
+  (interactive)
+  (labels ((first-word-of (str)
+                       (car (split-string str))))
+   (let*
+       ((commit-hashes (magit-git-lines "log" "--format=oneline" "--format=%H %s %cn, %cr, %cD"))
+        (old-revision (first-word-of (completing-read "old revision: " (append (list "HEAD^ (previous version)" "HEAD (current version)") commit-hashes))))
+        (new-revision (first-word-of (completing-read "new revision: " (append (list "HEAD (current version)" "HEAD^ (previous version)") commit-hashes))))
+        (file (buffer-file-name)))
+     (async-shell-command (format "latexdiff-vc -r %s -r %s %s --git --pdf" old-revision new-revision file)))))
 
 (use-package! evil-tex
   :after-call LaTeX-mode-hook
@@ -1210,7 +1252,10 @@ limitations under the License.
   :when (system-name= "klingenberg-tablet")
   :load-path  "~/Documents/programming/elisp/kanban.el/")
 
-(map! :map company-mode-map
+(map! :map (company-mode-map company-active-map)
+      "RET" nil
+      "<return>" nil
+      :i "M-RET" #'company-complete-selection
       :i "M-l" #'company-complete-selection
       :i "M-j" #'company-select-next-or-abort
       :i "M-k" #'company-select-previous-or-abort)
@@ -1429,6 +1474,7 @@ limitations under the License.
 
 (use-package! elfeed
   :commands (eww elfeed elfeed-update)
+  :custom (elfeed-search-title-max-width 100)
   :config
   (setq
    elfeed-search-filter "+youtube"
@@ -1463,8 +1509,13 @@ limitations under the License.
      ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3XTzVzaHQEd30rQbuvCtTQ" youtube lastweektonight)
      ("https://www.youtube.com/feeds/videos.xml?channel_id=UCYO_jab_esuFRV4b17AJtAw" youtube math 3blue1brown 3b1b)
      ("https://www.youtube.com/feeds/videos.xml?channel_id=UCoxcjq-8xIDTYp3uz647V5A" youtube math numberphile)
-     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCSju5G2aFaWMqn-_0YBtq5A" youtube math standupmaths matt parker)
-     ("https://www.youtube.com/feeds/videos.xml?playlist_id=PL8FB14A2200B87185" youtube playlist yale economics)))
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCHnyfMqiRRG1u-2MsSQLbXA" youtube math veritasium)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCfb7LAYCeJJiT3gyquv7V5Q" youtube politics die da oben)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC78Ib99EBhMN3NemVjYm3Ig" youtube maths 3b1b)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCNIuvl7V8zACPpTmmNIqP2A" youtube history oversimplified)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCsXVk37bltHxD1rDPwtNM8Q" youtube science kurzgsagt)
+     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=" youtube )
+     ))
 
   ;; Taken from https://joshrollinswrites.com/help-desk-head-desk/20200611/
   (defun elfeed-v-mpv (url)

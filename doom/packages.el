@@ -94,6 +94,8 @@
 
 (package! org-super-links :recipe (:host github :repo "toshism/org-super-links"))
 
+(package! org-ref)
+
 ;; (package! omnisharp :recipe (:no-native-compile t))
 
 ;; (package! rigpa

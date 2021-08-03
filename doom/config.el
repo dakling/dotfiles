@@ -99,7 +99,7 @@
 
 (setq! browse-url-browser-function 'browse-url-firefox)
 
-(setq!-default abbrev-mode t)
+(setq-default abbrev-mode t)
 (setq! abbrev-file-name "~/Dropbox/Dario/abbrev.el")
 
 
@@ -221,6 +221,8 @@
         ("ss" #'org-super-links-link)
         ("ls" #'org-super-links-store-link)
         ("lS" #'org-super-links-insert-link)))
+
+(use-package! org-ref)
 
 (setq! smerge-command-prefix "#")
 
@@ -860,6 +862,11 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
        ((system-name= "klingenberg-laptop" "klingenberg-tablet") "~/Documents-work/conferences/latex_macros/bibliography.bib")
        ((system-name= "klingenberg-pc") "~/Documents/conferences/latex_macros/bibliography.bib")))
 
+(map!
+ :localleader
+ :map bibtex-mode-map
+ :n "d" #'doi-utils-add-bibtex-entry-from-doi)
+
 (add-hook! (TeX-mode-hook LaTeX-mode-hook) (lambda () (auto-fill-mode 1)))
 (add-hook! (TeX-mode-hook LaTeX-mode-hook) (lambda () (visual-line-mode -1)))
 (after! (tex latex)
@@ -1399,7 +1406,8 @@ limitations under the License.
    "at" #'pdf-annot-add-text-annotation
    "ah" #'pdf-annot-add-highlight-markup-annotation
    "ao" #'pdf-annot-add-strikeout-markup-annotation
-   "aD" #'pdf-annot-delete))
+   "aD" #'pdf-annot-delete
+   "d" #'org-ref-pdf-to-bibtex))
 
 (use-package! pulseaudio-control
   :when (system-name= "klingenberg-tablet")

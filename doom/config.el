@@ -38,7 +38,7 @@
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type nil)
+(setq display-line-numbers-type 'relative)
 
 
 ;; Here are some additional functions/macros that could help you configure Doom:
@@ -1633,6 +1633,20 @@ limitations under the License.
         ;; "ef" #'stumpwm-eval-defun
         ;; "ee" #'stumpwm-eval-last-sexp
         "'" #'my/stumpwm-connect))
+
+(defun my/stumpwm-connect ()
+  (interactive)
+  (sly-connect "localhost" 4005))
+(defun my/activate-stump-mode ()
+  (when (equalp
+         (buffer-file-name)
+         "/home/klingenberg/.dotfiles/stumpwm.lisp")
+    (stumpwm-mode 1)))
+(add-hook 'lisp-mode-hook #'my/activate-stump-mode)
+(map! :localleader :map stumpwm-mode-map
+      ;; "ef" #'stumpwm-eval-defun
+      ;; "ee" #'stumpwm-eval-last-sexp
+      "'" #'my/stumpwm-connect)
 
 ;; (use-package! eaf
 ;;   :defer t

@@ -6,8 +6,8 @@
 
 (load "~/.sbclrc")
 
-(ql:quickload :slynk)
-(slynk:create-server :dont-close t)
+;; (ql:quickload :slynk)
+;; (slynk:create-server :dont-close t)
 
 ;; fonts
 (ql:quickload "clx-truetype")
@@ -18,8 +18,8 @@
 ; (set-font (make-instance 'xft:font :family "Fira Code" :subfamily "Medium" :size 10))
 
 (unless
-    (ignore-errors (set-font (make-instance 'xft:font :family "Fira Code" :subfamily "Light" :size 10)))
-  (set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Book" :size 10)))
+   (ignore-errors (set-font (make-instance 'xft:font :family "Fira Code" :subfamily "Light" :size 10)))
+ (set-font (make-instance 'xft:font :family "DejaVu Sans Mono" :subfamily "Book" :size 10)))
 
 (ql:quickload "xembed")
 (load-module "stumptray")
@@ -72,11 +72,11 @@
         ""))))
 
 (defcommand shutdown () ()
-  (stop-emacs-daemon t)
+  ;(stop-emacs-daemon t)
   (run-terminal "shutdown now"))
 
 (defcommand reboot () ()
-  (stop-emacs-daemon t)
+  ;(stop-emacs-daemon t)
   (run-terminal "reboot"))
 
 (defun map-tablet-to-screen (&optional (screen "eDP-1"))
@@ -259,24 +259,26 @@
 (define-key *top-map* (kbd "s-C-h") "move-window left")
 (define-key *top-map* (kbd "s-C-k") "move-window up")
 (define-key *top-map* (kbd "s-C-j") "move-window down")
-(define-key *top-map* (kbd "s-C-c") "close-window-or-emacs-buffer")
+(define-key *top-map* (kbd "s-c") "close-window-or-emacs-buffer")
 (define-key *top-map* (kbd "s-C") "delete")
 (define-key *top-map* (kbd "s-C-c") "remove-split")
 (define-key *top-map* (kbd "s-m") "maximize-window-and-emacs-window")
 ;; (define-key *top-map* (kbd "s-d") "colon1 exec ")
+;; (define-key *top-map* (kbd "s-d") "exec albert show")
 (define-key *top-map* (kbd "s-d") "exec rofi -show combi")
 (define-key *top-map* (kbd "s-x") "emacs-M-x")
 (define-key *top-map* (kbd "s-P") "emacs-pass")
-(define-key *top-map* (kbd "s-e") "run-emacs-client %s")
+;; (define-key *top-map* (kbd "s-e") "run-emacs-client %s")
 (define-key *top-map* (kbd "s-E") "exec emacs")
 ;;; reduce dependency on function row keys
 (define-key *top-map* (kbd "s-F1") "emacs-terminal")
 (define-key *top-map* (kbd "s-S-F1") "run-terminal")
+(define-key *top-map* (kbd "s-RET") "run-terminal")
 (define-key *top-map* (kbd "s-F2") "exec firefox")
 (define-key *top-map* (kbd "s-S-F2") "exec firefox")
 ;; (define-key *top-map* (kbd "s-F2") "exec nyxt")
 (define-key *top-map* (kbd "s-F3") "run-emacs-client deer")
-(define-key *top-map* (kbd "s-S-F3") "exec spacefm")
+(define-key *top-map* (kbd "s-e") "exec spacefm")
 (define-key *top-map* (kbd "s-F4") "run-emacs-client mu4e")
 
 (defvar *program-map*

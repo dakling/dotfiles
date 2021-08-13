@@ -359,7 +359,7 @@
 
 ;; I thought that this mode-line was fabulous!
 (defvar *battery-status-command*
-  "acpi -b | awk -F '[ ,]' '{printf \"%s%s\", $3, $5}' | sed s/Discharging/\-/ | sed s/Unknown// | sed s/Full// | sed s/Charging/+/")
+  "acpi -b | grep \"Battery 1:\" | cut -b 18-21")
 
 (defvar *vol-status-command*
   "pactl list sinks | grep Volume | head -n 1 | cut -b 30-34")
@@ -368,7 +368,8 @@
 
 (setf *screen-mode-line-format*
       (list "[^B%n^b] %w^>"
-            ;; '(:eval (run-shell-command *battery-status-command* t))
+            "| Bat: "
+            '(:eval (run-shell-command *battery-status-command* t))
             ;; " | Vol. "
             ;; '(:eval (run-shell-command *vol-status-command* t))
             " | %d |"

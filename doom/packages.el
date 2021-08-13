@@ -128,8 +128,9 @@
            :repo "Overdr0ne/shelldon"
            :branch "master"))
 
-; ;; installed by guix
-; (package! guix)
+(package! disable-mouse)
+                                        ; ;; installed by guix
+                                        ; (package! guix)
 
 ;; (package! eaf :recipe
 ;;   (:host github

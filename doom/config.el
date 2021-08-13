@@ -24,11 +24,11 @@
 (setq! doom-font (font-spec :family "Fira Code")
       doom-variable-pitch-font (font-spec :family "Fira Code"))
 ;; (setq! doom-font (font-spec :family "DejaVu Sans Mono"))
-
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 ;; (setq! doom-theme 'doom-solarized-dark)
+
 (setq! doom-theme 'doom-one)
 
 
@@ -40,6 +40,8 @@
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq! display-line-numbers-type nil)
 
+
+(setq doom-localleader-key "-")
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
@@ -65,17 +67,17 @@
    (lambda (name)
      (string-equal name (system-name)))
    names))
-
 ;;; Setting some variables
 (set-language-environment "UTF-8")
-(set-default-coding-systems 'utf-8)
-(setq! evil-respect-visual-line-mode t)  ; TODO check if this must be moved to init.el
+(set-default-coding-systems 'utf-8)  (setq! evil-respect-visual-line-mode t)
+; TODO check if this must be moved to init.el
+
 (setq! evil-collection-setup-minibuffer t)
 
 (setq! +evil-want-o/O-to-continue-comments nil)
-
 (setq! display-time-24hr-format t
       display-time-default-load-average nil)
+
 (display-time-mode 1)
 
 (setq! initial-major-mode 'lisp-interaction-mode
@@ -98,10 +100,10 @@
         ("Doom Emacs issues" "https://github.com/hlissner/doom-emacs/issues?q=is%%3Aissue+%s")))
 
 (setq! browse-url-browser-function 'browse-url-firefox)
-
 (setq-default abbrev-mode t)
-(setq! abbrev-file-name "~/Dropbox/Dario/abbrev.el")
 
+
+(setq! abbrev-file-name "~/Dropbox/Dario/abbrev.el")
 
 (cond
  ((system-name= "klingenberg-laptop" "klingenberg-pc" "helensInfinitybook")
@@ -194,6 +196,7 @@
    :localleader
    :after org
    :map org-mode-map
+   "-" nil
    :n "ll" #'org-insert-link
    :n "lf" (lambda () (interactive)
              (let ((current-prefix-arg '-)) ; simulate pressing C-u
@@ -229,8 +232,8 @@
 (set-popup-rules!
   '(("^\\*bosss\\*" :slot -1 :size 20 :select nil) ; popup bosss process buffer
     ("^\\*Async Shell Command\\*" :slot -1 :size 20)))
-
 ;;; Defining some useful functions
+
 (defun shutdown ()
   (interactive)
   (run-hook-with-args-until-failure 'kill-emacs-query-functions)
@@ -303,6 +306,7 @@
          (country (completing-read "which country? " (mapcar #'car country-search-string-table))))
     (eww (cadr (assoc country country-search-string-table)))))
 
+
 (defun my/make-alert (time mesg)
   (run-at-time
    time
@@ -313,12 +317,13 @@
          (my/make-alert 30 mesg)))))
   (message "Made alert for %s at %s" mesg time))
 
-
 (after! bash-completion
-  (setq! bash-completion-nospace t))     ; TODO does not have any effect
+  (setq! bash-completion-nospace t))
 
+; TODO does not have any effect
 (use-package! async-await)
 ;; adapted from snippet by oremacs
+
 (defun my/youtube-dl ()
   (interactive)
   (let* ((url (or (plist-get eww-data :url)
@@ -511,8 +516,8 @@
                   (set (car var) (cadr var)))
               account-vars)
       (error "No email account found"))))
-
 ;; ask for account when composing mail
+
 (add-hook 'mu4e-compose-pre-hook 'my/mu4e-set-account)
 
 (setq! fdy-signature
@@ -603,8 +608,8 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
          (mu4e-compose-signature nil)
          ;; (org-msg-signature nil)
          )))
-
 ;; taken from reddit
+
 (use-package! mu4e-alert
   :after-call mu4e-index-updated-hook
   :config
@@ -637,7 +642,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
          "*[ \t]*"
          ))
   (remove-hook 'mu4e-compose-pre-hook 'org-msg-mode)
-  (add-hook! mu4e-compose-pre-hook (lambda () (auto-fill-mode 1)))
+  (add-hook! 'mu4e-compose-pre-hook (lambda () (auto-fill-mode 1)))
   (setq! mu4e-get-mail-command (format "INSIDE_EMACS=%s mbsync -a" emacs-version))
   (setq! mu4e-update-interval 120)
   (setq! mu4e-compose-signature-auto-include t)
@@ -665,8 +670,6 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 ;; alternative leader for exwm
 ;; (setq! doom-leader-alt-key "s-SPC")
 
-(setq! doom-localleader-key "-")
-
 (map!
  "C-g" #'keyboard-quit
  :n "gb" #'pop-tag-mark
@@ -681,6 +684,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
       "er" #'eval-expression
       "SS" #'shutdown
       "SR" #'reboot
+      "w w" #'evil-switch-to-windows-last-buffer
       "w TAB" #'evil-switch-to-windows-last-buffer)
 
 (map!
@@ -815,12 +819,13 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 ;;    :n "ef" 'cider-eval-defun-at-point))
 
 ;; doc-view mode
-(map!
- :map 'doc-view-mode-map
- :n "j" #'doc-view-next-page
- :n "k" #'doc-view-previous-page
- :n "<down>" #'doc-view-next-page
- :n "<up>" #'doc-view-previous-page)
+(after! doc-view
+ (map!
+  :map 'doc-view-mode-map
+  :n "j" #'doc-view-next-page
+  :n "k" #'doc-view-previous-page
+  :n "<down>" #'doc-view-next-page
+  :n "<up>" #'doc-view-previous-page))
 
 ;; open docx as text
 (defun my/docx->markdown (&optional file)
@@ -857,32 +862,40 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 
 ;; latex
 (setq! +latex-viewers '(pdf-tools))
-(setq! reftex-default-bibliography
+(setq my/latex-macro-directory
       (cond
-       ((system-name= "klingenberg-laptop" "klingenberg-tablet") "~/Documents-work/conferences/latex_macros/bibliography.bib")
-       ((system-name= "klingenberg-pc") "~/Documents/conferences/latex_macros/bibliography.bib")))
+       ((system-name= "klingenberg-laptop" "klingenberg-tablet") "~/Documents-work/conferences/latex_macros/")
+       ((system-name= "klingenberg-pc") "~/Documents/conferences/latex_macros/")))
+(setq! reftex-default-bibliography (concat my/latex-macro-directory "bibliography.bib"))
+(setq my/latex-macro-file (concat my/latex-macro-directory "dakling.sty"))
 
 (map!
  :localleader
  :map bibtex-mode-map
  :n "d" #'doi-utils-add-bibtex-entry-from-doi)
 
-(add-hook! (TeX-mode-hook LaTeX-mode-hook) (lambda () (auto-fill-mode 1)))
-(add-hook! (TeX-mode-hook LaTeX-mode-hook) (lambda () (visual-line-mode -1)))
+;; (add-hook! '(TeX-mode-hook LaTeX-mode-hook) (visual-line-mode -1))
+
 (after! (tex latex)
   (setq! reftex-label-alist '(AMSTeX))
   (setq! reftex-ref-style-alist
-        '(("Cleveref" "cleveref"
-           (("\\cref" 99)
-            ("\\Cref" 67)
-            ("\\labelcref" 108)))
-          ("Default" t
-           (("\\ref" 13)
-            ("\\Ref" 82)
-            ("\\footref" 110)
-            ("\\pageref" 112)))))
-  (remove-hook! (TeX-mode-hook LaTeX-mode-hook) #'visual-line-mode)
-  (add-hook! (TeX-mode-hook LaTeX-mode-hook) (lambda () (visual-line-mode -1))))
+         '(("Cleveref" "cleveref"
+            (("\\cref" 99)
+             ("\\Cref" 67)
+             ("\\labelcref" 108)))
+           ("Default" t
+            (("\\ref" 13)
+             ("\\Ref" 82)
+             ("\\footref" 110)
+             ("\\pageref" 112)))))
+  (remove-hook! '(TeX-mode-hook LaTeX-mode-hook latex-mode-hook tex-mode-hook) #'visual-line-mode)
+  (add-hook! '(TeX-mode-hook LaTeX-mode-hook latex-mode-hook tex-mode-hook)
+             :append
+    (visual-line-mode -1)
+    (auto-fill-mode 1)
+    (setq-local TeX-electric-math (cons "\\(" "")) ; gets closed automatically apparently
+    ;; (setq-local TeX-electric-math (cons "\\(" "\\)"))
+    ))
 
 (map!
  :map (TeX-mode-map LaTeX-mode-map)
@@ -914,7 +927,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
  "rr" #'reftex-cleveref-cref
  "rl" #'reftex-cleveref-labelcref
  "rc" #'reftex-citation
- "og" (lambda () (interactive) (find-file "~/texmf/tex/latex/local/dakling.sty"))
+ "og" (lambda () (interactive) (find-file my/latex-macro-file))
  "ob" (lambda () (interactive) (find-file reftex-default-bibliography)))
 
 (defun my/latexdiff ()
@@ -1391,15 +1404,17 @@ limitations under the License.
 (use-package! pdf-tools
   :config
   (add-hook 'pdf-view-mode-hook 'pdf-view-auto-slice-minor-mode)
-  (add-hook 'pdf-view-mode-hook 'pdf-view-midnight-minor-mode)
+  (add-hook 'pdf-view-mode-hook 'pdf-view-themed-minor-mode)
   (evil-collection-init 'pdf)
   (add-to-list 'desktop-locals-to-save 'pdf-view-register-alist)
-  (setq! pdf-view-midnight-colors '("WhiteSmoke" . "gray16"))
+  ;; (setq! pdf-view-midnight-colors '("WhiteSmoke" . "gray16"))
   (map!
    :map pdf-view-mode-map
    :n "J" #'pdf-view-next-page
    :n "K" #'pdf-view-previous-page
-   :n "-" nil)
+   :n "zm" #'pdf-view-themed-minor-mode
+   "-" nil
+   "SPC" nil)
   (map!
    :localleader
    :map pdf-view-mode-map
@@ -1477,7 +1492,7 @@ limitations under the License.
 (use-package! alert
   :commands (alert)
   :init
-  (setq! alert-default-style 'notifier))
+  (setq! alert-default-style 'message))
 
 
 (use-package! elfeed
@@ -1802,7 +1817,32 @@ limitations under the License.
   (autoload 'igo-sgf-mode "igo-sgf-mode")
   (add-to-list 'auto-mode-alist '("\\.sgf$" . igo-sgf-mode)))
 
-;; (use-package! fira-code-mode
+;; os stuff
+(use-package disable-mouse
+  :after evil
+  :config
+  (global-disable-mouse-mode)
+  (mapc #'disable-mouse-in-keymap
+        (list evil-motion-state-map
+              evil-normal-state-map
+              evil-visual-state-map
+              evil-insert-state-map)))
+
+(defun aur-checker ()
+  (run-at-time
+   "15 minutes"
+   (* 3600 2)
+   (lambda ()
+     (let ((aur-failures
+            (with-temp-buffer
+              (insert-file-contents "~/.cache/aur-failures.log")
+              (string-to-number (buffer-string)))))
+       (when (< 0 aur-failures)
+         (my/make-alert nil (format "%s of my AUR PKGBUILDS failed" aur-failures)))))))
+
+(aur-checker)
+
+;; (use-package! Fry-code-mode
 ;;   :custom (fira-code-mode-disabled-ligatures (list "[]" "#{" "#(" "#_" "#_(" "x"))
 ;;   :config (global-fira-code-mode -1))
 

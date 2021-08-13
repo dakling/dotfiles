@@ -6,10 +6,10 @@
 
 (load "~/.sbclrc")
 
-(ql:quickload :slynk)
-(slynk:create-server :dont-close t)
+;; (ql:quickload :slynk)
+;; (slynk:create-server :dont-close t)
 
-;; fonts
+;; ;; fonts
 (ql:quickload "clx-truetype")
 (load-module "ttf-fonts")
 (setf clx-truetype::+font-cache-filename+ (concat (getenv "HOME") "/.fonts/font-cache.sexp"))
@@ -224,6 +224,7 @@
 (defvar *window-map*
   (let ((m (stumpwm:make-sparse-keymap)))
     (stumpwm:define-key m (stumpwm:kbd "TAB") "other-window")
+    (stumpwm:define-key m (stumpwm:kbd "w") "other-window")
     (stumpwm:define-key m (stumpwm:kbd "v") "hsplit")
     (stumpwm:define-key m (stumpwm:kbd "s") "vsplit")
     (stumpwm:define-key m (stumpwm:kbd "l") "move-focus right")
@@ -385,6 +386,40 @@
 (setf *mode-line-foreground-color* "#468DBF")
 
 (setf *mouse-focus-policy* :click)
+
+;; ;; custom functions
+;; (defun start-tagesschau ()
+;;   ;; TODO
+;;   (move-focus :up)
+;;   (move-focus :up)
+;;   (move-focus :up)
+;;   (move-focus :up)
+;;   (move-focus :up)
+;;   (move-focus :up)
+;;   (move-focus :up)
+;;   (run-shell-command "firefox https://live.daserste.de/")
+;;   (run-shell-command "sleep 10")
+;;   (run-shell-command "xdotool mousemove 956 611")
+;;   (run-shell-command "sleep 0.5")
+;;   (run-shell-command "xdotool click 1")
+;;   (run-shell-command "sleep 0.5")
+;;   (run-shell-command "xdotool mousemove 1633 936")
+;;   (run-shell-command "sleep 0.5")
+;;   (run-shell-command "xdotool click 1")
+;;   (run-shell-command "sleep 0.5")
+;;   (run-shell-command "xdotool mousemove 1919 977")
+;;   (loop while t do
+;;          (multiple-value-bind (second minute hour date month year day-of-week dst-p tz)
+;;              (get-decoded-time)
+;;              (if (and (= 20 hour) (< 15 minute 16))
+;;               (stop-tagesschau)
+;;               (run-shell-command "sleep 5")))))
+
+;; (start-tagesschau)
+
+;; (defun stop-tagesschau ()
+;;   (delete))
+
 
 ;; autostart
 

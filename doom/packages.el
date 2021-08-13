@@ -94,6 +94,8 @@
 
 (package! org-super-links :recipe (:host github :repo "toshism/org-super-links"))
 
+(package! org-ref)
+
 ;; (package! omnisharp :recipe (:no-native-compile t))
 
 ;; (package! rigpa
@@ -126,8 +128,9 @@
            :repo "Overdr0ne/shelldon"
            :branch "master"))
 
-; ;; installed by guix
-; (package! guix)
+(package! disable-mouse)
+                                        ; ;; installed by guix
+                                        ; (package! guix)
 
 ;; (package! eaf :recipe
 ;;   (:host github

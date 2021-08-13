@@ -23,8 +23,8 @@ Path ~/.mail/gmail/
 Inbox ~/.mail/gmail/Inbox
 
 Channel gmail
-Master :gmail-remote:
-Slave :gmail-local:
+Far :gmail-remote:
+Near :gmail-local:
 # Exclude everything under the internal [Gmail] folder, except the interesting folders
 Patterns * ![Gmail]* "[Gmail]/Sent Mail" "[Gmail]/Starred" "[Gmail]/All Mail"
 # Or include everything
@@ -58,8 +58,8 @@ Path ~/.mail/web/
 Inbox ~/.mail/web/Inbox
 
 Channel web
-Master :web-remote:
-Slave :web-local:
+Far :web-remote:
+Near :web-local:
 # Automatically create missing mailboxes, both locally and on the server
 Create Both
 # Save the synchronization state files in the relevant directory
@@ -89,8 +89,8 @@ Path ~/.mail/fdy/
 Inbox ~/.mail/fdy/Inbox
 
 Channel fdy
-Master :fdy-remote:
-Slave :fdy-local:
+Far :fdy-remote:
+Near :fdy-local:
 # Automatically create missing mailboxes, both locally and on the server
 Create Both
 # Save the synchronization state files in the relevant directory
@@ -121,8 +121,8 @@ Path ~/.mail/gsc/
 Inbox ~/.mail/gsc/Inbox
 
 Channel gsc
-Master :gsc-remote:
-Slave :gsc-local:
+Far :gsc-remote:
+Near :gsc-local:
 # Automatically create missing mailboxes, both locally and on the server
 Create Both
 # Save the synchronization state files in the relevant directory

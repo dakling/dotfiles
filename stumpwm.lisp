@@ -265,10 +265,11 @@
 (define-key *top-map* (kbd "s-C-c") "remove-split")
 (define-key *top-map* (kbd "s-m") "maximize-window-and-emacs-window")
 ;; (define-key *top-map* (kbd "s-d") "colon1 exec ")
+;; (define-key *top-map* (kbd "s-d") "exec albert show")
 (define-key *top-map* (kbd "s-d") "exec rofi -show combi")
 (define-key *top-map* (kbd "s-x") "emacs-M-x")
 (define-key *top-map* (kbd "s-P") "emacs-pass")
-(define-key *top-map* (kbd "s-e") "run-emacs-client %s")
+;; (define-key *top-map* (kbd "s-e") "run-emacs-client %s")
 (define-key *top-map* (kbd "s-E") "exec emacs")
 ;;; reduce dependency on function row keys
 (define-key *top-map* (kbd "s-F1") "emacs-terminal")
@@ -278,7 +279,7 @@
 (define-key *top-map* (kbd "s-S-F2") "exec firefox")
 ;; (define-key *top-map* (kbd "s-F2") "exec nyxt")
 (define-key *top-map* (kbd "s-F3") "run-emacs-client deer")
-(define-key *top-map* (kbd "s-S-F3") "exec spacefm")
+(define-key *top-map* (kbd "s-e") "exec spacefm")
 (define-key *top-map* (kbd "s-F4") "run-emacs-client mu4e")
 
 (defvar *program-map*

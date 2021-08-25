@@ -127,7 +127,10 @@
 (after! sly
   (setq! inferior-lisp-program (cond
                                ((system-name= "klingenberg-tablet")  "~/.local/bin/.run-sbcl.sh")
-                               (t "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")))
+                               (t "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")
+                               ;; (t "/usr/bin/ccl --load /home/klingenberg/quicklisp.lisp")
+                               ;; (t "/usr/bin/ecl --load /home/klingenberg/quicklisp.lisp")
+                               ))
   (defun my/connect-to-nyxt ()
     (when (equalp
            (buffer-file-name)
@@ -459,6 +462,10 @@
    "s-H" 'shrink-window-horizontally
    "s-J" 'enlarge-window
    "s-K" 'shrink-window
+   "s-M-l" 'enlarge-window-horizontally
+   "s-M-h" 'shrink-window-horizontally
+   "s-M-j" 'enlarge-window
+   "s-M-k" 'shrink-window
    "s-v" 'split-window-right
    "s-s" 'split-window-below
    "s-c" 'my/close-buffer
@@ -480,6 +487,15 @@
   (when t
     (map!
      :n
+     "s-x" 'execute-extended-command
+     "s-f" 'find-file
+     "s-p" 'projectile-find-file
+     "s-b" 'consult-buffer
+     "s-g" 'helm-system-packages
+     "s-P" 'password-store-insert))
+  (when nil
+    (map!
+     :n
      "s-x" 'counsel-M-x
      "s-f" 'counsel-find-file
      "s-p" 'counsel-projectile
@@ -494,7 +510,8 @@
      "s-p" 'helm-projectile
      "s-g" 'helm-system-packages
      "s-b" 'helm-mini
-     "s-P" 'helm-pass)))
+     "s-P" 'helm-pass
+     "s-M-p" 'helm-pass)))
 
 (my/create-super-bindings)
 
@@ -765,6 +782,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
   (setq! geiser-chicken-binary "chicken-csi")
   (setq! geiser-active-implementations '(chicken guile chez))
   (setq! geiser-default-implementation 'guile)
+  ;; (setq! geiser-chez-binary "scheme")
   ;; (setq! geiser-scheme-dir "~/")
   (defun chicken-doc (&optional obtain-function)
     (interactive)
@@ -1275,6 +1293,8 @@ limitations under the License.
 (map! :map (company-mode-map company-active-map)
       "RET" nil
       "<return>" nil
+      "<left>" nil
+      :i "<left>" #'company-complete-selection
       :i "M-RET" #'company-complete-selection
       :i "M-l" #'company-complete-selection
       :i "M-j" #'company-select-next-or-abort
@@ -1284,62 +1304,96 @@ limitations under the License.
  :after evil-snipe
  :v "s" #'evil-surround-region)
 
-(after! ivy
-  (setq! ivy-extra-directories nil)
-  (setq! ivy-use-virtual-buffers t)
-  (setq! ivy-use-selectable-prompt t)
-  (setq! counsel-find-file-at-point t)
-  ;; (defun my/open-shell-here (dir)
-  ;;   (sly)
-  ;;   (sly-mrepl-sync nil (directory-file-name dir)))
+(use-package! vertico
+  :config
   (map!
-   :map ivy-minibuffer-map
-   "M-j" #'ivy-next-line
-   "M-k" #'ivy-previous-line
-   "M-h" #'ivy-backward-delete-char
-   "M-l" #'ivy-alt-done
-   "M-o" #'ivy-dispatching-call
-   "TAB" #'ivy-partial
-   "M-RET" #'ivy-call
-   "M-TAB" #'ivy-mark
-   "C-TAB" #'ivy-unmark
-   "M-H" #'left-char
-   "M-L" #'right-char)
-  ;; (ivy-add-actions
-  ;;  'counsel-find-file
-  ;;  '(("y" counsel-find-file-copy "copy file(s)"
-  ;;     (lambda (x)
-  ;;       (counsel-find-file-copy (mapconcat 'identity x "\n"))))
-  ;;    ("r" counsel-find-file-move "move file(s)"
-  ;;     (lambda (x)
-  ;;       (counsel-find-file-move (mapconcat 'identity x "\n"))))
-  ;;    ("D" counsel-find-file-delete "delete file(s)"
-  ;;     (lambda (x)
-  ;;       (counsel-find-file-delete (mapconcat 'identity x "\n"))))
-  ;;    ("m" ivy-mark "mark")
-  ;;    ("u" ivy-ummark "unmark")
-  ;;    ;; ("t" ivy-toggle-marks "toggle marks")
-  ;;    ))
-  (map!
-   :map counsel-find-file-map
-   :ni "DEL" #'backward-delete-char
-   "M-e" (lambda () (interactive) (ivy-exit-with-action
-                                   (lambda (dir-or-file)
-                                     (let ((default-directory (file-name-directory dir-or-file)))
-                                       (eshell t)))))
-   "M-s" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-as-root))
-   "M-y" (lambda () (interactive) (ivy-exit-with-action
-                                   (lambda (x) (interactive) (if (listp x)
-                                                                 (counsel-find-file-copy (mapconcat 'identity x "\n"))
-                                                               (counsel-find-file-copy x)))))
-   "M-r" (lambda () (interactive) (ivy-exit-with-action
-                                   (lambda (x) (interactive) (if (listp x)
-                                                                 (counsel-find-file-move (mapconcat 'identity x "\n"))
-                                                               (counsel-find-file-move x)))))
-   "M-D" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-delete))
-   "M-Y" (lambda () (interactive) (ivy-exit-with-action (lambda (x) (interactive) (kill-new (directory-file-name x)))))
-   "M-c" (lambda () (interactive) (ivy-exit-with-action (lambda (x) (interactive) (dired-compress-file x))))
-   "M-RET" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-extern))))
+   :map (vertico-map)
+   "M-j" #'vertico-next
+   "M-k" #'vertico-previous
+   "M-h" #'vertico-directory-up
+   "<left>" #'vertico-directory-up
+   "M-l" #'vertico-directory-enter
+   "<right>" #'vertico-directory-enter))
+
+;; (after! ivy
+;;   (setq! ivy-extra-directories nil)
+;;   (setq! ivy-use-virtual-buffers t)
+;;   (setq! ivy-use-selectable-prompt t)
+;;   (setq! counsel-find-file-at-point t)
+;;   ;; (defun my/open-shell-here (dir)
+;;   ;;   (sly)
+;;   ;;   (sly-mrepl-sync nil (directory-file-name dir)))
+;;   (map!
+;;    :map ivy-minibuffer-map
+;;    "M-j" #'ivy-next-line
+;;    "M-k" #'ivy-previous-line
+;;    "M-h" #'ivy-backward-delete-char
+;;    "M-l" #'ivy-alt-done
+;;    "<left>" #'ivy-backward-delete-char
+;;    "<right>" #'ivy-alt-done
+;;    "M-o" #'ivy-dispatching-call
+;;    "TAB" #'ivy-partial
+;;    "M-RET" #'ivy-call
+;;    "M-TAB" #'ivy-mark
+;;    "C-TAB" #'ivy-unmark
+;;    "M-H" #'left-char
+;;    "M-L" #'right-char)
+;;   ;; (ivy-add-actions
+;;   ;;  'counsel-find-file
+;;   ;;  '(("y" counsel-find-file-copy "copy file(s)"
+;;   ;;     (lambda (x)
+;;   ;;       (counsel-find-file-copy (mapconcat 'identity x "\n"))))
+;;   ;;    ("r" counsel-find-file-move "move file(s)"
+;;   ;;     (lambda (x)
+;;   ;;       (counsel-find-file-move (mapconcat 'identity x "\n"))))
+;;   ;;    ("D" counsel-find-file-delete "delete file(s)"
+;;   ;;     (lambda (x)
+;;   ;;       (counsel-find-file-delete (mapconcat 'identity x "\n"))))
+;;   ;;    ("m" ivy-mark "mark")
+;;   ;;    ("u" ivy-ummark "unmark")
+;;   ;;    ;; ("t" ivy-toggle-marks "toggle marks")
+;;   ;;    ))
+;;   (map!
+;;    :map counsel-find-file-map
+;;    :ni "DEL" #'backward-delete-char
+;;    "M-e" (lambda () (interactive) (ivy-exit-with-action
+;;                               (lambda (dir-or-file)
+;;                                 (let ((default-directory (file-name-directory dir-or-file)))
+;;                                   (eshell t)))))
+;;    "M-s" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-as-root))
+;;    "M-y" (lambda () (interactive) (ivy-exit-with-action
+;;                               (lambda (x) (interactive) (if (listp x)
+;;                                                        (counsel-find-file-copy (mapconcat 'identity x "\n"))
+;;                                                      (counsel-find-file-copy x)))))
+;;    "M-r" (lambda () (interactive) (ivy-exit-with-action
+;;                               (lambda (x) (interactive) (if (listp x)
+;;                                                        (counsel-find-file-move (mapconcat 'identity x "\n"))
+;;                                                      (counsel-find-file-move x)))))
+;;    "M-D" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-delete))
+;;    "M-Y" (lambda () (interactive) (ivy-exit-with-action (lambda (x) (interactive) (kill-new (directory-file-name x)))))
+;;    "M-c" (lambda () (interactive) (ivy-exit-with-action (lambda (x) (interactive) (dired-compress-file x))))
+;;    "M-RET" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-extern)))
+;;   (map!
+;;    :map ivy-switch-buffer-map
+;;    :ni "DEL" #'backward-delete-char
+;;    "M-e" (lambda () (interactive) (ivy-exit-with-action
+;;                                    (lambda (dir-or-file)
+;;                                      (let ((default-directory (file-name-directory dir-or-file)))
+;;                                        (eshell t)))))
+;;    "M-s" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-as-root))
+;;    "M-y" (lambda () (interactive) (ivy-exit-with-action
+;;                                    (lambda (x) (interactive) (if (listp x)
+;;                                                                  (counsel-find-file-copy (mapconcat 'identity x "\n"))
+;;                                                                (counsel-find-file-copy x)))))
+;;    "M-r" (lambda () (interactive) (ivy-exit-with-action
+;;                                    (lambda (x) (interactive) (if (listp x)
+;;                                                                  (counsel-find-file-move (mapconcat 'identity x "\n"))
+;;                                                                (counsel-find-file-move x)))))
+;;    "M-d" (lambda () (interactive) (ivy-exit-with-action #'kill-buffer))
+;;    "M-D" (lambda () (interactive) (ivy-exit-with-action #'kill-buffer))
+;;    "M-Y" (lambda () (interactive) (ivy-exit-with-action (lambda (x) (interactive) (kill-new (directory-file-name x)))))
+;;    "M-c" (lambda () (interactive) (ivy-exit-with-action (lambda (x) (interactive) (dired-compress-file x))))
+;;    "M-RET" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-extern))))
 
 ;; (use-package! helm
 ;;   :when (featurep 'helm)
@@ -1422,6 +1476,7 @@ limitations under the License.
    "ah" #'pdf-annot-add-highlight-markup-annotation
    "ao" #'pdf-annot-add-strikeout-markup-annotation
    "aD" #'pdf-annot-delete
+   "al" #'pdf-annot-list-annotations
    "d" #'org-ref-pdf-to-bibtex))
 
 (use-package! pulseaudio-control
@@ -1773,6 +1828,8 @@ limitations under the License.
    "M-k" #'helm-previous-line
    "M-h" #'helm-find-files-up-one-level
    "M-l" #'helm-execute-persistent-action
+   "<left>" #'helm-find-files-up-one-level
+   "<right>" #'helm-execute-persistent-action
    "M-w" #'helm-select-action
    "M-H" #'left-char
    "M-L" #'right-char

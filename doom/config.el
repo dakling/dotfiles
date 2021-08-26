@@ -1294,11 +1294,14 @@ limitations under the License.
       "RET" nil
       "<return>" nil
       "<left>" nil
+      :i "TAB" #'+company/complete
       :i "<left>" #'company-complete-selection
       :i "M-RET" #'company-complete-selection
       :i "M-l" #'company-complete-selection
       :i "M-j" #'company-select-next-or-abort
       :i "M-k" #'company-select-previous-or-abort)
+
+(current-active-maps)
 
 (map!
  :after evil-snipe
@@ -1313,7 +1316,10 @@ limitations under the License.
    "M-h" #'vertico-directory-up
    "<left>" #'vertico-directory-up
    "M-l" #'vertico-directory-enter
-   "<right>" #'vertico-directory-enter))
+   "<right>" #'vertico-directory-enter
+   "M-r" #'rename-file
+   "M-y" #'copy-file
+   "M-D" #'delete-file))
 
 ;; (after! ivy
 ;;   (setq! ivy-extra-directories nil)

@@ -183,3 +183,9 @@ gtypist-single-space
 graphicsmagick
 q5go
 chrysalis-git
+cups
+cups-pdf
+usbutils
+python-magic
+julia
+qtqr

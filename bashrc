@@ -11,6 +11,10 @@ alias ee='emacsclient -t -a nvim'
 alias vim='emacsclient -t -a nvim'
 alias nvim='emacsclient -t -a nvim'
 
+function latexdiff-vc-most-recent(){
+    latexdiff-vc -r HEAD^ -r HEAD "$1" --pdf
+}
+
 PS1='[\u@\h \W]\$ '
 
 export PATH=~/.config/emacs/bin/:$PATH

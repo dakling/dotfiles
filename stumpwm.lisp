@@ -6,10 +6,10 @@
 
 (load "~/.sbclrc")
 
-(ql:quickload :slynk)
-(slynk:create-server :dont-close t)
+;; (ql:quickload :slynk)
+;; (slynk:create-server :dont-close t)
 
-;; fonts
+;; ;; fonts
 (ql:quickload "clx-truetype")
 (load-module "ttf-fonts")
 (setf clx-truetype::+font-cache-filename+ (concat (getenv "HOME") "/.fonts/font-cache.sexp"))
@@ -33,7 +33,8 @@
 ;; (clipboard-history:start-clipboard-manager)
 
 ;; change the prefix key to something else
-(set-prefix-key (kbd "s-SPC"))
+;; (set-prefix-key (kbd "s-SPC"))
+(set-prefix-key (kbd "s--"))
 
 ;; prompt the user for an interactive command. The first arg is an
 ;; optional initial contents.
@@ -144,22 +145,22 @@
 (defcommand emacs-M-x () ()
   (if (emacs-is-current-window-p)
       (meta (kbd "M-x"))
-      (run-emacs-client "counsel-M-x nil")))
+      (run-emacs-client "execute-extended-command")))
 
 (defcommand emacs-pass () ()
   (if (emacs-is-current-window-p)
       (meta (kbd "s-P"))
-      (run-emacs-client "ivy-pass")))
+      (run-emacs-client "password-store-insert")))
 
 (defcommand emacs-find-file () ()
   (if (emacs-is-current-window-p)
       (meta (kbd "s-f"))
-      (run-emacs-client "counsel-find-file nil")))
+      (run-emacs-client "find-file")))
 
 (defcommand emacs-find-buffer () ()
   (if (emacs-is-current-window-p)
       (meta (kbd "s-b"))
-      (run-emacs-client "ivy-switch-buffer")))
+      (run-emacs-client "consult-buffer")))
 
 (defcommand emacs-terminal () ()
   (if (emacs-is-current-window-p)
@@ -224,6 +225,7 @@
 (defvar *window-map*
   (let ((m (stumpwm:make-sparse-keymap)))
     (stumpwm:define-key m (stumpwm:kbd "TAB") "other-window")
+    (stumpwm:define-key m (stumpwm:kbd "w") "other-window")
     (stumpwm:define-key m (stumpwm:kbd "v") "hsplit")
     (stumpwm:define-key m (stumpwm:kbd "s") "vsplit")
     (stumpwm:define-key m (stumpwm:kbd "l") "move-focus right")
@@ -255,29 +257,43 @@
 (define-key *top-map* (kbd "s-H") "move-window left")
 (define-key *top-map* (kbd "s-K") "move-window up")
 (define-key *top-map* (kbd "s-J") "move-window down")
-(define-key *top-map* (kbd "s-C-l") "move-window right")
-(define-key *top-map* (kbd "s-C-h") "move-window left")
-(define-key *top-map* (kbd "s-C-k") "move-window up")
-(define-key *top-map* (kbd "s-C-j") "move-window down")
+(define-key *top-map* (kbd "s-M-l") "move-window right")
+(define-key *top-map* (kbd "s-M-h") "move-window left")
+(define-key *top-map* (kbd "s-M-k") "move-window up")
+(define-key *top-map* (kbd "s-M-j") "move-window down")
+(define-key *top-map* (kbd "H-l") "move-window right")
+(define-key *top-map* (kbd "H-h") "move-window left")
+(define-key *top-map* (kbd "H-k") "move-window up")
+(define-key *top-map* (kbd "H-j") "move-window down")
 (define-key *top-map* (kbd "s-c") "close-window-or-emacs-buffer")
 (define-key *top-map* (kbd "s-C") "delete")
-(define-key *top-map* (kbd "s-C-c") "remove-split")
+(define-key *top-map* (kbd "s-M-c") "remove-split")
+(define-key *top-map* (kbd "H-c") "remove-split")
 (define-key *top-map* (kbd "s-m") "maximize-window-and-emacs-window")
 ;; (define-key *top-map* (kbd "s-d") "colon1 exec ")
 (define-key *top-map* (kbd "s-d") "exec rofi -show combi")
 (define-key *top-map* (kbd "s-x") "emacs-M-x")
 (define-key *top-map* (kbd "s-P") "emacs-pass")
+(define-key *top-map* (kbd "H-p") "emacs-pass")
 (define-key *top-map* (kbd "s-e") "run-emacs-client %s")
 (define-key *top-map* (kbd "s-E") "exec emacs")
+(define-key *top-map* (kbd "s-M-e") "exec emacs")
+(define-key *top-map* (kbd "H-e") "exec emacs")
 ;;; reduce dependency on function row keys
 (define-key *top-map* (kbd "s-F1") "emacs-terminal")
 (define-key *top-map* (kbd "s-S-F1") "run-terminal")
+(define-key *top-map* (kbd "s-M-F1") "run-terminal")
+(define-key *top-map* (kbd "H-F1") "run-terminal")
 (define-key *top-map* (kbd "s-RET") "run-terminal")
 (define-key *top-map* (kbd "s-F2") "exec firefox")
 (define-key *top-map* (kbd "s-S-F2") "exec firefox")
+(define-key *top-map* (kbd "s-M-F2") "exec firefox")
+(define-key *top-map* (kbd "H-F2") "exec firefox")
 ;; (define-key *top-map* (kbd "s-F2") "exec nyxt")
 (define-key *top-map* (kbd "s-F3") "run-emacs-client deer")
 (define-key *top-map* (kbd "s-S-F3") "exec spacefm")
+(define-key *top-map* (kbd "s-M-F3") "exec spacefm")
+(define-key *top-map* (kbd "H-F3") "exec spacefm")
 (define-key *top-map* (kbd "s-F4") "run-emacs-client mu4e")
 
 (defvar *program-map*
@@ -296,7 +312,8 @@
 (loop for i from 1 upto 9
       do (progn
            (define-key *top-map* (kbd (format nil "s-~a" i)) (format nil "gselect ~a" i))
-           (define-key *top-map* (kbd (format nil "s-C-~a" i)) (format nil "gmove ~a" i))))
+           (define-key *top-map* (kbd (format nil "H-~a" i)) (format nil "gmove ~a" i))
+           (define-key *top-map* (kbd (format nil "s-M-~a" i)) (format nil "gmove ~a" i))))
 (define-key *top-map* (kbd "s-!") "gmove 1")
 (define-key *top-map* (kbd "s-\"") "gmove 2")
 (define-key *top-map* (kbd "s-section") "gmove 3")
@@ -358,7 +375,7 @@
 
 ;; I thought that this mode-line was fabulous!
 (defvar *battery-status-command*
-  "acpi -b | awk -F '[ ,]' '{printf \"%s%s\", $3, $5}' | sed s/Discharging/\-/ | sed s/Unknown// | sed s/Full// | sed s/Charging/+/")
+  "acpi -b | grep \"Battery 1:\" | cut -b 18-")
 
 (defvar *vol-status-command*
   "pactl list sinks | grep Volume | head -n 1 | cut -b 30-34")
@@ -367,6 +384,7 @@
 
 (setf *screen-mode-line-format*
       (list "[^B%n^b] %w^>"
+            ;; "| Bat: "
             ;; '(:eval (run-shell-command *battery-status-command* t))
             ;; " | Vol. "
             ;; '(:eval (run-shell-command *vol-status-command* t))
@@ -385,6 +403,40 @@
 (setf *mode-line-foreground-color* "#468DBF")
 
 (setf *mouse-focus-policy* :click)
+
+;; ;; custom functions
+;; (defun start-tagesschau ()
+;;   ;; TODO
+;;   (move-focus :up)
+;;   (move-focus :up)
+;;   (move-focus :up)
+;;   (move-focus :up)
+;;   (move-focus :up)
+;;   (move-focus :up)
+;;   (move-focus :up)
+;;   (run-shell-command "firefox https://live.daserste.de/")
+;;   (run-shell-command "sleep 10")
+;;   (run-shell-command "xdotool mousemove 956 611")
+;;   (run-shell-command "sleep 0.5")
+;;   (run-shell-command "xdotool click 1")
+;;   (run-shell-command "sleep 0.5")
+;;   (run-shell-command "xdotool mousemove 1633 936")
+;;   (run-shell-command "sleep 0.5")
+;;   (run-shell-command "xdotool click 1")
+;;   (run-shell-command "sleep 0.5")
+;;   (run-shell-command "xdotool mousemove 1919 977")
+;;   (loop while t do
+;;          (multiple-value-bind (second minute hour date month year day-of-week dst-p tz)
+;;              (get-decoded-time)
+;;              (if (and (= 20 hour) (< 15 minute 16))
+;;               (stop-tagesschau)
+;;               (run-shell-command "sleep 5")))))
+
+;; (start-tagesschau)
+
+;; (defun stop-tagesschau ()
+;;   (delete))
+
 
 ;; autostart
 

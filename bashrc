@@ -5,8 +5,6 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-xmodmap ~/.Xmodmap
-
 alias ls='ls --color=auto'
 
 alias ee='emacsclient -t -a nvim'

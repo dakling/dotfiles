@@ -29,7 +29,7 @@
 ;; `load-theme' function. This is the default:
 ;; (setq! doom-theme 'doom-solarized-dark)
 
-(setq! doom-theme 'doom-one)
+(setq! doom-theme 'doom-nord)
 
 
 ;; If you use `org' and don't want your org files in the default location below,

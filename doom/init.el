@@ -24,7 +24,8 @@
        (company)          ; the ultimate code completion backend
        ;; (helm +fuzzy +icons)    ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
-       (ivy +fuzzy +icons +prescient)               ; a search engine for love and life
+       ;; (ivy +fuzzy +icons +prescient)               ; a search engine for love and life
+       (vertico +icons)
 
        :ui
        ;;deft              ; notational velocity for Emacs
@@ -159,7 +160,7 @@
        ;;(ruby +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
        ;;rust              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        ;;scala             ; java, but good
-       (scheme +guile +chicken) ; a fully conniving family of lisps
+       (scheme +guile +chicken +chez) ; a fully conniving family of lisps
        (sh +lsp)     ; she sells {ba,z,fi}sh shells on the C xor
        ;;sml
        ;;solidity          ; do you need a blockchain? No.

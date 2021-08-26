@@ -187,3 +187,5 @@ cups
 cups-pdf
 usbutils
 python-magic
+julia
+qtqr

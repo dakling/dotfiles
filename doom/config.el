@@ -29,7 +29,7 @@
 ;; `load-theme' function. This is the default:
 ;; (setq! doom-theme 'doom-solarized-dark)
 
-(setq! doom-theme 'doom-nord)
+(setq! doom-theme 'doom-monokai-spectrum)
 
 
 ;; If you use `org' and don't want your org files in the default location below,
@@ -70,13 +70,179 @@
 ;;; Setting some variables
 (set-language-environment "UTF-8")
 (set-default-coding-systems 'utf-8)  (setq! evil-respect-visual-line-mode t)
-; TODO check if this must be moved to init.el
+                                        ; TODO check if this must be moved to init.el
 
 (setq! evil-collection-setup-minibuffer t)
 
 (setq! +evil-want-o/O-to-continue-comments nil)
 (setq! display-time-24hr-format t
-      display-time-default-load-average nil)
+       display-time-default-load-average nil)
+
+(defun my/setup-exwm ()
+  (use-package! exwm
+    :init
+    (server-start)
+    :config
+    ;; Add workspace to modeline
+    (exwm-enable)
+    (add-to-list 'global-mode-string
+                 '(:eval (format (concat "<%s> "
+                                         (unless (null (my/exwm-get-other-workspace)) "[%s] "))
+                                 exwm-workspace-current-index
+                                 (my/exwm-get-other-workspace))))
+    (defun +exwm/rename-buffer-to-title-h ()
+      "Make sure that the exwm buffers name convays its content."
+      (exwm-workspace-rename-buffer
+       (format "%s - %s" exwm-class-name exwm-title)))
+    (defun +exwm/update-class-h ()
+      (unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+                  (string= "gimp" exwm-instance-name)
+                  (string= "Firefox" exwm-class-name))
+        (exwm-workspace-rename-buffer exwm-class-name)))
+    (defun +exwm/update-title-h ()
+      (cond ((or (not exwm-instance-name)
+                 (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+                 (string= "gimp" exwm-instance-name)
+                 (string= "Firefox" exwm-class-name))
+             (exwm-workspace-rename-buffer exwm-title))))
+    (evil-set-initial-state 'exwm-mode 'emacs)
+    (add-hook 'exwm-floating-exit-hook #'exwm-layout-show-mode-line)
+    (add-hook 'exwm-floating-setup-hook #'exwm-layout-hide-mode-line)
+    (add-hook 'exwm-update-title-hook #'+exwm/rename-buffer-to-title-h)
+    (add-hook 'exwm-update-class-hook #'+exwm/update-class-h)
+    (add-hook 'exwm-update-title-hook #'+exwm/update-title-h)
+    (add-hook 'exwm-mode #'doom-mark-buffer-as-real-h)
+    (setq mouse-autoselect-window nil
+          focus-follows-mouse nil))
+  (use-package! dmenu)
+  (use-package! exwm-input
+    ;; :after-call exwm-randr
+    :config
+    (define-key exwm-mode-map (kbd "C-c") nil)
+    (setq exwm-input-global-keys
+          `(([?\s-r] . exwm-reset)
+            ([?\s-e] . exwm-input-release-keyboard)
+            ([?\s-F] . exwm-layout-set-fullscreen)
+            ([?\s-a] . exwm-workspace-switch)
+            ([?\s-A] . exwm-workspace-move-window)
+            (\,@(mapcar (lambda (i)
+                          `(,(kbd (format "s-%d" i)) .
+                            (lambda () (interactive)
+                              (exwm-workspace-switch-create ,i))))
+                        (number-sequence 0 9)))
+            (\,@(mapcar (lambda (i)
+                          `(,(kbd (format "M-%d" i)) .
+                            (lambda () (interactive)
+                              (exwm-workspace-switch-create ,i))))
+                        (number-sequence 0 9)))
+            ;; ,@(mapcar (lambda (i)
+            ;; 	      `(,(kbd (format "s-%s" i)) .
+            ;; 		(lambda () (interactive)
+            ;; 		  (exwm-workspace-move-window ,i))))
+            ;; 	    (list '! \" § $ % & / ( ) =))
+            ;; (number-sequence 0 9))
+            ([?\s-o] . my/exwm-switch-to-other-workspace)
+            ([?\s-O] . my/exwm-move-window-to-other-workspace)
+            ([?\s-w] . other-window)
+            ;; ([?\s-d] . (lambda () (interactive) (start-process "" nil "rofi" "-show" "combi")))
+            ([?\s-d] . dmenu)
+            ([?\s-l] . evil-window-right)
+            ([?\s-h] . evil-window-left)
+            ([?\s-j] . evil-window-down)
+            ([?\s-k] . evil-window-up)
+            ([?\s-v] . split-window-right)
+            ([?\s-s] . split-window-below)
+            ([?\s-c] . my/close-buffer)
+            ([?\s-q] . my/get-rid-of-mouse)
+            ([?\s-m] . delete-other-windows)
+            ([s-f1] . (lambda () (interactive) (eshell 'N)))
+            ([C-s-f1] . eshell)
+            ([s-S-f1] . (lambda () (interactive) (start-process "" nil "alacritty")))
+            ([s-return] . (lambda () (interactive) (start-process "" nil "alacritty")))
+            ([s-f2] . (lambda () (interactive) (start-process "" nil "firefox")))
+            ([s-f3] . deer)
+            ([s-f4] . (lambda () (interactive) (mu4e)))
+            ([s-f12] . (lambda () (interactive) (start-process "" nil "/usr/bin/slock")))))
+    (push ?\s-\  exwm-input-prefix-keys)
+    ;; (push ?\M-m  exwm-input-prefix-keys)
+    (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
+                        #'my/brightness+)
+    (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
+                        #'my/brightness-)
+    (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
+                        'pulseaudio-control-decrease-volume)
+    (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
+                        'pulseaudio-control-increase-volume)
+    (exwm-input-set-key (kbd "<XF86AudioMute>")
+                        'pulseaudio-control-toggle-current-sink-mute))
+
+  (use-package! exwm-systemtray
+    ;; :after-call exwm-mode-hook
+    :config (exwm-systemtray-enable))
+
+  (use-package! exwm-randr
+    ;; :after-call exwm-mode-hook
+    :init
+    (cond
+     ((system-name= "klingenberg-tablet") (progn (set 'monitor1 "eDP-1")
+                                                 (set 'monitor2 "HDMI-2")
+                                                 (set 'placement "below")))
+     ((system-name= "klingenberg-laptop") (progn (set 'monitor1 "eDP-1")
+                                                 (set 'monitor2 "HDMI-1")
+                                                 (set 'placement "below")))
+     (t (progn (set 'monitor2 "VGA-1")
+               (set 'monitor1 "HDMI-1")
+               (set 'placement "left-of"))))
+    (setq exwm-randr-workspace-monitor-plist (list 0 monitor1
+                                                   2 monitor1
+                                                   4 monitor1
+                                                   6 monitor1
+                                                   8 monitor1
+                                                   1 monitor2
+                                                   3 monitor2
+                                                   5 monitor2
+                                                   7 monitor2
+                                                   9 monitor2))
+    :config
+    (defun my/exwm-get-other-workspace ()
+      (cond ((not (= 2 (length (seq-filter #'identity (mapcar #'exwm-workspace--active-p exwm-workspace--list))))) nil) ;currently only works for two monitors
+            ((= exwm-workspace-current-index
+                (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))
+             (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
+            ((= exwm-workspace-current-index
+                (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
+             (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))))
+    (defun my/exwm-switch-to-other-workspace () (interactive)
+           (exwm-workspace-switch (my/exwm-get-other-workspace)))
+    (defun my/exwm-move-window-to-other-workspace () (interactive)
+           (exwm-workspace-move-window (my/exwm-get-other-workspace)))
+
+
+    (defun my/exwm-xrandr ()
+      "Configure screen with xrandr."
+      (shell-command
+       (if (file-exists-p "~/.screenlayout/default.sh")
+           "~/.screenlayout/default.sh" ; prefer saved command by arandr by default
+         (concat "xrandr --output "
+                 monitor1
+                 " --primary --auto --"
+                 placement
+                 " "
+                 monitor2
+                 " --auto")))
+      (my/fix-touchscreen))
+
+    (add-hook 'exwm-randr-screen-change-hook #'my/exwm-xrandr)
+    (progn
+      (exwm-randr-enable)))
+
+  (use-package! exwm-workspace
+    ;; :after-call exwm-mode-hook
+    :init
+    (progn
+      (setq exwm-workspace-number 10)
+      (setq exwm-workspace-show-all-buffers t)
+      (setq exwm-layout-show-all-buffers t))))
 
 (display-time-mode 1)
 
@@ -492,7 +658,7 @@
      "s-p" 'projectile-find-file
      "s-b" 'consult-buffer
      "s-g" 'helm-system-packages
-     "s-P" 'password-store-insert))
+     "s-P" '+pass/copy-secret))
   (when nil
     (map!
      :n
@@ -895,6 +1061,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 ;; (add-hook! '(TeX-mode-hook LaTeX-mode-hook) (visual-line-mode -1))
 
 (after! (tex latex)
+  :config
   (setq! reftex-label-alist '(AMSTeX))
   (setq! reftex-ref-style-alist
          '(("Cleveref" "cleveref"
@@ -1276,14 +1443,14 @@ limitations under the License.
    :n "lp" #'bosss-repl-load-my-assembly
    :n "in" #'bosss-create-new-field))
 
-;;(use-package! maxima
-  ;;:config
-  ;;(add-to-list 'auto-mode-alist '("\\.ma[cx]\\'" . maxima-mode))
-  ;;(map! :localleader :map maxima-mode-map
-        ;;"ef" #'maxima-send-full-line
-        ;;"ee" #'maxima-send-previous-form
-        ;;"er" #'maxima-send-region
-        ;;"eb" #'maxima-send-buffer))
+(use-package! imaxima
+  :config
+  (add-to-list 'auto-mode-alist '("\\.ma[cx]\\'" . maxima-mode))
+  (map! :localleader :map maxima-mode-map
+        "ef" #'maxima-send-full-line
+        "ee" #'maxima-send-previous-form
+        "er" #'maxima-send-region
+        "eb" #'maxima-send-buffer))
 
 ;; org-kanban
 (use-package! kanban
@@ -1295,17 +1462,19 @@ limitations under the License.
       "<return>" nil
       "<left>" nil
       :i "TAB" #'+company/complete
-      :i "<left>" #'company-complete-selection
+      :i "<right>" #'company-complete-selection
       :i "M-RET" #'company-complete-selection
       :i "M-l" #'company-complete-selection
       :i "M-j" #'company-select-next-or-abort
       :i "M-k" #'company-select-previous-or-abort)
 
-(current-active-maps)
-
 (map!
  :after evil-snipe
  :v "s" #'evil-surround-region)
+
+;; TODO should not be necessary
+(use-package! embark
+  :commands (vertico-mode))
 
 (use-package! vertico
   :config
@@ -1317,6 +1486,8 @@ limitations under the License.
    "<left>" #'vertico-directory-up
    "M-l" #'vertico-directory-enter
    "<right>" #'vertico-directory-enter
+   "M-o" #'embark-act
+   "M-RET" #'embark-act
    "M-r" #'rename-file
    "M-y" #'copy-file
    "M-D" #'delete-file))

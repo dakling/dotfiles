@@ -69,7 +69,8 @@
    names))
 ;;; Setting some variables
 (set-language-environment "UTF-8")
-(set-default-coding-systems 'utf-8)  (setq! evil-respect-visual-line-mode t)
+(set-default-coding-systems 'utf-8)
+(setq! evil-respect-visual-line-mode t)
                                         ; TODO check if this must be moved to init.el
 
 (setq! evil-collection-setup-minibuffer t)
@@ -825,7 +826,8 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
          "*[ \t]*"
          ))
   (remove-hook 'mu4e-compose-pre-hook 'org-msg-mode)
-  (add-hook! 'mu4e-compose-pre-hook (lambda () (auto-fill-mode 1)))
+  (add-hook! 'mu4e-compose-mode-hook
+    (auto-fill-mode 1))
   (setq! mu4e-get-mail-command (format "INSIDE_EMACS=%s mbsync -a" emacs-version))
   (setq! mu4e-update-interval 120)
   (setq! mu4e-compose-signature-auto-include t)
@@ -1461,7 +1463,7 @@ limitations under the License.
       "RET" nil
       "<return>" nil
       "<left>" nil
-      :i "TAB" #'+company/complete
+      ;; :i "TAB" #'+company/complete
       :i "<right>" #'company-complete-selection
       :i "M-RET" #'company-complete-selection
       :i "M-l" #'company-complete-selection
@@ -1472,9 +1474,12 @@ limitations under the License.
  :after evil-snipe
  :v "s" #'evil-surround-region)
 
-;; TODO should not be necessary
 (use-package! embark
-  :commands (vertico-mode))
+  :commands (vertico-mode) ; TODO should not be necessary
+  :config
+  (map! :map minibuffer-local-map
+        "C-c C-c" #'embark-act
+        "<f1>" #'embark-act))
 
 (use-package! vertico
   :config
@@ -1485,12 +1490,7 @@ limitations under the License.
    "M-h" #'vertico-directory-up
    "<left>" #'vertico-directory-up
    "M-l" #'vertico-directory-enter
-   "<right>" #'vertico-directory-enter
-   "M-o" #'embark-act
-   "M-RET" #'embark-act
-   "M-r" #'rename-file
-   "M-y" #'copy-file
-   "M-D" #'delete-file))
+   "<right>" #'vertico-directory-enter))
 
 ;; (after! ivy
 ;;   (setq! ivy-extra-directories nil)
@@ -1756,6 +1756,7 @@ limitations under the License.
      ("http://www.reddit.com/r/nixos/.rss" programming reddit)
      ("http://www.reddit.com/r/Plover/.rss" programming reddit)
      ("http://www.reddit.com/r/baduk/.rss" go baduk reddit)
+     ("http://www.go4go.net/go/games/rss" go baduk go4go)
      ("http://tv.dfb.de/rss.php" dfb futsal fussball)
      ("https://www.youtube.com/feeds/videos.xml?channel_id=UCyHDQ5C6z1NDmJ4g6SerW8g" youtube mailab)
      ("https://www.youtube.com/feeds/videos.xml?channel_id=UChkVOG0PqkXIHHmkBGG15Ig" youtube walulis)
@@ -2052,15 +2053,15 @@ limitations under the License.
   (add-to-list 'auto-mode-alist '("\\.sgf$" . igo-sgf-mode)))
 
 ;; os stuff
-(use-package disable-mouse
-  :after evil
-  :config
-  (global-disable-mouse-mode)
-  (mapc #'disable-mouse-in-keymap
-        (list evil-motion-state-map
-              evil-normal-state-map
-              evil-visual-state-map
-              evil-insert-state-map)))
+;; (use-package disable-mouse
+;;   :after evil
+;;   :config
+;;   (global-disable-mouse-mode)
+;;   (mapc #'disable-mouse-in-keymap
+;;         (list evil-motion-state-map
+;;               evil-normal-state-map
+;;               evil-visual-state-map
+;;               evil-insert-state-map)))
 
 (defun aur-checker ()
   (run-at-time

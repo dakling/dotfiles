@@ -6,8 +6,9 @@
 
 (load "~/.sbclrc")
 
-;; (ql:quickload :slynk)
-;; (slynk:create-server :dont-close t)
+(ignore-errors
+ (ql:quickload :slynk)
+ (slynk:create-server :dont-close t))
 
 ;; ;; fonts
 (ql:quickload "clx-truetype")
@@ -395,12 +396,16 @@
 
 (setf *mode-line-timeout* 1)
 
-(set-bg-color "#1C1E24")
-(set-fg-color "#468DBF")
-(set-border-color "#468DBF")
-(set-focus-color "#468DBF")
-(setf *mode-line-background-color* "#1C1E24")
-(setf *mode-line-foreground-color* "#468DBF")
+(let ((bg-color "#222222")
+      (fg-color "#FCE566")
+      ;; (fg-color "#5AD4E6")
+      )
+ (set-bg-color bg-color)
+ (set-fg-color fg-color)
+ (set-border-color fg-color)
+ (set-focus-color fg-color)
+ (setf *mode-line-background-color* bg-color)
+ (setf *mode-line-foreground-color* fg-color))
 
 (setf *mouse-focus-policy* :click)
 
@@ -442,6 +447,7 @@
 
 (let ((autostart-command-list
         (list
+         ;; "bash ~/.screenlayout/default.sh"
          "xmodmap -e 'clear mod4'"
          "xmodmap -e 'add mod4 = Super_L'"
          ;; "emacs --daemon=instance1"
@@ -455,7 +461,6 @@
          "setxkbmap de -option ctrl:nocaps nodeadkeys"
          "xcape -e 'Control_L=Escape'"
          ;; "xcape -e 'Shift_L=Escape'"
-         "bash ~/.screenlayout/default.sh"
          "feh --bg-scale ~/Pictures/arch-bg.jpg")))
   (dolist (cmd autostart-command-list)
     (run-shell-command cmd)))

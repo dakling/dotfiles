@@ -36,9 +36,9 @@
 ;; change `org-directory'. It must be set before org loads!
 (setq! org-directory "~/org/")
 
-;; This determines the style of line numbers in effect. If set to `nil', line
+;; This determines the style of line numbers in effect. If set to `nil ', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq! display-line-numbers-type nil)
+(setq! display-line-numbers-type nil )
 
 
 (setq doom-localleader-key "-")
@@ -75,9 +75,9 @@
 
 (setq! evil-collection-setup-minibuffer t)
 
-(setq! +evil-want-o/O-to-continue-comments nil)
+(setq! +evil-want-o/O-to-continue-comments nil )
 (setq! display-time-24hr-format t
-       display-time-default-load-average nil)
+       display-time-default-load-average nil )
 
 (defun my/setup-exwm ()
   (use-package! exwm
@@ -114,12 +114,12 @@
     (add-hook 'exwm-update-title-hook #'+exwm/update-title-h)
     (add-hook 'exwm-mode #'doom-mark-buffer-as-real-h)
     (setq mouse-autoselect-window nil
-          focus-follows-mouse nil))
+          focus-follows-mouse nil ))
   (use-package! dmenu)
   (use-package! exwm-input
     ;; :after-call exwm-randr
     :config
-    (define-key exwm-mode-map (kbd "C-c") nil)
+    (define-key exwm-mode-map (kbd "C-c") nil )
     (setq exwm-input-global-keys
           `(([?\s-r] . exwm-reset)
             ([?\s-e] . exwm-input-release-keyboard)
@@ -145,7 +145,7 @@
             ([?\s-o] . my/exwm-switch-to-other-workspace)
             ([?\s-O] . my/exwm-move-window-to-other-workspace)
             ([?\s-w] . other-window)
-            ;; ([?\s-d] . (lambda () (interactive) (start-process "" nil "rofi" "-show" "combi")))
+            ;; ([?\s-d] . (lambda () (interactive) (start-process "" nil  "rofi" "-show" "combi")))
             ([?\s-d] . dmenu)
             ([?\s-l] . evil-window-right)
             ([?\s-h] . evil-window-left)
@@ -158,12 +158,12 @@
             ([?\s-m] . delete-other-windows)
             ([s-f1] . (lambda () (interactive) (eshell 'N)))
             ([C-s-f1] . eshell)
-            ([s-S-f1] . (lambda () (interactive) (start-process "" nil "alacritty")))
-            ([s-return] . (lambda () (interactive) (start-process "" nil "alacritty")))
-            ([s-f2] . (lambda () (interactive) (start-process "" nil "firefox")))
+            ([s-S-f1] . (lambda () (interactive) (start-process "" nil  "alacritty")))
+            ([s-return] . (lambda () (interactive) (start-process "" nil  "alacritty")))
+            ([s-f2] . (lambda () (interactive) (start-process "" nil  "firefox")))
             ([s-f3] . deer)
             ([s-f4] . (lambda () (interactive) (mu4e)))
-            ([s-f12] . (lambda () (interactive) (start-process "" nil "/usr/bin/slock")))))
+            ([s-f12] . (lambda () (interactive) (start-process "" nil  "/usr/bin/slock")))))
     (push ?\s-\  exwm-input-prefix-keys)
     ;; (push ?\M-m  exwm-input-prefix-keys)
     (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
@@ -206,12 +206,12 @@
                                                    9 monitor2))
     :config
     (defun my/exwm-get-other-workspace ()
-      (cond ((not (= 2 (length (seq-filter #'identity (mapcar #'exwm-workspace--active-p exwm-workspace--list))))) nil) ;currently only works for two monitors
+      (cond ((not (= 2 (length (seq-filter #'identity (mapcar #'exwm-workspace--active-p exwm-workspace--list))))) nil ) ;currently only works for two monitors
             ((= exwm-workspace-current-index
                 (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))
-             (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
+             (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil ))
             ((= exwm-workspace-current-index
-                (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil))
+                (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil ))
              (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))))
     (defun my/exwm-switch-to-other-workspace () (interactive)
            (exwm-workspace-switch (my/exwm-get-other-workspace)))
@@ -348,7 +348,7 @@
 - PID: %(bosss-get-most-recent-pid)
 - previous calculation:
 - %?
-%i" :prepend nil) ("p" "Templates for projects") ("pt" "Project-local todo" entry (file+headline +org-capture-project-todo-file "Inbox") "* TODO %?
+%i" :prepend nil ) ("p" "Templates for projects") ("pt" "Project-local todo" entry (file+headline +org-capture-project-todo-file "Inbox") "* TODO %?
 %i
 %a" :prepend t) ("pn" "Project-local notes" entry (file+headline +org-capture-project-notes-file "Inbox") "* %U %?
 %i
@@ -356,7 +356,7 @@
 %i
 %a" :prepend t) ("o" "Centralized templates for projects") ("ot" "Project todo" entry #'+org-capture-central-project-todo-file "* TODO %?
  %i
- %a" :heading "Tasks" :prepend nil) ("on" "Project notes" entry #'+org-capture-central-project-notes-file "* %U %?
+ %a" :heading "Tasks" :prepend nil ) ("on" "Project notes" entry #'+org-capture-central-project-notes-file "* %U %?
  %i
  %a" :heading "Notes" :prepend t) ("oc" "Project changelog" entry #'+org-capture-central-project-changelog-file "* %U %?
  %i
@@ -395,12 +395,12 @@
         ("ls" #'org-super-links-store-link)
         ("lS" #'org-super-links-insert-link)))
 
-(use-package! org-ref)
+;; (use-package! org-ref)
 
 (setq! smerge-command-prefix "#")
 
 (set-popup-rules!
-  '(("^\\*bosss\\*" :slot -1 :size 20 :select nil) ; popup bosss process buffer
+  '(("^\\*bosss\\*" :slot -1 :size 20 :select nil ) ; popup bosss process buffer
     ("^\\*Async Shell Command\\*" :slot -1 :size 20)))
 ;;; Defining some useful functions
 
@@ -418,7 +418,7 @@
 
 (defun my/open-in-external-app ()
   (interactive)
-  (let ((process-connection-type nil))
+  (let ((process-connection-type nil ))
     ;; (helm-find-file-extern (buffer-file-name))
     (counsel-find-file-extern (buffer-file-name))))
 
@@ -650,7 +650,7 @@
    "s-<f4>" '(lambda () (interactive)
              (mu4e))
    "s-<f12>" '(lambda () (interactive)
-                (start-process "" nil "/usr/bin/slock")))
+                (start-process "" nil  "/usr/bin/slock")))
   (when t
     (map!
      :n
@@ -693,7 +693,7 @@
                                      (mapconcat #'(lambda (var) (car var))
                                                 my/mu4e-account-alist "/"))
                              (mapcar #'(lambda (var) (car var)) my/mu4e-account-alist)
-                             nil t nil nil (caar my/mu4e-account-alist))))
+                             nil  t nil  nil  (caar my/mu4e-account-alist))))
          (account-vars (cdr (assoc account my/mu4e-account-alist))))
     (if account-vars
         (mapc #'(lambda (var)
@@ -735,7 +735,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 (setq! my/mu4e-account-alist
       `(("fdy"
          (mu4e-sent-messages-behavior sent)
-         ;; (mu4e-compose-signature-auto-include nil)
+         ;; (mu4e-compose-signature-auto-include nil )
          (mu4e-compose-signature ,fdy-signature)
          ;; (org-msg-signature
 ;;           ,(concat
@@ -751,7 +751,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
          (user-full-name "Dario Klingenberg"))
         ("gsc"
          (mu4e-sent-messages-behavior sent)
-         ;; (mu4e-compose-signature-auto-include nil)
+         ;; (mu4e-compose-signature-auto-include nil )
          (mu4e-compose-signature ,gsc-signature)
          ;; (org-msg-signature
 ;;           ,(concat
@@ -768,7 +768,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
         ("gmail"
          ;; Under each account, set the account-specific variables you want.
          (mu4e-sent-messages-behavior delete)
-         ;; (mu4e-compose-signature-auto-include nil)
+         ;; (mu4e-compose-signature-auto-include nil )
          (mu4e-sent-folder "/gmail/sent")
          (mu4e-drafts-folder "/gmail/Drafts")
          (user-mail-address "dario.klingenberg@gmail.com")
@@ -776,12 +776,12 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
          (smtpmail-smtp-service 465)
          (smtpmail-stream-type ssl)
          (user-full-name "Dario Klingenberg")
-         (mu4e-compose-signature nil)
-         ;; (org-msg-signature nil)
+         (mu4e-compose-signature nil )
+         ;; (org-msg-signature nil )
          )
         ("web"
          (mu4e-sent-messages-behavior sent)
-         ;; (mu4e-compose-signature-auto-include nil)
+         ;; (mu4e-compose-signature-auto-include nil )
          (mu4e-sent-folder "/web/Sent Items")
          (mu4e-drafts-folder "/web/Drafts")
          (smtpmail-smtp-server "smtp.web.de")
@@ -789,8 +789,8 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
          (smtpmail-stream-type starttls)
          (user-mail-address "dario.klingenberg@web.de")
          (user-full-name "dario")
-         (mu4e-compose-signature nil)
-         ;; (org-msg-signature nil)
+         (mu4e-compose-signature nil )
+         ;; (org-msg-signature nil )
          )))
 ;; taken from reddit
 
@@ -807,7 +807,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    :continue t))
 
 (after! mu4e
-  (setq! shr-use-colors nil)
+  (setq! shr-use-colors nil )
   (setq! message-subject-re-regexp
         (concat
          "^[ \t]*"
@@ -857,9 +857,11 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 
 (map!
  "C-g" #'keyboard-quit
+ "M-i" nil
  :n "gb" #'pop-tag-mark
- :n "s" #'avy-goto-char-timer
- :n "S" #'avy-goto-char-timer)
+ ;; :n "s" #'avy-goto-char-timer
+ ;; :n "S" #'avy-goto-char-timer
+ )
 
 (map! :leader
       "SPC" #'execute-extended-command
@@ -884,20 +886,20 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 
 ;; outline-minor-mode messes with some of my lispy bindings
 ;; TODO why doesnt the map! macro work?
-(evil-define-minor-mode-key 'normal 'outline-minor-mode (kbd "M-j") nil)
-(evil-define-minor-mode-key 'normal 'outline-minor-mode (kbd "M-k") nil)
-(evil-define-minor-mode-key 'normal 'outline-minor-mode (kbd "M-h") nil)
-(evil-define-minor-mode-key 'normal 'outline-minor-mode (kbd "M-l") nil)
+(evil-define-minor-mode-key 'normal 'outline-minor-mode (kbd "M-j") nil )
+(evil-define-minor-mode-key 'normal 'outline-minor-mode (kbd "M-k") nil )
+(evil-define-minor-mode-key 'normal 'outline-minor-mode (kbd "M-h") nil )
+(evil-define-minor-mode-key 'normal 'outline-minor-mode (kbd "M-l") nil )
 ;; (map! :map outline-minor-mode-map ;TODO check if this messes up other situtations
 ;;       :n "M-j" nil
 ;;       :n "M-k" nil
 ;;       :n "M-h" nil
-;;       :n "M-l" nil)
+;;       :n "M-l" nil )
 
 (after!
   lispy
   (lispy-set-key-theme '(lispy c-digits))
-  (setq! lispy-colon-p nil)) ;; disable single-key bindings
+  (setq! lispy-colon-p nil )) ;; disable single-key bindings
 
 (after!
   lispyville
@@ -931,7 +933,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    "M-RET" nil
    "M-<return>" nil
    "[" nil
-   "]" nil)
+   "]" nil )
 
   (map!
    :localleader
@@ -995,6 +997,13 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    :n "k" 'guix-devel-copy-module-as-kill
    :n "u" 'guix-devel-use-module
    :n "." 'guix-devel-code-block-edit))
+
+(map!
+ :localleader
+ :map python-mode-map
+ "ef" #'python-shell-send-defun
+ "ee" #'python-shell-send-statement
+ "eb" #'python-shell-send-buffer)
 
 ;; (use-package! cider
 ;;   :config
@@ -1062,7 +1071,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 
 ;; (add-hook! '(TeX-mode-hook LaTeX-mode-hook) (visual-line-mode -1))
 
-(after! (tex latex)
+(use-package! latex
   :config
   (setq! reftex-label-alist '(AMSTeX))
   (setq! reftex-ref-style-alist
@@ -1083,6 +1092,8 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
     (setq-local TeX-electric-math (cons "\\(" "")) ; gets closed automatically apparently
     ;; (setq-local TeX-electric-math (cons "\\(" "\\)"))
     ))
+
+(use-package! font-latex)
 
 (map!
  :map (TeX-mode-map LaTeX-mode-map)
@@ -1203,12 +1214,12 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 ;;      ((system-name= "klingenberg-laptop" "klingenberg-tablet")
 ;;       ;; (setq! omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp/")
 ;;       (setq! omnisharp-server-executable-path (concat (omnisharp--server-installation-dir) "/run-custom"))
-;;       ;; (setq! omnisharp-server-executable-path nil)
+;;       ;; (setq! omnisharp-server-executable-path nil )
 ;;       ))))
 
 (after! lsp
   ;; (setq! lsp-file-watch-threshold 30000)
-  (setq! lsp-file-watch-threshold nil))
+  (setq! lsp-file-watch-threshold nil ))
 
 (defun my/csharp-list-to-array ()
   (replace-regexp "List<\\(.*\\)>" "\\1[]"
@@ -1279,7 +1290,7 @@ limitations under the License.
     (save-excursion
       (goto-line 0)
       (when (my/personal-bosss-file-p)
-        (unless (or (search-forward (substring header-text 93) nil t) ; check if header already exists, start a bit later to ignore year
+        (unless (or (search-forward (substring header-text 93) nil  t) ; check if header already exists, start a bit later to ignore year
                     (derived-mode-p #'bosss-mode)) ; check if this is just a worksheet
           (princ header-text (current-buffer)))))))
 
@@ -1365,7 +1376,7 @@ limitations under the License.
       (find-file file)
       (goto-char (point-min))
       (when
-          (search-forward-regexp "^string ProjName = " nil t)
+          (search-forward-regexp "^string ProjName = " nil  t)
         (end-of-line)
         (backward-word)
         (thing-at-point 'word t)))))
@@ -1391,13 +1402,13 @@ limitations under the License.
   "Find the closest csproj file relative to the current directory."
   (cl-labels
       ((find-csproj-file (dir)
-                         (directory-files dir nil ".*csproj"))
+                         (directory-files dir nil  ".*csproj"))
        (iter (dir)
              (cond
               ((find-csproj-file dir) (expand-file-name
                                        (car (find-csproj-file dir))
                                        dir)) ; if a .csproj file is found in the current directory, return its absolute path
-              ((string-equal "/" (expand-file-name dir)) nil) ; prevent infinite loops
+              ((string-equal "/" (expand-file-name dir)) nil ) ; prevent infinite loops
               (t (iter (concat dir "/../")))))) ; if there is no .csproj file, look one directory higher
     (iter (file-name-directory (buffer-file-name)))))
 
@@ -1448,6 +1459,12 @@ limitations under the License.
 (use-package! imaxima
   :config
   (add-to-list 'auto-mode-alist '("\\.ma[cx]\\'" . maxima-mode))
+  (set-repl-handler! 'maxima-mode #'maxima :persist t)
+  (set-docsets! '(maxima-mode imaxima-mode) "Maxima")
+  (set-lookup-handlers! '(maxima-mode imaxima-mode)
+    ;; :definition #'anaconda-mode-find-definitions
+    ;; :references #'anaconda-mode-find-references
+    :documentation #'maxima-help-at-point)
   (map! :localleader :map maxima-mode-map
         "ef" #'maxima-send-full-line
         "ee" #'maxima-send-previous-form
@@ -1464,18 +1481,23 @@ limitations under the License.
       "<return>" nil
       "<left>" nil
       ;; :i "TAB" #'+company/complete
-      :i "<right>" #'company-complete-selection
+      ;; :i "<right>" #'company-complete-selection
       :i "M-RET" #'company-complete-selection
-      :i "M-l" #'company-complete-selection
-      :i "M-j" #'company-select-next-or-abort
-      :i "M-k" #'company-select-previous-or-abort)
+      :i "C-l" #'company-complete-selection
+      :i "C-j" #'company-select-next-or-abort
+      :i "C-k" #'company-select-previous-or-abort)
 
 (map!
  :after evil-snipe
  :v "s" #'evil-surround-region)
 
+(map!
+ :map evil-snipe-mode-map
+ :after evil-snipe
+ :n "s" #'evil-avy-goto-char-timer)
+
 (use-package! embark
-  :commands (vertico-mode) ; TODO should not be necessary
+  ;; :commands (vertico-mode) ; TODO should not be necessary
   :config
   (map! :map minibuffer-local-map
         "C-c C-c" #'embark-act
@@ -1493,13 +1515,13 @@ limitations under the License.
    "<right>" #'vertico-directory-enter))
 
 ;; (after! ivy
-;;   (setq! ivy-extra-directories nil)
+;;   (setq! ivy-extra-directories nil )
 ;;   (setq! ivy-use-virtual-buffers t)
 ;;   (setq! ivy-use-selectable-prompt t)
 ;;   (setq! counsel-find-file-at-point t)
 ;;   ;; (defun my/open-shell-here (dir)
 ;;   ;;   (sly)
-;;   ;;   (sly-mrepl-sync nil (directory-file-name dir)))
+;;   ;;   (sly-mrepl-sync nil  (directory-file-name dir)))
 ;;   (map!
 ;;    :map ivy-minibuffer-map
 ;;    "M-j" #'ivy-next-line
@@ -1639,22 +1661,23 @@ limitations under the License.
   (evil-collection-init 'pdf)
   (add-to-list 'desktop-locals-to-save 'pdf-view-register-alist)
   ;; (setq! pdf-view-midnight-colors '("WhiteSmoke" . "gray16"))
-  (map!
-   :map pdf-view-mode-map
-   :n "J" #'pdf-view-next-page
-   :n "K" #'pdf-view-previous-page
-   :n "zm" #'pdf-view-themed-minor-mode
-   "-" nil
-   "SPC" nil)
-  (map!
-   :localleader
-   :map pdf-view-mode-map
-   "at" #'pdf-annot-add-text-annotation
-   "ah" #'pdf-annot-add-highlight-markup-annotation
-   "ao" #'pdf-annot-add-strikeout-markup-annotation
-   "aD" #'pdf-annot-delete
-   "al" #'pdf-annot-list-annotations
-   "d" #'org-ref-pdf-to-bibtex))
+  (progn
+   (map!
+    :map pdf-view-mode-map
+    :n "J" #'pdf-view-next-page
+    :n "K" #'pdf-view-previous-page
+    :n "zm" #'pdf-view-themed-minor-mode
+    "-" nil
+    "SPC" nil )
+   (map!
+    :localleader
+    :map pdf-view-mode-map
+    "at" #'pdf-annot-add-text-annotation
+    "ah" #'pdf-annot-add-highlight-markup-annotation
+    "ao" #'pdf-annot-add-strikeout-markup-annotation
+    "aD" #'pdf-annot-delete
+    "al" #'pdf-annot-list-annotations
+    "d" #'org-ref-pdf-to-bibtex)))
 
 (use-package! pulseaudio-control
   :when (system-name= "klingenberg-tablet")
@@ -1731,6 +1754,7 @@ limitations under the License.
   :commands (eww elfeed elfeed-update)
   :custom (elfeed-search-title-max-width 100)
   :config
+  ;; (add-hook! 'elfeed-search-mode-hook 'elfeed-update)
   (setq!
    elfeed-search-filter "+youtube"
    elfeed-feeds
@@ -1766,17 +1790,21 @@ limitations under the License.
      ("https://www.youtube.com/feeds/videos.xml?channel_id=UCYO_jab_esuFRV4b17AJtAw" youtube math 3blue1brown 3b1b)
      ("https://www.youtube.com/feeds/videos.xml?channel_id=UCoxcjq-8xIDTYp3uz647V5A" youtube math numberphile)
      ("https://www.youtube.com/feeds/videos.xml?channel_id=UCHnyfMqiRRG1u-2MsSQLbXA" youtube math veritasium)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCSju5G2aFaWMqn-_0YBtq5A" youtube math stand up matt parker)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCzV9N7eGedBchEQjQhPapyQ" youtube math stand up matt parker 2)
      ("https://www.youtube.com/feeds/videos.xml?channel_id=UCfb7LAYCeJJiT3gyquv7V5Q" youtube politics die da oben)
      ("https://www.youtube.com/feeds/videos.xml?channel_id=UC78Ib99EBhMN3NemVjYm3Ig" youtube maths 3b1b)
      ("https://www.youtube.com/feeds/videos.xml?channel_id=UCNIuvl7V8zACPpTmmNIqP2A" youtube history oversimplified)
      ("https://www.youtube.com/feeds/videos.xml?channel_id=UCsXVk37bltHxD1rDPwtNM8Q" youtube science kurzgsagt)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCMb0O2CdPBNi-QqPk5T3gsQ" youtube james hoffmann coffee)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCpa-Zb0ZcQjTCPP1Dx_1M8Q" youtube legal eagle)
      ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=" youtube )
      ))
 
   ;; Taken from https://joshrollinswrites.com/help-desk-head-desk/20200611/
   (defun elfeed-v-mpv (url)
     "Watch a video from URL in MPV"
-    (async-shell-command (format "mpv \"%s\"" url)))
+    (async-shell-command (format "mpv --ytdl-format='bestvideo[height<=480]+bestaudio/best[height<=480]' \"%s\"" url)))
 
   (defun elfeed-view-mpv (&optional use-generic-p)
     "Youtube-feed link"
@@ -1828,17 +1856,17 @@ limitations under the License.
       (mapc #'elfeed-search-update-entry entries)
       (unless (use-region-p) (forward-line))))
 
-  (defun elfeed-reddit-open (&optional use-generic-p)
-    "open with md4rd"
-    (interactive "P")
-    (let ((entries (elfeed-search-selected)))
-      (cl-loop for entry in entries
-               do (elfeed-untag entry 'unread)
-               when (elfeed-entry-link entry)
-               do (md4rd--fetch-comments (format "%s.json" it)))
-      (mapc #'elfeed-search-update-entry entries)
-      ;; (unless (use-region-p) (forward-line))
-      ))
+  ; (defun elfeed-reddit-open (&optional use-generic-p)
+  ;   "open with md4rd"
+  ;   (interactive "P")
+  ;   (let ((entries (elfeed-search-selected)))
+  ;     (cl-loop for entry in entries
+  ;              do (elfeed-untag entry 'unread)
+  ;              when (elfeed-entry-link entry)
+  ;              do (md4rd--fetch-comments (format "%s.json" it)))
+  ;     (mapc #'elfeed-search-update-entry entries)
+  ;     ;; (unless (use-region-p) (forward-line))
+  ;     ))
 
   (defun elfeed-open-item-generic (entry)
     (cond
@@ -1863,7 +1891,6 @@ limitations under the License.
         :n "o" #'elfeed-open-generic
         :n "e" #'elfeed-eww-open
         :n "b" #'elfeed-firefox-open
-        :n "r" #'elfeed-reddit-open
         :n "v" #'elfeed-view-mpv
         :n "d" #'elfeed-youtube-dl))
 
@@ -1902,10 +1929,10 @@ limitations under the License.
 ;;   :bind (:map ytel-mode-map ("RET" . ytel-show)))
 
 
-(use-package! md4rd
-  :commands (md4rd md4rd--fetch-comments)
-  :config
-  (add-hook 'md4rd-mode-hook 'md4rd-indent-all-the-lines))
+; (use-package! md4rd
+;   :commands (md4rd md4rd--fetch-comments)
+;   :config
+;   (add-hook 'md4rd-mode-hook 'md4rd-indent-all-the-lines))
 
 (use-package! emms
   :commands (emms)
@@ -1915,10 +1942,11 @@ limitations under the License.
   (setq! emms-source-file-default-directory "~/Music"))
 
 (use-package! pinentry
-  :init
-  (pinentry-start)
+  ;; :init
+  ;; (pinentry-start)
   :config
-  (setenv "GPG_AGENT_INFO" nil)
+  (pinentry-start)
+  (setenv "GPG_AGENT_INFO" nil )
   ;; (setq! epg-pinentry-mode 'ask)
   (setq! epg-pinentry-mode 'loopback))
 
@@ -1978,7 +2006,7 @@ limitations under the License.
     (async-shell-command "yay -Syu"))
   (add-to-list 'system-packages-supported-package-managers
                '(yay .
-                        ((default-sudo . nil)
+                        ((default-sudo . nil )
                          (install . "yay -S")
                          (search . "yay -Ss")
                          (uninstall . "yay -Rs")
@@ -1995,7 +2023,7 @@ limitations under the License.
                          (list-installed-packages-all . "yay -Q")
                          (list-dependencies-of . "yay -Qi")
                          (noconfirm . "--noconfirm"))))
-  (setq! system-packages-use-sudo nil)
+  (setq! system-packages-use-sudo nil )
   (setq! system-packages-package-manager 'yay))
 
 (use-package! helm-system-packages
@@ -2017,11 +2045,11 @@ limitations under the License.
       (find-file my/pacmanfile-file)
       (goto-line 0)
       ;; check if package is already listed
-      (if (search-forward-regexp (concat "^" package "$") nil t)
+      (if (search-forward-regexp (concat "^" package "$") nil  t)
           (progn
             (message "package already installed"))
         (progn
-          (write-region (format "%s\n" package) nil my/pacmanfile-file 'append)
+          (write-region (format "%s\n" package) nil  my/pacmanfile-file 'append)
           (save-buffer)
           (when install? (my/pacmanfile-sync))))
       (kill-buffer (current-buffer))))
@@ -2030,7 +2058,7 @@ limitations under the License.
     (my//add-package-to-pacfile t))
   (defun my/add-package-to-pacfile-no-install ()
     (interactive)
-    (my//add-package-to-pacfile nil))
+    (my//add-package-to-pacfile nil ))
   (map!
    :map (helm-system-packages-pacman-map)
    "M-i" #'my/add-package-to-pacfile-and-install
@@ -2073,7 +2101,7 @@ limitations under the License.
               (insert-file-contents "~/.cache/aur-failures.log")
               (string-to-number (buffer-string)))))
        (when (< 0 aur-failures)
-         (my/make-alert nil (format "%s of my AUR PKGBUILDS failed" aur-failures)))))))
+         (my/make-alert nil  (format "%s of my AUR PKGBUILDS failed" aur-failures)))))))
 
 (aur-checker)
 
@@ -2257,7 +2285,7 @@ limitations under the License.
  '(ibuffer-marked-face 'modus-theme-mark-sel)
  '(ibuffer-title-face 'modus-theme-header)
  '(pulseaudio-control-volume-step "5%")
- '(vc-annotate-background-mode nil)
+ '(vc-annotate-background-mode nil )
  '(xterm-color-names
    ["#000000" "#ff8059" "#44bc44" "#eecc00" "#29aeff" "#feacd0" "#00d3d0" "#a8a8a8"])
  '(xterm-color-names-bright

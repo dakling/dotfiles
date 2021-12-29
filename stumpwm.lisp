@@ -6,9 +6,8 @@
 
 (load "~/.sbclrc")
 
-(ignore-errors
- (ql:quickload :slynk)
- (slynk:create-server :dont-close t))
+;; (ql:quickload :slynk)
+;; (slynk:create-server :dont-close t)
 
 ;; ;; fonts
 (ql:quickload "clx-truetype")
@@ -34,8 +33,8 @@
 ;; (clipboard-history:start-clipboard-manager)
 
 ;; change the prefix key to something else
-;; (set-prefix-key (kbd "s-SPC"))
-(set-prefix-key (kbd "s--"))
+(set-prefix-key (kbd "s-SPC"))
+;; (set-prefix-key (kbd "s--"))
 
 ;; prompt the user for an interactive command. The first arg is an
 ;; optional initial contents.
@@ -258,28 +257,16 @@
 (define-key *top-map* (kbd "s-H") "move-window left")
 (define-key *top-map* (kbd "s-K") "move-window up")
 (define-key *top-map* (kbd "s-J") "move-window down")
-(define-key *top-map* (kbd "s-M-l") "move-window right")
-(define-key *top-map* (kbd "s-M-h") "move-window left")
-(define-key *top-map* (kbd "s-M-k") "move-window up")
-(define-key *top-map* (kbd "s-M-j") "move-window down")
-(define-key *top-map* (kbd "H-l") "move-window right")
-(define-key *top-map* (kbd "H-h") "move-window left")
-(define-key *top-map* (kbd "H-k") "move-window up")
-(define-key *top-map* (kbd "H-j") "move-window down")
 (define-key *top-map* (kbd "s-c") "close-window-or-emacs-buffer")
 (define-key *top-map* (kbd "s-C") "delete")
-(define-key *top-map* (kbd "s-M-c") "remove-split")
-(define-key *top-map* (kbd "H-c") "remove-split")
+(define-key *top-map* (kbd "s-C-c") "remove-split")
 (define-key *top-map* (kbd "s-m") "maximize-window-and-emacs-window")
 ;; (define-key *top-map* (kbd "s-d") "colon1 exec ")
 (define-key *top-map* (kbd "s-d") "exec rofi -show combi")
 (define-key *top-map* (kbd "s-x") "emacs-M-x")
 (define-key *top-map* (kbd "s-P") "emacs-pass")
-(define-key *top-map* (kbd "H-p") "emacs-pass")
 (define-key *top-map* (kbd "s-e") "run-emacs-client %s")
 (define-key *top-map* (kbd "s-E") "exec emacs")
-(define-key *top-map* (kbd "s-M-e") "exec emacs")
-(define-key *top-map* (kbd "H-e") "exec emacs")
 ;;; reduce dependency on function row keys
 (define-key *top-map* (kbd "s-F1") "emacs-terminal")
 (define-key *top-map* (kbd "s-S-F1") "run-terminal")
@@ -288,33 +275,23 @@
 (define-key *top-map* (kbd "s-RET") "run-terminal")
 (define-key *top-map* (kbd "s-F2") "exec firefox")
 (define-key *top-map* (kbd "s-S-F2") "exec firefox")
-(define-key *top-map* (kbd "s-M-F2") "exec firefox")
-(define-key *top-map* (kbd "H-F2") "exec firefox")
 ;; (define-key *top-map* (kbd "s-F2") "exec nyxt")
 (define-key *top-map* (kbd "s-F3") "run-emacs-client deer")
 (define-key *top-map* (kbd "s-S-F3") "exec spacefm")
-(define-key *top-map* (kbd "s-M-F3") "exec spacefm")
-(define-key *top-map* (kbd "H-F3") "exec spacefm")
 (define-key *top-map* (kbd "s-F4") "run-emacs-client mu4e")
-
-(defvar *program-map*
-  (let ((m (stumpwm:make-sparse-keymap)))
-    (stumpwm:define-key m (stumpwm:kbd "i") "exec firefox")
-    (stumpwm:define-key m (stumpwm:kbd "d") "exec spacefm")
-    (stumpwm:define-key m (stumpwm:kbd "t") "run-terminal")
-    (stumpwm:define-key m (stumpwm:kbd "m") "run-emacs-client mu4e")
-    m))
-(stumpwm:define-key stumpwm:*top-map* (stumpwm:kbd "s-C-SPC") '*program-map*)
 
 
 (define-key *top-map* (kbd "s-n") "gnew")
 (define-key *top-map* (kbd "s-w") "grouplist")
 
+(loop for i from 0 upto 9
+      do (progn
+           (define-key *top-map* (kbd (format nil "s-C-~a" i)) (format nil "select-window-by-number ~a" i))))
+
 (loop for i from 1 upto 9
       do (progn
-           (define-key *top-map* (kbd (format nil "s-~a" i)) (format nil "gselect ~a" i))
-           (define-key *top-map* (kbd (format nil "H-~a" i)) (format nil "gmove ~a" i))
-           (define-key *top-map* (kbd (format nil "s-M-~a" i)) (format nil "gmove ~a" i))))
+           (define-key *top-map* (kbd (format nil "s-~a" i)) (format nil "gselect ~a" i))))
+
 (define-key *top-map* (kbd "s-!") "gmove 1")
 (define-key *top-map* (kbd "s-\"") "gmove 2")
 (define-key *top-map* (kbd "s-section") "gmove 3")
@@ -397,7 +374,10 @@
 (setf *mode-line-timeout* 1)
 
 (let ((bg-color "#222222")
-      (fg-color "#FCE566")
+      ;; (bg-color "#120A06")
+      ;; (fg-color "#FCE566")
+      ;; (fg-color "#727159")
+      (fg-color "#FFFFFF")
       ;; (fg-color "#5AD4E6")
       )
  (set-bg-color bg-color)
@@ -409,40 +389,6 @@
 
 (setf *mouse-focus-policy* :click)
 
-;; ;; custom functions
-;; (defun start-tagesschau ()
-;;   ;; TODO
-;;   (move-focus :up)
-;;   (move-focus :up)
-;;   (move-focus :up)
-;;   (move-focus :up)
-;;   (move-focus :up)
-;;   (move-focus :up)
-;;   (move-focus :up)
-;;   (run-shell-command "firefox https://live.daserste.de/")
-;;   (run-shell-command "sleep 10")
-;;   (run-shell-command "xdotool mousemove 956 611")
-;;   (run-shell-command "sleep 0.5")
-;;   (run-shell-command "xdotool click 1")
-;;   (run-shell-command "sleep 0.5")
-;;   (run-shell-command "xdotool mousemove 1633 936")
-;;   (run-shell-command "sleep 0.5")
-;;   (run-shell-command "xdotool click 1")
-;;   (run-shell-command "sleep 0.5")
-;;   (run-shell-command "xdotool mousemove 1919 977")
-;;   (loop while t do
-;;          (multiple-value-bind (second minute hour date month year day-of-week dst-p tz)
-;;              (get-decoded-time)
-;;              (if (and (= 20 hour) (< 15 minute 16))
-;;               (stop-tagesschau)
-;;               (run-shell-command "sleep 5")))))
-
-;; (start-tagesschau)
-
-;; (defun stop-tagesschau ()
-;;   (delete))
-
-
 ;; autostart
 
 (let ((autostart-command-list
@@ -453,6 +399,7 @@
          ;; "emacs --daemon=instance1"
          "pkill dropbox"
          "dropbox"
+         "kdeconnect-indicator"
          "nm-applet"
          "udiskie --tray"
          "blueman-applet"
@@ -461,7 +408,8 @@
          "setxkbmap de -option ctrl:nocaps nodeadkeys"
          "xcape -e 'Control_L=Escape'"
          ;; "xcape -e 'Shift_L=Escape'"
-         "feh --bg-scale ~/Pictures/arch-bg.jpg")))
+         ;; "feh --bg-scale ~/Pictures/arch-bg.jpg"
+         "feh --bg-scale ~/Pictures/go-bg.jpg")))
   (dolist (cmd autostart-command-list)
     (run-shell-command cmd)))
 

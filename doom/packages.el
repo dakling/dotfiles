@@ -71,6 +71,7 @@
 (package! pinentry)
 
 (package! elfeed)
+(disable-packages! elfeed-goodies)
 
 (package! diminish)
 
@@ -86,7 +87,7 @@
 
 ;; (package! ytel-show)
 
-(package! md4rd)
+; (package! md4rd)
 
 (package! emms)
 

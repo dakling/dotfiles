@@ -11,6 +11,14 @@ alias ee='emacsclient -t -a nvim'
 alias vim='emacsclient -t -a nvim'
 alias nvim='emacsclient -t -a nvim'
 
+alias top='btm'
+alias htop='btm'
+
+alias xx='Xephyr -br -ac -noreset -screen 1920x1080 :1 & DISPLAY=:1'
+alias fix_screen='~/.screenlayout/single.sh; ~/.screenlayout/default.sh ; ~/.screenlayout/default.sh'
+
+alias mount_nexus='sshfs nexus:/home/phablet ~/mnt/nexus/'
+
 function latexdiff-vc-most-recent(){
     latexdiff-vc -r HEAD^ -r HEAD "$1" --pdf
 }

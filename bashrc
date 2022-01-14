@@ -15,7 +15,7 @@ alias top='btm'
 alias htop='btm'
 
 alias xx='Xephyr -br -ac -noreset -screen 1920x1080 :1 & DISPLAY=:1'
-alias fix_screen='~/.screenlayout/single.sh; ~/.screenlayout/default.sh ; ~/.screenlayout/default.sh'
+alias fix_screen='~/.screenlayout/single.sh; ~/.screenlayout/double.sh ; ~/.screenlayout/double.sh'
 
 alias mount_nexus='sshfs nexus:/home/phablet ~/mnt/nexus/'
 

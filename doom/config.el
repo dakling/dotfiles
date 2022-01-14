@@ -1095,10 +1095,16 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 
 (use-package! font-latex)
 
+(defun my/reftex-fix-cleveref-ref ()
+  (interactive)
+  (replace-regexp "}.?\\l?a?b?e?l?cref{" "," nil (point-at-bol) (point-at-eol))
+  (end-of-line))
+
 (map!
  :map (TeX-mode-map LaTeX-mode-map)
- "C-c C-l" #'reftex-cleveref-labelcref
- "C-c C-r" #'reftex-cleveref-cref)
+ "C-c C-l" (lambda () (interactive) (progn (reftex-cleveref-labelcref) (my/reftex-fix-cleveref-ref)))
+ "C-c C-r" (lambda () (interactive) (progn (reftex-cleveref-cref) (my/reftex-fix-cleveref-ref)))
+ "C-c C-z" #'reftex-citation)
 (map!
  :localleader
  :map (TeX-mode-map LaTeX-mode-map)
@@ -1127,18 +1133,26 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
  "rc" #'reftex-citation
  "og" (lambda () (interactive) (find-file my/latex-macro-file))
  "ob" (lambda () (interactive) (find-file reftex-default-bibliography)))
+(map!
+ :map (reftex-select-shared-map)
+ :n "U" #'reftex-parse-one
+ :n "gr" #'reftex-parse-all)
+
+(setq reftex-cite-format
+      '((?t . "\\citet[]{%l}")
+        (?p . "\\citep[]{%l}")))
 
 (defun my/latexdiff ()
   "Create a pdf showing the differences between some old revision and a new git revision of the current file."
   (interactive)
   (labels ((first-word-of (str)
-                       (car (split-string str))))
-   (let*
-       ((commit-hashes (magit-git-lines "log" "--format=oneline" "--format=%H %s %cn, %cr, %cD"))
-        (old-revision (first-word-of (completing-read "old revision: " (append (list "HEAD^ (previous version)" "HEAD (current version)") commit-hashes))))
-        (new-revision (first-word-of (completing-read "new revision: " (append (list "HEAD (current version)" "HEAD^ (previous version)") commit-hashes))))
-        (file (buffer-file-name)))
-     (async-shell-command (format "latexdiff-vc -r %s -r %s %s --git --pdf" old-revision new-revision file)))))
+                          (car (split-string str))))
+    (let*
+        ((commit-hashes (magit-git-lines "log" "--format=oneline" "--format=%H %s %cn, %cr, %cD"))
+         (old-revision (first-word-of (completing-read "old revision: " (append (list "HEAD^ (previous version)" "HEAD (current version)") commit-hashes))))
+         (new-revision (first-word-of (completing-read "new revision: " (append (list "HEAD (current version)" "HEAD^ (previous version)") commit-hashes))))
+         (file (buffer-file-name)))
+      (async-shell-command (format "latexdiff-vc -r %s -r %s %s --git --pdf" old-revision new-revision file)))))
 
 (use-package! evil-tex
   :after-call LaTeX-mode-hook
@@ -1483,6 +1497,9 @@ limitations under the License.
       ;; :i "TAB" #'+company/complete
       ;; :i "<right>" #'company-complete-selection
       :i "M-RET" #'company-complete-selection
+      :i "M-l" #'company-complete-selection
+      :i "M-j" #'company-select-next-or-abort
+      :i "M-k" #'company-select-previous-or-abort
       :i "C-l" #'company-complete-selection
       :i "C-j" #'company-select-next-or-abort
       :i "C-k" #'company-select-previous-or-abort)
@@ -1756,7 +1773,7 @@ limitations under the License.
   :config
   ;; (add-hook! 'elfeed-search-mode-hook 'elfeed-update)
   (setq!
-   elfeed-search-filter "+youtube"
+   elfeed-search-filter "@2-months-ago +youtube"
    elfeed-feeds
    '(("https://www.zeitsprung.fm/feed/ogg/" podcast zeitsprung)
      ("https://kickermeetsdazn.podigee.io/feed/mp3/" podcast kmd fussball)
@@ -1764,8 +1781,8 @@ limitations under the License.
      ("http://fokus-fussball.de/feed/mp3/" podcast collina erben fussball)
      ("https://liebling-bosman.podigee.io/feed/mp3" podcast liebling bosman fussball)
      ("https://tribuenengespraech.podigee.io/feed/vorbis" podcast rasenfunk tribünengespräch fussball)
-     ("https://feeds.feedburner.com/hacks-on-tap" podcast hacks on tap politics)
-     ("https://lexfridman.com/feed/podcast" podcast lex friedman)
+     ;; ("https://feeds.feedburner.com/hacks-on-tap" podcast hacks on tap politics)
+     ;; ("https://lexfridman.com/feed/podcast" podcast lex friedman)
      ("https://ambrevar.xyz/atom.xml" blog emacs programming)
      ("https://nyxt.atlas.engineer/feed" lisp programming nyxt next)
      ("https://guix.gnu.org/feeds/blog/arm.atom" lisp programming guix blog)
@@ -1781,7 +1798,7 @@ limitations under the License.
      ("http://www.reddit.com/r/Plover/.rss" programming reddit)
      ("http://www.reddit.com/r/baduk/.rss" go baduk reddit)
      ("http://www.go4go.net/go/games/rss" go baduk go4go)
-     ("http://tv.dfb.de/rss.php" dfb futsal fussball)
+     ;; ("http://tv.dfb.de/rss.php" dfb futsal fussball)
      ("https://www.youtube.com/feeds/videos.xml?channel_id=UCyHDQ5C6z1NDmJ4g6SerW8g" youtube mailab)
      ("https://www.youtube.com/feeds/videos.xml?channel_id=UChkVOG0PqkXIHHmkBGG15Ig" youtube walulis)
      ("https://www.youtube.com/feeds/videos.xml?channel_id=UCo4693Ony4slDY5hR0ny-bw" youtube walulis)
@@ -1791,7 +1808,7 @@ limitations under the License.
      ("https://www.youtube.com/feeds/videos.xml?channel_id=UCoxcjq-8xIDTYp3uz647V5A" youtube math numberphile)
      ("https://www.youtube.com/feeds/videos.xml?channel_id=UCHnyfMqiRRG1u-2MsSQLbXA" youtube math veritasium)
      ("https://www.youtube.com/feeds/videos.xml?channel_id=UCSju5G2aFaWMqn-_0YBtq5A" youtube math stand up matt parker)
-     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCzV9N7eGedBchEQjQhPapyQ" youtube math stand up matt parker 2)
+     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCzV9N7eGedBchEQjQhPapyQ" youtube math stand up matt parker)
      ("https://www.youtube.com/feeds/videos.xml?channel_id=UCfb7LAYCeJJiT3gyquv7V5Q" youtube politics die da oben)
      ("https://www.youtube.com/feeds/videos.xml?channel_id=UC78Ib99EBhMN3NemVjYm3Ig" youtube maths 3b1b)
      ("https://www.youtube.com/feeds/videos.xml?channel_id=UCNIuvl7V8zACPpTmmNIqP2A" youtube history oversimplified)

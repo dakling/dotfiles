@@ -18,6 +18,8 @@ alias xx='Xephyr -br -ac -noreset -screen 1920x1080 :1 & DISPLAY=:1'
 alias fix_screen='~/.screenlayout/single.sh; ~/.screenlayout/double.sh ; ~/.screenlayout/double.sh'
 
 alias mount_nexus='sshfs nexus:/home/phablet ~/mnt/nexus/'
+alias liwi_ssh_tunnel='ssh -f -N -L 3389:lichtwiese-tunnel:9999 lichtwiese'
+alias mount_liwi='sshfs lichtwiese:/home/klingenberg ~/mnt/lichtwiese/'
 
 function latexdiff-vc-most-recent(){
     latexdiff-vc -r HEAD^ -r HEAD "$1" --pdf

@@ -482,9 +482,7 @@
    time
    nil
    (lambda ()
-     (let ((ans (y-or-n-p (concat "Reminder: " mesg " Remind again in 30 seconds (n) or dismiss reminder (y)?"))))
-       (unless ans
-         (my/make-alert 30 mesg)))))
+     (alert mesg :title "Reminder")))
   (message "Made alert for %s at %s" mesg time))
 
 (after! bash-completion
@@ -1136,7 +1134,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 (map!
  :map (reftex-select-shared-map)
  :n "U" #'reftex-parse-one
- :n "gr" #'reftex-parse-all)
+ :n "gr" #'reftex-parse-one)
 
 (setq reftex-cite-format
       '((?t . "\\citet[]{%l}")
@@ -1764,8 +1762,7 @@ limitations under the License.
 (use-package! alert
   :commands (alert)
   :init
-  (setq! alert-default-style 'message))
-
+  (setq! alert-default-style 'libnotify))
 
 (use-package! elfeed
   :commands (eww elfeed elfeed-update)

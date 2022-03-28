@@ -199,7 +199,8 @@
 (define-key *top-map* (kbd "s-S") "vsplit")
 (define-key *top-map* (kbd "s-f") "emacs-find-file")
 (define-key *top-map* (kbd "s-b") "emacs-find-buffer")
-(define-key *top-map* (kbd "s-a") "emacs-everywhere")
+;; (define-key *top-map* (kbd "s-a") "emacs-everywhere")
+(define-key *top-map* (kbd "s-r") "iresize")
 (define-key *top-map* (kbd "s-Right") "move-focus right")
 (define-key *top-map* (kbd "s-Left") "move-focus left")
 (define-key *top-map* (kbd "s-Up") "move-focus up")
@@ -351,23 +352,33 @@
 (setf *message-window-gravity* :center)
 (setf *input-window-gravity* :center)
 
-;; I thought that this mode-line was fabulous!
+(defun my/format-mode-line-command (command)
+    (remove #\space
+            (remove #\newline
+                    (run-shell-command command t))))
+
 (defvar *battery-status-command*
-  "acpi -b | grep \"Battery 1:\" | cut -b 18-")
+  "acpi -b | grep \"Battery 0:\" | cut -b 18-")
 
 (defvar *vol-status-command*
-  "pactl list sinks | grep Volume | head -n 1 | cut -b 30-34")
+  "pactl list sinks | grep Volume | head -n 3 | tail -n 1 | cut -b 30-34")
+
+(defvar *cpu-temp-status-command*
+  "get_mean_cpu_temp.py | cut -b -2")
 
 (setf *time-modeline-string* "%a %b %e %k:%M")
 
 (setf *screen-mode-line-format*
       (list "[^B%n^b] %w^>"
-            ;; "| Bat: "
-            ;; '(:eval (run-shell-command *battery-status-command* t))
-            ;; " | Vol. "
-            ;; '(:eval (run-shell-command *vol-status-command* t))
+            " | CPU "
+            '(:eval (my/format-mode-line-command *cpu-temp-status-command*))
+            " °C "
+            ;; "| Bat "
+            ;; '(:eval (my/format-mode-line-command *battery-status-command*))
+            ;; " | Vol "
+            ;; '(:eval (my/format-mode-line-command *vol-status-command*))
             " | %d |"
-            "             "))
+            "                      "))
 
 (setf *window-format* "%m%n%s%c")
 
@@ -394,8 +405,8 @@
 (let ((autostart-command-list
         (list
          ;; "bash ~/.screenlayout/default.sh"
-         "xmodmap -e 'clear mod4'"
-         "xmodmap -e 'add mod4 = Super_L'"
+         ;; "xmodmap -e 'clear mod4'"
+         ;; "xmodmap -e 'add mod4 = Super_L'"
          ;; "emacs --daemon=instance1"
          ;; "pkill dropbox"
          ;; "dropbox"
@@ -406,8 +417,9 @@
          "blueman-applet"
          "pa-applet"
          "/usr/bin/polkit-dumb-agent"
-         "setxkbmap de -option ctrl:nocaps nodeadkeys"
-         "xcape -e 'Control_L=Escape'"
+         ;; "setxkbmap de -option ctrl:nocaps nodeadkeys"
+         "setxkbmap de nodeadkeys"
+         ;; "xcape -e 'Control_L=Escape'"
          ;; "xcape -e 'Shift_L=Escape'"
          ;; "feh --bg-scale ~/Pictures/arch-bg.jpg"
          "feh --bg-scale ~/Pictures/go-bg.jpg")))

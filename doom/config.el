@@ -637,7 +637,7 @@
    "s-q" 'my/get-rid-of-mouse
    "s-m" 'delete-other-windows
    "s-t" 'my/tuxi
-   "s-y" 'ytdious
+   ;; "s-y" 'ytdious
    ;; "s-<f1>" '+vterm/here
    ;; "C-s-<f1>" '+vterm/toggle
    "s-<f1>" '+eshell/here
@@ -1060,12 +1060,24 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
        ((system-name= "klingenberg-laptop" "klingenberg-tablet") "~/Documents-work/conferences/latex_macros/")
        ((system-name= "klingenberg-pc") "~/Documents/conferences/latex_macros/")))
 (setq! reftex-default-bibliography (concat my/latex-macro-directory "bibliography.bib"))
+(setq my/latex-bibliography-file (concat my/latex-macro-directory "bibliography.bib"))
 (setq my/latex-macro-file (concat my/latex-macro-directory "dakling.sty"))
+
+(use-package! doi-utils
+  :after (latex bibtex LaTeX TeX))
 
 (map!
  :localleader
  :map bibtex-mode-map
- :n "d" #'doi-utils-add-bibtex-entry-from-doi)
+ :n "d" (lambda (doi)
+          (interactive
+           (list (read-string
+                  "DOI: "
+                  ;; now set initial input
+                  (doi-utils-maybe-doi-from-region-or-current-kill))))
+          (doi-utils-add-bibtex-entry-from-doi
+           doi
+           (buffer-file-name))))
 
 ;; (add-hook! '(TeX-mode-hook LaTeX-mode-hook) (visual-line-mode -1))
 
@@ -1088,6 +1100,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
     (visual-line-mode -1)
     (auto-fill-mode 1)
     (setq-local TeX-electric-math (cons "\\(" "")) ; gets closed automatically apparently
+    (add-hook! '(before-save-hook) #'reftex-parse-all)
     ;; (setq-local TeX-electric-math (cons "\\(" "\\)"))
     ))
 
@@ -1100,6 +1113,12 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 
 (map!
  :map (TeX-mode-map LaTeX-mode-map)
+ "C-c e" #'LaTeX-environment
+ "C-c s" #'LaTeX-section
+ "C-c m" #'TeX-insert-macro
+ "C-c l" (lambda () (interactive) (progn (reftex-cleveref-labelcref) (my/reftex-fix-cleveref-ref)))
+ "C-c r" (lambda () (interactive) (progn (reftex-cleveref-cref) (my/reftex-fix-cleveref-ref)))
+ "C-c z" #'reftex-citation
  "C-c C-l" (lambda () (interactive) (progn (reftex-cleveref-labelcref) (my/reftex-fix-cleveref-ref)))
  "C-c C-r" (lambda () (interactive) (progn (reftex-cleveref-cref) (my/reftex-fix-cleveref-ref)))
  "C-c C-z" #'reftex-citation)
@@ -1130,7 +1149,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
  "rl" #'reftex-cleveref-labelcref
  "rc" #'reftex-citation
  "og" (lambda () (interactive) (find-file my/latex-macro-file))
- "ob" (lambda () (interactive) (find-file reftex-default-bibliography)))
+ "ob" (lambda () (interactive) (find-file my/latex-bibliography-file)))
 (map!
  :map (reftex-select-shared-map)
  :n "U" #'reftex-parse-one
@@ -1183,29 +1202,46 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 
 (use-package! gnu-apl-mode)
 
+;; (require 'ein)
+(use-package! ein
+  :config
+  (add-hook! 'ein:notebook-mode-hook #'buffer-enable-undo)
+  (map! :after ein
+        :map ein:notebook-mode-map
+        :n "M-j" #'ein:worksheet-goto-next-input-km
+        :n "M-k" #'ein:worksheet-goto-prev-input-km)
+  (map! :localleader
+        :after ein
+        :map ein:notebook-mode-map
+        :n "j" #'ein:worksheet-insert-cell-below-km
+        :n "k" #'ein:worksheet-insert-cell-above-km
+        :n "ef" #'ein:worksheet-execute-cell
+        :n "ee" #'ein:worksheet-execute-cell-and-goto-next-km
+        :n "eb" #'ein:worksheet-execute-all-cells))
+
 ;;c#
 (use-package! lsp
   :config
   ;;(progn
-    ;;(let*
-        ;;((version "v1.37.7")
-         ;;(server-dir (concat "~/.config/emacs/.local/etc/lsp/omnisharp-roslyn/" version "/")))
-      ;;(defun my/create-lsp-custom-executable ()
-        ;;"Modify the omnisharp-server run-script as needed for Guix"
-        ;;(when (system-name= "klingenberg-laptop" "klingenberg-tablet")
-          ;;(with-temp-file (concat server-dir "run-custom")
-            ;;(goto-char (point-min))
-            ;;(insert-file-contents (concat server-dir "run"))
-            ;;(search-forward "mono_cmd")
-            ;;(kill-line)
-            ;;(insert "=mono"))))
-      ;;(my/create-lsp-custom-executable)
-      ;;(cond
-       ;;((system-name= "klingenberg-pi")
-        ;;(setq! omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
-       ;;((system-name= "klingenberg-laptop" "klingenberg-tablet")
-        ;;;; (setq! omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp/")
-        ;;(setq! lsp-csharp-server-path (concat server-dir "/run-custom"))))))
+  ;;(let*
+  ;;((version "v1.37.7")
+  ;;(server-dir (concat "~/.config/emacs/.local/etc/lsp/omnisharp-roslyn/" version "/")))
+  ;;(defun my/create-lsp-custom-executable ()
+  ;;"Modify the omnisharp-server run-script as needed for Guix"
+  ;;(when (system-name= "klingenberg-laptop" "klingenberg-tablet")
+  ;;(with-temp-file (concat server-dir "run-custom")
+  ;;(goto-char (point-min))
+  ;;(insert-file-contents (concat server-dir "run"))
+  ;;(search-forward "mono_cmd")
+  ;;(kill-line)
+  ;;(insert "=mono"))))
+  ;;(my/create-lsp-custom-executable)
+  ;;(cond
+  ;;((system-name= "klingenberg-pi")
+  ;;(setq! omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
+  ;;((system-name= "klingenberg-laptop" "klingenberg-tablet")
+;;;; (setq! omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp/")
+  ;;(setq! lsp-csharp-server-path (concat server-dir "/run-custom"))))))
   )
 
 ;; (after! omnisharp

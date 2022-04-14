@@ -18,8 +18,10 @@ alias xx='Xephyr -br -ac -noreset -screen 1920x1080 :1 & DISPLAY=:1'
 alias fix_screen='~/.screenlayout/single.sh; ~/.screenlayout/double.sh ; ~/.screenlayout/double.sh'
 
 alias mount_nexus='sshfs nexus:/home/phablet ~/mnt/nexus/'
+alias mount_purism='sshfs purism:/home/purism ~/mnt/purism/'
 alias liwi_ssh_tunnel='ssh -f -N lichtwiese-tunnel'
 alias mount_liwi='sshfs lichtwiese:/home/klingenberg ~/mnt/lichtwiese/'
+alias mount_liwivpn='sshfs lichtwiesevpn:/home/klingenberg ~/mnt/lichtwiese/'
 alias mount_lcluster='sshfs lcluster:/home/km88econ ~/mnt/lichtenberg/'
 
 function latexdiff-vc-most-recent(){

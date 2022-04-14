@@ -326,6 +326,16 @@
 
 (setq! magit-repository-directories '(("~/" . 1)))
 
+(defun ediff-copy-both-to-C ()
+  (interactive)
+  (ediff-copy-diff ediff-current-difference nil 'C nil
+                   (concat
+                    (ediff-get-region-contents ediff-current-difference 'A ediff-control-buffer)
+                    (ediff-get-region-contents ediff-current-difference 'B ediff-control-buffer))))
+(defun add-d-to-ediff-mode-map () (define-key ediff-mode-map "d" 'ediff-copy-both-to-C))
+(add-hook 'ediff-keymap-setup-hook 'add-d-to-ediff-mode-map)
+
+
 (after! org
   (setq! org-id-link-to-org-use-id t)
   (setq! org-file-apps
@@ -419,8 +429,9 @@
 (defun my/open-in-external-app ()
   (interactive)
   (let ((process-connection-type nil ))
-    ;; (helm-find-file-extern (buffer-file-name))
-    (counsel-find-file-extern (buffer-file-name))))
+    (helm-find-file-extern (buffer-file-name))
+    ;; (counsel-find-file-extern (buffer-file-name))
+    ))
 
 (defun my/brightness+ ()
   (interactive)
@@ -649,7 +660,7 @@
              (mu4e))
    "s-<f12>" '(lambda () (interactive)
                 (start-process "" nil  "/usr/bin/slock")))
-  (when t
+  (when nil
     (map!
      :n
      "s-x" 'execute-extended-command
@@ -667,7 +678,7 @@
      "s-b" 'ivy-switch-buffer
      "s-g" 'helm-system-packages
      "s-P" '+pass/ivy))
-  (when nil
+  (when t
     (map!
      :n
      "s-x" 'helm-M-x
@@ -1063,6 +1074,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 (setq my/latex-bibliography-file (concat my/latex-macro-directory "bibliography.bib"))
 (setq my/latex-macro-file (concat my/latex-macro-directory "dakling.sty"))
 
+(require 'doi-utils)
 (use-package! doi-utils
   :after (latex bibtex LaTeX TeX))
 
@@ -1202,7 +1214,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 
 (use-package! gnu-apl-mode)
 
-;; (require 'ein)
+(require 'ein)
 (use-package! ein
   :config
   (add-hook! 'ein:notebook-mode-hook #'buffer-enable-undo)
@@ -1547,23 +1559,23 @@ limitations under the License.
  :after evil-snipe
  :n "s" #'evil-avy-goto-char-timer)
 
-(use-package! embark
-  ;; :commands (vertico-mode) ; TODO should not be necessary
-  :config
-  (map! :map minibuffer-local-map
-        "C-c C-c" #'embark-act
-        "<f1>" #'embark-act))
+;; (use-package! embark
+;;   ;; :commands (vertico-mode) ; TODO should not be necessary
+;;   :config
+;;   (map! :map minibuffer-local-map
+;;         "C-c C-c" #'embark-act
+;;         "<f1>" #'embark-act))
 
-(use-package! vertico
-  :config
-  (map!
-   :map (vertico-map)
-   "M-j" #'vertico-next
-   "M-k" #'vertico-previous
-   "M-h" #'vertico-directory-up
-   "<left>" #'vertico-directory-up
-   "M-l" #'vertico-directory-enter
-   "<right>" #'vertico-directory-enter))
+;; (use-package! vertico
+;;   :config
+;;   (map!
+;;    :map (vertico-map)
+;;    "M-j" #'vertico-next
+;;    "M-k" #'vertico-previous
+;;    "M-h" #'vertico-directory-up
+;;    "<left>" #'vertico-directory-up
+;;    "M-l" #'vertico-directory-enter
+;;    "<right>" #'vertico-directory-enter))
 
 ;; (after! ivy
 ;;   (setq! ivy-extra-directories nil )
@@ -1645,38 +1657,37 @@ limitations under the License.
 ;;    "M-c" (lambda () (interactive) (ivy-exit-with-action (lambda (x) (interactive) (dired-compress-file x))))
 ;;    "M-RET" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-extern))))
 
-;; (use-package! helm
-;;   :when (featurep 'helm)
-;;   :diminish helm-mode
-;;   :config
-;;   (map!
-;;    :map doom-leader-buffer-map
-;;    "b" #'helm-mini)
-;;   (map!
-;;    :map helm-map
-;;    "M-j" #'helm-next-line
-;;    "M-k" #'helm-previous-line
-;;    "M-h" #'helm-find-files-up-one-level
-;;    "M-l" #'helm-execute-persistent-action
-;;    "M-w" #'helm-select-action
-;;    "M-H" #'left-char
-;;    "M-L" #'right-char
-;;    "M-TAB" #'helm-toggle-visible-mark-forward)
-;;   (map!
-;;    :map helm-find-files-map
-;;    "M-l" #'helm-ff-RET
-;;    "C-l" nil
-;;    "M-y" #'helm-ff-run-copy-file
-;;    "M-r" #'helm-ff-run-rename-file
-;;    "M-s" #'helm-ff-run-find-file-as-root
-;;    "M--" #'helm-ff-run-marked-files-in-dired
-;;    "M-o" #'helm-ff-run-switch-other-window
-;;    "M-O" #'helm-ff-run-switch-other-frame
-;;    "M-RET" #'helm-ff-run-open-file-with-default-tool)
-;;   (map!
-;;    :map helm-buffer-map
-;;    "M-d" #'helm-buffer-run-kill-persistent)
-;;   (setq! helm-move-to-line-cycle-in-source t))
+(use-package! helm
+  :diminish helm-mode
+  :config
+  (map!
+   :map doom-leader-buffer-map
+   "b" #'helm-mini)
+  (map!
+   :map helm-map
+   "M-j" #'helm-next-line
+   "M-k" #'helm-previous-line
+   "M-h" #'helm-find-files-up-one-level
+   "M-l" #'helm-execute-persistent-action
+   "M-w" #'helm-select-action
+   "M-H" #'left-char
+   "M-L" #'right-char
+   "M-TAB" #'helm-toggle-visible-mark-forward)
+  (map!
+   :map helm-find-files-map
+   "M-l" #'helm-ff-RET
+   "C-l" nil
+   "M-y" #'helm-ff-run-copy-file
+   "M-r" #'helm-ff-run-rename-file
+   "M-s" #'helm-ff-run-find-file-as-root
+   "M--" #'helm-ff-run-marked-files-in-dired
+   "M-o" #'helm-ff-run-switch-other-window
+   "M-O" #'helm-ff-run-switch-other-frame
+   "M-RET" #'helm-ff-run-open-file-with-default-tool)
+  (map!
+   :map helm-buffer-map
+   "M-d" #'helm-buffer-run-kill-persistent)
+  (setq! helm-move-to-line-cycle-in-source t))
 
 ;; TODO check if this is needed with doom
 ;; (use-package! org-roam-server

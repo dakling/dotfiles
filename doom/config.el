@@ -38,7 +38,7 @@
 
 ;; This determines the style of line numbers in effect. If set to `nil ', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq! display-line-numbers-type nil )
+(setq! display-line-numbers-type 'relative)
 
 
 (setq doom-localleader-key "-")
@@ -74,6 +74,7 @@
                                         ; TODO check if this must be moved to init.el
 
 (setq! evil-collection-setup-minibuffer t)
+(setq! evil-ex-substitute-global t)
 
 (setq! +evil-want-o/O-to-continue-comments nil )
 (setq! display-time-24hr-format t
@@ -290,6 +291,36 @@
 
 (after! undo-fu
   (setq! undo-fu-allow-undo-in-region t))
+
+(use-package! string-inflection
+  :commands (string-inflection-all-cycle
+             string-inflection-toggle
+             string-inflection-camelcase
+             string-inflection-lower-camelcase
+             string-inflection-kebab-case
+             string-inflection-underscore
+             string-inflection-capital-underscore
+             string-inflection-upcase)
+  :init
+  (map! :leader :prefix ("c~" . "naming convention")
+        :desc "cycle" "~" #'string-inflection-all-cycle
+        :desc "toggle" "t" #'string-inflection-toggle
+        :desc "CamelCase" "c" #'string-inflection-camelcase
+        :desc "downCase" "d" #'string-inflection-lower-camelcase
+        :desc "kebab-case" "k" #'string-inflection-kebab-case
+        :desc "under_score" "_" #'string-inflection-underscore
+        :desc "Upper_Score" "u" #'string-inflection-capital-underscore
+        :desc "UP_CASE" "U" #'string-inflection-upcase)
+  (after! evil
+    (evil-define-operator evil-operator-string-inflection (beg end _type)
+      "Define a new evil operator that cycles symbol casing."
+      :move-point nil
+      (interactive "<R>")
+      (string-inflection-all-cycle)
+      (setq evil-repeat-info '([?g ?~])))
+    (define-key evil-normal-state-map (kbd "g~") 'evil-operator-string-inflection)))
+
+
 
 (after! sly
   (setq! inferior-lisp-program (cond
@@ -686,8 +717,10 @@
      "s-p" 'helm-projectile
      "s-g" 'helm-system-packages
      "s-b" 'helm-mini
-     "s-P" 'helm-pass
-     "s-M-p" 'helm-pass)))
+     "s-P" '+pass/copy-secret
+     ;; "s-P" 'helm-pass
+     ;; "s-M-p" 'helm-pass
+     )))
 
 (my/create-super-bindings)
 
@@ -816,7 +849,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    :continue t))
 
 (after! mu4e
-  (setq! shr-use-colors nil )
+  (setq! shr-use-colors nil)
   (setq! message-subject-re-regexp
         (concat
          "^[ \t]*"
@@ -1687,7 +1720,7 @@ limitations under the License.
   (map!
    :map helm-buffer-map
    "M-d" #'helm-buffer-run-kill-persistent)
-  (setq! helm-move-to-line-cycle-in-source t))
+  (setq! helm-move-to-line-cycle-in-source nil))
 
 ;; TODO check if this is needed with doom
 ;; (use-package! org-roam-server
@@ -2029,18 +2062,29 @@ limitations under the License.
         "'" #'my/stumpwm-connect))
 
 ;; (use-package! eaf
-;;   :defer t
-;;   :config
+;;   ;; :config
 ;;   ;; (setq! eaf-enable-debug t) ; should only be used when eaf is wigging out
-;;   (eaf-setq! eaf-browser-dark-mode "true") ; dark mode is overrated
-;;   (setq! eaf-browser-default-search-engine "duckduckgo")
-;;   (eaf-setq! eaf-browse-blank-page-url "https://duckduckgo.com"))
+;;   ;; (eaf-setq! eaf-browser-dark-mode "true") ; dark mode is overrated
+;;   ;; (setq! eaf-browser-default-search-engine "duckduckgo")
+;;   ;; (eaf-setq! eaf-browse-blank-page-url "https://duckduckgo.com")
+;;   )
 
 ;; (use-package! eaf-evil ;; evil bindings in my browser
 ;;   :after eaf
-;;   :config
-;;   (setq! eaf-evil-leader-keymap doom-leader-map)
-;;   (setq! eaf-evil-leader-key "SPC"))
+;;   ;; :config
+;;   ;; (setq! eaf-evil-leader-keymap doom-leader-map)
+;;   ;; (setq! eaf-evil-leader-key "SPC")
+;;   )
+
+;; (use-package! eaf-browser
+;;   ;; :after eaf
+;;   )
+;; (use-package! eaf-pdf-viewer
+;;   ;; :after eaf
+;;   )
+;; (use-package! eaf-file-browser
+;;   ;; :after eaf
+;;   )
 
 (use-package! diminish
   :config
@@ -2151,6 +2195,13 @@ limitations under the License.
 ;;               evil-normal-state-map
 ;;               evil-visual-state-map
 ;;               evil-insert-state-map)))
+
+(use-package! beacon
+  :config
+  (beacon-mode 1))
+
+(use-package! systemd
+  :defer t)
 
 (defun aur-checker ()
   (run-at-time

@@ -130,11 +130,18 @@
            :branch "master"))
 
 (package! disable-mouse)
-                                        ; ;; installed by guix
-                                        ; (package! guix)
+
+(package! beacon)
+
+(package! rotate)
+
+(package! string-inflection)
+
+(package! systemd)
 
 ;; (package! eaf :recipe
 ;;   (:host github
-;;    :repo "manateelazycat/emacs-application-framework"
+;;    :repo "emacs-eaf/emacs-application-framework"
 ;;    :files ("*.el" "*.py" "core" "app")
-;;    :no-byte-compile t))
+;;    ;; :no-byte-compile t
+;;    ))

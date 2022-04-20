@@ -32,11 +32,12 @@
        doom ; what makes DOOM look the way it does
        ;; doom-dashboard    ; a nifty splash screen for Emacs
        ;; doom-quit         ; DOOM quit-message prompts when you quit Emacs
+       (emoji +unicode)
        ;; fill-column       ; a `fill-column' indicator
        hl-todo          ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
        ;; hydra
        ;;indent-guides     ; highlighted indent columns
-       ;;minimap           ; show a map of the code on the side
+       minimap           ; show a map of the code on the side
        (modeline +light)              ; snazzy, Atom-inspired modeline, plus API
        nav-flash         ; blink cursor line after big motions
        ;;neotree           ; a project drawer, like NERDTree for vim
@@ -48,7 +49,7 @@
        unicode                  ; extended unicode support for various languages
        vc-gutter                ; vcs diff in the fringe
        vi-tilde-fringe          ; fringe tildes to mark beyond EOB
-       ;;window-select     ; visually switch windows
+       (window-select +numbers)     ; visually switch windows
        ;; workspaces        ; tab emulation, persistence & separate workspaces
        ;;zen               ; distraction-free coding or writing
 
@@ -62,14 +63,14 @@
        multiple-cursors  ; editing in many places at once
        ;;objed             ; text object editing for the innocent
        ;;parinfer          ; turn lisp into python, sort of
-       ;;rotate-text       ; cycle region at point between text candidates
+       rotate-text       ; cycle region at point between text candidates
        snippets                       ; my elves. They type so I don't have to
        word-wrap                      ; soft wrapping with language-aware indent
 
        :emacs
        (dired +icons +ranger)  ; making dired pretty [functional]
        electric                ; smarter, keyword-based electric-indent
-       ;;ibuffer         ; interactive buffer management
+       (ibuffer +icons)         ; interactive buffer management
        undo              ; persistent, smarter undo for your inevitable mistakes
        vc                ; version-control and Emacs, sitting in a tree
 
@@ -147,7 +148,7 @@
        ;;nim               ; python + lisp at the speed of c
        ;; nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
-       (org +pretty +dragndrop +gnuplot +pandoc +roam +present +capture +jupyter) ; organize your plain life in plain text
+       (org +pretty +dragndrop +gnuplot +noter +pandoc +roam2 +present +capture +journal +jupyter) ; organize your plain life in plain text
        ;;perl              ; write code no one else can comprehend
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
@@ -176,6 +177,7 @@
 
        :app
        calendar
+       emms
        everywhere
        irc      ; how neckbeards socialize
        rss      ; emacs as an RSS reader

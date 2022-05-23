@@ -1,4 +1,6 @@
 #!/bin/sh
 
-xinput --map-to-output $(xinput list --id-only "ELAN Touchscreen") eDP-1
-xinput --map-to-output $(xinput list --id-only "HDX HDX DIGITIZER Pen (0)") eDP-1
+# xinput --map-to-output $(xinput list --id-only "ELAN Touchscreen") eDP-1
+# xinput --map-to-output $(xinput list --id-only "HDX HDX DIGITIZER Pen (0)") eDP-1
+xinput --map-to-output $(xinput list --id-only "Wacom One by Wacom M Pen stylus") eDP-1
+xinput --map-to-output $(xinput list --id-only "Wacom One by Wacom M Pen eraser") eDP-1

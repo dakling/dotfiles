@@ -1098,7 +1098,8 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
  :n "l" #'my/open-in-external-app)
 
 ;; latex
-(setq! +latex-viewers '(pdf-tools))
+;; (setq! +latex-viewers '(pdf-tools))
+(setq! +latex-viewers '(zathura))
 (setq my/latex-macro-directory
       (cond
        ((system-name= "klingenberg-laptop" "klingenberg-tablet") "~/Documents-work/conferences/latex_macros/")
@@ -1549,20 +1550,20 @@ limitations under the License.
    :n "lp" #'bosss-repl-load-my-assembly
    :n "in" #'bosss-create-new-field))
 
-(use-package! imaxima
-  :config
-  (add-to-list 'auto-mode-alist '("\\.ma[cx]\\'" . maxima-mode))
-  (set-repl-handler! 'maxima-mode #'maxima :persist t)
-  (set-docsets! '(maxima-mode imaxima-mode) "Maxima")
-  (set-lookup-handlers! '(maxima-mode imaxima-mode)
-    ;; :definition #'anaconda-mode-find-definitions
-    ;; :references #'anaconda-mode-find-references
-    :documentation #'maxima-help-at-point)
-  (map! :localleader :map maxima-mode-map
-        "ef" #'maxima-send-full-line
-        "ee" #'maxima-send-previous-form
-        "er" #'maxima-send-region
-        "eb" #'maxima-send-buffer))
+;; (use-package! maxima
+;;   :config
+;;   (add-to-list 'auto-mode-alist '("\\.ma[cx]\\'" . maxima-mode))
+;;   (set-repl-handler! 'maxima-mode #'maxima :persist t)
+;;   (set-docsets! '(maxima-mode imaxima-mode) "Maxima")
+;;   (set-lookup-handlers! '(maxima-mode imaxima-mode)
+;;     ;; :definition #'anaconda-mode-find-definitions
+;;     ;; :references #'anaconda-mode-find-references
+;;     :documentation #'maxima-help-at-point)
+;;   (map! :localleader :map maxima-mode-map
+;;         "ef" #'maxima-send-full-line
+;;         "ee" #'maxima-send-previous-form
+;;         "er" #'maxima-send-region
+;;         "eb" #'maxima-send-buffer))
 
 ;; org-kanban
 (use-package! kanban

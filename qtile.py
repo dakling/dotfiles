@@ -24,52 +24,107 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from libqtile import bar, layout, widget
-from libqtile.config import Click, Drag, Group, Key, Match, Screen
+from libqtile import bar, hook, layout, widget
+from libqtile.config import Click, Drag, Group, Key, KeyChord, Match, Screen
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
 from libqtile import extension
 from libqtile.log_utils import logger
+# from pynput.keyboard import Key as PKey, Controller
+import pyautogui
+import subprocess
+
+try:
+    import aiomanhole # type: ignore
+except ImportError:
+    aiomanhole = None
+
+
+
+# global variables
+
+mod = "mod4"
+alt = "mod1"
+terminal = guess_terminal()
+browser = "firefox"
+
+bg_color = "#222222"
+fg_color = "#FFFFFF"
+fg_color_alt = "#828080"
 
 # custom functions
 
 def change_focus_emacs(qtile, direction):
     w = qtile.current_screen.group.current_window
-    # logger.warning(w.name)
-    # if 'Doom Emacs' in w.name:
-    if 'emacs' in w.get_wm_class()[0]:
-        logger.warning(f"in emacs")
-        # qtile.cmd_simulate_keypress([mod], direction["key"])
-        # qtile.cmd_
-        subprocess.run("emacsclient" "-e \"(find-file)\"")
-        direction["cmd"]()
+    win_class = w.get_wm_class()
+    if win_class is not None and 'emacs' == win_class[0].lower():
+        if qtile.core.name == "x11":
+            pyautogui.keyDown('alt')
+            pyautogui.keyUp('h')
+            # pyautogui.keyUp('j')
+            # pyautogui.keyUp('k')
+            # pyautogui.keyUp('l')
+            pyautogui.keyDown(direction["key"])
+            pyautogui.keyUp(direction["key"])
+            pyautogui.keyUp('alt')
+        elif qtile.core.name == "wayland":
+            # qtile.cmd_simulate_keypress([mod, "control", alt], direction["key"])
+            # qtile.cmd_simulate_keypress([], "i")
+            # qtile.cmd_spawn("emacsclient" " --eval (quote (progn (helm-find-files)))")
+            # qtile.cmd_spawn("wtype" " -M ctrl -M win " + direction["key"])
+            subprocess.run("wtype -M ctrl -M alt " + direction["key"])
+            # subprocess.run("wtype -M alt -M logo h")
+            # subprocess.run("wtype" " i " + direction["key"])
+            # direction["cmd"]()
     else:
-        logger.warning(f"not in emacs")
         direction["cmd"]()
 
 @lazy.function
 def left_emacs(qtile):
-    logger.warning(f"going left")
-    change_focus_emacs(qtile, {"key": "h", "cmd": qtile.current_group.layout.cmd_left})
+    try:
+        change_focus_emacs(qtile, {"key": 'f12',
+                                   "cmd": qtile.current_group.layout.cmd_left,
+                                })
+    except AttributeError:
+        change_focus_emacs(qtile, {"key": 'f12',
+                                   "cmd": qtile.current_group.layout.cmd_previous,
+                                   })
 
 @lazy.function
 def right_emacs(qtile):
-    logger.warning(f"going right")
-    change_focus_emacs(qtile, {"key": "l", "cmd": qtile.current_group.layout.cmd_right})
+    try:
+        change_focus_emacs(qtile, {"key": 'f11',
+                                   "cmd": qtile.current_group.layout.cmd_right,
+                                })
+    except AttributeError:
+        change_focus_emacs(qtile, {"key": 'f11',
+                                   "cmd": qtile.current_group.layout.cmd_next}
+                                   )
 
 @lazy.function
 def up_emacs(qtile):
-    logger.warning(f"going up")
-    change_focus_emacs(qtile, {"key": "k", "cmd": qtile.current_group.layout.cmd_up})
+    try:
+        change_focus_emacs(qtile, {"key": 'f9',
+                                   "cmd": qtile.current_group.layout.cmd_up,
+                                })
+    except AttributeError:
+        change_focus_emacs(qtile, {"key": 'f9'})
 
 @lazy.function
 def down_emacs(qtile):
-    logger.warning(f"going down")
-    change_focus_emacs(qtile, {"key": "j", "cmd": qtile.current_group.layout.cmd_down})
+    try:
+        change_focus_emacs(qtile, {"key": 'f10',
+                                   "cmd": qtile.current_group.layout.cmd_down,
+                                })
+    except AttributeError:
+        change_focus_emacs(qtile, {"key": 'f10'})
 
-
-mod = "mod4"
-terminal = guess_terminal()
+@lazy.function
+def to_other_screen(qtile):
+    current_screen = qtile.current_screen
+    logger.warning(current_screen)
+    new_screen = 0 if current_screen == 1 else 1
+    # qtile.current_window.to_screen(new_screen)
 
 
 keys = [
@@ -80,6 +135,10 @@ keys = [
     Key([mod], "l", right_emacs(), desc="Move focus to right"),
     Key([mod], "j", down_emacs(), desc="Move focus down"),
     Key([mod], "k", up_emacs(), desc="Move focus up"),
+    Key([mod], "Left", lazy.layout.left(), desc="Move focus to left (ignoring emacs frames)"),
+    Key([mod], "Right", lazy.layout.right(), desc="Move focus to right (ignoring emacs frames)"),
+    Key([mod], "Down", lazy.layout.down(), desc="Move focus down (ignoring emacs frames)"),
+    Key([mod], "Up", lazy.layout.up(), desc="Move focus up (ignoring emacs frames)"),
     # Move windows between left/right columns or move up/down in current stack.
     # Moving out of range in Columns layout will create new column.
     Key([mod, "shift"], "h", lazy.layout.shuffle_left(), desc="Move window to the left"),
@@ -94,26 +153,47 @@ keys = [
     Key([mod, "control"], "k", lazy.layout.grow_up(), desc="Grow window up"),
     Key([mod], "n", lazy.layout.normalize(), desc="Reset all window sizes"),
     Key([mod], "o", lazy.next_screen(), desc="Go to next screen"),
-    Key([mod, "shift"], "o", lazy.prev_screen(), desc="Go to previous screen"),
+    Key([mod, "control"], "o", lazy.prev_screen(), desc="Go to previous screen"),
+    # Key([mod, "shift"], "o", lazy.window.toscreen(0 if lazy.current_screen == 1 else 1), desc="Move window to next screen"),
+    Key([mod, "shift"], "o", to_other_screen(), desc="Move window to next screen"),
+    # Key([mod, "shift"], "o", logger.warning(lazy.group.current_screen), desc="Move window to next screen"),
     # Toggle between split and unsplit sides of stack.
     # Split = all windows displayed
     # Unsplit = 1 window displayed, like Max layout, but still with
     # multiple stack panes
     Key(
-        [mod], "m",
+        [mod, "control"], "m",
         lazy.layout.toggle_split(),
         desc="Toggle between split and unsplit sides of stack",
     ),
     Key([mod], "Return", lazy.spawn(terminal), desc="Launch terminal"),
     # Toggle between different layouts as defined below
     Key([mod, "control"], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
+    Key([mod, alt], "m", lazy.to_layout_index(2), desc="Use max layout"),
+    Key([mod], "v", lazy.to_layout_index(0), desc="Use column layout"),
+    Key([mod], "s", lazy.to_layout_index(1), desc="Use vertical tile layout"),
     Key([mod], "c", lazy.window.kill(), desc="Kill focused window"),
     Key([mod, "shift"], "m", lazy.window.toggle_fullscreen() , desc="Toggle fullscreen of focused window"),
     # Key([mod], "w", lazy.run_extension(extension.WindowList()) , desc="Show list of all open windows"),
     Key([mod, "shift"], "space", lazy.window.toggle_floating() , desc="Toggle floating of focused window"),
     Key([mod, "control"], "r", lazy.reload_config(), desc="Reload the config"),
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
-    Key([mod], "d", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
+    Key([mod, "shift"], "d", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
+    Key([mod], "d", lazy.spawn("rofi -show combi"), desc="Spawn a command using rofi"),
+
+    Key([mod], "e", lazy.spawn("emacsclient -nc"), desc="Spawn emacsclient"),
+    Key([mod, "shift"], "e", lazy.spawn("emacs"), desc="Spawn emacs"),
+    Key([mod], "F1", lazy.spawn(terminal), desc="Spawn terminal"),
+    Key([mod], "F2", lazy.spawn(browser), desc="Spawn browser"),
+
+    KeyChord([mod], "space", [
+        KeyChord(["shift"], "s", [
+            Key(["shift"], "s", lazy.spawn("shutdown now")),
+            Key(["shift"], "r", lazy.spawn("reboot")),
+        ],
+                 mode="System")
+    ],
+             mode="Top")
 ]
 
 groups = [Group(i) for i in "123456789"]
@@ -143,10 +223,20 @@ for i in groups:
     )
 
 layouts = [
-    layout.Columns(border_focus_stack=["#d75f5f", "#8f3d3d"], border_width=1, split=False),
+    layout.Columns(border_focus_stack=[fg_color, bg_color],
+                   border_focus=[fg_color_alt, bg_color],
+                   border_width=1,
+                   split=False,
+                   border_on_single=True,
+                   wrap_focus_rows=False,
+                   wrap_focus_columns=False,
+                   wrap_focus_stacks=True),
     # layout.Stack(num_stacks=1),
     # layout.Stack(num_stacks=2),
     # layout.Stack(num_stacks=3),
+    layout.VerticalTile(
+                   border_focus=[fg_color_alt, bg_color],
+    ),
     layout.Max(),
     # layout.Bsp(),
     # layout.Matrix(),
@@ -155,7 +245,6 @@ layouts = [
     # layout.RatioTile(),
     # layout.Tile(),
     # layout.TreeTab(),
-    # layout.VerticalTile(),
     # layout.Zoomy(),
 ]
 
@@ -177,7 +266,7 @@ screens = [
                 widget.TaskList(),
                 widget.Chord(
                     chords_colors={
-                        "launch": ("#ff0000", "#ffffff"),
+                        "launch": (bg_color, fg_color),
                     },
                     name_transform=lambda name: name.upper(),
                 ),
@@ -207,7 +296,7 @@ screens = [
                 widget.TaskList(),
                 widget.Chord(
                     chords_colors={
-                        "launch": ("#ff0000", "#ffffff"),
+                        "launch": (bg_color, fg_color),
                     },
                     name_transform=lambda name: name.upper(),
                 ),
@@ -236,7 +325,7 @@ mouse = [
 
 dgroups_key_binder = None
 dgroups_app_rules = []  # type: list
-follow_mouse_focus = True
+follow_mouse_focus = False
 bring_front_click = False
 cursor_warp = False
 floating_layout = layout.Floating(
@@ -272,6 +361,26 @@ wl_input_rules = None
 # java that happens to be on java's whitelist.
 wmname = "LG3D"
 
+if aiomanhole:
+    @hook.subscribe.startup_complete
+    def set_manhole():
+        aiomanhole.start_manhole(port=7113, namespace={"qtile": qtile})
 
-# TODO emacs integration
-# TODO program staring shortcuts
+@hook.subscribe.startup_once
+def autostart():
+    processes = [
+        ['blueman-applet'],
+        ['dunst'],
+        ["kdeconnect-indicator"],
+        ["nm-applet"],
+        ["udiskie", "--tray"],
+        ["pa-applet"],
+        ["/usr/bin/polkit-dumb-agent"],
+    ]
+    # if lazy.core.name == "x11":
+    #     processes.append(["setxkbmap", "de" "nodeadkeys"])
+
+    for p in processes:
+        subprocess.Popen(p)
+
+# TODO kanshi

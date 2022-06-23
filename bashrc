@@ -24,6 +24,10 @@ alias mount_liwi='sshfs lichtwiese:/home/klingenberg ~/mnt/lichtwiese/'
 alias mount_liwivpn='sshfs lichtwiesevpn:/home/klingenberg ~/mnt/lichtwiese/'
 alias mount_lcluster='sshfs lcluster:/home/km88econ ~/mnt/lichtenberg/'
 
+alias fe41='source /home/klingenberg/foam/foam-extend-4.1/etc/bashrc'
+
+source ~/.bash_aliases.sh
+
 function latexdiff-vc-most-recent(){
     latexdiff-vc -r HEAD^ -r HEAD "$1" --pdf
 }

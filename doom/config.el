@@ -164,7 +164,8 @@
             ([s-f2] . (lambda () (interactive) (start-process "" nil  "firefox")))
             ([s-f3] . deer)
             ([s-f4] . (lambda () (interactive) (mu4e)))
-            ([s-f12] . (lambda () (interactive) (start-process "" nil  "/usr/bin/slock")))))
+            ;; ([s-f12] . (lambda () (interactive) (start-process "" nil  "/usr/bin/slock")))
+            ))
     (push ?\s-\  exwm-input-prefix-keys)
     ;; (push ?\M-m  exwm-input-prefix-keys)
     (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
@@ -617,7 +618,8 @@
   ;;   (kill-this-buffer))
   (if (< 1 (length (window-list)))
       (evil-window-delete)
-    (stump/window-close)))
+    ;; (stump/window-close)
+    (qtile/window-close)))
 
 (defun my/run-command-ssh (server &rest cmds)
   "Run COMMAND on SERVER, assumes that you set it up properly"
@@ -653,7 +655,50 @@
 
 (defun stump/window-close ()
   (with-current-buffer "*scratch*"
+      (shell-command-to-string "qtile run-cmd lazy.window.kill()"))) ;TODO
+
+(defun qtile/move-focus (direction)
+  (with-current-buffer "*scratch*"
+      (shell-command-to-string (format "qtile cmd-obj -o layout -f %s" direction))))
+
+(defun qtile/emacs-window-right ()
+  (interactive)
+  (condition-case nil
+      (evil-window-right 1)
+    (error (qtile/move-focus "right"))))
+
+(defun qtile/emacs-window-left ()
+  (interactive)
+  (condition-case nil
+      (evil-window-left 1)
+    (error (qtile/move-focus "left"))))
+
+(defun qtile/emacs-window-up ()
+  (interactive)
+  (condition-case nil
+      (evil-window-up 1)
+    (error (qtile/move-focus "up"))))
+
+(defun qtile/emacs-window-down ()
+  (interactive)
+  ;; (evil-window-down 1)
+  (condition-case nil
+      (evil-window-down 1)
+    (error (qtile/move-focus "down"))))
+
+(defun qtile/window-close ()
+  (with-current-buffer "*scratch*"
       (shell-command-to-string "stumpish delete")))
+
+(map!
+   :nvi "M-<f11>" #'qtile/emacs-window-right
+   :nvi "M-<f12>" #'qtile/emacs-window-left
+   :nvi "M-<f10>" #'qtile/emacs-window-down
+   :nvi "M-<f9>" #'qtile/emacs-window-up
+   :nvi "M-s-<f11>" #'qtile/emacs-window-right
+   :nvi "M-s-<f12>" #'qtile/emacs-window-left
+   :nvi "M-s-<f10>" #'qtile/emacs-window-down
+   :nvi "M-s-<f9>" #'qtile/emacs-window-up)
 
 (defun my/create-super-bindings ()
   "Create bindings starting with super for use outside exwm."
@@ -661,20 +706,20 @@
    :n
    ;; :states '(insert emacs hybrid normal visual motion operator replace)
    "s-w" '(other-window :which-key "other window")
-   "s-l" 'stump/emacs-window-right
-   "s-h" 'stump/emacs-window-left
-   "s-j" 'stump/emacs-window-down
-   "s-k" 'stump/emacs-window-up
-   "s-L" 'enlarge-window-horizontally
-   "s-H" 'shrink-window-horizontally
-   "s-J" 'enlarge-window
-   "s-K" 'shrink-window
+   ;; "s-l" 'stump/emacs-window-right
+   ;; "s-h" 'stump/emacs-window-left
+   ;; "s-j" 'stump/emacs-window-down
+   ;; "s-k" 'stump/emacs-window-up
+   ;; "s-L" 'enlarge-window-horizontally
+   ;; "s-H" 'shrink-window-horizontally
+   ;; "s-J" 'enlarge-window
+   ;; "s-K" 'shrink-window
    "s-M-l" 'enlarge-window-horizontally
    "s-M-h" 'shrink-window-horizontally
    "s-M-j" 'enlarge-window
    "s-M-k" 'shrink-window
-   "s-v" 'split-window-right
-   "s-s" 'split-window-below
+   ;; "s-v" 'split-window-right
+   ;; "s-s" 'split-window-below
    "s-c" 'my/close-buffer
    "s-q" 'my/get-rid-of-mouse
    "s-m" 'delete-other-windows
@@ -688,9 +733,7 @@
              (funcall browse-url-browser-function "" "-new-tab"))
    "s-<f3>" 'deer
    "s-<f4>" '(lambda () (interactive)
-             (mu4e))
-   "s-<f12>" '(lambda () (interactive)
-                (start-process "" nil  "/usr/bin/slock")))
+             (mu4e)))
   (when nil
     (map!
      :n
@@ -1098,8 +1141,8 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
  :n "l" #'my/open-in-external-app)
 
 ;; latex
-;; (setq! +latex-viewers '(pdf-tools))
-(setq! +latex-viewers '(zathura))
+(setq! +latex-viewers '(pdf-tools))
+;; (setq! +latex-viewers '(zathura))
 (setq my/latex-macro-directory
       (cond
        ((system-name= "klingenberg-laptop" "klingenberg-tablet") "~/Documents-work/conferences/latex_macros/")
@@ -1265,51 +1308,25 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
         :n "ee" #'ein:worksheet-execute-cell-and-goto-next-km
         :n "eb" #'ein:worksheet-execute-all-cells))
 
+;;c++
+(map! :localleader
+      :map c++-mode-map
+      :n "b" #'recompile)
 ;;c#
 (use-package! lsp
   :config
-  ;;(progn
-  ;;(let*
-  ;;((version "v1.37.7")
-  ;;(server-dir (concat "~/.config/emacs/.local/etc/lsp/omnisharp-roslyn/" version "/")))
-  ;;(defun my/create-lsp-custom-executable ()
-  ;;"Modify the omnisharp-server run-script as needed for Guix"
-  ;;(when (system-name= "klingenberg-laptop" "klingenberg-tablet")
-  ;;(with-temp-file (concat server-dir "run-custom")
-  ;;(goto-char (point-min))
-  ;;(insert-file-contents (concat server-dir "run"))
-  ;;(search-forward "mono_cmd")
-  ;;(kill-line)
-  ;;(insert "=mono"))))
-  ;;(my/create-lsp-custom-executable)
-  ;;(cond
-  ;;((system-name= "klingenberg-pi")
-  ;;(setq! omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
-  ;;((system-name= "klingenberg-laptop" "klingenberg-tablet")
-;;;; (setq! omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp/")
-  ;;(setq! lsp-csharp-server-path (concat server-dir "/run-custom"))))))
-  )
+  (setq lsp-auto-guess-root t))
 
-;; (after! omnisharp
-;;   (progn
-;;     (defun my/create-omnisharp-custom-executable ()
-;;       "Modify the omnisharp-server run-script as needed for Guix"
-;;       (when (system-name= "klingenberg-laptop" "klingenberg-tablet")
-;;         (with-temp-file (concat (omnisharp--server-installation-dir) "/run-custom")
-;;           (goto-char (point-min))
-;;           (insert-file-contents (omnisharp--server-installation-path))
-;;           (search-forward "mono_cmd")
-;;           (kill-line)
-;;           (insert "=mono"))))
-;;     (my/create-omnisharp-custom-executable)
-;;     (cond
-;;      ((system-name= "klingenberg-pi")
-;;       (setq! omnisharp-server-executable-path "/run/current-system/sw/bin/omnisharp"))
-;;      ((system-name= "klingenberg-laptop" "klingenberg-tablet")
-;;       ;; (setq! omnisharp-server-executable-path "~/.nix-profile/bin/omnisharp/")
-;;       (setq! omnisharp-server-executable-path (concat (omnisharp--server-installation-dir) "/run-custom"))
-;;       ;; (setq! omnisharp-server-executable-path nil )
-;;       ))))
+;; (use-package dap-netcore)
+;; (use-package! dap-mode
+;;   :config
+;;   (dap-register-debug-template "NetCoreDdg Launch"
+;;                                (list :type "coreclr"
+;;                                      :request "launch"
+;;                                      :mode "launch"
+;;                                      :name "NetCoreDbg Launch"
+;;   	                             :dap-compilation "dotnet build"
+;; 	                             :program "${workspaceFolder}/bin/Debug/net6.0/${workspaceFolderBasename}.dll")))
 
 (after! lsp
   ;; (setq! lsp-file-watch-threshold 30000)
@@ -2045,22 +2062,22 @@ limitations under the License.
   ;; (setq! epg-pinentry-mode 'ask)
   (setq! epg-pinentry-mode 'loopback))
 
-(use-package! stumpwm-mode
-  :when (system-name= "klingenberg-laptop" "klingenberg-tablet" "klingenberg-pc" "helensInfinitybook")
-  :config
-  (defun my/stumpwm-connect ()
-    (interactive)
-    (sly-connect "localhost" 4005))
-  (defun my/activate-stump-mode ()
-    (when (equalp
-           (buffer-file-name)
-           "/home/klingenberg/.dotfiles/stumpwm.lisp")
-      (stumpwm-mode 1)))
-  (add-hook 'lisp-mode-hook #'my/activate-stump-mode)
-  (map! :localleader :map stumpwm-mode-map
-        ;; "ef" #'stumpwm-eval-defun
-        ;; "ee" #'stumpwm-eval-last-sexp
-        "'" #'my/stumpwm-connect))
+;; (use-package! stumpwm-mode
+;;   :when (system-name= "klingenberg-laptop" "klingenberg-tablet" "klingenberg-pc" "helensInfinitybook")
+;;   :config
+;;   (defun my/stumpwm-connect ()
+;;     (interactive)
+;;     (sly-connect "localhost" 4005))
+;;   (defun my/activate-stump-mode ()
+;;     (when (equalp
+;;            (buffer-file-name)
+;;            "/home/klingenberg/.dotfiles/stumpwm.lisp")
+;;       (stumpwm-mode 1)))
+;;   (add-hook 'lisp-mode-hook #'my/activate-stump-mode)
+;;   (map! :localleader :map stumpwm-mode-map
+;;         ;; "ef" #'stumpwm-eval-defun
+;;         ;; "ee" #'stumpwm-eval-last-sexp
+;;         "'" #'my/stumpwm-connect))
 
 ;; (use-package! eaf
 ;;   ;; :config

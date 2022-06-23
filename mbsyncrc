@@ -4,7 +4,7 @@ Host imap.gmail.com
 User dario.klingenberg@gmail.com
 # To store the password in an encrypted file use PassCmd instead of Pass
 # PassCmd "gpg -q --for-your-eyes-only --no-tty -d ~/.password-store/gmail.gpg"
-PassCmd "pass gmail"
+PassCmd "pass gmail-mbsync"
 #
 # Use SSL
 SSLType IMAPS

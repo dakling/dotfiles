@@ -91,7 +91,7 @@
        :tools
        ;;ansible
        biblio
-       ;; (debugger +lsp)          ; FIXME stepping through code, to help you add bugs
+       (debugger +lsp)          ; FIXME stepping through code, to help you add bugs
        ;;direnv
        ;;docker
        editorconfig      ; let someone else argue about tabs vs spaces
@@ -110,6 +110,7 @@
        ;;taskrunner        ; taskrunner for all your projects
        ;;terraform         ; infrastructure as code
        ;;tmux              ; an API for interacting with tmux
+       tree-sitter
        ;;upload            ; map local to remote projects via ssh/ftp
 
        :lang
@@ -119,7 +120,7 @@
        common-lisp              ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
        ;;crystal           ; ruby at the speed of c
-       (csharp +lsp +dotnet)            ; unity, .NET, and mono shenanigans
+       (csharp +lsp +dotnet +treesitter)            ; unity, .NET, and mono shenanigans
        data              ; config/data formats
        ;;(dart +flutter)   ; paint ui and not much else
        ;;elixir            ; erlang done right
@@ -153,7 +154,7 @@
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
-       (python -lsp)              ; beautiful is better than ugly
+       (python +pyright +lsp +tree-sitter)              ; beautiful is better than ugly
        ;;qt                ; the 'cutest' gui framework ever
        ;; (racket +xp)        ; a DSL for DSLs
        ;;rest              ; Emacs as a REST client

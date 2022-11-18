@@ -21,7 +21,7 @@ configuration {
 	kb-accept-alt: "Shift+Return,Alt+Return";
 	kb-clear-line: "Alt+h";
     kb-delete-entry: "Alt+d";
-    kb-row-tab: "Tab";
+    // kb-row-tab: "Tab";
     kb-select-1: "Alt+1";
     kb-select-2: "Alt+2";
     kb-select-3: "Alt+3";

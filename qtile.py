@@ -53,6 +53,15 @@ fg_color = "#FFFFFF"
 fg_color_alt = "#828080"
 
 # custom functions
+@lazy.function
+def toggle_touchpad(qtile):
+    subprocess.run("toggle_touchpad.sh")
+
+@lazy.function
+def left_click(qtile):
+    pyautogui.keyUp('alt')
+    pyautogui.keyUp('win')
+    pyautogui.click()
 
 def change_focus_emacs(qtile, direction):
     w = qtile.current_screen.group.current_window
@@ -126,6 +135,11 @@ def to_other_screen(qtile):
     new_screen = 0 if current_screen == 1 else 1
     # qtile.current_window.to_screen(new_screen)
 
+go_frame_ogs_screen1 = [[455, 703, 948], [1445, 1694, 1944]]
+go_frame_kgs_screen1 = [[202, 510, 814], [1344, 1656, 1961]]
+go_frame = go_frame_kgs_screen1
+go_delta_x = (go_frame[0][2] - go_frame[0][0])/11.0
+go_delta_y = (go_frame[1][2] - go_frame[1][0])/11.0
 
 keys = [
     # A list of available commands that can be bound to keys can be found
@@ -166,14 +180,14 @@ keys = [
         lazy.layout.toggle_split(),
         desc="Toggle between split and unsplit sides of stack",
     ),
-    Key([mod], "Return", lazy.spawn(terminal), desc="Launch terminal"),
+    Key([mod, "shift"], "Return", lazy.spawn(terminal), desc="Launch terminal"),
     # Toggle between different layouts as defined below
     Key([mod, "control"], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
-    Key([mod, alt], "m", lazy.to_layout_index(2), desc="Use max layout"),
+    Key([mod, "shift"], "m", lazy.to_layout_index(2), desc="Use max layout"),
     Key([mod], "v", lazy.to_layout_index(0), desc="Use column layout"),
     Key([mod], "s", lazy.to_layout_index(1), desc="Use vertical tile layout"),
     Key([mod], "c", lazy.window.kill(), desc="Kill focused window"),
-    Key([mod, "shift"], "m", lazy.window.toggle_fullscreen() , desc="Toggle fullscreen of focused window"),
+    Key([mod, "shift"], "f", lazy.window.toggle_fullscreen() , desc="Toggle fullscreen of focused window"),
     # Key([mod], "w", lazy.run_extension(extension.WindowList()) , desc="Show list of all open windows"),
     Key([mod, "shift"], "space", lazy.window.toggle_floating() , desc="Toggle floating of focused window"),
     Key([mod, "control"], "r", lazy.reload_config(), desc="Reload the config"),
@@ -183,8 +197,13 @@ keys = [
 
     Key([mod], "e", lazy.spawn("emacsclient -nc"), desc="Spawn emacsclient"),
     Key([mod, "shift"], "e", lazy.spawn("emacs"), desc="Spawn emacs"),
+    Key([mod, "shift"], "a", lazy.spawn("doom +everywhere"), desc="Spawn emacs-everywhere"),
     Key([mod], "F1", lazy.spawn(terminal), desc="Spawn terminal"),
     Key([mod], "F2", lazy.spawn(browser), desc="Spawn browser"),
+    # Key([mod], "F10", lazy.spawn("xdotool click 1"), desc="left mouse click"),
+    Key([mod], "Return", left_click(), desc="left mouse click"),
+
+    # Key("XF86TouchpadToggle", toggle_touchpad(), desc="toggle touchpad"),
 
     KeyChord([mod], "space", [
         KeyChord(["shift"], "s", [
@@ -193,7 +212,34 @@ keys = [
         ],
                  mode="System")
     ],
-             mode="Top")
+             mode="Top"),
+
+    KeyChord([mod, alt], "g", [
+        Key([], "w", lazy.spawn("xdotool mousemove " + str(go_frame[0][0]) + " " + str(go_frame[1][0]))),
+        Key([], "e", lazy.spawn("xdotool mousemove " + str(go_frame[0][1]) + " " + str(go_frame[1][0]))),
+        Key([], "r", lazy.spawn("xdotool mousemove " + str(go_frame[0][2]) + " " + str(go_frame[1][0]))),
+        Key([], "s", lazy.spawn("xdotool mousemove " + str(go_frame[0][0]) + " " + str(go_frame[1][1]))),
+        Key([], "d", lazy.spawn("xdotool mousemove " + str(go_frame[0][1]) + " " + str(go_frame[1][1]))),
+        Key([], "f", lazy.spawn("xdotool mousemove " + str(go_frame[0][2]) + " " + str(go_frame[1][1]))),
+        Key([], "x", lazy.spawn("xdotool mousemove " + str(go_frame[0][0]) + " " + str(go_frame[1][2]))),
+        Key([], "c", lazy.spawn("xdotool mousemove " + str(go_frame[0][1]) + " " + str(go_frame[1][2]))),
+        Key([], "v", lazy.spawn("xdotool mousemove " + str(go_frame[0][2]) + " " + str(go_frame[1][2]))),
+
+        Key([], "h", lazy.spawn("xdotool mousemove_relative -- " + str(-go_delta_x) + " " + str(0))),
+        Key([], "j", lazy.spawn("xdotool mousemove_relative -- " + str(0) + " " + str(go_delta_y))),
+        Key([], "k", lazy.spawn("xdotool mousemove_relative -- " + str(0) + " " + str(-go_delta_y))),
+        Key([], "l", lazy.spawn("xdotool mousemove_relative -- " + str(go_delta_x) + " " + str(0))),
+        # Key([], "u", lazy.spawn("xdotool mousemove_relative -- " + str(-go_delta_x) + " " + str(go_delta_y))),
+        # Key([], "i", lazy.spawn("xdotool mousemove_relative -- " + str(0) + " " + str(go_delta_y))),
+        # Key([], "o", lazy.spawn("xdotool mousemove_relative -- " + str(go_delta_x) + " " + str(go_delta_y))),
+        # Key([], "j", lazy.spawn("xdotool mousemove_relative -- " + str(-go_delta_x) + " " + str(0))),
+        # Key([], "l", lazy.spawn("xdotool mousemove_relative -- " + str(go_delta_x) + " " + str(0))),
+        # Key([], "m", lazy.spawn("xdotool mousemove_relative -- " + str(-go_delta_x) + " " + str(-go_delta_y))),
+        # Key([], "comma", lazy.spawn("xdotool mousemove_relative -- " + str(0) + " " + str(-go_delta_y))),
+        # Key([], "period", lazy.spawn("xdotool mousemove_relative -- " + str(go_delta_x) + " " + str(-go_delta_y))),
+        Key([], "Return", left_click())
+    ],
+             mode="Go")
 ]
 
 groups = [Group(i) for i in "123456789"]
@@ -376,6 +422,7 @@ def autostart():
         ["udiskie", "--tray"],
         ["pa-applet"],
         ["/usr/bin/polkit-dumb-agent"],
+        ["setxkbmap", "de" "nodeadkeys"]
     ]
     # if lazy.core.name == "x11":
     #     processes.append(["setxkbmap", "de" "nodeadkeys"])

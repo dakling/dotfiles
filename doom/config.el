@@ -29,8 +29,7 @@
 ;; `load-theme' function. This is the default:
 ;; (setq! doom-theme 'doom-solarized-dark)
 
-(setq! doom-theme 'doom-monokai-spectrum)
-
+(setq! doom-theme 'doom-palenight)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -422,11 +421,22 @@
  :map org-mode-map
  :n "gb" 'org-mark-ring-goto)
 
-(setq! org-roam-capture-templates
-      '(("d" "default" plain #'org-roam-capture--get-point "%? \n %i \n %a"
-         :file-name "%<%Y%m%d%H%M%S>-${slug}"
-         :head "#+TITLE: ${title}\n"
-         :unnarrowed t)))
+(map!
+ :after org
+ :map evil-org-mode-map
+ :nvi "M-k" nil
+ :nvi "M-j" nil
+ :nvi "M-l" nil
+ :nvi "C-M-h" #'org-metaleft
+ :nvi "C-M-k" #'org-metaup
+ :nvi "C-M-j" #'org-metadown
+ :nvi "C-M-l" #'org-metaright)
+
+;; (setq! org-roam-capture-templates
+;;       '(("d" "default" plain #'org-roam-capture--get-point "%? \n %i \n %a"
+;;          :file-name "%<%Y%m%d%H%M%S>-${slug}"
+;;          :head "#+TITLE: ${title}\n"
+;;          :unnarrowed t)))
 
 (use-package! org-super-links
   :after org
@@ -791,7 +801,7 @@
 
 (setq! fdy-signature
           "Technische Universität Darmstadt
-Dario Klingenberg, M.Sc.
+Dr.-Ing. Dario Klingenberg
 Fachgebiet für Strömungsdynamik
 Fachbereich Maschinenbau
 Fachgebiet für Strömungsdynamik (FDY)
@@ -806,7 +816,7 @@ Web: https://www.fdy.tu-darmstadt.de
 
 (setq! gsc-signature
           "Technische Universität Darmstadt
-Dario Klingenberg, M.Sc.
+Dr.-Ing. Dario Klingenberg
 Graduate School Computational Engineering
 Dolivostraße 15
 64293 Darmstadt
@@ -892,6 +902,8 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    :continue t))
 
 (after! mu4e
+  (defalias 'mu4e~start 'mu4e--start)
+  (defalias 'mu4e~main-view 'mu4e--main-view)
   (setq! shr-use-colors nil)
   (setq! message-subject-re-regexp
         (concat
@@ -954,8 +966,6 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
       "+ RET" #'+popup/other
       "lm" #'bookmark-set
       "er" #'eval-expression
-      "SS" #'shutdown
-      "SR" #'reboot
       "w w" #'evil-switch-to-windows-last-buffer
       "w TAB" #'evil-switch-to-windows-last-buffer)
 
@@ -997,10 +1007,10 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
                                slurp/barf-cp))
   (map!
    :map lispyville-mode-map
-   :ni "M-h" #'lispy-left
-   :ni "M-l" #'lispyville-next-closing
-   :n "M-j" #'lispy-down
-   :n "M-k" #'lispy-up
+   :ni "C-H" #'lispy-left
+   :ni "C-L" #'lispyville-next-closing
+   :n "C-J" #'lispy-down
+   :n "C-K" #'lispy-up
    :ni "M-J" #'lispyville-drag-forward
    :ni "M-K" #'lispyville-drag-backward
    :ni "M-H" #'lispyville-<
@@ -1317,20 +1327,17 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
   :config
   (setq lsp-auto-guess-root t))
 
-;; (use-package dap-netcore)
-;; (use-package! dap-mode
-;;   :config
-;;   (dap-register-debug-template "NetCoreDdg Launch"
-;;                                (list :type "coreclr"
-;;                                      :request "launch"
-;;                                      :mode "launch"
-;;                                      :name "NetCoreDbg Launch"
-;;   	                             :dap-compilation "dotnet build"
-;; 	                             :program "${workspaceFolder}/bin/Debug/net6.0/${workspaceFolderBasename}.dll")))
+(use-package! dap-mode
+  :config
+  (add-hook 'dap-stopped-hook
+            (lambda (arg) (call-interactively #'dap-hydra)))
+  (require 'dap-python)
+  (require 'dap-netcore)
+  (setq dap-python-debugger 'debugpy))
 
 (after! lsp
   ;; (setq! lsp-file-watch-threshold 30000)
-  (setq! lsp-file-watch-threshold nil ))
+  (setq! lsp-file-watch-threshold nil))
 
 (defun my/csharp-list-to-array ()
   (replace-regexp "List<\\(.*\\)>" "\\1[]"
@@ -1526,12 +1533,13 @@ limitations under the License.
 (map!
  :localleader
  :map csharp-mode-map
- "cd" (lambda () (interactive) (compile (concat "msbuild -verbosity:quiet -maxCpuCount /p:WarningLevel=0 /p:Configuration=Debug " (my/csharp-find-current-project))))
- "cr" (lambda () (interactive) (compile (concat "msbuild -verbosity:quiet -maxCpuCount /p:WarningLevel=0 /p:Configuration=Release " bosss-master-solution)))
- "ce" (lambda () (interactive) (compile (concat "msbuild -verbosity:quiet -maxCpuCount /p:WarningLevel=0 /p:Configuration=Debug " bosss-master-solution)))
- "cc" #'recompile
+ "b" #'recompile
+ ;; "cd" (lambda () (interactive) (compile (concat "msbuild -verbosity:quiet -maxCpuCount /p:WarningLevel=0 /p:Configuration=Debug " (my/csharp-find-current-project))))
+ ;; "cr" (lambda () (interactive) (compile (concat "msbuild -verbosity:quiet -maxCpuCount /p:WarningLevel=0 /p:Configuration=Release " bosss-master-solution)))
+ ;; "ce" (lambda () (interactive) (compile (concat "msbuild -verbosity:quiet -maxCpuCount /p:WarningLevel=0 /p:Configuration=Debug " bosss-master-solution)))
+ ;; "cc" #'recompile
  "=" #'my/indent-buffer-without-bosss-header
- "et" (lambda () (interactive) (my/run-tests (my/csharp-find-current-project)))
+ ;; "et" (lambda () (interactive) (my/run-tests (my/csharp-find-current-project)))
  "eo" #'run-csharp-repl-other-frame
  "R" #'run-csharp-repl-other-window
  "er" #'csharp-repl-send-region
@@ -1720,6 +1728,7 @@ limitations under the License.
    "M-k" #'helm-previous-line
    "M-h" #'helm-find-files-up-one-level
    "M-l" #'helm-execute-persistent-action
+   ;; "M-l" #'helm-maybe-exit-minibuffer
    "M-w" #'helm-select-action
    "M-H" #'left-char
    "M-L" #'right-char
@@ -1737,8 +1746,12 @@ limitations under the License.
    "M-RET" #'helm-ff-run-open-file-with-default-tool)
   (map!
    :map helm-buffer-map
+   "M-l" #'helm-maybe-exit-minibuffer
    "M-d" #'helm-buffer-run-kill-persistent)
-  (setq! helm-move-to-line-cycle-in-source nil))
+  (setq! helm-move-to-line-cycle-in-source nil)
+  (setq! helm-truncate-lines nil)
+  (setq! helm-buffer-max-length nil)
+  (setq! helm-buffers-truncate-lines nil))
 
 ;; TODO check if this is needed with doom
 ;; (use-package! org-roam-server

@@ -57,12 +57,16 @@
 ;; (package! dmenu)
 ;; (package! pulseaudio-control)
 
+(unpin! evil-collection)
+;; (package! evil-collection
+;;   :recipe (:repo "meliache/evil-collection" :branch "mu4e-development"))
+
 (package! mu4e-alert)
 
 (package! smooth-scrolling)
 
 (package! telega
-  :pin "9187e6e3d903474645f3e64806bc62ef687ec205")
+  :pin "b981a3a0d00c41768e054a294095b732a16fde84")
 
 ;; (package! slack)
 
@@ -138,6 +142,8 @@
 (package! string-inflection)
 
 (package! systemd)
+
+;; (package! gptel :recipe (:host github :repo "karthink/gptel"))
 
 ;; (package! eaf :recipe
 ;;   (:host github

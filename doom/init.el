@@ -14,6 +14,7 @@
 ;;      Alternatively, press 'gd' (or 'C-c g d') on a module to browse its
 ;;      directory (for easy access to its source code).
 
+;; (setq unicode-fonts-use-persistent-storage "unicode-fonts-2")
 (setq evil-respect-visual-line-mode t)
 
 (doom! :input
@@ -47,7 +48,7 @@
        ;;tabs              ; an tab bar for Emacs
        (treemacs +lsp)                 ; a project drawer, like neotree but cooler
        unicode                  ; extended unicode support for various languages
-       vc-gutter                ; vcs diff in the fringe
+       (vc-gutter +pretty)                ; vcs diff in the fringe
        vi-tilde-fringe          ; fringe tildes to mark beyond EOB
        (window-select +numbers)     ; visually switch windows
        ;; workspaces        ; tab emulation, persistence & separate workspaces
@@ -138,7 +139,7 @@
        ;;json              ; At least it ain't XML
        ;;(java +meghanada) ; the poster child for carpal tunnel syndrome
        ;;javascript        ; all(hope(abandon(ye(who(enter(here))))))
-       julia             ; a better, faster MATLAB
+       (julia +lsp +tree-sitter)             ; a better, faster MATLAB
        ;;kotlin            ; a better, slicker Java(Script)
        (latex +lsp +latexmk +fold) ; writing papers in Emacs has never been so fun
        ;;lean
@@ -154,7 +155,7 @@
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
-       (python +pyright +lsp +tree-sitter)              ; beautiful is better than ugly
+       (python +pyright +lsp +tree-sitter +conda)              ; beautiful is better than ugly
        ;;qt                ; the 'cutest' gui framework ever
        ;; (racket +xp)        ; a DSL for DSLs
        ;;rest              ; Emacs as a REST client

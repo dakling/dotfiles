@@ -37,7 +37,7 @@
 
 ;; This determines the style of line numbers in effect. If set to `nil ', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq! display-line-numbers-type 'relative)
+(setq! display-line-numbers-type 'absolute)
 
 
 (setq doom-localleader-key "-")
@@ -70,7 +70,6 @@
 (set-language-environment "UTF-8")
 (set-default-coding-systems 'utf-8)
 (setq! evil-respect-visual-line-mode t)
-                                        ; TODO check if this must be moved to init.el
 
 (setq! evil-collection-setup-minibuffer t)
 (setq! evil-ex-substitute-global t)
@@ -78,6 +77,10 @@
 (setq! +evil-want-o/O-to-continue-comments nil )
 (setq! display-time-24hr-format t
        display-time-default-load-average nil )
+
+(setq! ispell-dictionary "en_GB")
+(setq! ispell-alternate-dictionary nil)
+;; (setq! ispell-alternate-dictionary "de_DE")
 
 (defun my/setup-exwm ()
   (use-package! exwm
@@ -320,7 +323,9 @@
       (setq evil-repeat-info '([?g ?~])))
     (define-key evil-normal-state-map (kbd "g~") 'evil-operator-string-inflection)))
 
-
+(use-package! projectile
+  :config
+  (setq projectile-per-project-compilation-buffer t))
 
 (after! sly
   (setq! inferior-lisp-program (cond
@@ -629,7 +634,8 @@
   (if (< 1 (length (window-list)))
       (evil-window-delete)
     ;; (stump/window-close)
-    (qtile/window-close)))
+    (qtile/window-close)
+    ))
 
 (defun my/run-command-ssh (server &rest cmds)
   "Run COMMAND on SERVER, assumes that you set it up properly"
@@ -701,14 +707,14 @@
       (shell-command-to-string "stumpish delete")))
 
 (map!
-   :nvi "M-<f11>" #'qtile/emacs-window-right
-   :nvi "M-<f12>" #'qtile/emacs-window-left
-   :nvi "M-<f10>" #'qtile/emacs-window-down
-   :nvi "M-<f9>" #'qtile/emacs-window-up
-   :nvi "M-s-<f11>" #'qtile/emacs-window-right
-   :nvi "M-s-<f12>" #'qtile/emacs-window-left
-   :nvi "M-s-<f10>" #'qtile/emacs-window-down
-   :nvi "M-s-<f9>" #'qtile/emacs-window-up)
+   :g "M-<f11>" #'qtile/emacs-window-right
+   :g "M-<f12>" #'qtile/emacs-window-left
+   :g "M-<f10>" #'qtile/emacs-window-down
+   :g "M-<f9>" #'qtile/emacs-window-up
+   :g "M-s-<f11>" #'qtile/emacs-window-right
+   :g "M-s-<f12>" #'qtile/emacs-window-left
+   :g "M-s-<f10>" #'qtile/emacs-window-down
+   :g "M-s-<f9>" #'qtile/emacs-window-up)
 
 (defun my/create-super-bindings ()
   "Create bindings starting with super for use outside exwm."
@@ -956,6 +962,8 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
  "C-g" #'keyboard-quit
  "M-i" nil
  :n "gb" #'pop-tag-mark
+ "M-p" #'helm-show-kill-ring
+ :n "M-y" #'helm-show-kill-ring
  ;; :n "s" #'avy-goto-char-timer
  ;; :n "S" #'avy-goto-char-timer
  )
@@ -1092,6 +1100,13 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    :n "k" 'guix-devel-copy-module-as-kill
    :n "u" 'guix-devel-use-module
    :n "." 'guix-devel-code-block-edit))
+
+(map!
+ :localleader
+ :map julia-mode-map
+ "ee" #'julia-repl-send-region-or-line
+ "eb" #'julia-repl-send-buffer)
+
 
 (map!
  :localleader
@@ -1326,6 +1341,35 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 (use-package! lsp
   :config
   (setq lsp-auto-guess-root t))
+
+(use-package! gud
+  :config
+  (defhydra gud-hydra (:color pink :hint nil :foreign-keys run)
+    "
+^Stepping^          ^Switch^                 ^Breakpoints^         ^Debug^
+^^^^^^^^---------------------------------------------------------------------------------
+_n_: Next           _su_: Up stack frame     _bb_: Toggle          _dd_: Debug
+_i_: Step in        _sd_: Down stack frame   _bd_: Delete          _ds_: Debug restart
+_c_: Continue
+_r_: Restart frame
+_Q_: Disconnect     "
+
+    ("n" gud-next)
+    ("i" gud-step)
+    ("c" gud-cont)
+    ("r" gud-refresh)
+    ("su" gud-up)
+    ("sd" gud-down)
+    ("bb" gud-break)
+    ("bd" gud-remove)
+    ("dd" gud-run)
+    ("ds" gud-refresh)
+    ("q" nil "quit" :color blue)
+    ("Q" gud-finish :color red))
+(defun gud-hydra ()
+  "Run `gud-hydra/body'."
+  (interactive)
+  (gud-hydra/body)))
 
 (use-package! dap-mode
   :config
@@ -1819,6 +1863,8 @@ limitations under the License.
   :after (rainbow-identifiers)
   :when (system-name= "klingenberg-laptop" "klingenberg-tablet")
   :commands telega
+  :init
+  (setq telega-server-libs-prefix "/usr/")
   :config
   (telega-notifications-mode 1))
 
@@ -1929,7 +1975,7 @@ limitations under the License.
   ;; Taken from https://joshrollinswrites.com/help-desk-head-desk/20200611/
   (defun elfeed-v-mpv (url)
     "Watch a video from URL in MPV"
-    (async-shell-command (format "mpv --ytdl-format='bestvideo[height<=480]+bestaudio/best[height<=480]' \"%s\"" url)))
+    (async-shell-command (format "mpv \"%s\"" url)))
 
   (defun elfeed-view-mpv (&optional use-generic-p)
     "Youtube-feed link"
@@ -2018,6 +2064,44 @@ limitations under the License.
         :n "b" #'elfeed-firefox-open
         :n "v" #'elfeed-view-mpv
         :n "d" #'elfeed-youtube-dl))
+
+(defun my//play-playlist (filename &optional shuffle)
+  (defun my/random-sort-lines ()
+    "Sort lines in region randomly."
+    (interactive "r")
+    (save-excursion
+      (save-restriction
+        (goto-char (point-min))
+        (let ;; To make `end-of-line' and etc. to ignore fields.
+            ((inhibit-field-text-motion t))
+          (sort-subr nil 'forward-line 'end-of-line nil nil
+                     (lambda (s1 s2) (eq (random 2) 0)))))))
+  (defun play-yt-audio (url)
+    "Watch a video from URL in MPV"
+    (let
+        ((formatted-url (concat "https://youtube.com/watch\?v=" url)))
+      (message formatted-url)
+     (shell-command (format "mpv --no-video \"%s\"" formatted-url))))
+  (find-file filename)
+  (when shuffle
+    (my/random-sort-lines)
+    (save-buffer))
+  (goto-char (point-min))
+  (setq more-lines t)
+  (while more-lines
+    (beginning-of-line)
+    (setq splitPos (point))
+    (end-of-line)
+    (setq restLine (buffer-substring-no-properties splitPos (point) ))
+    (play-yt-audio restLine)
+
+    (setq moreLines (= 0 (forward-line 1)))
+    (next-line)))
+
+(defun my/play-youtube-playlist ()
+  (interactive)
+  (let ((playlist-file "~/Musik/playlist.txt"))
+    (my//play-playlist playlist-file t)))
 
 (after! eww
   (map!
@@ -2212,7 +2296,7 @@ limitations under the License.
 (use-package! igo-org
   :after org
   :config
-  ;; (igo-org-setup)
+  (igo-org-setup)
   (autoload 'igo-sgf-mode "igo-sgf-mode")
   (add-to-list 'auto-mode-alist '("\\.sgf$" . igo-sgf-mode)))
 
@@ -2233,6 +2317,10 @@ limitations under the License.
 
 (use-package! systemd
   :defer t)
+
+;; (use-package! gptel
+;;   :config
+;;   (setq gptel-api-key (shell-command-to-string "pass openaiapikey")))
 
 (defun aur-checker ()
   (run-at-time

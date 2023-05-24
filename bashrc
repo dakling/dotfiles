@@ -24,8 +24,7 @@ alias liwi_ssh_tunnel='ssh -f -N lichtwiese-tunnel'
 alias mount_liwi='sshfs lichtwiese:/home/klingenberg ~/mnt/lichtwiese/'
 alias mount_liwivpn='sshfs lichtwiesevpn:/home/klingenberg ~/mnt/lichtwiese/'
 alias mount_lcluster='sshfs lcluster:/home/km88econ ~/mnt/lichtenberg/'
-alias mount_jenkins='sshfs jenkins:/ ~/mnt/jenkins/'
-
+alias mount_jenkins_old='sshfs jenkins-old:/ ~/mnt/jenkins/'
 alias fe41='source /home/klingenberg/foam/foam-extend-4.1/etc/bashrc'
 
 source ~/.bash_aliases.sh
@@ -34,9 +33,14 @@ function latexdiff-vc-most-recent(){
     latexdiff-vc -r HEAD^ -r HEAD "$1" --pdf
 }
 
+function scrcb() {
+    scrot $1 -e 'xclip -selection clipboard -t image/png -i $f'
+}
+
 PS1='[\u@\h \W]\$ '
 
 export PATH=~/.config/emacs/bin/:$PATH
+export FOAM_DG_ROOT=~/Documents-work/programming/foam-dg/foam-dg/
 
 # up-down arrow to search in history
 bind '"\e[A": history-substring-search-backward'
@@ -86,3 +90,19 @@ fi
 #     vterm_printf "51;A$(whoami)@$(hostname):$(pwd)"
 # }
 # PS1=$PS1'\[$(vterm_prompt_end)\]'
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/usr/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/usr/etc/profile.d/conda.sh" ]; then
+        . "/usr/etc/profile.d/conda.sh"
+    else
+        export PATH="/usr/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+

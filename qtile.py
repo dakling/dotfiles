@@ -163,8 +163,8 @@ keys = [
     # will be to screen edge - window would shrink.
     Key([mod, "control"], "h", lazy.layout.grow_left(), desc="Grow window to the left"),
     Key([mod, "control"], "l", lazy.layout.grow_right(), desc="Grow window to the right"),
-    Key([mod, "control"], "j", lazy.layout.grow_down(), desc="Grow window down"),
-    Key([mod, "control"], "k", lazy.layout.grow_up(), desc="Grow window up"),
+    Key([mod, "control"], "j", lazy.layout.grow(), desc="Grow window down"),
+    Key([mod, "control"], "k", lazy.layout.shrink(), desc="Grow window up"),
     Key([mod], "n", lazy.layout.normalize(), desc="Reset all window sizes"),
     Key([mod], "o", lazy.next_screen(), desc="Go to next screen"),
     Key([mod, "control"], "o", lazy.prev_screen(), desc="Go to previous screen"),
@@ -180,6 +180,7 @@ keys = [
         lazy.layout.toggle_split(),
         desc="Toggle between split and unsplit sides of stack",
     ),
+    Key([mod], "Return", lazy.spawn(terminal), desc="Launch terminal"),
     Key([mod, "shift"], "Return", lazy.spawn(terminal), desc="Launch terminal"),
     # Toggle between different layouts as defined below
     Key([mod, "control"], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
@@ -200,15 +201,17 @@ keys = [
     Key([mod, "shift"], "a", lazy.spawn("doom +everywhere"), desc="Spawn emacs-everywhere"),
     Key([mod], "F1", lazy.spawn(terminal), desc="Spawn terminal"),
     Key([mod], "F2", lazy.spawn(browser), desc="Spawn browser"),
-    # Key([mod], "F10", lazy.spawn("xdotool click 1"), desc="left mouse click"),
-    Key([mod], "Return", left_click(), desc="left mouse click"),
+    Key([mod, alt], "F2", lazy.spawn("mullvad-browser"), desc="Spawn alternative browser"),
+    # Key([mod], "Return", left_click(), desc="left mouse click"),
 
-    # Key("XF86TouchpadToggle", toggle_touchpad(), desc="toggle touchpad"),
+    Key([], "XF86AudioRaiseVolume", lazy.spawn("volume.sh up"), desc="turn volume up"),
+    Key([], "XF86AudioLowerVolume", lazy.spawn("volume.sh down"), desc="turn volume down"),
+    Key([], "XF86AudioMute", lazy.spawn("volume.sh mute"), desc="toggle volume mute"),
 
-    KeyChord([mod], "space", [
-        KeyChord(["shift"], "s", [
-            Key(["shift"], "s", lazy.spawn("shutdown now")),
-            Key(["shift"], "r", lazy.spawn("reboot")),
+    KeyChord([mod, alt, "control", "shift"], "space", [
+        KeyChord([mod, alt, "control", "shift"], "s", [
+            Key([mod, alt, "control", "shift"], "s", lazy.spawn("shutdown now")),
+            Key([mod, alt, "control", "shift"], "r", lazy.spawn("reboot")),
         ],
                  mode="System")
     ],
@@ -276,22 +279,26 @@ layouts = [
                    border_on_single=True,
                    wrap_focus_rows=False,
                    wrap_focus_columns=False,
-                   wrap_focus_stacks=True),
+                   wrap_focus_stacks=True
+                   ),
     # layout.Stack(num_stacks=1),
     # layout.Stack(num_stacks=2),
     # layout.Stack(num_stacks=3),
-    layout.VerticalTile(
-                   border_focus=[fg_color_alt, bg_color],
-    ),
-    layout.Max(),
+    # layout.VerticalTile(
+    #                border_focus=[fg_color_alt, bg_color],
+    # ),
     # layout.Bsp(),
     # layout.Matrix(),
     # layout.MonadTall(),
-    # layout.MonadWide(),
+    layout.MonadWide(
+                   border_focus=[fg_color_alt, bg_color],
+        ratio=0.7
+    ),
     # layout.RatioTile(),
     # layout.Tile(),
     # layout.TreeTab(),
     # layout.Zoomy(),
+    layout.Max()
 ]
 
 widget_defaults = dict(
@@ -420,7 +427,7 @@ def autostart():
         ["kdeconnect-indicator"],
         ["nm-applet"],
         ["udiskie", "--tray"],
-        ["pa-applet"],
+        ["pa-applet", "--disable-key-grabbing"],
         ["/usr/bin/polkit-dumb-agent"],
         ["setxkbmap", "de" "nodeadkeys"]
     ]

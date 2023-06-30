@@ -30,7 +30,6 @@ from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
 from libqtile import extension
 from libqtile.log_utils import logger
-# from pynput.keyboard import Key as PKey, Controller
 import pyautogui
 import subprocess
 

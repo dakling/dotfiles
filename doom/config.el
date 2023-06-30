@@ -80,6 +80,8 @@
 
 (setq! ispell-dictionary "en_GB")
 (setq! ispell-alternate-dictionary nil)
+
+(setq! flycheck-checker-error-threshold 10000)
 ;; (setq! ispell-alternate-dictionary "de_DE")
 
 (defun my/setup-exwm ()
@@ -1217,6 +1219,16 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
     (add-hook! '(before-save-hook) #'reftex-parse-all)
     ;; (setq-local TeX-electric-math (cons "\\(" "\\)"))
     ))
+
+(use-package! lsp-ltex
+  :hook (text-mode . (lambda ()
+                       (require 'lsp-ltex)
+                       (lsp)))          ; or lsp-deferred
+  :init
+  (setq lsp-ltex-version "15.2.0")
+  :config
+  (setq lsp-ltex-enabled t)
+  (setq lsp-ltex-language "en-GB"))
 
 (use-package! font-latex)
 

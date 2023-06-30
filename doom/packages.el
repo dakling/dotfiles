@@ -101,6 +101,8 @@
 
 (package! org-ref)
 
+(package! lsp-ltex)
+
 ;; (package! omnisharp :recipe (:no-native-compile t))
 
 ;; (package! rigpa
@@ -120,6 +122,8 @@
 (package! bosss :recipe (:host github :repo "dakling/emacs-bosss"))
 
 (disable-packages! org-msg)
+
+(disable-packages! writegood-mode)
 
 ;; (package! solaire-mode :disable t)
 

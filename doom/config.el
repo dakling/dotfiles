@@ -601,33 +601,6 @@
                  url)))))
     (elfeed-v-mpv str)))
 
-(defun fdy-mount (source target)
-  "Mount a directory from fdy windows remote server."
-  (async-shell-command (concat
-                        "sudo /usr/bin/mount //dc1/"
-                        source
-                        " "
-                        target
-                        " -t cifs -o username=klingenberg,noexec,uid=klingenberg")))
-
-(defun qmount ()
-  "Shortcuts for mounting frequent locations,"
-  (interactive)
-  (let*
-      ((mount-options
-        '((lectures . ("misc/fdy-lectures.git" "~/git/mnt/fdy-lectures.git"))
-          (klausuren . ("lehre/TM1/Klausuren.git" "~/git/mnt/Klausuren.git"))
-          (bosss . ("bosss/users/klingenberg/root.git" "~/git/mnt/bosss.git"))
-          (publications . ("misc/fdy-publications.git" "~/git/mnt/fdy-publications.git"))
-          (misc . ("misc" "~/misc"))
-          (scratch . ("scratch" "~/scratch"))
-          (backup . ("backup" "~/backup"))
-          (lehre . ("lehre" "~/lehre"))))
-       (location (intern
-                  (completing-read
-                   "What to mount"
-                   (mapcar #'car mount-options)))))
-    (apply #'fdy-mount (alist-get location mount-options))))
 
 (defun my/close-buffer ()
   (interactive)
@@ -807,67 +780,25 @@
 
 (add-hook 'mu4e-compose-pre-hook 'my/mu4e-set-account)
 
-(setq! fdy-signature
-          "Technische Universität Darmstadt
-Dr.-Ing. Dario Klingenberg
-Fachgebiet für Strömungsdynamik
-Fachbereich Maschinenbau
-Fachgebiet für Strömungsdynamik (FDY)
-Otto-Berndt-Straße 2 (L1|01 322)
-64287 Darmstadt
 
-E-Mail: klingenberg@fdy.tu-darmstadt.de
-Telefon: +49 6151 16-26207
-Fax: +49 6151 16-26203
-Web: https://www.fdy.tu-darmstadt.de
-")
-
-(setq! gsc-signature
-          "Technische Universität Darmstadt
-Dr.-Ing. Dario Klingenberg
-Graduate School Computational Engineering
-Dolivostraße 15
-64293 Darmstadt
-
-E-Mail: klingenberg@gsc.tu-darmstadt.de
-Telefon: +49 6151 16-24381
-Fax: +49 6151 16-24404
-Web: https://www.gsc.ce.tu-darmstadt.de/
-")
 
 (setq! my/mu4e-account-alist
-      `(("fdy"
+      `(("cam"
          (mu4e-sent-messages-behavior sent)
          ;; (mu4e-compose-signature-auto-include nil )
-         (mu4e-compose-signature ,fdy-signature)
+         (mu4e-compose-signature cam-signature)
          ;; (org-msg-signature
-;;           ,(concat
-;;            "#+begin_signature
-;; --" fdy-signature "
-;; #+end_signature"))
-         (mu4e-sent-folder "/fdy/Sent Items")
-         (mu4e-drafts-folder "/fdy/Drafts")
-         (smtpmail-smtp-server "smtp.tu-darmstadt.de")
-         (smtpmail-smtp-service 465)
-         (smtpmail-stream-type ssl)
-         (user-mail-address "klingenberg@fdy.tu-darmstadt.de")
-         (user-full-name "Dario Klingenberg"))
-        ("gsc"
-         (mu4e-sent-messages-behavior sent)
-         ;; (mu4e-compose-signature-auto-include nil )
-         (mu4e-compose-signature ,gsc-signature)
-         ;; (org-msg-signature
-;;           ,(concat
-;;             "#+begin_signature
-;; --" gsc-signature "
-;; #+end_signature"))
-         (mu4e-sent-folder "/gsc/Sent Items")
-         (mu4e-drafts-folder "/gsc/Drafts")
-         (smtpmail-smtp-server "smtp.tu-darmstadt.de")
-         (smtpmail-smtp-service 465)
-         (smtpmail-stream-type ssl)
-         (user-mail-address "klingenberg@gsc.tu-darmstadt.de")
-         (user-full-name "Dario Klingenberg"))
+         ;;           ,(concat
+         ;;            "#+begin_signature
+         ;; --" fdy-signature "
+         ;; #+end_signature"))
+        (mu4e-sent-folder "cam/Sent Items")
+        (mu4e-drafts-folder "cam/Drafts")
+        (smtpmail-smtp-server "smtp.office365.com")
+        (smtpmail-smtp-service 465)
+        (smtpmail-stream-type ssl)
+        (user-mail-address "dsk34@cam.ac.uk")
+        (user-full-name "Dario Klingenberg"))
         ("gmail"
          ;; Under each account, set the account-specific variables you want.
          (mu4e-sent-messages-behavior delete)
@@ -1049,40 +980,37 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
    "x" #'lispy-x))
 
 ;; scheme
-(use-package! geiser
-  ;; :load-path "/run/current-system/profile/share/emacs/site-lisp/"
-  ;; :commands (run-geiser)
-  :config
-  (setq! flycheck-scheme-chicken-executable "chicken-csc")
-  (setq! geiser-chicken-binary "chicken-csi")
-  (setq! geiser-active-implementations '(chicken guile chez))
-  (setq! geiser-default-implementation 'guile)
-  ;; (setq! geiser-chez-binary "scheme")
-  ;; (setq! geiser-scheme-dir "~/")
-  (defun chicken-doc (&optional obtain-function)
-    (interactive)
-    (let ((func (funcall (or obtain-function 'current-word))))
-      (when func
-        (process-send-string (scheme-proc)
-                             (format "(require-library chicken-doc) ,doc %S\n" func))
-        (save-selected-window
-          (select-window (display-buffer (get-buffer scheme-buffer) t))
-          (goto-char (point-max))))))
-  ;; (after! geiser
-  ;;   (add-to-list 'geiser-implementations-alist '((regexp "\\.sc$") chez))
-  ;;   (add-to-list 'geiser-implementations-alist '((regexp "\\.sls$") chez)))
-  (add-to-list 'auto-mode-alist
-               '("\\.sls\\'" . scheme-mode)
-               '("\\.sc\\'" . scheme-mode))
-  (add-to-list 'auto-mode-alist
-               '("\\.egg\\'" . scheme-mode))
-  (map!
-   :localleader
-   :map scheme-mode-map
-   :n "'" #'geiser
-   :n "ef" #'geiser-eval-definition
-   :n "ee" #'geiser-eval-last-sexp
-   :n "eb" #'geiser-eval-buffer))
+;; (use-package! geiser
+;;   ;; :load-path "/run/current-system/profile/share/emacs/site-lisp/"
+;;   ;; :commands (run-geiser)
+;;   :config
+;;   (setq! flycheck-scheme-chicken-executable "chicken-csc")
+;;   (setq! geiser-chicken-binary "chicken-csi")
+;;   (setq! geiser-active-implementations '(chicken guile chez))
+;;   (setq! geiser-default-implementation 'guile)
+;;   ;; (setq! geiser-chez-binary "scheme")
+;;   ;; (setq! geiser-scheme-dir "~/")
+;;   (defun chicken-doc (&optional obtain-function)
+;;     (interactive)
+;;     (let ((func (funcall (or obtain-function 'current-word))))
+;;       (when func
+;;         (process-send-string (scheme-proc)
+;;                              (format "(require-library chicken-doc) ,doc %S\n" func))
+;;         (save-selected-window
+;;           (select-window (display-buffer (get-buffer scheme-buffer) t))
+;;           (goto-char (point-max))))))
+;;   (add-to-list 'auto-mode-alist
+;;                '("\\.sls\\'" . scheme-mode)
+;;                '("\\.sc\\'" . scheme-mode))
+;;   (add-to-list 'auto-mode-alist
+;;                '("\\.egg\\'" . scheme-mode))
+;;   (map!
+;;    :localleader
+;;    :map scheme-mode-map
+;;    :n "'" #'geiser
+;;    :n "ef" #'geiser-eval-definition
+;;    :n "ee" #'geiser-eval-last-sexp
+;;    :n "eb" #'geiser-eval-buffer))
 
 (use-package! guix
   :when (system-name= "klingenberg-tablet")
@@ -1109,13 +1037,54 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
  "ee" #'julia-repl-send-region-or-line
  "eb" #'julia-repl-send-buffer)
 
+(defun my/python-shell-send-main ()
+  (interactive)
+  (with-temp-buffer
+    (insert-file-contents "./main.py")
+    (python-shell-send-string (buffer-string))))
+
+(defun my/python-shell-send-buffer ()
+  (interactive)
+  (if (file-exists-p "./main.py")
+      (my/python-shell-send-main)
+      (python-shell-send-buffer)))
 
 (map!
  :localleader
  :map python-mode-map
  "ef" #'python-shell-send-defun
  "ee" #'python-shell-send-statement
- "eb" #'python-shell-send-buffer)
+ "eB" #'python-shell-send-buffer
+ "eb" #'my/python-shell-send-buffer
+ "em" #'my/python-shell-send-main)
+
+(defun my/haskell-load-and-run ()
+  "Loads and runs the current Haskell file main function."
+  (interactive)
+  (haskell-process-load-file)
+  (haskell-interactive-mode-run-expr "main"))
+
+(defun my/haskell-insert-type ()
+  (interactive)
+  (let ((current-prefix-arg '-)) ; simulate pressing C-u
+    (haskell-process-do-type)))
+
+;; (after! haskell-mode
+;;   (defun haskell-interactive-mode-reset-error (session)
+;;    "Reset the error cursor position."
+;;    (interactive)
+;;    (with-current-buffer (haskell-session-interactive-buffer session)
+;;      (let ((mrk (point-marker)))
+;;        (haskell-session-set session 'next-error-locus nil)
+;;        (haskell-session-set session 'next-error-region (cons mrk (copy-marker mrk t))))))
+;;  )
+
+(map!
+ :localleader
+ :map haskell-mode-map
+ "t" #'my/haskell-insert-type
+ "eB" #'haskell-process-load-file
+ "eb" #'my/haskell-load-and-run)
 
 ;; (use-package! cider
 ;;   :config
@@ -1199,6 +1168,11 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
 
 (use-package! latex
   :config
+  (add-to-list 'TeX-command-list '
+               ("latexmk (cont.)" "latexmk %(-PDF)%S%(mode) %(file-line-error) -pvc %(extraopts) %t" TeX-run-latexmk nil
+                (plain-tex-mode latex-mode doctex-mode)
+                :help "Run LatexMk continuously"))
+  (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
   (setq! reftex-label-alist '(AMSTeX))
   (setq! reftex-ref-style-alist
          '(("Cleveref" "cleveref"
@@ -1228,6 +1202,7 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
   (setq lsp-ltex-version "15.2.0")
   :config
   (setq lsp-ltex-enabled t)
+  ;; (setq lsp-ltex-language "en-US")
   (setq lsp-ltex-language "en-GB"))
 
 (use-package! font-latex)
@@ -1310,9 +1285,9 @@ Web: https://www.gsc.ce.tu-darmstadt.de/
       :map octave-mode-map
       "el" #'octave-send-line
       "ef" #'octave-send-defun
-      "eb" #'octave-send-block
+      "ee" #'octave-send-block
       "er" #'octave-send-region
-      "ee" #'octave-send-buffer)
+      "eb" #'octave-send-buffer)
 
 ;; f#
 (map! :localleader
@@ -1775,6 +1750,10 @@ limitations under the License.
 (use-package! helm
   :diminish helm-mode
   :config
+  (setq helm-mini-default-sources '(helm-source-buffers-list
+                                    helm-source-recentf
+                                    helm-source-bookmarks
+                                    helm-source-buffer-not-found))
   (map!
    :map doom-leader-buffer-map
    "b" #'helm-mini)
@@ -1870,7 +1849,6 @@ limitations under the License.
                                              ("decibels" . 2.5)
                                              ("raw" . 72000))))
 
-;; TODO start
 (use-package! telega
   :after (rainbow-identifiers)
   :when (system-name= "klingenberg-laptop" "klingenberg-tablet")
@@ -1880,46 +1858,7 @@ limitations under the License.
   :config
   (telega-notifications-mode 1))
 
-;; TODO end
 
-(use-package! slack
-  :commands (slack-start)
-  :init
-  (setq! slack-buffer-emojify t) ;; if you want to enable emoji, default nil
-  (setq! slack-prefer-current-team t)
-  :config
-  (slack-register-team
-   :name "2021-ZIH"
-   :default t
-   :token (auth-source-pick-first-password
-           :host "2021-zih.slack.com"
-           :user "klingenberg@fdy.tu-darmstadt.de")
-   :subscribed-channels '(allgemein)
-   :full-and-display-names t)
-
-  (evil-define-key 'normal slack-info-mode-map
-    ",u" 'slack-room-update-messages)
-  (evil-define-key 'normal slack-mode-map
-    ",c" 'slack-buffer-kill
-    ",ra" 'slack-message-add-reaction
-    ",rr" 'slack-message-remove-reaction
-    ",rs" 'slack-message-show-reaction-users
-    ",pl" 'slack-room-pins-list
-    ",pa" 'slack-message-pins-add
-    ",pr" 'slack-message-pins-remove
-    ",mm" 'slack-message-write-another-buffer
-    ",me" 'slack-message-edit
-    ",md" 'slack-message-delete
-    ",u" 'slack-room-update-messages
-    ",2" 'slack-message-embed-mention
-    ",3" 'slack-message-embed-channel
-    "\C-n" 'slack-buffer-goto-next-message
-    "\C-p" 'slack-buffer-goto-prev-message)
-  (evil-define-key 'normal slack-edit-message-mode-map
-    ",k" 'slack-message-cancel-edit
-    ",s" 'slack-message-send-from-buffer
-    ",2" 'slack-message-embed-mention
-    ",3" 'slack-message-embed-channel))
 
 (after! circe
   (set-irc-server! "chat.freenode.net"

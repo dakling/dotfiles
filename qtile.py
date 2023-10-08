@@ -201,6 +201,7 @@ keys = [
     Key([mod], "F1", lazy.spawn(terminal), desc="Spawn terminal"),
     Key([mod], "F2", lazy.spawn(browser), desc="Spawn browser"),
     Key([mod, alt], "F2", lazy.spawn("mullvad-browser"), desc="Spawn alternative browser"),
+    Key([mod, "shift"], "F2", lazy.spawn("mullvad-browser"), desc="Spawn alternative browser"),
     # Key([mod], "Return", left_click(), desc="left mouse click"),
 
     Key([], "XF86AudioRaiseVolume", lazy.spawn("volume.sh up"), desc="turn volume up"),

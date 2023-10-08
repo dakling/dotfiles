@@ -1,5 +1,4 @@
 #! /bin/sh
 
-# termite -e "sudo openconnect -u km88econ https://fwfdy.net.hrz.tu-darmstadt.de"
-alacritty -e xfreerdp /v:130.83.248.243 /u:klingenberg /f +clipboard /home-drive
-# gnome-terminal -e "xfreerdp /v:terminal03 /u:klingenberg /f +clipboard /home-drive"
+# alacritty -e xfreerdp /v:130.83.248.243 /u:klingenberg /f +clipboard /home-drive
+alacritty -e xfreerdp /v:130.83.248.243 /u:klingenberg +clipboard /home-drive

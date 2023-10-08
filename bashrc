@@ -25,6 +25,8 @@ alias mount_liwi='sshfs lichtwiese:/home/klingenberg ~/mnt/lichtwiese/'
 alias mount_liwivpn='sshfs lichtwiesevpn:/home/klingenberg ~/mnt/lichtwiese/'
 alias mount_lcluster='sshfs lcluster:/home/km88econ ~/mnt/lichtenberg/'
 alias mount_jenkins_old='sshfs jenkins-old:/ ~/mnt/jenkins/'
+alias mount_cadmium='sshfs cadmium:/home/dsk34/ ~/mnt/cadmium/'
+alias mount_fawcett='sshfs fawcett:/home/dsk34/ ~/mnt/fawcett/'
 alias fe41='source /home/klingenberg/foam/foam-extend-4.1/etc/bashrc'
 
 source ~/.bash_aliases.sh

@@ -155,3 +155,5 @@
 ;;    :files ("*.el" "*.py" "core" "app")
 ;;    ;; :no-byte-compile t
 ;;    ))
+
+(unpin! haskell-mode)

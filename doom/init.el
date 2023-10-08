@@ -133,7 +133,7 @@
        ;; (fsharp +lsp)                    ; ML stands for Microsoft's Language
        ;;fstar             ; (dependent) types and (monadic) effects and Z3
        ;;(go +lsp)         ; the hipster dialect
-       ;;(haskell +dante)  ; a language that's lazier than I am
+       (haskell +lsp + tree-sitter)  ; a language that's lazier than I am
        ;;hy                ; readability of scheme w/ speed of python
        ;;idris             ;
        ;;json              ; At least it ain't XML
@@ -155,7 +155,7 @@
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
-       (python +pyright +lsp +tree-sitter +conda)              ; beautiful is better than ugly
+       (python +pyright +lsp +tree-sitter)              ; beautiful is better than ugly
        ;;qt                ; the 'cutest' gui framework ever
        ;; (racket +xp)        ; a DSL for DSLs
        ;;rest              ; Emacs as a REST client
@@ -163,7 +163,7 @@
        ;;(ruby +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
        ;;rust              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        ;;scala             ; java, but good
-       (scheme +guile +chicken +chez) ; a fully conniving family of lisps
+       ;; (scheme +guile +chicken +chez) ; a fully conniving family of lisps
        (sh +lsp)     ; she sells {ba,z,fi}sh shells on the C xor
        ;;sml
        ;;solidity          ; do you need a blockchain? No.

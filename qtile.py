@@ -204,9 +204,14 @@ keys = [
     Key([mod, "shift"], "F2", lazy.spawn("mullvad-browser"), desc="Spawn alternative browser"),
     # Key([mod], "Return", left_click(), desc="left mouse click"),
 
-    Key([], "XF86AudioRaiseVolume", lazy.spawn("volume.sh up"), desc="turn volume up"),
-    Key([], "XF86AudioLowerVolume", lazy.spawn("volume.sh down"), desc="turn volume down"),
-    Key([], "XF86AudioMute", lazy.spawn("volume.sh mute"), desc="toggle volume mute"),
+    Key([], "XF86MonBrightnessUp", lazy.spawn("/usr/bin/brightness_up.sh"), desc="turn brightness up"),
+    Key([], "XF86MonBrightnessDown", lazy.spawn("/usr/bin/brightness_down.sh"), desc="turn brightness down"),
+    Key([], "XF86AudioRaiseVolume", lazy.spawn("/usr/bin/volume-up.sh"), desc="turn volume up"),
+    Key([], "XF86AudioLowerVolume", lazy.spawn("/usr/bin/volume-down.sh"), desc="turn volume down"),
+    Key([], "XF86AudioMute", lazy.spawn("/usr/bin/volume-mute.sh"), desc="toggle volume mute"),
+    Key([], "XF86TouchpadToggle", lazy.spawn("/usr/bin/toggle_touchpad.sh"), desc="toggle touchpad"),
+    Key(["control"], "F9", lazy.spawn("/usr/bin/toggle_touchpad.sh"), desc="toggle touchpad"),
+    Key(["shift"], "F9", lazy.spawn("/usr/bin/toggle_touchpad_tap_to_click.sh"), desc="toggle touchpad tap tp click (left button)"),
 
     KeyChord([mod, alt, "control", "shift"], "space", [
         KeyChord([mod, alt, "control", "shift"], "s", [

@@ -76,8 +76,11 @@
 
 (package! elfeed)
 (disable-packages! elfeed-goodies)
+(disable-packages! ts-fold)
 
 (package! diminish)
+
+(package! ellama)
 
 (package! async-await)
 
@@ -87,13 +90,7 @@
 
 (package! ytdious)
 
-;; (package! ytel)
-
-;; (package! ytel-show)
-
-; (package! md4rd)
-
-(package! emms)
+;; (package! emms)
 
 (package! ace-link)
 
@@ -102,12 +99,6 @@
 (package! org-ref)
 
 (package! lsp-ltex)
-
-;; (package! omnisharp :recipe (:no-native-compile t))
-
-;; (package! rigpa
-;;   :recipe (:host github
-;;            :repo "countvajhula/rigpa"))
 
 (unpin! sly)
 

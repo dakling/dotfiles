@@ -68,36 +68,3 @@ Patterns * ![Gmail]* "[Gmail]/Sent Mail" "[Gmail]/Starred" "[Gmail]/All Mail"
 SyncState *
 
 
-IMAPAccount cam
-# Address to connect to
-Host outlook.office365.com
-# Host imap-mail.outlook.com
-User dsk34@cam.ac.uk
-PassCmd "pass raven\\ university\\ of\\ cambridge"
-# PassCmd "oauth2ms"
-# AuthMechs XOAUTH2
-# oauth2_request_url = https://login.microsoftonline.com/common/oauth2/v2.0/token
-# oauth2_client_id = "9e5f94bc-e8a4-4e73-b8be-63364c29d753"
-# oauth2_client_secret = ""
-# oauth2_refresh_token = <the contents of the refresh_token file from step 2>
-#
-# Use SSL
-SSLType IMAPS
-# SSLVersions TLSv1_2
-
-IMAPStore cam-remote
-Account cam
-
-MaildirStore cam-local
-Subfolders Verbatim
-# The trailing "/" is important
-Path ~/.mail/cam/
-Inbox ~/.mail/cam/Inbox
-
-Channel cam
-Far :cam-remote:
-Near :cam-local:
-# Automatically create missing mailboxes, both locally and on the server
-Create Both
-# Save the synchronization state files in the relevant directory
-SyncState *

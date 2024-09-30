@@ -6,10 +6,9 @@
 [[ $- != *i* ]] && return
 
 alias ls='ls --color=auto'
+alias ll='ls -lrth --color=auto'
 
 alias ee='emacsclient -t -a nvim'
-alias vim='emacsclient -t -a nvim'
-alias nvim='emacsclient -t -a nvim'
 
 alias top='btm'
 alias htop='btm'
@@ -20,6 +19,7 @@ alias fix_screen='~/.screenlayout/single.sh; ~/.screenlayout/double.sh ; ~/.scre
 alias mount_fairphone='sshfs fairphone:/home/phablet ~/mnt/fairphone/'
 alias mount_nexus='sshfs nexus:/home/phablet ~/mnt/nexus/'
 alias mount_purism='sshfs purism:/home/purism ~/mnt/purism/'
+alias mount_pi='sshfs pi:/home/klingenberg ~/mnt/pi/'
 alias liwi_ssh_tunnel='ssh -f -N lichtwiese-tunnel'
 alias mount_liwi='sshfs lichtwiese:/home/klingenberg ~/mnt/lichtwiese/'
 alias mount_liwivpn='sshfs lichtwiesevpn:/home/klingenberg ~/mnt/lichtwiese/'
@@ -27,6 +27,10 @@ alias mount_lcluster='sshfs lcluster:/home/km88econ ~/mnt/lichtenberg/'
 alias mount_jenkins_old='sshfs jenkins-old:/ ~/mnt/jenkins/'
 alias mount_cadmium='sshfs cadmium:/home/dsk34/ ~/mnt/cadmium/'
 alias mount_fawcett='sshfs fawcett:/home/dsk34/ ~/mnt/fawcett/'
+alias mount_maths='sshfs maths:/home/dsk34/ ~/mnt/maths/'
+alias mount_store_maths='sshfs maths:/store/DAMTP/dsk34 ~/mnt/maths_store/'
+alias mount_data_maths='sshfs maths:/data/septal/dsk34 ~/mnt/maths_data/'
+alias mount_wilkes='sshfs wilkes:/home/dsk34/ ~/mnt/wilkes/'
 alias fe41='source /home/klingenberg/foam/foam-extend-4.1/etc/bashrc'
 
 source ~/.bash_aliases.sh
@@ -108,3 +112,4 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
+[ -f /opt/miniconda3/etc/profile.d/conda.sh ] && source /opt/miniconda3/etc/profile.d/conda.sh

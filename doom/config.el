@@ -7,7 +7,7 @@
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
 (setq! user-full-name "Dario Klingenberg"
-      user-mail-address "dario.klingenberg@web.de")
+       user-mail-address "dario.klingenberg@web.de")
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
@@ -288,11 +288,18 @@
   (add-load-path! "/run/current-system/profile/share/emacs/site-lisp/")
   (add-load-path! "~/.guix-profile/share/emacs/site-lisp/")))
 
-(after! dired
-  (setq! ranger-cleanup-on-disable t
-        ranger-cleanup-eagerly t)
-  (map! :map ranger-mode-map
-        "M-RET" (lambda () (interactive) (counsel-find-file-extern (ranger-find-file)))))
+(after! dirvish
+  (map! :map dirvish-mode-map
+        :ng "f" #'dirvish-narrow
+        :ng "gf" #'dirvish-file-info-menu))
+
+(use-package! dired-x
+ :hook (dired-mode . dired-omit-mode)
+ :config
+ (setq dired-omit-verbose nil
+       dired-omit-files
+       (concat dired-omit-files
+               "^\\.?#\\|^\\.$\\|^\\.\\.$\\|^\\..*$")))
 
 (after! undo-fu
   (setq! undo-fu-allow-undo-in-region t))
@@ -453,8 +460,6 @@
         ("ss" #'org-super-links-link)
         ("ls" #'org-super-links-store-link)
         ("lS" #'org-super-links-insert-link)))
-
-;; (use-package! org-ref)
 
 (setq! smerge-command-prefix "#")
 
@@ -758,75 +763,42 @@
 
 (my/create-super-bindings)
 
-(defun my/mu4e-set-account ()
-  "Set the account for composing a message."
-  (let* ((account
-          (if mu4e-compose-parent-message
-              (let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
-                (string-match "/\\(.*?\\)/" maildir)
-                (match-string 1 maildir))
-            (completing-read (format "Compose with account: (%s) "
-                                     (mapconcat #'(lambda (var) (car var))
-                                                my/mu4e-account-alist "/"))
-                             (mapcar #'(lambda (var) (car var)) my/mu4e-account-alist)
-                             nil  t nil  nil  (caar my/mu4e-account-alist))))
-         (account-vars (cdr (assoc account my/mu4e-account-alist))))
-    (if account-vars
-        (mapc #'(lambda (var)
-                  (set (car var) (cadr var)))
-              account-vars)
-      (error "No email account found"))))
-;; ask for account when composing mail
+(after! mu4e
+  (setq! mu4e-context-policy 'always-ask
+         mu4e-compose-context-policy 'always-ask)
 
-(add-hook 'mu4e-compose-pre-hook 'my/mu4e-set-account)
-
-
-
-(setq! my/mu4e-account-alist
-      `(("cam"
-         (mu4e-sent-messages-behavior sent)
-         ;; (mu4e-compose-signature-auto-include nil )
-         (mu4e-compose-signature cam-signature)
-         ;; (org-msg-signature
-         ;;           ,(concat
-         ;;            "#+begin_signature
-         ;; --" fdy-signature "
-         ;; #+end_signature"))
-        (mu4e-sent-folder "cam/Sent Items")
-        (mu4e-drafts-folder "cam/Drafts")
-        (smtpmail-smtp-server "smtp.office365.com")
-        (smtpmail-smtp-service 465)
-        (smtpmail-stream-type ssl)
-        (user-mail-address "dsk34@cam.ac.uk")
-        (user-full-name "Dario Klingenberg"))
-        ("gmail"
-         ;; Under each account, set the account-specific variables you want.
-         (mu4e-sent-messages-behavior delete)
-         ;; (mu4e-compose-signature-auto-include nil )
-         (mu4e-sent-folder "/gmail/sent")
-         (mu4e-drafts-folder "/gmail/Drafts")
-         (user-mail-address "dario.klingenberg@gmail.com")
-         (smtpmail-smtp-server "smtp.gmail.com")
-         (smtpmail-smtp-service 465)
-         (smtpmail-stream-type ssl)
-         (user-full-name "Dario Klingenberg")
-         (mu4e-compose-signature nil )
-         ;; (org-msg-signature nil )
-         )
-        ("web"
-         (mu4e-sent-messages-behavior sent)
-         ;; (mu4e-compose-signature-auto-include nil )
-         (mu4e-sent-folder "/web/Sent Items")
-         (mu4e-drafts-folder "/web/Drafts")
-         (smtpmail-smtp-server "smtp.web.de")
-         (smtpmail-smtp-service 587)
-         (smtpmail-stream-type starttls)
-         (user-mail-address "dario.klingenberg@web.de")
-         (user-full-name "dario")
-         (mu4e-compose-signature nil )
-         ;; (org-msg-signature nil )
-         )))
-;; taken from reddit
+  (set-email-account! "gmail"
+                      ;; Under each account, set the account-specific variables you want.
+                      '(;; (mu4e-sent-messages-behavior . sent)
+                        (mu4e-sent-messages-behavior . delete)
+                        ;; (mu4e-compose-signature-auto-include nil )
+                        (message-send-mail-function . smtpmail-send-it)
+                        (mu4e-sent-folder . "/gmail/sent")
+                        (mu4e-drafts-folder . "/gmail/Drafts")
+                        (user-mail-address . "dario.klingenberg@gmail.com")
+                        (smtpmail-smtp-user . "dario.klingenberg@gmail.com")
+                        (smtpmail-smtp-server . "smtp.gmail.com")
+                        (smtpmail-smtp-service . 465)
+                        (smtpmail-stream-type . starttls)
+                        (user-full-name . "Dario Klingenberg")
+                        (mu4e-compose-signature . nil )
+                        ;; (org-msg-signature nil )
+                        )
+                      t)
+  (set-email-account! "web"
+                      '((mu4e-sent-messages-behavior . sent)
+                        ;; (mu4e-compose-signature-auto-include nil )
+                        (mu4e-sent-folder . "/web/Sent Items")
+                        (mu4e-drafts-folder . "/web/Drafts")
+                        ;; (smtpmail-smtp-server . "smtp.web.de")
+                        (smtpmail-smtp-user . "dario.klingenberg@web.de")
+                        (user-mail-address . "dario.klingenberg@web.de")
+                        ;; (smtpmail-smtp-service . 587)
+                        (smtpmail-stream-type . starttls)
+                        (user-full-name . "dario")
+                        (mu4e-compose-signature . nil )
+                        ;; (org-msg-signature nil )
+                        )))
 
 (use-package! mu4e-alert
   :after-call mu4e-index-updated-hook
@@ -1041,7 +1013,7 @@
   (interactive)
   (with-temp-buffer
     (insert-file-contents "./main.py")
-    (python-shell-send-string (buffer-string))))
+    (python-shell-send-string (concat (buffer-string) "\nmain()"))))
 
 (defun my/python-shell-send-buffer ()
   (interactive)
@@ -1141,7 +1113,7 @@
 ;; (setq! +latex-viewers '(zathura))
 (setq my/latex-macro-directory
       (cond
-       ((system-name= "klingenberg-laptop" "klingenberg-tablet") "~/Documents-work/conferences/latex_macros/")
+       ((system-name= "klingenberg-laptop" "klingenberg-tablet") "~/Documents/conferences/latex_macros/")
        ((system-name= "klingenberg-pc") "~/Documents/conferences/latex_macros/")))
 (setq! reftex-default-bibliography (concat my/latex-macro-directory "bibliography.bib"))
 (setq my/latex-bibliography-file (concat my/latex-macro-directory "bibliography.bib"))
@@ -1169,7 +1141,7 @@
 (use-package! latex
   :config
   (add-to-list 'TeX-command-list '
-               ("latexmk (cont.)" "latexmk %(-PDF)%S%(mode) %(file-line-error) -pvc %(extraopts) %t" TeX-run-latexmk nil
+               ("latexmk (cont.)" "latexmk  %(latexmk-out) %(file-line-error) -pvc %(extraopts) %t" TeX-run-format nil
                 (plain-tex-mode latex-mode doctex-mode)
                 :help "Run LatexMk continuously"))
   (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
@@ -1277,9 +1249,54 @@
   :config
   (add-hook 'LaTeX-mode-hook #'evil-tex-mode))
 
+(use-package! ellama
+  :init
+  ;; setup key bindings
+  (setopt ellama-keymap-prefix "C-c e")
+  ;; language you want ellama to translate to
+  (setopt ellama-language "English")
+  ;; could be llm-openai for example
+  (require 'llm-ollama)
+  ;; (setopt ellama-provider
+  ;;         (make-llm-ollama
+  ;;          ;; this model should be pulled to use it
+  ;;          ;; value should be the same as you print in terminal during pull
+  ;;          :chat-model "llama3:8b-instruct-q8_0"
+  ;;          :embedding-model "nomic-embed-text"
+  ;;          :default-chat-non-standard-params '(("num_ctx" . 8192))))
+  ;; ;; Predefined llm providers for interactive switching.
+  ;; ;; You shouldn't add ollama providers here - it can be selected interactively
+  ;; ;; without it. It is just example.
+  ;; (setopt ellama-providers
+  ;;       	    '(("zephyr" . (make-llm-ollama
+  ;;       			   :chat-model "zephyr:7b-beta-q6_K"
+  ;;       			   :embedding-model "zephyr:7b-beta-q6_K"))
+  ;;       	      ("mistral" . (make-llm-ollama
+  ;;       			    :chat-model "mistral:7b-instruct-v0.2-q6_K"
+  ;;       			    :embedding-model "mistral:7b-instruct-v0.2-q6_K"))
+  ;;       	      ("mixtral" . (make-llm-ollama
+  ;;       			    :chat-model "mixtral:8x7b-instruct-v0.1-q3_K_M-4k"
+  ;;       			    :embedding-model "mixtral:8x7b-instruct-v0.1-q3_K_M-4k"))))
+  ;; ;; Naming new sessions with llm
+  ;; (setopt ellama-naming-provider
+  ;;         (make-llm-ollama
+  ;;          :chat-model "llama3:8b-instruct-q8_0"
+  ;;          :embedding-model "nomic-embed-text"
+  ;;          :default-chat-non-standard-params '(("stop" . ("\n")))))
+  (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
+  ;; Translation llm provider
+  (setopt ellama-translation-provider (make-llm-ollama
+				       :chat-model "phi3:14b-medium-128k-instruct-q6_K"
+				       :embedding-model "nomic-embed-text")))
+
 ;; octave
 (setq! auto-mode-alist
-      (cons '("\\.m$" . octave-mode) auto-mode-alist))
+       (cons '("\\.m$" . octave-mode) auto-mode-alist))
+
+(add-hook 'octave-mode-hook
+    (lambda () (progn (setq octave-comment-char ?%)
+                      (setq comment-start "% ")
+                      (setq comment-add 0))))
 
 (map! :localleader
       :map octave-mode-map
@@ -1363,7 +1380,9 @@ _Q_: Disconnect     "
   (add-hook 'dap-stopped-hook
             (lambda (arg) (call-interactively #'dap-hydra)))
   (require 'dap-python)
-  (require 'dap-netcore)
+  (require 'dap-netcore))
+
+(after! dap-mode
   (setq dap-python-debugger 'debugpy))
 
 (after! lsp
@@ -1621,6 +1640,10 @@ limitations under the License.
 ;;         "er" #'maxima-send-region
 ;;         "eb" #'maxima-send-buffer))
 
+(add-hook! '(yaml-mode-hook)
+ :append
+ (visual-line-mode -1))
+
 ;; org-kanban
 (use-package! kanban
   :when (system-name= "klingenberg-tablet")
@@ -1771,6 +1794,7 @@ limitations under the License.
   (map!
    :map helm-find-files-map
    "M-l" #'helm-ff-RET
+   "M-k" #'helm-previous-line ; needed here again to override default function
    "C-l" nil
    "M-y" #'helm-ff-run-copy-file
    "M-r" #'helm-ff-run-rename-file

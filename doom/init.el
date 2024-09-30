@@ -69,7 +69,7 @@
        word-wrap                      ; soft wrapping with language-aware indent
 
        :emacs
-       (dired +icons +ranger)  ; making dired pretty [functional]
+       (dired +icons +dirvish)  ; making dired pretty [functional]
        electric                ; smarter, keyword-based electric-indent
        (ibuffer +icons)         ; interactive buffer management
        (undo +tree)              ; persistent, smarter undo for your inevitable mistakes
@@ -121,7 +121,7 @@
        common-lisp              ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
        ;;crystal           ; ruby at the speed of c
-       (csharp +lsp +dotnet +treesitter)            ; unity, .NET, and mono shenanigans
+       ;; (csharp +lsp +dotnet +treesitter)            ; unity, .NET, and mono shenanigans
        data              ; config/data formats
        ;;(dart +flutter)   ; paint ui and not much else
        ;;elixir            ; erlang done right
@@ -141,7 +141,7 @@
        ;;javascript        ; all(hope(abandon(ye(who(enter(here))))))
        (julia +lsp +tree-sitter)             ; a better, faster MATLAB
        ;;kotlin            ; a better, slicker Java(Script)
-       (latex +lsp +latexmk +fold) ; writing papers in Emacs has never been so fun
+       (latex +lsp +fold) ; writing papers in Emacs has never been so fun
        ;;lean
        ;;factor
        ;;ledger            ; an accounting system in Emacs
@@ -170,16 +170,16 @@
        ;;swift             ; who asked for emoji variables?
        ;;terra             ; Earth and Moon in alignment for performance.
        ;;web               ; the tubes
-       ;; yaml                             ; JSON, but readable
+       (yaml +lsp +tree-sitter)                             ; JSON, but readable
 
        :email
-       mu4e
+       (mu4e +gmail)
        ;; notmuch
        ;;(wanderlust +gmail)
 
        :app
        calendar
-       emms
+       ;; emms
        everywhere
        irc      ; how neckbeards socialize
        rss      ; emacs as an RSS reader

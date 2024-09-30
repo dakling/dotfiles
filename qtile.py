@@ -433,7 +433,7 @@ def autostart():
         ["nm-applet"],
         ["udiskie", "--tray"],
         ["pa-applet", "--disable-key-grabbing"],
-        ["/usr/bin/polkit-dumb-agent"],
+        ["/usr/bin/lxqt-policykit-agent"],
         ["setxkbmap", "de" "nodeadkeys"]
     ]
     # if lazy.core.name == "x11":

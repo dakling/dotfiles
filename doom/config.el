@@ -1141,9 +1141,10 @@
 (use-package! latex
   :config
   (add-to-list 'TeX-command-list '
-               ("latexmk (cont.)" "latexmk  %(latexmk-out) %(file-line-error) -pvc %(extraopts) %t" TeX-run-format nil
-                (plain-tex-mode latex-mode doctex-mode)
-                :help "Run LatexMk continuously"))
+
+               ("LaTeXMk (cont.)" "latexmk %(latexmk-out) %(file-line-error) %(output-dir) -pvc %`%(extraopts) %S%(mode)%' %t" TeX-run-format nil
+                (LaTeX-mode docTeX-mode)
+                :help "Run LaTeXMk continuously"))
   (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
   (setq! reftex-label-alist '(AMSTeX))
   (setq! reftex-ref-style-alist

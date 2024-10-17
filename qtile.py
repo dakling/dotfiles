@@ -334,6 +334,9 @@ screens = [
                 # widget.StatusNotifier(),
                 widget.Notify(),
                 widget.Systray(),
+                widget.Sep(padding=10),
+                widget.GenPollCommand(cmd="emacsclient -e '(my/org-pomodoro-text-time)' | sed 's/\"//g'", shell="True", update_interval=1),
+                widget.Sep(padding=10),
                 widget.Clock(format="%Y-%m-%d %a %I:%M %p"),
                 # widget.QuickExit(),
             ],
@@ -362,6 +365,8 @@ screens = [
                 # widget.TextBox("Press &lt;S-d&gt; to spawn", foreground="#d75f5f"),
                 # NB Systray is incompatible with Wayland, consider using StatusNotifier instead
                 # widget.StatusNotifier(),
+                widget.GenPollCommand(cmd="emacsclient -e '(my/org-pomodoro-text-time)' | sed 's/\"//g'", shell="True", update_interval=1),
+                widget.Sep(padding=10),
                 widget.Clock(format="%Y-%m-%d %a %I:%M %p"),
                 # widget.QuickExit(),
             ],

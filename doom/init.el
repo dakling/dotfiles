@@ -141,7 +141,7 @@
        ;;javascript        ; all(hope(abandon(ye(who(enter(here))))))
        (julia +lsp +tree-sitter)             ; a better, faster MATLAB
        ;;kotlin            ; a better, slicker Java(Script)
-       (latex +lsp +fold) ; writing papers in Emacs has never been so fun
+       (latex +lsp +fold +cdlatex) ; writing papers in Emacs has never been so fun
        ;;lean
        ;;factor
        ;;ledger            ; an accounting system in Emacs
@@ -150,7 +150,7 @@
        ;;nim               ; python + lisp at the speed of c
        ;; nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
-       (org +pretty +dragndrop +gnuplot +noter +pandoc +roam2 +present +capture +journal +jupyter) ; organize your plain life in plain text
+       (org +pretty +dragndrop +gnuplot +noter +pandoc +roam2 +present +capture +journal +jupyter +pomodoro) ; organize your plain life in plain text
        ;;perl              ; write code no one else can comprehend
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more

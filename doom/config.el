@@ -336,13 +336,30 @@
   :config
   (setq projectile-per-project-compilation-buffer t))
 
+(after! org-pomodoro
+  (defun my/disable-notifications ()
+    (shell-command "dunstctl set-paused true"))
+  (defun my/enable-notifications ()
+    (shell-command "dunstctl set-paused false"))
+  (defun my/org-pomodoro-text-time ()
+    "Display remaining pomodoro time in i3 status bar. Credit to dakra on reddit."
+    (if (org-pomodoro-active-p)
+        (format "  Pomodoro: %s  " (org-pomodoro-format-seconds))
+      "No active pomodoro"))
+  :config
+  (setq org-pomodoro-manual-break t)
+  (add-hook! 'org-pomodoro-started-hook #'my/disable-notifications)
+  (add-hook! 'org-pomodoro-overtime-hook #'my/enable-notifications))
+  (add-hook! 'org-pomodoro-finished-hook #'my/enable-notifications)
+
+
 (after! sly
   (setq! inferior-lisp-program (cond
-                               ((system-name= "klingenberg-tablet")  "~/.local/bin/.run-sbcl.sh")
-                               (t "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")
-                               ;; (t "/usr/bin/ccl --load /home/klingenberg/quicklisp.lisp")
-                               ;; (t "/usr/bin/ecl --load /home/klingenberg/quicklisp.lisp")
-                               ))
+                                ((system-name= "klingenberg-tablet")  "~/.local/bin/.run-sbcl.sh")
+                                (t "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")
+                                ;; (t "/usr/bin/ccl --load /home/klingenberg/quicklisp.lisp")
+                                ;; (t "/usr/bin/ecl --load /home/klingenberg/quicklisp.lisp")
+                                ))
   (defun my/connect-to-nyxt ()
     (when (equalp
            (buffer-file-name)
@@ -1140,9 +1157,7 @@
 
 (use-package! latex
   :config
-  (add-to-list 'TeX-command-list '
-
-               ("LaTeXMk (cont.)" "latexmk %(latexmk-out) %(file-line-error) %(output-dir) -pvc %`%(extraopts) %S%(mode)%' %t" TeX-run-format nil
+  (add-to-list 'TeX-command-list '("LaTeXMk (cont.)" "latexmk %(latexmk-out) %(file-line-error) %(output-dir) -halt-on-error -pvc %`%(extraopts) %S%(mode)%' %t" TeX-run-format nil
                 (LaTeX-mode docTeX-mode)
                 :help "Run LaTeXMk continuously"))
   (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
@@ -1177,6 +1192,14 @@
   (setq lsp-ltex-enabled t)
   ;; (setq lsp-ltex-language "en-US")
   (setq lsp-ltex-language "en-GB"))
+
+(use-package! cdlatex
+  :config
+  (setq cdlatex-math-symbol-prefix ?#)
+  (map! :map cdlatex-mode-map
+        "#" #'cdlatex-math-symbol)
+  (map! :map org-cdlatex-mode-map
+        "#" #'cdlatex-math-symbol))
 
 (use-package! font-latex)
 

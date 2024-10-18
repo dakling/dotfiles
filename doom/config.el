@@ -338,17 +338,24 @@
 
 (after! org-pomodoro
   (defun my/disable-notifications ()
+    (mu4e-alert-disable-mode-line-display)
+    (mu4e-alert-disable-notifications)
     (shell-command "dunstctl set-paused true"))
   (defun my/enable-notifications ()
+    (mu4e-alert-enable-mode-line-display)
+    (mu4e-alert-enable-notifications)
     (shell-command "dunstctl set-paused false"))
   (defun my/org-pomodoro-text-time ()
     "Display remaining pomodoro time in i3 status bar. Credit to dakra on reddit."
     (if (org-pomodoro-active-p)
-        (format "  Pomodoro: %s  " (org-pomodoro-format-seconds))
-      "No active pomodoro"))
+        (cond ((eq org-pomodoro-state :pomodoro) (format "pomodoro: %s" (org-pomodoro-format-seconds)))
+              ((eq org-pomodoro-state :short-break) (format "break: %s" (org-pomodoro-format-seconds)))
+              ((eq org-pomodoro-state :long-break) (format "break: %s" (org-pomodoro-format-seconds))))
+      ""))
   :config
   (setq org-pomodoro-manual-break t)
   (add-hook! 'org-pomodoro-started-hook #'my/disable-notifications)
+  (add-hook! 'org-pomodoro-started-hook #'org-todo)
   (add-hook! 'org-pomodoro-overtime-hook #'my/enable-notifications))
   (add-hook! 'org-pomodoro-finished-hook #'my/enable-notifications)
 
@@ -403,10 +410,9 @@
   (setq! org-file-apps
         (remove (assoc "\\.pdf\\'" org-file-apps)
                 org-file-apps))
-  (setq! org-todo-keywords (list "TODO" "SCOP" "PROG" "|" "DONE" "BLOC" "KILL"))
+  (setq! org-todo-keywords (list "TODO" "PROG" "|" "DONE" "BLOC" "KILL"))
   (setq! org-todo-keyword-faces
-        '(("DONE" . font-lock-comment-face)
-          ("SCOP" . +org-todo-onhold)))
+        '(("DONE" . font-lock-comment-face)))
   (setq! org-capture-templates
         `(("t" "Personal todo" entry (file+headline +org-capture-todo-file "Inbox") "* TODO %?
 %i
@@ -1670,7 +1676,6 @@ limitations under the License.
 
 ;; org-kanban
 (use-package! kanban
-  :when (system-name= "klingenberg-tablet")
   :load-path  "~/Documents/programming/elisp/kanban.el/")
 
 (map! :map (company-mode-map company-active-map)

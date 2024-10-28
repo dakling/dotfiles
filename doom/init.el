@@ -60,7 +60,7 @@
        fold                             ; (nigh) universal code folding
        format                           ; automated prettiness
        ;;god               ; run Emacs commands without modifier keys
-       lispy ; vim for lisp, for people who don't like vim
+       ;; lispy ; vim for lisp, for people who don't like vim
        multiple-cursors  ; editing in many places at once
        ;;objed             ; text object editing for the innocent
        ;;parinfer          ; turn lisp into python, sort of
@@ -79,7 +79,7 @@
        eshell            ; the elisp shell that works everywhere
        ;; shell             ; simple shell REPL for Emacs
        ;;term              ; basic terminal emulator for Emacs
-       vterm                            ; the best terminal emulation in Emacs
+       ;; vterm                            ; the best terminal emulation in Emacs
 
        :checkers
        syntax                        ; tasing you for every semicolon you forget
@@ -104,7 +104,7 @@
        ;;macos             ; MacOS-specific commands
        (magit -forge)           ; a git porcelain for Emacs
        ;; make              ; run make tasks from Emacs
-       pass                             ; password manager for nerds
+       ;; pass                             ; password manager for nerds
        pdf                              ; pdf enhancements
        ;;prodigy           ; FIXME managing external services & code builders
        ;;rgb               ; creating color strings
@@ -116,9 +116,9 @@
 
        :lang
        ;;agda              ; types of types of types of types...
-       (cc +lsp)                ; C/C++/Obj-C madness
+       ;; (cc +lsp)                ; C/C++/Obj-C madness
        ;; clojure                  ; java with a lisp
-       common-lisp              ; if you've seen one lisp, you've seen them all
+       ;; common-lisp              ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
        ;;crystal           ; ruby at the speed of c
        ;; (csharp +lsp +dotnet +treesitter)            ; unity, .NET, and mono shenanigans
@@ -133,13 +133,13 @@
        ;; (fsharp +lsp)                    ; ML stands for Microsoft's Language
        ;;fstar             ; (dependent) types and (monadic) effects and Z3
        ;;(go +lsp)         ; the hipster dialect
-       (haskell +lsp + tree-sitter)  ; a language that's lazier than I am
+       ;; (haskell +lsp + tree-sitter)  ; a language that's lazier than I am
        ;;hy                ; readability of scheme w/ speed of python
        ;;idris             ;
        ;;json              ; At least it ain't XML
        ;;(java +meghanada) ; the poster child for carpal tunnel syndrome
        ;;javascript        ; all(hope(abandon(ye(who(enter(here))))))
-       (julia +lsp +tree-sitter)             ; a better, faster MATLAB
+       ;; (julia +lsp +tree-sitter)             ; a better, faster MATLAB
        ;;kotlin            ; a better, slicker Java(Script)
        (latex +lsp +fold +cdlatex) ; writing papers in Emacs has never been so fun
        ;;lean
@@ -173,16 +173,16 @@
        (yaml +lsp +tree-sitter)                             ; JSON, but readable
 
        :email
-       (mu4e +gmail)
+       ;; (mu4e +gmail)
        ;; notmuch
        ;;(wanderlust +gmail)
 
        :app
        calendar
        ;; emms
-       everywhere
-       irc      ; how neckbeards socialize
-       rss      ; emacs as an RSS reader
+       ;; everywhere
+       ;; irc      ; how neckbeards socialize
+       ;; rss      ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought
 
        :config

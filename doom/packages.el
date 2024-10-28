@@ -57,40 +57,7 @@
 ;; (package! dmenu)
 ;; (package! pulseaudio-control)
 
-(unpin! evil-collection)
-;; (package! evil-collection
-;;   :recipe (:repo "meliache/evil-collection" :branch "mu4e-development"))
-
-(package! mu4e-alert)
-
-(package! smooth-scrolling)
-
-(package! telega
-  :pin "b981a3a0d00c41768e054a294095b732a16fde84")
-
-;; (package! slack)
-
-(package! alert)
-
-(package! pinentry)
-
-(package! elfeed)
-(disable-packages! elfeed-goodies)
-(disable-packages! ts-fold)
-
-(package! diminish)
-
-(package! ellama)
-
-(package! async-await)
-
 (package! evil-tex :recipe (:host github :repo "itai33/evil-tex"))
-
-(package! wgrep)
-
-(package! ytdious)
-
-;; (package! emms)
 
 (package! ace-link)
 
@@ -99,52 +66,3 @@
 (package! org-ref)
 
 (package! lsp-ltex)
-
-(unpin! sly)
-
-;; (unpin! org-mode)
-
-(package! gnu-apl-mode :recipe (:host github :repo "lokedhs/gnu-apl-mode"))
-
-(package! el-igo :recipe (:host github :repo "misohena/el-igo"))
-
-(package! csharp-repl :recipe (:host github :repo "dakling/emacs-csharp-repl"))
-
-(package! bosss :recipe (:host github :repo "dakling/emacs-bosss"))
-
-(disable-packages! org-msg)
-
-(disable-packages! writegood-mode)
-
-;; (package! solaire-mode :disable t)
-
-(package! nov)
-
-(package! system-packages)
-(package! helm-system-packages)
-
-(package! shelldon
-  :recipe (:host github
-           :repo "Overdr0ne/shelldon"
-           :branch "master"))
-
-(package! disable-mouse)
-
-(package! beacon)
-
-(package! rotate)
-
-(package! string-inflection)
-
-(package! systemd)
-
-;; (package! gptel :recipe (:host github :repo "karthink/gptel"))
-
-;; (package! eaf :recipe
-;;   (:host github
-;;    :repo "emacs-eaf/emacs-application-framework"
-;;    :files ("*.el" "*.py" "core" "app")
-;;    ;; :no-byte-compile t
-;;    ))
-
-(unpin! haskell-mode)

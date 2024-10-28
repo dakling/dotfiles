@@ -33,8 +33,8 @@
 ;; (clipboard-history:start-clipboard-manager)
 
 ;; change the prefix key to something else
-;; (set-prefix-key (kbd "s-SPC"))
-(set-prefix-key (kbd "s--"))
+(set-prefix-key (kbd "s-SPC"))
+;; (set-prefix-key (kbd "s--"))
 
 ;; prompt the user for an interactive command. The first arg is an
 ;; optional initial contents.
@@ -199,7 +199,8 @@
 (define-key *top-map* (kbd "s-S") "vsplit")
 (define-key *top-map* (kbd "s-f") "emacs-find-file")
 (define-key *top-map* (kbd "s-b") "emacs-find-buffer")
-(define-key *top-map* (kbd "s-a") "emacs-everywhere")
+;; (define-key *top-map* (kbd "s-a") "emacs-everywhere")
+(define-key *top-map* (kbd "s-r") "iresize")
 (define-key *top-map* (kbd "s-Right") "move-focus right")
 (define-key *top-map* (kbd "s-Left") "move-focus left")
 (define-key *top-map* (kbd "s-Up") "move-focus up")
@@ -257,64 +258,42 @@
 (define-key *top-map* (kbd "s-H") "move-window left")
 (define-key *top-map* (kbd "s-K") "move-window up")
 (define-key *top-map* (kbd "s-J") "move-window down")
-(define-key *top-map* (kbd "s-M-l") "move-window right")
-(define-key *top-map* (kbd "s-M-h") "move-window left")
-(define-key *top-map* (kbd "s-M-k") "move-window up")
-(define-key *top-map* (kbd "s-M-j") "move-window down")
-(define-key *top-map* (kbd "H-l") "move-window right")
-(define-key *top-map* (kbd "H-h") "move-window left")
-(define-key *top-map* (kbd "H-k") "move-window up")
-(define-key *top-map* (kbd "H-j") "move-window down")
 (define-key *top-map* (kbd "s-c") "close-window-or-emacs-buffer")
 (define-key *top-map* (kbd "s-C") "delete")
-(define-key *top-map* (kbd "s-M-c") "remove-split")
-(define-key *top-map* (kbd "H-c") "remove-split")
+(define-key *top-map* (kbd "s-C-c") "remove-split")
 (define-key *top-map* (kbd "s-m") "maximize-window-and-emacs-window")
 ;; (define-key *top-map* (kbd "s-d") "colon1 exec ")
 ;; (define-key *top-map* (kbd "s-d") "exec albert show")
 (define-key *top-map* (kbd "s-d") "exec rofi -show combi")
 (define-key *top-map* (kbd "s-x") "emacs-M-x")
 (define-key *top-map* (kbd "s-P") "emacs-pass")
-(define-key *top-map* (kbd "H-p") "emacs-pass")
 (define-key *top-map* (kbd "s-e") "run-emacs-client %s")
 (define-key *top-map* (kbd "s-E") "exec emacs")
-(define-key *top-map* (kbd "s-M-e") "exec emacs")
-(define-key *top-map* (kbd "H-e") "exec emacs")
 ;;; reduce dependency on function row keys
-(define-key *top-map* (kbd "s-F1") "emacs-terminal")
-(define-key *top-map* (kbd "s-S-F1") "run-terminal")
+;; (define-key *top-map* (kbd "s-F1") "emacs-terminal")
+(define-key *top-map* (kbd "s-F1") "run-terminal")
 (define-key *top-map* (kbd "s-M-F1") "run-terminal")
 (define-key *top-map* (kbd "H-F1") "run-terminal")
 (define-key *top-map* (kbd "s-RET") "run-terminal")
 (define-key *top-map* (kbd "s-F2") "exec firefox")
-(define-key *top-map* (kbd "s-S-F2") "exec firefox")
-(define-key *top-map* (kbd "s-M-F2") "exec firefox")
-(define-key *top-map* (kbd "H-F2") "exec firefox")
+(define-key *top-map* (kbd "s-S-F2") "exec mullvad-browser")
 ;; (define-key *top-map* (kbd "s-F2") "exec nyxt")
 (define-key *top-map* (kbd "s-F3") "run-emacs-client deer")
 (define-key *top-map* (kbd "s-S-F3") "exec spacefm")
-(define-key *top-map* (kbd "s-M-F3") "exec spacefm")
-(define-key *top-map* (kbd "H-F3") "exec spacefm")
 (define-key *top-map* (kbd "s-F4") "run-emacs-client mu4e")
-
-(defvar *program-map*
-  (let ((m (stumpwm:make-sparse-keymap)))
-    (stumpwm:define-key m (stumpwm:kbd "i") "exec firefox")
-    (stumpwm:define-key m (stumpwm:kbd "d") "exec spacefm")
-    (stumpwm:define-key m (stumpwm:kbd "t") "run-terminal")
-    (stumpwm:define-key m (stumpwm:kbd "m") "run-emacs-client mu4e")
-    m))
-(stumpwm:define-key stumpwm:*top-map* (stumpwm:kbd "s-C-SPC") '*program-map*)
 
 
 (define-key *top-map* (kbd "s-n") "gnew")
 (define-key *top-map* (kbd "s-w") "grouplist")
 
+(loop for i from 0 upto 9
+      do (progn
+           (define-key *top-map* (kbd (format nil "s-C-~a" i)) (format nil "select-window-by-number ~a" i))))
+
 (loop for i from 1 upto 9
       do (progn
-           (define-key *top-map* (kbd (format nil "s-~a" i)) (format nil "gselect ~a" i))
-           (define-key *top-map* (kbd (format nil "H-~a" i)) (format nil "gmove ~a" i))
-           (define-key *top-map* (kbd (format nil "s-M-~a" i)) (format nil "gmove ~a" i))))
+           (define-key *top-map* (kbd (format nil "s-~a" i)) (format nil "gselect ~a" i))))
+
 (define-key *top-map* (kbd "s-!") "gmove 1")
 (define-key *top-map* (kbd "s-\"") "gmove 2")
 (define-key *top-map* (kbd "s-section") "gmove 3")
@@ -374,90 +353,77 @@
 (setf *message-window-gravity* :center)
 (setf *input-window-gravity* :center)
 
-;; I thought that this mode-line was fabulous!
+(defun my/format-mode-line-command (command)
+    (remove #\space
+            (remove #\newline
+                    (run-shell-command command t))))
+
 (defvar *battery-status-command*
-  "acpi -b | grep \"Battery 1:\" | cut -b 18-")
+  "acpi -b | grep \"Battery 0:\" | cut -b 18-")
 
 (defvar *vol-status-command*
-  "pactl list sinks | grep Volume | head -n 1 | cut -b 30-34")
+  "pactl list sinks | grep Volume | head -n 3 | tail -n 1 | cut -b 30-34")
+
+(defvar *cpu-temp-status-command*
+  "get_mean_cpu_temp.py | cut -b -2")
 
 (setf *time-modeline-string* "%a %b %e %k:%M")
 
 (setf *screen-mode-line-format*
       (list "[^B%n^b] %w^>"
-            ;; "| Bat: "
-            ;; '(:eval (run-shell-command *battery-status-command* t))
-            ;; " | Vol. "
-            ;; '(:eval (run-shell-command *vol-status-command* t))
+            " | CPU "
+            '(:eval (my/format-mode-line-command *cpu-temp-status-command*))
+            " °C "
+            ;; "| Bat "
+            ;; '(:eval (my/format-mode-line-command *battery-status-command*))
+            ;; " | Vol "
+            ;; '(:eval (my/format-mode-line-command *vol-status-command*))
             " | %d |"
-            "             "))
+            "                      "))
 
 (setf *window-format* "%m%n%s%c")
 
 (setf *mode-line-timeout* 1)
 
-(set-bg-color "#1C1E24")
-(set-fg-color "#468DBF")
-(set-border-color "#468DBF")
-(set-focus-color "#468DBF")
-(setf *mode-line-background-color* "#1C1E24")
-(setf *mode-line-foreground-color* "#468DBF")
+(let ((bg-color "#222222")
+      ;; (bg-color "#120A06")
+      ;; (fg-color "#FCE566")
+      ;; (fg-color "#727159")
+      (fg-color "#FFFFFF")
+      ;; (fg-color "#5AD4E6")
+      )
+ (set-bg-color bg-color)
+ (set-fg-color fg-color)
+ (set-border-color fg-color)
+ (set-focus-color fg-color)
+ (setf *mode-line-background-color* bg-color)
+ (setf *mode-line-foreground-color* fg-color))
 
 (setf *mouse-focus-policy* :click)
-
-;; ;; custom functions
-;; (defun start-tagesschau ()
-;;   ;; TODO
-;;   (move-focus :up)
-;;   (move-focus :up)
-;;   (move-focus :up)
-;;   (move-focus :up)
-;;   (move-focus :up)
-;;   (move-focus :up)
-;;   (move-focus :up)
-;;   (run-shell-command "firefox https://live.daserste.de/")
-;;   (run-shell-command "sleep 10")
-;;   (run-shell-command "xdotool mousemove 956 611")
-;;   (run-shell-command "sleep 0.5")
-;;   (run-shell-command "xdotool click 1")
-;;   (run-shell-command "sleep 0.5")
-;;   (run-shell-command "xdotool mousemove 1633 936")
-;;   (run-shell-command "sleep 0.5")
-;;   (run-shell-command "xdotool click 1")
-;;   (run-shell-command "sleep 0.5")
-;;   (run-shell-command "xdotool mousemove 1919 977")
-;;   (loop while t do
-;;          (multiple-value-bind (second minute hour date month year day-of-week dst-p tz)
-;;              (get-decoded-time)
-;;              (if (and (= 20 hour) (< 15 minute 16))
-;;               (stop-tagesschau)
-;;               (run-shell-command "sleep 5")))))
-
-;; (start-tagesschau)
-
-;; (defun stop-tagesschau ()
-;;   (delete))
-
 
 ;; autostart
 
 (let ((autostart-command-list
         (list
-         "xmodmap -e 'clear mod4'"
-         "xmodmap -e 'add mod4 = Super_L'"
+         ;; "bash ~/.screenlayout/default.sh"
+         ;; "xmodmap -e 'clear mod4'"
+         ;; "xmodmap -e 'add mod4 = Super_L'"
          ;; "emacs --daemon=instance1"
-         "pkill dropbox"
-         "dropbox"
+         ;; "pkill dropbox"
+         ;; "dropbox"
+         "dunst"
+         "kdeconnect-indicator"
          "nm-applet"
          "udiskie --tray"
          "blueman-applet"
          "pa-applet"
          "/usr/bin/polkit-dumb-agent"
-         "setxkbmap de -option ctrl:nocaps nodeadkeys"
-         "xcape -e 'Control_L=Escape'"
+         ;; "setxkbmap de -option ctrl:nocaps nodeadkeys"
+         "setxkbmap de nodeadkeys"
+         ;; "xcape -e 'Control_L=Escape'"
          ;; "xcape -e 'Shift_L=Escape'"
-         "bash ~/.screenlayout/default.sh"
-         "feh --bg-scale ~/Pictures/arch-bg.jpg")))
+         ;; "feh --bg-scale ~/Pictures/arch-bg.jpg"
+         "feh --bg-scale ~/Pictures/go-bg.jpg")))
   (dolist (cmd autostart-command-list)
     (run-shell-command cmd)))
 

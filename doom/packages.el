@@ -57,22 +57,30 @@
 ;; (package! dmenu)
 ;; (package! pulseaudio-control)
 
+(unpin! evil-collection)
+;; (package! evil-collection
+;;   :recipe (:repo "meliache/evil-collection" :branch "mu4e-development"))
+
 (package! mu4e-alert)
 
 (package! smooth-scrolling)
 
 (package! telega
-  :pin "9187e6e3d903474645f3e64806bc62ef687ec205")
+  :pin "b981a3a0d00c41768e054a294095b732a16fde84")
 
-(package! slack)
+;; (package! slack)
 
 (package! alert)
 
 (package! pinentry)
 
 (package! elfeed)
+(disable-packages! elfeed-goodies)
+(disable-packages! ts-fold)
 
 (package! diminish)
+
+(package! ellama)
 
 (package! async-await)
 
@@ -82,13 +90,7 @@
 
 (package! ytdious)
 
-;; (package! ytel)
-
-;; (package! ytel-show)
-
-(package! md4rd)
-
-(package! emms)
+;; (package! emms)
 
 (package! ace-link)
 
@@ -96,11 +98,7 @@
 
 (package! org-ref)
 
-;; (package! omnisharp :recipe (:no-native-compile t))
-
-;; (package! rigpa
-;;   :recipe (:host github
-;;            :repo "countvajhula/rigpa"))
+(package! lsp-ltex)
 
 (unpin! sly)
 
@@ -116,6 +114,8 @@
 
 (disable-packages! org-msg)
 
+(disable-packages! writegood-mode)
+
 ;; (package! solaire-mode :disable t)
 
 (package! nov)
@@ -129,11 +129,22 @@
            :branch "master"))
 
 (package! disable-mouse)
-                                        ; ;; installed by guix
-                                        ; (package! guix)
+
+(package! beacon)
+
+(package! rotate)
+
+(package! string-inflection)
+
+(package! systemd)
+
+;; (package! gptel :recipe (:host github :repo "karthink/gptel"))
 
 ;; (package! eaf :recipe
 ;;   (:host github
-;;    :repo "manateelazycat/emacs-application-framework"
+;;    :repo "emacs-eaf/emacs-application-framework"
 ;;    :files ("*.el" "*.py" "core" "app")
-;;    :no-byte-compile t))
+;;    ;; :no-byte-compile t
+;;    ))
+
+(unpin! haskell-mode)

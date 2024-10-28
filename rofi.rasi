@@ -1,6 +1,6 @@
 configuration {
     modi: "combi,ssh,run,drun,window";
-    combi-modi: "window,run,drun";
+    combi-modi: "run,drun,window";
     fake-transparency: true;
     font: "Fira Mono 12";
     monitor: "-4"; // the monitor with the focused window
@@ -11,7 +11,6 @@ configuration {
     show-icons: true;
     /* theme: "glue_pro_blue"; */
     /* theme: "Monokai"; */
-    theme: "sidebar";
     /* theme: "slate"; */
     matching: "fuzzy";
     kb-row-down: "Alt+j,Down";
@@ -22,7 +21,7 @@ configuration {
 	kb-accept-alt: "Shift+Return,Alt+Return";
 	kb-clear-line: "Alt+h";
     kb-delete-entry: "Alt+d";
-    kb-row-tab: "Tab";
+    // kb-row-tab: "Tab";
     kb-select-1: "Alt+1";
     kb-select-2: "Alt+2";
     kb-select-3: "Alt+3";
@@ -45,3 +44,5 @@ configuration {
     kb-custom-10: "Control+0";
     case-sensitive: false;
 }
+
+@theme "sidebar"

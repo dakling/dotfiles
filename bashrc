@@ -6,18 +6,47 @@
 [[ $- != *i* ]] && return
 
 alias ls='ls --color=auto'
+alias ll='ls -lrth --color=auto'
 
 alias ee='emacsclient -t -a nvim'
-alias vim='emacsclient -t -a nvim'
-alias nvim='emacsclient -t -a nvim'
+
+alias top='btm'
+alias htop='btm'
+
+alias xx='Xephyr -br -ac -noreset -screen 1920x1080 :1 & DISPLAY=:1'
+alias fix_screen='~/.screenlayout/single.sh; ~/.screenlayout/double.sh ; ~/.screenlayout/double.sh'
+
+alias mount_fairphone='sshfs fairphone:/home/phablet ~/mnt/fairphone/'
+alias mount_nexus='sshfs nexus:/home/phablet ~/mnt/nexus/'
+alias mount_purism='sshfs purism:/home/purism ~/mnt/purism/'
+alias mount_pi='sshfs pi:/home/klingenberg ~/mnt/pi/'
+alias liwi_ssh_tunnel='ssh -f -N lichtwiese-tunnel'
+alias mount_liwi='sshfs lichtwiese:/home/klingenberg ~/mnt/lichtwiese/'
+alias mount_liwivpn='sshfs lichtwiesevpn:/home/klingenberg ~/mnt/lichtwiese/'
+alias mount_lcluster='sshfs lcluster:/home/km88econ ~/mnt/lichtenberg/'
+alias mount_jenkins_old='sshfs jenkins-old:/ ~/mnt/jenkins/'
+alias mount_cadmium='sshfs cadmium:/home/dsk34/ ~/mnt/cadmium/'
+alias mount_fawcett='sshfs fawcett:/home/dsk34/ ~/mnt/fawcett/'
+alias mount_maths='sshfs maths:/home/dsk34/ ~/mnt/maths/'
+alias mount_store_maths='sshfs maths:/store/DAMTP/dsk34 ~/mnt/maths_store/'
+alias mount_data_maths='sshfs maths:/data/septal/dsk34 ~/mnt/maths_data/'
+alias mount_wilkes='sshfs wilkes:/home/dsk34/ ~/mnt/wilkes/'
+alias fe41='source /home/klingenberg/foam/foam-extend-4.1/etc/bashrc'
+
+source ~/.bash_aliases.sh
 
 function latexdiff-vc-most-recent(){
     latexdiff-vc -r HEAD^ -r HEAD "$1" --pdf
 }
 
+function scrcb() {
+    scrot $1 -e 'xclip -selection clipboard -t image/png -i $f'
+}
+
 PS1='[\u@\h \W]\$ '
 
 export PATH=~/.config/emacs/bin/:$PATH
+export FOAM_DG_ROOT=~/Documents-work/programming/foam-dg/foam-dg/
 
 # up-down arrow to search in history
 bind '"\e[A": history-substring-search-backward'
@@ -67,3 +96,20 @@ fi
 #     vterm_printf "51;A$(whoami)@$(hostname):$(pwd)"
 # }
 # PS1=$PS1'\[$(vterm_prompt_end)\]'
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/usr/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/usr/etc/profile.d/conda.sh" ]; then
+        . "/usr/etc/profile.d/conda.sh"
+    else
+        export PATH="/usr/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+[ -f /opt/miniconda3/etc/profile.d/conda.sh ] && source /opt/miniconda3/etc/profile.d/conda.sh

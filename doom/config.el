@@ -350,12 +350,14 @@
     (if (org-pomodoro-active-p)
         (cond ((eq org-pomodoro-state :pomodoro) (format "pomodoro: %s" (org-pomodoro-format-seconds)))
               ((eq org-pomodoro-state :short-break) (format "break: %s" (org-pomodoro-format-seconds)))
-              ((eq org-pomodoro-state :long-break) (format "break: %s" (org-pomodoro-format-seconds))))
+              ((eq org-pomodoro-state :long-break) (format "break: %s" (org-pomodoro-format-seconds)))
+              (t (format "overtime: %s" (org-pomodoro-format-seconds))))
       ""))
   :config
   (setq org-pomodoro-manual-break t)
   (add-hook! 'org-pomodoro-started-hook #'my/disable-notifications)
   (add-hook! 'org-pomodoro-started-hook #'org-todo)
+  (add-hook! 'org-pomodoro-finished-hook #'org-todo)
   (add-hook! 'org-pomodoro-overtime-hook #'my/enable-notifications))
   (add-hook! 'org-pomodoro-finished-hook #'my/enable-notifications)
 

@@ -9,6 +9,7 @@ alias ls='ls --color=auto'
 alias ll='ls -lrth --color=auto'
 
 alias ee='emacsclient -t -a nvim'
+alias vim='nvim'
 
 alias top='btm'
 alias htop='btm'

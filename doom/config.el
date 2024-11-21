@@ -70,6 +70,11 @@
 (set-language-environment "UTF-8")
 (set-default-coding-systems 'utf-8)
 (setq! evil-respect-visual-line-mode t)
+(setq! evil-search-module 'evil-search)
+(setq!
+ isearch-lax-whitespace t
+ isearch-regexp-lax-whitespace t
+ search-whitespace-regexp (purecopy "[ \t\r\n]+")) ; TODO: only do this is some modes?
 
 (setq! evil-collection-setup-minibuffer t)
 (setq! evil-ex-substitute-global t)
@@ -1034,6 +1039,9 @@
  "ee" #'julia-repl-send-region-or-line
  "eb" #'julia-repl-send-buffer)
 
+(after! lsp-julia
+  (setq lsp-julia-default-environment "~/.julia/environments/v1.11/"))
+
 (defun my/python-shell-send-main ()
   (interactive)
   (with-temp-buffer
@@ -1929,52 +1937,47 @@ limitations under the License.
 
 (use-package! elfeed
   :commands (eww elfeed elfeed-update)
-  :custom (elfeed-search-title-max-width 100)
+  :custom (elfeed-search-title-max-width 150)
   :config
   ;; (add-hook! 'elfeed-search-mode-hook 'elfeed-update)
   (setq!
-   elfeed-search-filter "@2-months-ago +youtube"
+   elfeed-search-filter "@12-months-ago"
    elfeed-feeds
-   '(("https://www.zeitsprung.fm/feed/ogg/" podcast zeitsprung)
-     ("https://kickermeetsdazn.podigee.io/feed/mp3/" podcast kmd fussball)
-     ("https://audioboom.com/channels/2399216.rss" podcast nstaaf)
-     ("http://fokus-fussball.de/feed/mp3/" podcast collina erben fussball)
-     ("https://liebling-bosman.podigee.io/feed/mp3" podcast liebling bosman fussball)
-     ("https://tribuenengespraech.podigee.io/feed/vorbis" podcast rasenfunk tribünengespräch fussball)
-     ;; ("https://feeds.feedburner.com/hacks-on-tap" podcast hacks on tap politics)
-     ;; ("https://lexfridman.com/feed/podcast" podcast lex friedman)
-     ("https://ambrevar.xyz/atom.xml" blog emacs programming)
-     ("https://nyxt.atlas.engineer/feed" lisp programming nyxt next)
-     ("https://guix.gnu.org/feeds/blog/arm.atom" lisp programming guix blog)
-     ("https://www.kernel.org/feeds/kdist.xml" linux kernel updates)
-     ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
-     ("http://www.reddit.com/r/DoomEmacs/.rss" emacs reddit)
-     ("http://www.reddit.com/r/lisp/.rss" programming reddit)
-     ("http://www.reddit.com/r/common_lisp/.rss" programming reddit)
-     ("http://www.reddit.com/r/scheme/.rss" programming reddit)
-     ("http://www.reddit.com/r/linux/.rss" programming reddit)
-     ("http://www.reddit.com/r/archlinux/.rss" programming reddit)
-     ("http://www.reddit.com/r/nixos/.rss" programming reddit)
-     ("http://www.reddit.com/r/Plover/.rss" programming reddit)
-     ("http://www.reddit.com/r/baduk/.rss" go baduk reddit)
-     ("http://www.go4go.net/go/games/rss" go baduk go4go)
+   '(("https://www.cambridge.org/core/rss/product/id/1F51BCFAA50101CAF5CB9A20F8DEA3E4" work fluid mechanics jfm)
+     ("http://feeds.aps.org/rss/recent/prfluids.xml" work fluid mechanics prf)
+     ("https://rss.arxiv.org/rss/physics.flu-dyn" work fluid mechanics archivx)
+     ;; ("https://www.zeitsprung.fm/feed/ogg/" podcast zeitsprung)
+     ;; ("https://tribuenengespraech.podigee.io/feed/vorbis" podcast rasenfunk tribünengespräch fussball)
+     ;; ("https://guix.gnu.org/feeds/blog/arm.atom" lisp programming guix blog)
+     ;; ("https://www.kernel.org/feeds/kdist.xml" linux kernel updates)
+     ;; ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
+     ;; ("http://www.reddit.com/r/DoomEmacs/.rss" emacs reddit)
+     ;; ("http://www.reddit.com/r/lisp/.rss" programming reddit)
+     ;; ("http://www.reddit.com/r/common_lisp/.rss" programming reddit)
+     ;; ("http://www.reddit.com/r/scheme/.rss" programming reddit)
+     ;; ("http://www.reddit.com/r/linux/.rss" programming reddit)
+     ;; ("http://www.reddit.com/r/archlinux/.rss" programming reddit)
+     ;; ("http://www.reddit.com/r/nixos/.rss" programming reddit)
+     ;; ("http://www.reddit.com/r/Plover/.rss" programming reddit)
+     ;; ("http://www.reddit.com/r/baduk/.rss" go baduk reddit)
+     ;; ("http://www.go4go.net/go/games/rss" go baduk go4go)
      ;; ("http://tv.dfb.de/rss.php" dfb futsal fussball)
-     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCyHDQ5C6z1NDmJ4g6SerW8g" youtube mailab)
-     ("https://www.youtube.com/feeds/videos.xml?channel_id=UChkVOG0PqkXIHHmkBGG15Ig" youtube walulis)
-     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCo4693Ony4slDY5hR0ny-bw" youtube walulis)
-     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVTyTA7-g9nopHeHbeuvpRA" youtube meyers)
-     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3XTzVzaHQEd30rQbuvCtTQ" youtube lastweektonight)
-     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCYO_jab_esuFRV4b17AJtAw" youtube math 3blue1brown 3b1b)
-     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCoxcjq-8xIDTYp3uz647V5A" youtube math numberphile)
-     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCHnyfMqiRRG1u-2MsSQLbXA" youtube math veritasium)
-     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCSju5G2aFaWMqn-_0YBtq5A" youtube math stand up matt parker)
-     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCzV9N7eGedBchEQjQhPapyQ" youtube math stand up matt parker)
-     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCfb7LAYCeJJiT3gyquv7V5Q" youtube politics die da oben)
-     ("https://www.youtube.com/feeds/videos.xml?channel_id=UC78Ib99EBhMN3NemVjYm3Ig" youtube maths 3b1b)
-     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCNIuvl7V8zACPpTmmNIqP2A" youtube history oversimplified)
-     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCsXVk37bltHxD1rDPwtNM8Q" youtube science kurzgsagt)
-     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCMb0O2CdPBNi-QqPk5T3gsQ" youtube james hoffmann coffee)
-     ("https://www.youtube.com/feeds/videos.xml?channel_id=UCpa-Zb0ZcQjTCPP1Dx_1M8Q" youtube legal eagle)
+     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCyHDQ5C6z1NDmJ4g6SerW8g" youtube mailab)
+     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UChkVOG0PqkXIHHmkBGG15Ig" youtube walulis)
+     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCo4693Ony4slDY5hR0ny-bw" youtube walulis)
+     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVTyTA7-g9nopHeHbeuvpRA" youtube meyers)
+     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3XTzVzaHQEd30rQbuvCtTQ" youtube lastweektonight)
+     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCYO_jab_esuFRV4b17AJtAw" youtube math 3blue1brown 3b1b)
+     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCoxcjq-8xIDTYp3uz647V5A" youtube math numberphile)
+     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCHnyfMqiRRG1u-2MsSQLbXA" youtube math veritasium)
+     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCSju5G2aFaWMqn-_0YBtq5A" youtube math stand up matt parker)
+     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCzV9N7eGedBchEQjQhPapyQ" youtube math stand up matt parker)
+     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCfb7LAYCeJJiT3gyquv7V5Q" youtube politics die da oben)
+     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UC78Ib99EBhMN3NemVjYm3Ig" youtube maths 3b1b)
+     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCNIuvl7V8zACPpTmmNIqP2A" youtube history oversimplified)
+     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCsXVk37bltHxD1rDPwtNM8Q" youtube science kurzgsagt)
+     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCMb0O2CdPBNi-QqPk5T3gsQ" youtube james hoffmann coffee)
+     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCpa-Zb0ZcQjTCPP1Dx_1M8Q" youtube legal eagle)
      ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=" youtube )
      ))
 
@@ -2297,7 +2300,32 @@ limitations under the License.
    "M-G" #'helm-system-packages-toggle-groups
    "C-]" #'helm-system-packages-toggle-descriptions))
 
-(use-package! shelldon)
+(after! shelldon
+; below is the configuration I use, take what you want...
+      ; tell bash this shell is interactive
+      (setq shell-command-switch "-ic")
+      ; recursive minibuffers for nested autocompletion from minibuffer commands,
+      ; to e.g. interactively select from the kill-ring
+      (setq enable-recursive-minibuffers t)
+      ; comint output may contain SGR control sequences that may be translated into
+      ; text properties if emacs has something equivalent. This requires special
+      ; processing.
+      (add-hook 'shelldon-mode-hook 'ansi-color-for-comint-mode-on)
+      (add-to-list 'comint-output-filter-functions 'ansi-color-process-output)
+      (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
+      ; Tell Emacs how to display shelldon’s output buffers
+      (add-to-list 'display-buffer-alist
+                   '("*shelldon:"
+                     (display-buffer-reuse-window display-buffer-in-previous-window display-buffer-in-side-window display-buffer-pop-up-window)
+                     (side . right)
+                     (slot . 0)
+                     (window-width . 80))))
+
+(map!
+ :leader
+ :g "d" #'shelldon
+ :g "C-d" #'shelldon-cd
+ :g "D" #'shelldon-loop)
 
 (use-package! igo-org
   :after org

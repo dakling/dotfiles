@@ -51,6 +51,9 @@ bg_color = "#222222"
 fg_color = "#FFFFFF"
 fg_color_alt = "#828080"
 
+wallpaper_path="/home/klingenberg/Pictures/DSC03289.png"
+wallpaper_path_external="/home/klingenberg/Pictures/DSC03291.png"
+
 # custom functions
 @lazy.function
 def toggle_touchpad(qtile):
@@ -307,7 +310,8 @@ layouts = [
 ]
 
 widget_defaults = dict(
-    font="sans",
+    # font="Comic Mono",
+    font="Shantell Sans",
     fontsize=14,
     padding=1,
 )
@@ -344,7 +348,7 @@ screens = [
             # border_width=[2, 0, 2, 0],  # Draw top and bottom borders
             # border_color=["ff00ff", "000000", "ff00ff", "000000"]  # Borders are magenta
         ),
-        wallpaper="/home/klingenberg/Pictures/go-bg.jpg",
+        wallpaper=wallpaper_path,
         wallpaper_mode="fill",
     ),
     Screen(
@@ -374,7 +378,7 @@ screens = [
             # border_width=[2, 0, 2, 0],  # Draw top and bottom borders
             # border_color=["ff00ff", "000000", "ff00ff", "000000"]  # Borders are magenta
         ),
-        wallpaper="/home/klingenberg/Pictures/go-bg.jpg",
+        wallpaper=wallpaper_path_external,
         wallpaper_mode="fill",
     ),
 ]

@@ -21,8 +21,14 @@
 ;; font string. You generally only need these two:
 ;; (setq! doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
 ;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
-(setq! doom-font (font-spec :family "Fira Code")
-      doom-variable-pitch-font (font-spec :family "Fira Code"))
+;; (setq! doom-font (font-spec :family "Serious Sans Nerd Font Mono")
+;;       doom-variable-pitch-font (font-spec :family "Serious Sans Nerd Font Mono"))
+(setq! doom-font (font-spec :family "Comic Mono")
+      doom-variable-pitch-font (font-spec :family "Shantell Sans")
+      ;; doom-variable-pitch-font (font-spec :family "Comic Mono")
+      )
+;; (setq! doom-font (font-spec :family "Fira Code")
+;;       doom-variable-pitch-font (font-spec :family "Fira Code"))
 ;; (setq! doom-font (font-spec :family "DejaVu Sans Mono"))
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -83,178 +89,14 @@
 (setq! display-time-24hr-format t
        display-time-default-load-average nil )
 
+(setq! langtool-default-language "en-GB")
+(setq langtool-java-classpath "/usr/share/languagetool:/usr/share/java/languagetool/*")
 (setq! ispell-dictionary "en_GB")
 (setq! ispell-alternate-dictionary nil)
 
 (setq! flycheck-checker-error-threshold 10000)
 ;; (setq! ispell-alternate-dictionary "de_DE")
 
-(defun my/setup-exwm ()
-  (use-package! exwm
-    :init
-    (server-start)
-    :config
-    ;; Add workspace to modeline
-    (exwm-enable)
-    (add-to-list 'global-mode-string
-                 '(:eval (format (concat "<%s> "
-                                         (unless (null (my/exwm-get-other-workspace)) "[%s] "))
-                                 exwm-workspace-current-index
-                                 (my/exwm-get-other-workspace))))
-    (defun +exwm/rename-buffer-to-title-h ()
-      "Make sure that the exwm buffers name convays its content."
-      (exwm-workspace-rename-buffer
-       (format "%s - %s" exwm-class-name exwm-title)))
-    (defun +exwm/update-class-h ()
-      (unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
-                  (string= "gimp" exwm-instance-name)
-                  (string= "Firefox" exwm-class-name))
-        (exwm-workspace-rename-buffer exwm-class-name)))
-    (defun +exwm/update-title-h ()
-      (cond ((or (not exwm-instance-name)
-                 (string-prefix-p "sun-awt-X11-" exwm-instance-name)
-                 (string= "gimp" exwm-instance-name)
-                 (string= "Firefox" exwm-class-name))
-             (exwm-workspace-rename-buffer exwm-title))))
-    (evil-set-initial-state 'exwm-mode 'emacs)
-    (add-hook 'exwm-floating-exit-hook #'exwm-layout-show-mode-line)
-    (add-hook 'exwm-floating-setup-hook #'exwm-layout-hide-mode-line)
-    (add-hook 'exwm-update-title-hook #'+exwm/rename-buffer-to-title-h)
-    (add-hook 'exwm-update-class-hook #'+exwm/update-class-h)
-    (add-hook 'exwm-update-title-hook #'+exwm/update-title-h)
-    (add-hook 'exwm-mode #'doom-mark-buffer-as-real-h)
-    (setq mouse-autoselect-window nil
-          focus-follows-mouse nil ))
-  (use-package! dmenu)
-  (use-package! exwm-input
-    ;; :after-call exwm-randr
-    :config
-    (define-key exwm-mode-map (kbd "C-c") nil )
-    (setq exwm-input-global-keys
-          `(([?\s-r] . exwm-reset)
-            ([?\s-e] . exwm-input-release-keyboard)
-            ([?\s-F] . exwm-layout-set-fullscreen)
-            ([?\s-a] . exwm-workspace-switch)
-            ([?\s-A] . exwm-workspace-move-window)
-            (\,@(mapcar (lambda (i)
-                          `(,(kbd (format "s-%d" i)) .
-                            (lambda () (interactive)
-                              (exwm-workspace-switch-create ,i))))
-                        (number-sequence 0 9)))
-            (\,@(mapcar (lambda (i)
-                          `(,(kbd (format "M-%d" i)) .
-                            (lambda () (interactive)
-                              (exwm-workspace-switch-create ,i))))
-                        (number-sequence 0 9)))
-            ;; ,@(mapcar (lambda (i)
-            ;; 	      `(,(kbd (format "s-%s" i)) .
-            ;; 		(lambda () (interactive)
-            ;; 		  (exwm-workspace-move-window ,i))))
-            ;; 	    (list '! \" § $ % & / ( ) =))
-            ;; (number-sequence 0 9))
-            ([?\s-o] . my/exwm-switch-to-other-workspace)
-            ([?\s-O] . my/exwm-move-window-to-other-workspace)
-            ([?\s-w] . other-window)
-            ;; ([?\s-d] . (lambda () (interactive) (start-process "" nil  "rofi" "-show" "combi")))
-            ([?\s-d] . dmenu)
-            ([?\s-l] . evil-window-right)
-            ([?\s-h] . evil-window-left)
-            ([?\s-j] . evil-window-down)
-            ([?\s-k] . evil-window-up)
-            ([?\s-v] . split-window-right)
-            ([?\s-s] . split-window-below)
-            ([?\s-c] . my/close-buffer)
-            ([?\s-q] . my/get-rid-of-mouse)
-            ([?\s-m] . delete-other-windows)
-            ([s-f1] . (lambda () (interactive) (eshell 'N)))
-            ([C-s-f1] . eshell)
-            ([s-S-f1] . (lambda () (interactive) (start-process "" nil  "alacritty")))
-            ([s-return] . (lambda () (interactive) (start-process "" nil  "alacritty")))
-            ([s-f2] . (lambda () (interactive) (start-process "" nil  "firefox")))
-            ([s-f3] . deer)
-            ([s-f4] . (lambda () (interactive) (mu4e)))
-            ;; ([s-f12] . (lambda () (interactive) (start-process "" nil  "/usr/bin/slock")))
-            ))
-    (push ?\s-\  exwm-input-prefix-keys)
-    ;; (push ?\M-m  exwm-input-prefix-keys)
-    (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
-                        #'my/brightness+)
-    (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
-                        #'my/brightness-)
-    (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
-                        'pulseaudio-control-decrease-volume)
-    (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
-                        'pulseaudio-control-increase-volume)
-    (exwm-input-set-key (kbd "<XF86AudioMute>")
-                        'pulseaudio-control-toggle-current-sink-mute))
-
-  (use-package! exwm-systemtray
-    ;; :after-call exwm-mode-hook
-    :config (exwm-systemtray-enable))
-
-  (use-package! exwm-randr
-    ;; :after-call exwm-mode-hook
-    :init
-    (cond
-     ((system-name= "klingenberg-tablet") (progn (set 'monitor1 "eDP-1")
-                                                 (set 'monitor2 "HDMI-2")
-                                                 (set 'placement "below")))
-     ((system-name= "klingenberg-laptop") (progn (set 'monitor1 "eDP-1")
-                                                 (set 'monitor2 "HDMI-1")
-                                                 (set 'placement "below")))
-     (t (progn (set 'monitor2 "VGA-1")
-               (set 'monitor1 "HDMI-1")
-               (set 'placement "left-of"))))
-    (setq exwm-randr-workspace-monitor-plist (list 0 monitor1
-                                                   2 monitor1
-                                                   4 monitor1
-                                                   6 monitor1
-                                                   8 monitor1
-                                                   1 monitor2
-                                                   3 monitor2
-                                                   5 monitor2
-                                                   7 monitor2
-                                                   9 monitor2))
-    :config
-    (defun my/exwm-get-other-workspace ()
-      (cond ((not (= 2 (length (seq-filter #'identity (mapcar #'exwm-workspace--active-p exwm-workspace--list))))) nil ) ;currently only works for two monitors
-            ((= exwm-workspace-current-index
-                (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))
-             (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil ))
-            ((= exwm-workspace-current-index
-                (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end nil ))
-             (cl-position t (mapcar #'exwm-workspace--active-p exwm-workspace--list) :from-end t))))
-    (defun my/exwm-switch-to-other-workspace () (interactive)
-           (exwm-workspace-switch (my/exwm-get-other-workspace)))
-    (defun my/exwm-move-window-to-other-workspace () (interactive)
-           (exwm-workspace-move-window (my/exwm-get-other-workspace)))
-
-
-    (defun my/exwm-xrandr ()
-      "Configure screen with xrandr."
-      (shell-command
-       (if (file-exists-p "~/.screenlayout/default.sh")
-           "~/.screenlayout/default.sh" ; prefer saved command by arandr by default
-         (concat "xrandr --output "
-                 monitor1
-                 " --primary --auto --"
-                 placement
-                 " "
-                 monitor2
-                 " --auto")))
-      (my/fix-touchscreen))
-
-    (add-hook 'exwm-randr-screen-change-hook #'my/exwm-xrandr)
-    (progn
-      (exwm-randr-enable)))
-
-  (use-package! exwm-workspace
-    ;; :after-call exwm-mode-hook
-    :init
-    (progn
-      (setq exwm-workspace-number 10)
-      (setq exwm-workspace-show-all-buffers t)
-      (setq exwm-layout-show-all-buffers t))))
 
 (display-time-mode 1)
 
@@ -292,6 +134,45 @@
  ((system-name= "klingenberg-tablet")
   (add-load-path! "/run/current-system/profile/share/emacs/site-lisp/")
   (add-load-path! "~/.guix-profile/share/emacs/site-lisp/")))
+
+
+(use-package! helm
+  :diminish helm-mode
+  :config
+  (setq helm-mini-default-sources '(helm-source-buffers-list
+                                    helm-source-recentf
+                                    helm-source-bookmarks
+                                    helm-source-buffer-not-found))
+  (map!
+   :map helm-map
+   "M-j" #'helm-next-line
+   "M-k" #'helm-previous-line
+   "M-h" #'helm-find-files-up-one-level
+   "M-l" #'helm-execute-persistent-action
+   ;; "M-w" #'helm-select-action
+   "M-H" #'left-char
+   "M-L" #'right-char
+   "M-TAB" #'helm-toggle-visible-mark-forward
+   :map helm-find-files-map
+   "M-l" #'helm-ff-RET
+   "M-k" #'helm-previous-line ; needed here again to override default function
+   "C-l" nil
+   "M-y" #'helm-ff-run-copy-file
+   "M-r" #'helm-ff-run-rename-file
+   "M-s" #'helm-ff-run-find-file-as-root
+   "M--" #'helm-ff-run-marked-files-in-dired
+   "M-o" #'helm-ff-run-switch-other-window
+   "M-O" #'helm-ff-run-switch-other-frame
+   "M-RET" #'helm-ff-run-open-file-with-default-tool
+   :map helm-buffer-map
+   "M-l" #'helm-maybe-exit-minibuffer
+   "M-d" #'helm-buffer-run-kill-persistent
+   :map doom-leader-buffer-map
+   "b" #'helm-mini)
+  (setq! helm-move-to-line-cycle-in-source nil)
+  (setq! helm-truncate-lines nil)
+  (setq! helm-buffer-max-length nil)
+  (setq! helm-buffers-truncate-lines nil))
 
 (after! dirvish
   (map! :map dirvish-mode-map
@@ -335,12 +216,17 @@
       (interactive "<R>")
       (string-inflection-all-cycle)
       (setq evil-repeat-info '([?g ?~])))
+    (map! :map (helm-map minibuffer-mode-map minibuffer-local-map minibuffer-local-ns-map minibuffer-local-isearch-map minibuffer-local-completion-map evil-command-line-map)
+          "<escape>" #'evil-normal-state) ; why did this become necessary?
     (define-key evil-normal-state-map (kbd "g~") 'evil-operator-string-inflection)))
 
 (use-package! projectile
   :config
   (setq projectile-per-project-compilation-buffer t))
 
+
+(defun my/org-pomodoro-text-time ()
+  "")
 (after! org-pomodoro
   (defun my/disable-notifications ()
     (mu4e-alert-disable-mode-line-display)
@@ -370,21 +256,7 @@
 (after! sly
   (setq! inferior-lisp-program (cond
                                 ((system-name= "klingenberg-tablet")  "~/.local/bin/.run-sbcl.sh")
-                                (t "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")
-                                ;; (t "/usr/bin/ccl --load /home/klingenberg/quicklisp.lisp")
-                                ;; (t "/usr/bin/ecl --load /home/klingenberg/quicklisp.lisp")
-                                ))
-  (defun my/connect-to-nyxt ()
-    (when (equalp
-           (buffer-file-name)
-           "/home/klingenberg/.dotfiles/nyxt.lisp")
-      (sly-connect "localhost" 4006)))
-  ;; (add-to-list 'sly-filename-translations
-  ;;              (sly-create-filename-translator
-  ;;               :machine-instance "lichtwiese"
-  ;;               :remote-host "lichtwiese"
-  ;;               :username "klingenberg"))
-  (add-hook 'lisp-mode-hook #'my/connect-to-nyxt)
+                                (t "/usr/bin/sbcl --load /home/klingenberg/quicklisp.lisp")))
   (map! :map sly-mrepl-mode-map
         :ni "M-k" #'sly-mrepl-previous-prompt
         :ni "M-j" #'sly-mrepl-next-prompt)
@@ -410,6 +282,12 @@
                     (ediff-get-region-contents ediff-current-difference 'B ediff-control-buffer))))
 (defun add-d-to-ediff-mode-map () (define-key ediff-mode-map "d" 'ediff-copy-both-to-C))
 (add-hook 'ediff-keymap-setup-hook 'add-d-to-ediff-mode-map)
+
+(map!
+ :after evil
+ :map general-override-mode-map
+ :v "s" #'evil-surround-region
+ :n "s" #'evil-avy-goto-char-timer)
 
 
 (after! org
@@ -447,18 +325,20 @@
  %i
  %a" :heading "Changelog" :prepend t))))
 
+(add-hook! 'org-mode-hook (variable-pitch-mode 1))
+
 (map!
-   :localleader
-   :after org
-   :map org-mode-map
-   "-" nil
-   :n "ll" #'org-insert-link
-   :n "lf" (lambda () (interactive)
-             (let ((current-prefix-arg '-)) ; simulate pressing C-u
-               (org-insert-link)))
-   :n "x" (lambda () (interactive)
-             (let ((current-prefix-arg '-)) ; simulate pressing C-u
-               (call-interactively 'org-export-dispatch))))
+ :localleader
+ :after org
+ :map org-mode-map
+ "-" nil
+ :n "ll" #'org-insert-link
+ :n "lf" (lambda () (interactive)
+           (let ((current-prefix-arg '-)) ; simulate pressing C-u
+             (org-insert-link)))
+ :n "x" (lambda () (interactive)
+          (let ((current-prefix-arg '-)) ; simulate pressing C-u
+            (call-interactively 'org-export-dispatch))))
 
 (map!
  :after org
@@ -872,26 +752,14 @@
   (setq! mu4e-enable-notifications t)
   (customize-set-variable 'mu4e-headers-leave-behavior 'apply)
   (setq! mu4e-view-use-gnus t)
-  ;; (add-hook 'mu4e-compose-mode-hook 'mml-secure-sign-pgpmime)
-  ;; (setq! mml-secure-message-openpgp-sign-with-sender t)
   (require 'mu4e-icalendar)
   (mu4e-icalendar-setup)
   (require 'org-agenda)
   (setq! gnus-icalendar-org-capture-file "~/org/notes.org")
   (setq! gnus-icalendar-org-capture-headline '("Inbox"))
-  (gnus-icalendar-org-setup)
-  ;;     org-msg
-  ;; (add-hook 'org-msg-edit-mode-hook 'mml-secure-sign-pgpmime)
-  ;; (setq! org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
-  ;;       ;; org-msg-startup "hidestars indent inlineimages"
-  ;;       ;; org-msg-greeting-fmt "Hallo %s,\n\n\n"
-  ;;       org-msg-default-alternatives '(html text))
-  )
+  (gnus-icalendar-org-setup))
 
 ;; keybindings
-;;
-;; alternative leader for exwm
-;; (setq! doom-leader-alt-key "s-SPC")
 
 (map!
  "C-g" #'keyboard-quit
@@ -923,7 +791,6 @@
       "ep" #'eval-print-last-sexp)
 
 ;; outline-minor-mode messes with some of my lispy bindings
-;; TODO why doesnt the map! macro work?
 (evil-define-minor-mode-key 'normal 'outline-minor-mode (kbd "M-j") nil )
 (evil-define-minor-mode-key 'normal 'outline-minor-mode (kbd "M-k") nil )
 (evil-define-minor-mode-key 'normal 'outline-minor-mode (kbd "M-h") nil )
@@ -981,39 +848,6 @@
    "2" #'lispy-arglist-inline
    "x" #'lispy-x))
 
-;; scheme
-;; (use-package! geiser
-;;   ;; :load-path "/run/current-system/profile/share/emacs/site-lisp/"
-;;   ;; :commands (run-geiser)
-;;   :config
-;;   (setq! flycheck-scheme-chicken-executable "chicken-csc")
-;;   (setq! geiser-chicken-binary "chicken-csi")
-;;   (setq! geiser-active-implementations '(chicken guile chez))
-;;   (setq! geiser-default-implementation 'guile)
-;;   ;; (setq! geiser-chez-binary "scheme")
-;;   ;; (setq! geiser-scheme-dir "~/")
-;;   (defun chicken-doc (&optional obtain-function)
-;;     (interactive)
-;;     (let ((func (funcall (or obtain-function 'current-word))))
-;;       (when func
-;;         (process-send-string (scheme-proc)
-;;                              (format "(require-library chicken-doc) ,doc %S\n" func))
-;;         (save-selected-window
-;;           (select-window (display-buffer (get-buffer scheme-buffer) t))
-;;           (goto-char (point-max))))))
-;;   (add-to-list 'auto-mode-alist
-;;                '("\\.sls\\'" . scheme-mode)
-;;                '("\\.sc\\'" . scheme-mode))
-;;   (add-to-list 'auto-mode-alist
-;;                '("\\.egg\\'" . scheme-mode))
-;;   (map!
-;;    :localleader
-;;    :map scheme-mode-map
-;;    :n "'" #'geiser
-;;    :n "ef" #'geiser-eval-definition
-;;    :n "ee" #'geiser-eval-last-sexp
-;;    :n "eb" #'geiser-eval-buffer))
-
 (use-package! guix
   :when (system-name= "klingenberg-tablet")
   ;; :commands (guix scheme-mode)
@@ -1038,9 +872,6 @@
  :map julia-mode-map
  "ee" #'julia-repl-send-region-or-line
  "eb" #'julia-repl-send-buffer)
-
-(after! lsp-julia
-  (setq lsp-julia-default-environment "~/.julia/environments/v1.11/"))
 
 (defun my/python-shell-send-main ()
   (interactive)
@@ -1073,16 +904,6 @@
   (interactive)
   (let ((current-prefix-arg '-)) ; simulate pressing C-u
     (haskell-process-do-type)))
-
-;; (after! haskell-mode
-;;   (defun haskell-interactive-mode-reset-error (session)
-;;    "Reset the error cursor position."
-;;    (interactive)
-;;    (with-current-buffer (haskell-session-interactive-buffer session)
-;;      (let ((mrk (point-marker)))
-;;        (haskell-session-set session 'next-error-locus nil)
-;;        (haskell-session-set session 'next-error-region (cons mrk (copy-marker mrk t))))))
-;;  )
 
 (map!
  :localleader
@@ -1148,7 +969,7 @@
       (cond
        ((system-name= "klingenberg-laptop" "klingenberg-tablet") "~/Documents/conferences/latex_macros/")
        ((system-name= "klingenberg-pc") "~/Documents/conferences/latex_macros/")))
-(setq! reftex-default-bibliography (concat my/latex-macro-directory "bibliography.bib"))
+(setq! reftex-default-bibliography (list (concat my/latex-macro-directory "bibliography.bib")))
 (setq my/latex-bibliography-file (concat my/latex-macro-directory "bibliography.bib"))
 (setq my/latex-macro-file (concat my/latex-macro-directory "dakling.sty"))
 
@@ -1159,17 +980,8 @@
 (map!
  :localleader
  :map bibtex-mode-map
- :n "d" (lambda (doi)
-          (interactive
-           (list (read-string
-                  "DOI: "
-                  ;; now set initial input
-                  (doi-utils-maybe-doi-from-region-or-current-kill))))
-          (doi-utils-add-bibtex-entry-from-doi
-           doi
-           (buffer-file-name))))
+ :n "d" #'biblio-doi-insert-bibtex)
 
-;; (add-hook! '(TeX-mode-hook LaTeX-mode-hook) (visual-line-mode -1))
 
 (use-package! latex
   :config
@@ -1189,25 +1001,16 @@
              ("\\footref" 110)
              ("\\pageref" 112)))))
   (remove-hook! '(TeX-mode-hook LaTeX-mode-hook latex-mode-hook tex-mode-hook) #'visual-line-mode)
+  (add-hook! '(plain-TeX-mode-hook tex-mode-hook latex-mode-hook) #'LaTeX-mode)
   (add-hook! '(TeX-mode-hook LaTeX-mode-hook latex-mode-hook tex-mode-hook)
              :append
     (visual-line-mode -1)
+    (variable-pitch-mode 1)
     (auto-fill-mode 1)
     (setq-local TeX-electric-math (cons "\\(" "")) ; gets closed automatically apparently
     (add-hook! '(before-save-hook) #'reftex-parse-all)
     ;; (setq-local TeX-electric-math (cons "\\(" "\\)"))
     ))
-
-(use-package! lsp-ltex
-  :hook (text-mode . (lambda ()
-                       (require 'lsp-ltex)
-                       (lsp)))          ; or lsp-deferred
-  :init
-  (setq lsp-ltex-version "15.2.0")
-  :config
-  (setq lsp-ltex-enabled t)
-  ;; (setq lsp-ltex-language "en-US")
-  (setq lsp-ltex-language "en-GB"))
 
 (use-package! cdlatex
   :config
@@ -1297,13 +1100,14 @@
   (setopt ellama-language "English")
   ;; could be llm-openai for example
   (require 'llm-ollama)
-  ;; (setopt ellama-provider
-  ;;         (make-llm-ollama
-  ;;          ;; this model should be pulled to use it
-  ;;          ;; value should be the same as you print in terminal during pull
-  ;;          :chat-model "llama3:8b-instruct-q8_0"
-  ;;          :embedding-model "nomic-embed-text"
-  ;;          :default-chat-non-standard-params '(("num_ctx" . 8192))))
+  (setopt ellama-provider
+          (make-llm-ollama
+           ;; this model should be pulled to use it
+           ;; value should be the same as you print in terminal during pull
+           :chat-model "codellama"
+           ;; :chat-model "mistral:instruct"
+           :embedding-model "nomic-embed-text"
+           :default-chat-non-standard-params '(("num_ctx" . 8192))))
   ;; ;; Predefined llm providers for interactive switching.
   ;; ;; You shouldn't add ollama providers here - it can be selected interactively
   ;; ;; without it. It is just example.
@@ -1326,7 +1130,7 @@
   (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
   ;; Translation llm provider
   (setopt ellama-translation-provider (make-llm-ollama
-				       :chat-model "phi3:14b-medium-128k-instruct-q6_K"
+                                       :chat-model "mistral:instruct"
 				       :embedding-model "nomic-embed-text")))
 
 ;; octave
@@ -1381,10 +1185,6 @@
 (map! :localleader
       :map c++-mode-map
       :n "b" #'recompile)
-;;c#
-(use-package! lsp
-  :config
-  (setq lsp-auto-guess-root t))
 
 (use-package! gud
   :config
@@ -1425,9 +1225,9 @@ _Q_: Disconnect     "
 (after! dap-mode
   (setq dap-python-debugger 'debugpy))
 
-(after! lsp
-  ;; (setq! lsp-file-watch-threshold 30000)
-  (setq! lsp-file-watch-threshold nil))
+;; (after! lsp
+;;   ;; (setq! lsp-file-watch-threshold 30000)
+;;   (setq! lsp-file-watch-threshold nil))
 
 (defun my/csharp-list-to-array ()
   (replace-regexp "List<\\(.*\\)>" "\\1[]"
@@ -1453,158 +1253,6 @@ _Q_: Disconnect     "
             ((re-search-forward "\\(.*\\)\\[\\]" max t)
              (my/csharp-array-to-list))
             (t (message "neither array nor string found on current line"))))))
-
-(use-package! csharp-repl
-  :when (system-name= "klingenberg-laptop" "klingenberg-tablet" "klingenberg-pc")
-  ;; :load-path "~/Documents/programming/elisp/emacs-csharp-repl/"
-  )
-
-(defun my/personal-bosss-file-p ()
-  (and (buffer-file-name)
-       (cl-search "private-kli" (buffer-file-name))))
-
-(defun my/personal-bosss-control-file-p ()
-  (and (buffer-file-name)
-       (my/personal-bosss-file-p)
-       (cl-search "Controlfiles" (buffer-file-name))))
-
-(defun my/bosss-file-p ()
-  (or
-   (and (buffer-file-name)
-        (file-in-directory-p (buffer-file-name) "~/BoSSS-experimental/"))
-   (my/personal-bosss-file-p)))
-
-(defun my/add-header ()
-  (interactive)
-  (let ((header-text
-         (concat
-          "/* =======================================================================
-Copyright " (format-time-string "%Y") " Technische Universitaet Darmstadt, Fachgebiet fuer Stroemungsdynamik (chair of fluid dynamics)
-
-Licensed under the Apache License, Version 2.0 (the \"License\");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an \"AS IS\" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
-")))
-    (save-excursion
-      (goto-line 0)
-      (when (my/personal-bosss-file-p)
-        (unless (or (search-forward (substring header-text 93) nil  t) ; check if header already exists, start a bit later to ignore year
-                    (derived-mode-p #'bosss-mode)) ; check if this is just a worksheet
-          (princ header-text (current-buffer)))))))
-
-;; (defun my/omnisharp-code-format-entire-file ()
-;;   (when (and (my/personal-bosss-file-p) (not (my/personal-bosss-control-file-p)))
-;;     (omnisharp-code-format-entire-file)))
-
-(defun my/format-on-save-enable ()
-  "Code-format the entire buffen on save."
-  (interactive)
-  (format-all-mode -1)
-  ;; (add-hook 'before-save-hook #'my/omnisharp-code-format-entire-file)
-  )
-
-(defun my/format-on-save-disable ()
-  "Disable Code-formatting of the entire buffen on save."
-  (interactive)
-  ;; (remove-hook 'before-save-hook #'my/omnisharp-code-format-entire-file)
-  ;; (remove-hook 'before-save-hook #'omnisharp-code-format-entire-file)
-  (format-all-mode -1))
-
-(defun my/indent-buffer-without-bosss-header ()
-  "Indent file, but ignore header"
-  (interactive)
-  (save-excursion
-    (goto-line 16)
-    (let ((beg (point)))
-      (evil-indent beg (point-max)))))
-
-(defun my/add-file-to-project (file project)
-  "Add FILE to PROJECT."
-  (find-file project)
-  (goto-line 0)
-  (search-forward "<Compile Include=")
-  (evil-open-above 1)
-  (princ (concat "<Compile Include=\""
-                 (file-relative-name file
-                                     (file-name-directory project))
-                 "\"/>")
-         (current-buffer))
-  (save-buffer)
-  (magit-stage-file file)
-  (kill-buffer (current-buffer)))
-
-(defun my/add-current-file-to-project ()
-  "Add current file to my project."
-  (interactive)
-  (my/add-file-to-project (buffer-file-name) (my/csharp-find-current-project)))
-
-(defun my/remove-file-from-project (file project)
-  "Remove FILE from PROJECT."
-  (find-file project)
-  (goto-line 0)
-  (search-forward "<Compile Include=")
-  (search-forward (file-name-nondirectory file))
-  (kill-whole-line)
-  (save-buffer)
-  (delete-file file)
-  (magit-stage-file file)
-  (kill-buffer (current-buffer)))
-
-(defun my/remove-current-file-from-project ()
-  "Remove current file to my project."
-  (interactive)
-  (my/remove-file-from-project (buffer-file-name) (my/csharp-find-current-project)))
-
-(defun my/run-bosss-control-file (solver control-file &optional debug)
-  "Run SOLVER with CONTROL-FILE, optionally using sbd to DEBUB"
-  (async-shell-command
-   (if debug
-       (concat "sdb \"args -c " control-file "\" \"run " solver "\"")
-     (concat "mono " solver " -c " control-file))))
-
-(defun my/run-tests (path-to-assembly)
-  "Implement tests manually as default functions do not work"
-  (interactive)
-  (async-shell-command (concat "nunit3-console " path-to-assembly)))
-
-(defun my/bosss-worksheet-get-project-name (file)
-  "In a BoSSS worksheet FILE, obtain the project name of the current calculation. Warning: This function is not very sophisticated."
-  (save-excursion
-    (progn
-      (find-file file)
-      (goto-char (point-min))
-      (when
-          (search-forward-regexp "^string ProjName = " nil  t)
-        (end-of-line)
-        (backward-word)
-        (thing-at-point 'word t)))))
-
-(defun my/scancel-lichtenberg ()
-  "Scancel (kill) process with pid on lichtenberg, assumes that pid is (thing-at-point)."
-  (interactive)
-  (let ((sid (thing-at-point 'word t)))
-    (my/run-command-ssh "lcluster" (concat "scancel " sid))))
-
-(defun my/squeue-lichtenberg ()
-  "List process state on lichtenberg."
-  (interactive)
-  (my/run-command-ssh "lcluster" "squeue" "sacct --format=\"JobID,JobName%30,State\" | grep RUNNING"))
-
-(add-hook 'csharp-mode-hook #'my/add-header)
-(add-hook 'csharp-mode-hook #'my/format-on-save-disable)
-;; (add-hook 'omnisharp-mode-hook #'my/omnisharp-code-format-entire-file)
-
-(setq! bosss-master-solution "/home/klingenberg/BoSSS-experimental/internal/src/Master.sln")
 
 (defun my/csharp-find-current-project ()
   "Find the closest csproj file relative to the current directory."
@@ -1635,51 +1283,6 @@ limitations under the License.
  "er" #'csharp-repl-send-region
  "eb" #'csharp-repl-send-buffer)
 
-;; bosss
-(use-package! bosss
-  :when (system-name= "klingenberg-laptop" "klingenberg-tablet" "klingenberg-pc")
-  ;; :load-path "~/Documents/programming/elisp/emacs-bosss/"
-  :init
-  (add-to-list 'auto-mode-alist '("\\.bws\\'" . bosss-mode))
-  (setq! bosss-pad-path "/home/klingenberg/BoSSS-experimental/public/src/L4-application/BoSSSpad/bin/Release/BoSSSpad.exe")
-  (setq! bosss-path-reference (mapcar (lambda (proj) (concat "/home/klingenberg/BoSSS-experimental/internal/src/private-kli/" proj))
-                                     '("RANSCommon/bin/Release/RANS_Solver.dll"
-                                       "KOmegaModelSolver/bin/Release/KOmegaSolver.exe"
-                                       "KOmegaStatSymmModelSolver/bin/Release/KOmegaSSSolver.exe"
-                                       "TurbulenceModelParameterOptimization/bin/Release/ParameterOptimization.exe")))
-  :config
-  (map! :map bosss-mode-map
-        :n "M-j" '(bosss-next-field :which-key "next field")
-        :n "M-k" '(bosss-previous-field :which-key "previous field"))
-  (map!
-   :localleader
-   :map #'bosss-mode-map
-   :n "ro" #'run-bosss-repl-other-window
-   :n "rq" #'bosss-repl-quit
-   :n "R"  #'run-bosss-repl-other-window
-   :n "rn" #'bosss-repl-start-bosss-pad
-   :n "ef" #'bosss-repl-send-current-field
-   :n "ee" #'bosss-repl-send-region
-   :n "eb" #'bosss-repl-send-buffer
-   :n "en" #'bosss-eval-and-next-field
-   :n "lp" #'bosss-repl-load-my-assembly
-   :n "in" #'bosss-create-new-field))
-
-;; (use-package! maxima
-;;   :config
-;;   (add-to-list 'auto-mode-alist '("\\.ma[cx]\\'" . maxima-mode))
-;;   (set-repl-handler! 'maxima-mode #'maxima :persist t)
-;;   (set-docsets! '(maxima-mode imaxima-mode) "Maxima")
-;;   (set-lookup-handlers! '(maxima-mode imaxima-mode)
-;;     ;; :definition #'anaconda-mode-find-definitions
-;;     ;; :references #'anaconda-mode-find-references
-;;     :documentation #'maxima-help-at-point)
-;;   (map! :localleader :map maxima-mode-map
-;;         "ef" #'maxima-send-full-line
-;;         "ee" #'maxima-send-previous-form
-;;         "er" #'maxima-send-region
-;;         "eb" #'maxima-send-buffer))
-
 (add-hook! '(yaml-mode-hook)
  :append
  (visual-line-mode -1))
@@ -1699,157 +1302,10 @@ limitations under the License.
       :i "M-j" #'company-select-next-or-abort
       :i "M-k" #'company-select-previous-or-abort
       :i "C-l" #'company-complete-selection
-      :i "C-j" #'company-select-next-or-abort
       :i "C-k" #'company-select-previous-or-abort)
 
-(map!
- :after evil-snipe
- :v "s" #'evil-surround-region)
 
-(map!
- :map evil-snipe-mode-map
- :after evil-snipe
- :n "s" #'evil-avy-goto-char-timer)
 
-;; (use-package! embark
-;;   ;; :commands (vertico-mode) ; TODO should not be necessary
-;;   :config
-;;   (map! :map minibuffer-local-map
-;;         "C-c C-c" #'embark-act
-;;         "<f1>" #'embark-act))
-
-;; (use-package! vertico
-;;   :config
-;;   (map!
-;;    :map (vertico-map)
-;;    "M-j" #'vertico-next
-;;    "M-k" #'vertico-previous
-;;    "M-h" #'vertico-directory-up
-;;    "<left>" #'vertico-directory-up
-;;    "M-l" #'vertico-directory-enter
-;;    "<right>" #'vertico-directory-enter))
-
-;; (after! ivy
-;;   (setq! ivy-extra-directories nil )
-;;   (setq! ivy-use-virtual-buffers t)
-;;   (setq! ivy-use-selectable-prompt t)
-;;   (setq! counsel-find-file-at-point t)
-;;   ;; (defun my/open-shell-here (dir)
-;;   ;;   (sly)
-;;   ;;   (sly-mrepl-sync nil  (directory-file-name dir)))
-;;   (map!
-;;    :map ivy-minibuffer-map
-;;    "M-j" #'ivy-next-line
-;;    "M-k" #'ivy-previous-line
-;;    "M-h" #'ivy-backward-delete-char
-;;    "M-l" #'ivy-alt-done
-;;    "<left>" #'ivy-backward-delete-char
-;;    "<right>" #'ivy-alt-done
-;;    "M-o" #'ivy-dispatching-call
-;;    "TAB" #'ivy-partial
-;;    "M-RET" #'ivy-call
-;;    "M-TAB" #'ivy-mark
-;;    "C-TAB" #'ivy-unmark
-;;    "M-H" #'left-char
-;;    "M-L" #'right-char)
-;;   ;; (ivy-add-actions
-;;   ;;  'counsel-find-file
-;;   ;;  '(("y" counsel-find-file-copy "copy file(s)"
-;;   ;;     (lambda (x)
-;;   ;;       (counsel-find-file-copy (mapconcat 'identity x "\n"))))
-;;   ;;    ("r" counsel-find-file-move "move file(s)"
-;;   ;;     (lambda (x)
-;;   ;;       (counsel-find-file-move (mapconcat 'identity x "\n"))))
-;;   ;;    ("D" counsel-find-file-delete "delete file(s)"
-;;   ;;     (lambda (x)
-;;   ;;       (counsel-find-file-delete (mapconcat 'identity x "\n"))))
-;;   ;;    ("m" ivy-mark "mark")
-;;   ;;    ("u" ivy-ummark "unmark")
-;;   ;;    ;; ("t" ivy-toggle-marks "toggle marks")
-;;   ;;    ))
-;;   (map!
-;;    :map counsel-find-file-map
-;;    :ni "DEL" #'backward-delete-char
-;;    "M-e" (lambda () (interactive) (ivy-exit-with-action
-;;                               (lambda (dir-or-file)
-;;                                 (let ((default-directory (file-name-directory dir-or-file)))
-;;                                   (eshell t)))))
-;;    "M-s" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-as-root))
-;;    "M-y" (lambda () (interactive) (ivy-exit-with-action
-;;                               (lambda (x) (interactive) (if (listp x)
-;;                                                        (counsel-find-file-copy (mapconcat 'identity x "\n"))
-;;                                                      (counsel-find-file-copy x)))))
-;;    "M-r" (lambda () (interactive) (ivy-exit-with-action
-;;                               (lambda (x) (interactive) (if (listp x)
-;;                                                        (counsel-find-file-move (mapconcat 'identity x "\n"))
-;;                                                      (counsel-find-file-move x)))))
-;;    "M-D" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-delete))
-;;    "M-Y" (lambda () (interactive) (ivy-exit-with-action (lambda (x) (interactive) (kill-new (directory-file-name x)))))
-;;    "M-c" (lambda () (interactive) (ivy-exit-with-action (lambda (x) (interactive) (dired-compress-file x))))
-;;    "M-RET" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-extern)))
-;;   (map!
-;;    :map ivy-switch-buffer-map
-;;    :ni "DEL" #'backward-delete-char
-;;    "M-e" (lambda () (interactive) (ivy-exit-with-action
-;;                                    (lambda (dir-or-file)
-;;                                      (let ((default-directory (file-name-directory dir-or-file)))
-;;                                        (eshell t)))))
-;;    "M-s" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-as-root))
-;;    "M-y" (lambda () (interactive) (ivy-exit-with-action
-;;                                    (lambda (x) (interactive) (if (listp x)
-;;                                                                  (counsel-find-file-copy (mapconcat 'identity x "\n"))
-;;                                                                (counsel-find-file-copy x)))))
-;;    "M-r" (lambda () (interactive) (ivy-exit-with-action
-;;                                    (lambda (x) (interactive) (if (listp x)
-;;                                                                  (counsel-find-file-move (mapconcat 'identity x "\n"))
-;;                                                                (counsel-find-file-move x)))))
-;;    "M-d" (lambda () (interactive) (ivy-exit-with-action #'kill-buffer))
-;;    "M-D" (lambda () (interactive) (ivy-exit-with-action #'kill-buffer))
-;;    "M-Y" (lambda () (interactive) (ivy-exit-with-action (lambda (x) (interactive) (kill-new (directory-file-name x)))))
-;;    "M-c" (lambda () (interactive) (ivy-exit-with-action (lambda (x) (interactive) (dired-compress-file x))))
-;;    "M-RET" (lambda () (interactive) (ivy-exit-with-action #'counsel-find-file-extern))))
-
-(use-package! helm
-  :diminish helm-mode
-  :config
-  (setq helm-mini-default-sources '(helm-source-buffers-list
-                                    helm-source-recentf
-                                    helm-source-bookmarks
-                                    helm-source-buffer-not-found))
-  (map!
-   :map doom-leader-buffer-map
-   "b" #'helm-mini)
-  (map!
-   :map helm-map
-   "M-j" #'helm-next-line
-   "M-k" #'helm-previous-line
-   "M-h" #'helm-find-files-up-one-level
-   "M-l" #'helm-execute-persistent-action
-   ;; "M-l" #'helm-maybe-exit-minibuffer
-   "M-w" #'helm-select-action
-   "M-H" #'left-char
-   "M-L" #'right-char
-   "M-TAB" #'helm-toggle-visible-mark-forward)
-  (map!
-   :map helm-find-files-map
-   "M-l" #'helm-ff-RET
-   "M-k" #'helm-previous-line ; needed here again to override default function
-   "C-l" nil
-   "M-y" #'helm-ff-run-copy-file
-   "M-r" #'helm-ff-run-rename-file
-   "M-s" #'helm-ff-run-find-file-as-root
-   "M--" #'helm-ff-run-marked-files-in-dired
-   "M-o" #'helm-ff-run-switch-other-window
-   "M-O" #'helm-ff-run-switch-other-frame
-   "M-RET" #'helm-ff-run-open-file-with-default-tool)
-  (map!
-   :map helm-buffer-map
-   "M-l" #'helm-maybe-exit-minibuffer
-   "M-d" #'helm-buffer-run-kill-persistent)
-  (setq! helm-move-to-line-cycle-in-source nil)
-  (setq! helm-truncate-lines nil)
-  (setq! helm-buffer-max-length nil)
-  (setq! helm-buffers-truncate-lines nil))
 
 ;; TODO check if this is needed with doom
 ;; (use-package! org-roam-server
@@ -1937,7 +1393,7 @@ limitations under the License.
 
 (use-package! elfeed
   :commands (eww elfeed elfeed-update)
-  :custom (elfeed-search-title-max-width 150)
+  :init (setq! elfeed-search-title-max-width 150)
   :config
   ;; (add-hook! 'elfeed-search-mode-hook 'elfeed-update)
   (setq!
@@ -2068,6 +1524,7 @@ limitations under the License.
       (unless (use-region-p) (forward-line))))
 
   (map! :map elfeed-search-mode-map
+        :n "u" #'elfeed-update
         :n "o" #'elfeed-open-generic
         :n "e" #'elfeed-eww-open
         :n "b" #'elfeed-firefox-open

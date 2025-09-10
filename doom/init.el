@@ -22,7 +22,8 @@
        ;;japanese
 
        :completion
-       (company)          ; the ultimate code completion backend
+       ;; (company)          ; the ultimate code completion backend
+       (corfu +icons +orderless +dabbrev)          ; the ultimate code completion backend
        (helm +fuzzy +icons)    ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
        ;; (ivy +fuzzy +icons +prescient)               ; a search engine for love and life
@@ -46,7 +47,7 @@
        (popup +defaults)          ; tame sudden yet inevitable temporary windows
        ;; (ligatures +extra)
        ;;tabs              ; an tab bar for Emacs
-       (treemacs +lsp)                 ; a project drawer, like neotree but cooler
+       (treemacs -lsp)                 ; a project drawer, like neotree but cooler
        unicode                  ; extended unicode support for various languages
        (vc-gutter +pretty)                ; vcs diff in the fringe
        vi-tilde-fringe          ; fringe tildes to mark beyond EOB
@@ -92,7 +93,7 @@
        :tools
        ;;ansible
        biblio
-       (debugger +lsp)          ; FIXME stepping through code, to help you add bugs
+       (debugger)          ; FIXME stepping through code, to help you add bugs
        ;;direnv
        ;;docker
        editorconfig      ; let someone else argue about tabs vs spaces
@@ -100,7 +101,7 @@
        (eval +overlay)       ; run code, run (also, repls)
        ;;gist              ; interacting with github gists
        (lookup +dictionary +offline +docsets)                         ; navigate your code and its documentation
-       lsp
+       (lsp +eglot)
        ;;macos             ; MacOS-specific commands
        (magit -forge)           ; a git porcelain for Emacs
        ;; make              ; run make tasks from Emacs

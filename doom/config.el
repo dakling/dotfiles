@@ -137,6 +137,7 @@
 
 
 (use-package! helm
+  :defer t
   :diminish helm-mode
   :config
   (setq helm-mini-default-sources '(helm-source-buffers-list
@@ -221,6 +222,7 @@
     (define-key evil-normal-state-map (kbd "g~") 'evil-operator-string-inflection)))
 
 (use-package! projectile
+  :defer t
   :config
   (setq projectile-per-project-compilation-buffer t))
 
@@ -286,8 +288,7 @@
 (map!
  :after evil
  :map general-override-mode-map
- :v "s" #'evil-surround-region
- :n "s" #'evil-avy-goto-char-timer)
+ :v "s" #'evil-surround-region)
 
 
 (after! org
@@ -464,7 +465,7 @@
   (setq! bash-completion-nospace t))
 
 ; TODO does not have any effect
-(use-package! async-await)
+;; (use-package! async-await)
 ;; adapted from snippet by oremacs
 
 (defun my/youtube-dl ()
@@ -850,6 +851,7 @@
 
 (use-package! guix
   :when (system-name= "klingenberg-tablet")
+  :defer t
   ;; :commands (guix scheme-mode)
   :config
   (defun my/activate-guix-devel-mode ()
@@ -874,25 +876,27 @@
  "eb" #'julia-repl-send-buffer)
 
 (defun my/python-shell-send-main ()
-  (interactive)
-  (with-temp-buffer
-    (insert-file-contents "./main.py")
-    (python-shell-send-string (concat (buffer-string) "\nmain()"))))
+   (interactive)
+   (with-temp-buffer
+     (insert-file-contents "./main.py")
+     ;; (python-shell-send-string (concat (buffer-string) "\nmain()"))
+     (python-shell-send-string (buffer-string))))
 
-(defun my/python-shell-send-buffer ()
-  (interactive)
-  (if (file-exists-p "./main.py")
-      (my/python-shell-send-main)
-      (python-shell-send-buffer)))
+ (defun my/python-shell-send-buffer ()
+   (interactive)
+   (if (file-exists-p "./main.py")
+       (my/python-shell-send-main)
+     (python-shell-send-buffer)))
 
-(map!
- :localleader
- :map python-mode-map
- "ef" #'python-shell-send-defun
- "ee" #'python-shell-send-statement
- "eB" #'python-shell-send-buffer
- "eb" #'my/python-shell-send-buffer
- "em" #'my/python-shell-send-main)
+ (map!
+  :after python
+  :localleader
+  :map (python-mode-map python-ts-mode-map)
+  "ef" #'python-shell-send-defun
+  "ee" #'python-shell-send-statement
+  "eb" #'my/python-shell-send-buffer
+  "eB" #'python-shell-send-buffer
+  "em" #'my/python-shell-send-main)
 
 (defun my/haskell-load-and-run ()
   "Loads and runs the current Haskell file main function."
@@ -984,6 +988,7 @@
 
 
 (use-package! latex
+  :defer t
   :config
   (add-to-list 'TeX-command-list '("LaTeXMk (cont.)" "latexmk %(latexmk-out) %(file-line-error) %(output-dir) -halt-on-error -pvc %`%(extraopts) %S%(mode)%' %t" TeX-run-format nil
                 (LaTeX-mode docTeX-mode)
@@ -1013,6 +1018,7 @@
     ))
 
 (use-package! cdlatex
+  :defer t
   :config
   (setq cdlatex-math-symbol-prefix ?#)
   (map! :map cdlatex-mode-map
@@ -1020,7 +1026,8 @@
   (map! :map org-cdlatex-mode-map
         "#" #'cdlatex-math-symbol))
 
-(use-package! font-latex)
+(use-package! font-latex
+  :defer t)
 
 (defun my/reftex-fix-cleveref-ref ()
   (interactive)
@@ -1093,6 +1100,7 @@
   (add-hook 'LaTeX-mode-hook #'evil-tex-mode))
 
 (use-package! ellama
+  :defer t
   :init
   ;; setup key bindings
   (setopt ellama-keymap-prefix "C-c e")
@@ -1162,10 +1170,12 @@
       :n "cr" #'recompile
       :n "cc" #'recompile)
 
-(use-package! gnu-apl-mode)
+(use-package! gnu-apl-mode
+  :defer t)
 
-(require 'ein)
+;; (require 'ein)
 (use-package! ein
+  :defer t
   :config
   (add-hook! 'ein:notebook-mode-hook #'buffer-enable-undo)
   (map! :after ein
@@ -1187,6 +1197,7 @@
       :n "b" #'recompile)
 
 (use-package! gud
+  :defer t
   :config
   (defhydra gud-hydra (:color pink :hint nil :foreign-keys run)
     "
@@ -1216,6 +1227,7 @@ _Q_: Disconnect     "
   (gud-hydra/body)))
 
 (use-package! dap-mode
+  :defer t
   :config
   (add-hook 'dap-stopped-hook
             (lambda (arg) (call-interactively #'dap-hydra)))
@@ -1289,6 +1301,7 @@ _Q_: Disconnect     "
 
 ;; org-kanban
 (use-package! kanban
+  :defer t
   :load-path  "~/Documents/programming/elisp/kanban.el/")
 
 (map! :map (company-mode-map company-active-map)
@@ -1326,6 +1339,7 @@ _Q_: Disconnect     "
 ;;   :config (edit-server-start))
 
 (use-package! vterm
+  :defer t
   :config
   (map!
    :map vterm-mode-map
@@ -1335,6 +1349,7 @@ _Q_: Disconnect     "
    :ni "M-j" #'vterm-next-prompt))
 
 (use-package! pdf-tools
+  :defer t
   :config
   (add-hook 'pdf-view-mode-hook 'pdf-view-auto-slice-minor-mode)
   (add-hook 'pdf-view-mode-hook 'pdf-view-themed-minor-mode)
@@ -1360,6 +1375,7 @@ _Q_: Disconnect     "
     "d" #'org-ref-pdf-to-bibtex)))
 
 (use-package! pulseaudio-control
+  :defer t
   :when (system-name= "klingenberg-tablet")
   :custom
   (pulseaudio-control-volume-step "5%")
@@ -1583,6 +1599,7 @@ _Q_: Disconnect     "
    :n "d" #'my/youtube-dl))
 
 (use-package! ytdious
+  :defer t
   :config
   (setq! ytdious-invidious-api-url
         "https://invidious.tube"
@@ -1617,6 +1634,7 @@ _Q_: Disconnect     "
   (setq! emms-source-file-default-directory "~/Music"))
 
 (use-package! pinentry
+  :defer t
   ;; :init
   ;; (pinentry-start)
   :config
@@ -1668,6 +1686,7 @@ _Q_: Disconnect     "
 ;;   )
 
 (use-package! diminish
+  :defer t
   :config
   (mapcar #'diminish '(reftex-mode
                        auto-revert-mode
@@ -1679,6 +1698,7 @@ _Q_: Disconnect     "
                        defining-kbd-macro)))
 
 (use-package! system-packages
+  :defer t
   :config
   (setq! my/pacmanfile-file "~/.dotfiles/pacmanfile.txt")
   (defun my/pacmanfile-visit ()
@@ -1713,6 +1733,7 @@ _Q_: Disconnect     "
   (setq! system-packages-package-manager 'yay))
 
 (use-package! helm-system-packages
+  :defer t
   :config
   (map!
    :map helm-map
@@ -1803,6 +1824,7 @@ _Q_: Disconnect     "
 ;;               evil-insert-state-map)))
 
 (use-package! beacon
+  :defer t
   :config
   (beacon-mode 1))
 

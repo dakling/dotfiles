@@ -203,6 +203,7 @@ keys = [
     Key([mod, "shift"], "a", lazy.spawn("doom +everywhere"), desc="Spawn emacs-everywhere"),
     Key([mod], "F1", lazy.spawn(terminal), desc="Spawn terminal"),
     Key([mod], "F2", lazy.spawn(browser), desc="Spawn browser"),
+    Key([mod], "F3", lazy.spawn("freetube"), desc="Spawn freetube"),
     Key([mod, alt], "F2", lazy.spawn("mullvad-browser"), desc="Spawn alternative browser"),
     Key([mod, "shift"], "F2", lazy.spawn("mullvad-browser"), desc="Spawn alternative browser"),
     # Key([mod], "Return", left_click(), desc="left mouse click"),

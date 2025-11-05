@@ -1099,47 +1099,59 @@
   :config
   (add-hook 'LaTeX-mode-hook #'evil-tex-mode))
 
-(use-package! ellama
-  :defer t
-  :init
-  ;; setup key bindings
-  (setopt ellama-keymap-prefix "C-c e")
-  ;; language you want ellama to translate to
-  (setopt ellama-language "English")
-  ;; could be llm-openai for example
-  (require 'llm-ollama)
-  (setopt ellama-provider
-          (make-llm-ollama
-           ;; this model should be pulled to use it
-           ;; value should be the same as you print in terminal during pull
-           :chat-model "codellama"
-           ;; :chat-model "mistral:instruct"
-           :embedding-model "nomic-embed-text"
-           :default-chat-non-standard-params '(("num_ctx" . 8192))))
-  ;; ;; Predefined llm providers for interactive switching.
-  ;; ;; You shouldn't add ollama providers here - it can be selected interactively
-  ;; ;; without it. It is just example.
-  ;; (setopt ellama-providers
-  ;;       	    '(("zephyr" . (make-llm-ollama
-  ;;       			   :chat-model "zephyr:7b-beta-q6_K"
-  ;;       			   :embedding-model "zephyr:7b-beta-q6_K"))
-  ;;       	      ("mistral" . (make-llm-ollama
-  ;;       			    :chat-model "mistral:7b-instruct-v0.2-q6_K"
-  ;;       			    :embedding-model "mistral:7b-instruct-v0.2-q6_K"))
-  ;;       	      ("mixtral" . (make-llm-ollama
-  ;;       			    :chat-model "mixtral:8x7b-instruct-v0.1-q3_K_M-4k"
-  ;;       			    :embedding-model "mixtral:8x7b-instruct-v0.1-q3_K_M-4k"))))
-  ;; ;; Naming new sessions with llm
-  ;; (setopt ellama-naming-provider
-  ;;         (make-llm-ollama
-  ;;          :chat-model "llama3:8b-instruct-q8_0"
-  ;;          :embedding-model "nomic-embed-text"
-  ;;          :default-chat-non-standard-params '(("stop" . ("\n")))))
-  (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
-  ;; Translation llm provider
-  (setopt ellama-translation-provider (make-llm-ollama
-                                       :chat-model "mistral:instruct"
-				       :embedding-model "nomic-embed-text")))
+(use-package! gptel
+  :config
+  (setq
+   gptel-model 'minimax/minimax-m2:free
+   gptel-backend (gptel-make-openai "OpenRouter"
+                   :host "openrouter.ai"
+                   :endpoint "/api/v1/chat/completions"
+                   :stream t
+                   :key (lambda () (password-store-get "openrouterai-api-key-0"))
+                   :models '(minimax/minimax-m2:free))
+   ;; gptel-backend (gptel-make-ollama "Ollama"
+   ;;                 :host "localhost:11434"
+   ;;                 :stream t
+   ;;                 :models '(codellama:latest))
+   ))
+
+;; Keybindings
+(map! :map doom-leader-open-map
+        "lf" #'gptel-add-file
+        "ld" (cmd! (gptel-add-file default-directory))
+        "lp" (cmd! (gptel-add-file (projectile-project-root))))
+(map! :map gptel-mode-map
+        "RET" #'gptel-send              ;; TODO check if this is good
+        "C-RET" #'evil-ret)
+(map! :map gptel-mode-map
+        :localleader
+        "d" (cmd! (gptel-add-file default-directory))
+        "P" (cmd! (gptel-add-file (projectile-project-root)))
+        "RET" #'gptel-send
+        "C-RET" #'gptel-send-newline
+        "i" #'gptel-add-buffer
+        "f" #'gptel-add-file
+        "r" #'gptel-context-remove-all
+        "t" #'gptel-select-prefix
+        "s" #'gptel-switch-model
+        "o" #'gptel-open-log
+        "n" #'gptel-next-message
+        "p" #'gptel-previous-message
+        "k" #'gptel-delete-current
+        "c" #'gptel-new-chat
+        "q" #'kill-buffer)
+
+(use-package! claude-code-ide
+  :bind ("C-c C-'" . claude-code-ide-menu) ; Set your favorite keybinding
+  :config
+  (claude-code-ide-emacs-tools-setup)) ; Optionally enable Emacs MCP tools
+
+
+(use-package! minimax-agent
+  :config
+  ;; Configuration options
+  (setq minimax-agent-api-key (password-store-get "minimax-api-key")))
+
 
 ;; octave
 (setq! auto-mode-alist
@@ -1413,11 +1425,43 @@ _Q_: Disconnect     "
   :config
   ;; (add-hook! 'elfeed-search-mode-hook 'elfeed-update)
   (setq!
-   elfeed-search-filter "@12-months-ago"
+   elfeed-search-filter "@12-months-ago AI"
    elfeed-feeds
-   '(("https://www.cambridge.org/core/rss/product/id/1F51BCFAA50101CAF5CB9A20F8DEA3E4" work fluid mechanics jfm)
-     ("http://feeds.aps.org/rss/recent/prfluids.xml" work fluid mechanics prf)
-     ("https://rss.arxiv.org/rss/physics.flu-dyn" work fluid mechanics archivx)
+   '(("https://www.anthropic.com/news/rss.xml" anthropic AI)
+     ("https://openai.com/blog/rss/" OpenAI AI)
+     ("https://deepmind.google/discover/blog/feed/" google deepmind AI)
+     ("https://blogs.microsoft.com/ai/feed/" microsoft ai)
+     ("https://aiweekly.co/rss" aiweekly AI)
+     ("https://venturebeat.com/feed/" venturebeat AI)
+     ("https://techcrunch.com/feed/" techcrunch AI)
+     ("http://arxiv.org/rss/cs.LG" arxiv ML AI)
+     ("http://arxiv.org/rss/cs.AI" arxiv AI)
+     ("http://news.mit.edu/rss/topic/artificial-intelligence2" MIT AI)
+     ("https://www.technologyreview.com/feed/" AI)
+     ("https://bair.berkeley.edu/blog/feed.xml" AI)
+     ("http://proceedings.mlr.press//feed.xml" AI)
+     ("https://distill.pub/rss.xml" AI)
+     ("https://www.wired.com/feed/tag/ai/latest/rss" AI)
+     ("https://machinelearningmastery.com/blog/feed/" AI)
+     ("https://jalammar.github.io/feed.xml" AI)
+     ("https://blogs.nvidia.com/blog/category/ai/feed/" AI)
+     ("https://aws.amazon.com/blogs/machine-learning/feed/" AI)
+     ("http://feeds.feedburner.com/FeaturedBlogPosts-DataScienceCentral?format=xml" AI)
+     ;; ("https://www.reddit.com/r/MachineLearning/.rss" AI)
+     ;; ("https://www.reddit.com/r/artificial/.rss" AI)
+     ;; ("https://www.reddit.com/r/neuralnetworks/.rss?format=xml" AI)
+     ("https://www.sciencedaily.com/rss/computers_math/artificial_intelligence.xml" AI)
+     ("https://www.therundown.ai/feed" AI)
+     ("https://www.inference.vc/rss" AI)
+     ("https://www.fast.ai/atom.xml" AI)
+     ("http://davidstutz.de/feed" AI)
+     ("https://danieltakeshi.github.io/feed.xml" AI)
+     ("https://mlinproduction.com/feed" AI)
+     ("https://aiweirdness.com/rss" AI)
+     ("https://becominghuman.ai/feed" AI)
+     ;; ("https://www.cambridge.org/core/rss/product/id/1F51BCFAA50101CAF5CB9A20F8DEA3E4" work fluid mechanics jfm)
+     ;; ("http://feeds.aps.org/rss/recent/prfluids.xml" work fluid mechanics prf)
+     ;; ("https://rss.arxiv.org/rss/physics.flu-dyn" work fluid mechanics archivx)
      ;; ("https://www.zeitsprung.fm/feed/ogg/" podcast zeitsprung)
      ;; ("https://tribuenengespraech.podigee.io/feed/vorbis" podcast rasenfunk tribünengespräch fussball)
      ;; ("https://guix.gnu.org/feeds/blog/arm.atom" lisp programming guix blog)

@@ -80,7 +80,8 @@
 
 (package! diminish)
 
-(package! ellama)
+(package! claude-code-ide
+  :recipe (:host github :repo "manzaltu/claude-code-ide.el"))
 
 (package! async-await)
 
@@ -111,6 +112,8 @@
 (package! csharp-repl :recipe (:host github :repo "dakling/emacs-csharp-repl"))
 
 (package! bosss :recipe (:host github :repo "dakling/emacs-bosss"))
+
+(package! minimax.el :recipe (:host github :repo "dakling/minimax.el"))
 
 (disable-packages! org-msg)
 

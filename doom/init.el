@@ -100,6 +100,7 @@
        ein               ; tame Jupyter notebooks with emacs
        (eval +overlay)       ; run code, run (also, repls)
        ;;gist              ; interacting with github gists
+       llm
        (lookup +dictionary +offline +docsets)                         ; navigate your code and its documentation
        (lsp +eglot)
        ;;macos             ; MacOS-specific commands
@@ -137,7 +138,7 @@
        (haskell +lsp + tree-sitter)  ; a language that's lazier than I am
        ;;hy                ; readability of scheme w/ speed of python
        ;;idris             ;
-       ;;json              ; At least it ain't XML
+       (json +lsp +tree-sitter)              ; At least it ain't XML
        ;;(java +meghanada) ; the poster child for carpal tunnel syndrome
        ;;javascript        ; all(hope(abandon(ye(who(enter(here))))))
        (julia +lsp +tree-sitter +snail)             ; a better, faster MATLAB

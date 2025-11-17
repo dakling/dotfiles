@@ -1102,13 +1102,15 @@
 (use-package! gptel
   :config
   (setq
-   gptel-model 'minimax/minimax-m2:free
+   gptel-model 'moonshotai/kimi-k2:free
+   gptel--system-message "You are a helpful and knowledgeable assistant specialized in software development."
    gptel-backend (gptel-make-openai "OpenRouter"
                    :host "openrouter.ai"
                    :endpoint "/api/v1/chat/completions"
                    :stream t
                    :key (lambda () (password-store-get "openrouterai-api-key-0"))
-                   :models '(minimax/minimax-m2:free))
+                   :models '(moonshotai/kimi-k2:free))
+
    ;; gptel-backend (gptel-make-ollama "Ollama"
    ;;                 :host "localhost:11434"
    ;;                 :stream t
@@ -1122,6 +1124,7 @@
         "lp" (cmd! (gptel-add-file (projectile-project-root))))
 (map! :map gptel-mode-map
         "RET" #'gptel-send              ;; TODO check if this is good
+        "C-c C-c" #'gptel-send
         "C-RET" #'evil-ret)
 (map! :map gptel-mode-map
         :localleader

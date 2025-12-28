@@ -85,6 +85,8 @@
 
 (package! async-await)
 
+(package! obsidian)
+
 (package! evil-tex :recipe (:host github :repo "itai33/evil-tex"))
 
 (package! wgrep)

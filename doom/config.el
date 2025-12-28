@@ -1101,27 +1101,28 @@
 
 (use-package! gptel
   :config
-  (setq
-   gptel-model 'moonshotai/kimi-k2:free
-   gptel--system-message "You are a helpful and knowledgeable assistant specialized in software development."
-   gptel-backend (gptel-make-openai "OpenRouter"
-                   :host "openrouter.ai"
-                   :endpoint "/api/v1/chat/completions"
-                   :stream t
-                   :key (lambda () (password-store-get "openrouterai-api-key-0"))
-                   :models '(moonshotai/kimi-k2:free))
-
-   ;; gptel-backend (gptel-make-ollama "Ollama"
-   ;;                 :host "localhost:11434"
-   ;;                 :stream t
-   ;;                 :models '(codellama:latest))
-   ))
+  (let* ((model 'B-A-M-N/vibethinker:1.5b)
+         (ollama (gptel-make-ollama "Ollama" ;Any name of your choosing
+                   :host "localhost:11434"   ;Where it's running
+                   :stream t                 ;Stream responses
+                   :models (list model)))
+         (openrouter (gptel-make-openai "OpenRouter"
+                       :host "openrouter.ai"
+                       :endpoint "/api/v1/chat/completions"
+                       :stream t
+                       :key (lambda () (password-store-get "openrouterai-api-key-0"))
+                       :models '(moonshotai/kimi-k2:free))))
+      (setq
+       gptel-model model
+       gptel--system-message "You are a helpful and knowledgeable assistant specialized in software development."
+       gptel-backend ollama)))
 
 ;; Keybindings
 (map! :map doom-leader-open-map
-        "lf" #'gptel-add-file
-        "ld" (cmd! (gptel-add-file default-directory))
-        "lp" (cmd! (gptel-add-file (projectile-project-root))))
+      "lL" #'(lambda () (interactive) (let ((current-prefix-arg t)) (call-interactively #'gptel)))
+      "lf" #'gptel-add-file
+      "ld" (cmd! (gptel-add-file default-directory))
+      "lp" (cmd! (gptel-add-file (projectile-project-root))))
 (map! :map gptel-mode-map
         "RET" #'gptel-send              ;; TODO check if this is good
         "C-c C-c" #'gptel-send
@@ -1333,7 +1334,9 @@ _Q_: Disconnect     "
       :i "C-k" #'company-select-previous-or-abort)
 
 
-
+(use-package! obsidian
+  :config
+  (setq obsidian-directory "~/Documents/Obsidian Vault/"))
 
 ;; TODO check if this is needed with doom
 ;; (use-package! org-roam-server

@@ -68,7 +68,7 @@
 (package! telega
   :pin "b981a3a0d00c41768e054a294095b732a16fde84")
 
-;; (package! slack)
+(package! slack)
 
 (package! alert)
 
@@ -85,7 +85,7 @@
 
 (package! async-await)
 
-(package! obsidian)
+;; (package! obidian)
 
 (package! evil-tex :recipe (:host github :repo "itai33/evil-tex"))
 

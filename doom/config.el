@@ -7,7 +7,7 @@
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
 (setq! user-full-name "Dario Klingenberg"
-       user-mail-address "dario.klingenberg@web.de")
+       user-mail-address "dario@ellamind.com")
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
@@ -19,14 +19,10 @@
 ;;
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
-;; (setq! doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
-;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
+;;(setq! doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
+ ;;    doom-variable-pitch-font (font-spec :family "sans" :size 13))
 ;; (setq! doom-font (font-spec :family "Serious Sans Nerd Font Mono")
 ;;       doom-variable-pitch-font (font-spec :family "Serious Sans Nerd Font Mono"))
-(setq! doom-font (font-spec :family "Comic Mono")
-      doom-variable-pitch-font (font-spec :family "Shantell Sans")
-      ;; doom-variable-pitch-font (font-spec :family "Comic Mono")
-      )
 ;; (setq! doom-font (font-spec :family "Fira Code")
 ;;       doom-variable-pitch-font (font-spec :family "Fira Code"))
 ;; (setq! doom-font (font-spec :family "DejaVu Sans Mono"))
@@ -82,10 +78,14 @@
  isearch-regexp-lax-whitespace t
  search-whitespace-regexp (purecopy "[ \t\r\n]+")) ; TODO: only do this is some modes?
 
+(setq ns-alternate-modifier 'meta)       ; Left Option = Meta
+(setq ns-right-alternate-modifier 'none) ; Right Option = Option key
+
+
 (setq! evil-collection-setup-minibuffer t)
 (setq! evil-ex-substitute-global t)
 
-(setq! +evil-want-o/O-to-continue-comments nil )
+(setq! +evil-want-o/O-to-continue-comments nil)
 (setq! display-time-24hr-format t
        display-time-default-load-average nil )
 
@@ -1119,6 +1119,7 @@
 
 ;; Keybindings
 (map! :map doom-leader-open-map
+      "c" #'claude-code-ide-menu
       "lL" #'(lambda () (interactive) (let ((current-prefix-arg t)) (call-interactively #'gptel)))
       "lf" #'gptel-add-file
       "ld" (cmd! (gptel-add-file default-directory))
@@ -1334,9 +1335,9 @@ _Q_: Disconnect     "
       :i "C-k" #'company-select-previous-or-abort)
 
 
-(use-package! obsidian
-  :config
-  (setq obsidian-directory "~/Documents/Obsidian Vault/"))
+;; (use-package! obsidian
+;;   :config
+;;   (setq obsidian-directory "~/Document/Obsidian Vault/"))
 
 ;; TODO check if this is needed with doom
 ;; (use-package! org-roam-server

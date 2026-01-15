@@ -597,16 +597,6 @@
   (with-current-buffer "*scratch*"
       (shell-command-to-string "stumpish delete")))
 
-(map!
-   :g "M-<f11>" #'qtile/emacs-window-right
-   :g "M-<f12>" #'qtile/emacs-window-left
-   :g "M-<f10>" #'qtile/emacs-window-down
-   :g "M-<f9>" #'qtile/emacs-window-up
-   :g "M-s-<f11>" #'qtile/emacs-window-right
-   :g "M-s-<f12>" #'qtile/emacs-window-left
-   :g "M-s-<f10>" #'qtile/emacs-window-down
-   :g "M-s-<f9>" #'qtile/emacs-window-up)
-
 (defun my/create-super-bindings ()
   "Create bindings starting with super for use outside exwm."
   (map!
@@ -671,6 +661,20 @@
      ;; "s-P" 'helm-pass
      ;; "s-M-p" 'helm-pass
      )))
+
+(map!
+   ;; :g "M-<f11>" #'qtile/emacs-window-right
+   ;; :g "M-<f12>" #'qtile/emacs-window-left
+   ;; :g "M-<f10>" #'qtile/emacs-window-down
+   ;; :g "M-<f9>" #'qtile/emacs-window-up
+   ;; :g "M-s-<f11>" #'qtile/emacs-window-right
+   ;; :g "M-s-<f12>" #'qtile/emacs-window-left
+   ;; :g "M-s-<f10>" #'qtile/emacs-window-down
+   ;; :g "M-s-<f9>" #'qtile/emacs-window-up
+   :g "C-s-l" #'evil-window-right
+   :g "C-s-h" #'evil-window-left
+   :g "C-s-j" #'evil-window-down
+   :g "C-s-k" #'evil-window-up)
 
 (my/create-super-bindings)
 
@@ -1099,23 +1103,46 @@
   :config
   (add-hook 'LaTeX-mode-hook #'evil-tex-mode))
 
-(use-package! gptel
-  :config
-  (let* ((model 'B-A-M-N/vibethinker:1.5b)
-         (ollama (gptel-make-ollama "Ollama" ;Any name of your choosing
-                   :host "localhost:11434"   ;Where it's running
-                   :stream t                 ;Stream responses
-                   :models (list model)))
-         (openrouter (gptel-make-openai "OpenRouter"
-                       :host "openrouter.ai"
-                       :endpoint "/api/v1/chat/completions"
-                       :stream t
-                       :key (lambda () (password-store-get "openrouterai-api-key-0"))
-                       :models '(moonshotai/kimi-k2:free))))
-      (setq
-       gptel-model model
-       gptel--system-message "You are a helpful and knowledgeable assistant specialized in software development."
-       gptel-backend ollama)))
+;; (defun op-get-secret (item-name field-name &optional vault)
+;;   "Retrieve a secret from 1Password using the op CLI.
+;; ITEM-NAME is the name of the 1Password item.
+;; FIELD-NAME is the field to retrieve (e.g., 'password', 'api_key').
+;; VAULT is optional - specify if the item is in a specific vault."
+;;   (let* ((vault-arg (if vault (format "--vault %s" vault) ""))
+;;          (command (format "op read \"op://%s/%s/%s\""
+;;                          (or vault "local")
+;;                          item-name
+;;                          field-name))
+;;          (output (string-trim
+;;                   (shell-command-to-string command))))
+;;     (if (string-prefix-p "Error" output)
+;;         (error "Failed to retrieve secret: %s" output)
+;;       output)))
+
+;; (use-package! gptel
+;;   :config
+;;   (let* (
+;;          ;; (model 'B-A-M-N/vibethinker:1.5b)
+;;          (model 'claude-sonnet-4-5-20250929)
+;;          (claude
+;;           (gptel-make-anthropic "Claude" ;Any name you want
+;;             :stream t                    ;Streaming responses
+;;             :key (op-get-secret "ANTHROPIC_API_KEY" "credential")))
+;;          ;; (ollama (gptel-make-ollama "Ollama" ;Any name of your choosing
+;;          ;;           :host "localhost:11434"   ;Where it's running
+;;          ;;           :stream t                 ;Stream responses
+;;          ;;           :models (list model)))
+;;          ;; (openrouter (gptel-make-openai "OpenRouter"
+;;          ;;               :host "openrouter.ai"
+;;          ;;               :endpoint "/api/v1/chat/completions"
+;;          ;;               :stream t
+;;          ;;               :key (lambda () (password-store-get "openrouterai-api-key-0"))
+;;          ;;               :models '(moonshotai/kimi-k2:free)))
+;;          )
+;;          (setq
+;;           ;; gptel-model model
+;;           gptel--system-message "You are a helpful and knowledgeable assistant specialized in software development."
+;;           gptel-backend claude)))
 
 ;; Keybindings
 (map! :map doom-leader-open-map
@@ -1147,9 +1174,21 @@
         "q" #'kill-buffer)
 
 (use-package! claude-code-ide
-  :bind ("C-c C-'" . claude-code-ide-menu) ; Set your favorite keybinding
+  :bind
   :config
-  (claude-code-ide-emacs-tools-setup)) ; Optionally enable Emacs MCP tools
+  (claude-code-ide-emacs-tools-setup)   ; Optionally enable Emacs MCP tools
+  (setq! my/claude-text-snippets-list
+         '("Be very concise. Sacrifice grammar for the sake of concision. "
+           "Always use the explore subagents if you need more context. "
+           "Please use the AskUserQuestion tool to ask for clarification on anything that is unclear. "))
+  (defun my/claude-snippet-menu ()
+    (interactive)
+    (let ((snippet (completing-read "Snippet to insert:"
+                                    my/claude-text-snippets-list)))
+      (send-string (current-buffer) snippet)))
+  (map! :map vterm-mode-map
+        "C-c C-r"  #'my/claude-snippet-menu))
+  
 
 
 (use-package! minimax-agent

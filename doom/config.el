@@ -1176,16 +1176,18 @@
 (use-package! claude-code-ide
   :bind
   :config
-  (claude-code-ide-emacs-tools-setup)   ; Optionally enable Emacs MCP tools
+  ;; (claude-code-ide-emacs-tools-setup)   ; Optionally enable Emacs MCP tools
   (setq! my/claude-text-snippets-list
-         '("Be very concise. Sacrifice grammar for the sake of concision. "
-           "Always use the explore subagents if you need more context. "
-           "Please use the AskUserQuestion tool to ask for clarification on anything that is unclear. "))
+         '("Be very concise. Sacrifice grammar for the sake of concision."
+           "Always use the explore subagents if you need more context."
+           "Please start five parallel explore subagents to explore solutions."
+           "Please give me five different solution prototypes."
+           "Please use the AskUserQuestion tool to ask for clarification on anything that is unclear."))
   (defun my/claude-snippet-menu ()
     (interactive)
     (let ((snippet (completing-read "Snippet to insert:"
                                     my/claude-text-snippets-list)))
-      (send-string (current-buffer) snippet)))
+      (send-string (current-buffer) (concat " " snippet " "))))
   (map! :map vterm-mode-map
         "C-c C-r"  #'my/claude-snippet-menu))
   

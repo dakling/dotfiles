@@ -1101,7 +1101,7 @@
 
 (use-package! gptel
   :config
-  (let* ((model 'B-A-M-N/vibethinker:1.5b)
+  (let* ((model 'nemotron-3-nano:30b)
          (ollama (gptel-make-ollama "Ollama" ;Any name of your choosing
                    :host "localhost:11434"   ;Where it's running
                    :stream t                 ;Stream responses
@@ -1116,6 +1116,32 @@
        gptel-model model
        gptel--system-message "You are a helpful and knowledgeable assistant specialized in software development."
        gptel-backend ollama)))
+
+(use-package! opencode
+  :after gptel
+  :config
+  (opencode-setup)
+  ;; Configure command permissions
+  (setq opencode-bash-permissions 
+        '(("ls*" . "allow")        ; Allow ls commands
+          ("git*" . "allow")       ; Allow git commands
+          ("npm*" . "allow")       ; Allow npm commands
+          ("rm*" . "ask")          ; Ask before rm commands
+          ("sudo*" . "deny")       ; Deny sudo commands
+          ("*" . "ask")))          ; Ask for everything else
+
+  ;; Configure file edit permissions
+  (setq opencode-edit-permissions "ask")  ; "allow", "deny", or "ask"
+  ;; Enable LSP features (default: enabled)
+  (setq opencode-lsp-enabled t)
+
+  ;; Show diagnostics in tool output (default: enabled)
+  (setq opencode-lsp-show-diagnostics t)
+
+  ;; Auto-start LSP servers when needed (default: enabled)
+  (setq opencode-lsp-auto-start t)
+  (setq opencode-enabled-tools 'all)      ; All tools
+  )
 
 ;; Keybindings
 (map! :map doom-leader-open-map
@@ -1880,10 +1906,6 @@ _Q_: Disconnect     "
 
 (use-package! systemd
   :defer t)
-
-;; (use-package! gptel
-;;   :config
-;;   (setq gptel-api-key (shell-command-to-string "pass openaiapikey")))
 
 (defun aur-checker ()
   (run-at-time

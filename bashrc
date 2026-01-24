@@ -5,35 +5,56 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+# History settings
+shopt -s histappend
+export HISTCONTROL=ignoredups:erasedups
+
+# Basic aliases
 alias ls='ls --color=auto'
 alias ll='ls -lrth --color=auto'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias grep='grep --color=auto'
+alias mkdir='mkdir -pv'
 
+# Safety aliases
+alias rm='rm -i'
+alias mv='mv -i'
+alias cp='cp -i'
+
+# Editor aliases
 alias ee='emacsclient -t -a nvim'
 alias vim='nvim'
+export EDITOR='nvim'
 
+# Process monitoring
 alias top='btm'
 alias htop='btm'
+
+# System update
+alias update='sudo apt update && sudo apt upgrade'
 
 alias xx='Xephyr -br -ac -noreset -screen 1920x1080 :1 & DISPLAY=:1'
 alias fix_screen='~/.screenlayout/single.sh; ~/.screenlayout/default.sh ; ~/.screenlayout/default.sh'
 
-alias mount_fairphone='sshfs fairphone:/home/phablet ~/mnt/fairphone/'
-alias mount_nexus='sshfs nexus:/home/phablet ~/mnt/nexus/'
-alias mount_purism='sshfs purism:/home/purism ~/mnt/purism/'
-alias mount_pi='sshfs pi:/home/klingenberg ~/mnt/pi/'
-alias liwi_ssh_tunnel='ssh -f -N lichtwiese-tunnel'
-alias mount_liwi='sshfs lichtwiese:/home/klingenberg ~/mnt/lichtwiese/'
-alias mount_liwivpn='sshfs lichtwiesevpn:/home/klingenberg ~/mnt/lichtwiese/'
-alias mount_lcluster='sshfs lcluster:/home/km88econ ~/mnt/lichtenberg/'
-alias mount_jenkins_old='sshfs jenkins-old:/ ~/mnt/jenkins/'
-alias mount_cadmium='sshfs cadmium:/home/dsk34/ ~/mnt/cadmium/'
-alias mount_fawcett='sshfs fawcett:/home/dsk34/ ~/mnt/fawcett/'
-alias mount_maths='sshfs maths:/home/dsk34/ ~/mnt/maths/'
-alias mount_swirles='sshfs swirles:/cephfs/home/dsk34/ ~/mnt/swirles/'
-alias mount_store_swirles='sshfs swirles:/cephfs/store/fluids-rrk26/dsk34/ ~/mnt/swirles_store/'
-alias mount_store_maths='sshfs maths:/store/DAMTP/dsk34 ~/mnt/maths_store/'
-alias mount_data_maths='sshfs maths:/data/septal/dsk34 ~/mnt/maths_data/'
-alias mount_wilkes='sshfs wilkes:/home/dsk34/ ~/mnt/wilkes/'
+# SSH mount aliases
+mount_fairphone() { sshfs fairphone:/home/phablet ~/mnt/fairphone/; }
+mount_nexus() { sshfs nexus:/home/phablet ~/mnt/nexus/; }
+mount_purism() { sshfs purism:/home/purism ~/mnt/purism/; }
+mount_pi() { sshfs pi:/home/klingenberg ~/mnt/pi/; }
+liwi_ssh_tunnel() { ssh -f -N lichtwiese-tunnel; }
+mount_liwi() { sshfs lichtwiese:/home/klingenberg ~/mnt/lichtwiese/; }
+mount_liwivpn() { sshfs lichtwiesevpn:/home/klingenberg ~/mnt/lichtwiese/; }
+mount_lcluster() { sshfs lcluster:/home/km88econ ~/mnt/lichtenberg/; }
+mount_jenkins_old() { sshfs jenkins-old:/ ~/mnt/jenkins/; }
+mount_cadmium() { sshfs cadmium:/home/dsk34/ ~/mnt/cadmium/; }
+mount_fawcett() { sshfs fawcett:/home/dsk34/ ~/mnt/fawcett/; }
+mount_maths() { sshfs maths:/home/dsk34/ ~/mnt/maths/; }
+mount_swirles() { sshfs swirles:/cephfs/home/dsk34/ ~/mnt/swirles/; }
+mount_store_swirles() { sshfs swirles:/cephfs/store/fluids-rrk26/dsk34/ ~/mnt/swirles_store/; }
+mount_store_maths() { sshfs maths:/store/DAMTP/dsk34 ~/mnt/maths_store/; }
+mount_data_maths() { sshfs maths:/data/septal/dsk34 ~/mnt/maths_data/; }
+mount_wilkes() { sshfs wilkes:/home/dsk34/ ~/mnt/wilkes/; }
 alias fe41='source /home/klingenberg/foam/foam-extend-4.1/etc/bashrc'
 
 source ~/.bash_aliases.sh
@@ -46,7 +67,11 @@ function scrcb() {
     scrot $1 -e 'xclip -selection clipboard -t image/png -i $f'
 }
 
-PS1='[\u@\h \W]\$ '
+# Enhanced PS1 with git branch and colors
+parse_git_branch() {
+    git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
+export PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\[\033[33m\]$(parse_git_branch)\[\033[00m\]\$ '
 
 export PATH=~/.config/emacs/bin/:$PATH
 export FOAM_DG_ROOT=~/Documents-work/programming/foam-dg/foam-dg/
@@ -63,42 +88,7 @@ if [[ "$INSIDE_EMACS" = 'vterm' ]] \
 	source ${EMACS_VTERM_PATH}/etc/emacs-vterm-bash.sh
 fi
 
-# vterm_printf(){
-#     if [ -n "$TMUX" ] && ([ "${TERM%%-*}" = "tmux" ] || [ "${TERM%%-*}" = "screen" ] ); then
-#         # Tell tmux to pass the escape sequences through
-#         printf "\ePtmux;\e\e]%s\007\e\\" "$1"
-#     elif [ "${TERM%%-*}" = "screen" ]; then
-#         # GNU screen (screen, screen-256color, screen-256color-bce)
-#         printf "\eP\e]%s\007\e\\" "$1"
-#     else
-#         printf "\e]%s\e\\" "$1"
-#     fi
-# }
 
-# if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
-#     function clear(){
-#         vterm_printf "51;Evterm-clear-scrollback";
-#         tput clear;
-#     }
-# fi
-
-# PROMPT_COMMAND='echo -ne "\033]0;${HOSTNAME}:${PWD}\007"'
-
-# vterm_cmd() {
-#     local vterm_elisp
-#     vterm_elisp=""
-#     while [ $# -gt 0 ]; do
-#         vterm_elisp="$vterm_elisp""$(printf '"%s" ' "$(printf "%s" "$1" | sed -e 's|\\|\\\\|g' -e 's|"|\\"|g')")"
-#         shift
-#     done
-#     vterm_printf "51;E$vterm_elisp"
-# }
-
-# # should be at the end
-# vterm_prompt_end(){
-#     vterm_printf "51;A$(whoami)@$(hostname):$(pwd)"
-# }
-# PS1=$PS1'\[$(vterm_prompt_end)\]'
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
@@ -113,6 +103,7 @@ else
     fi
 fi
 unset __conda_setup
-# <<< conda initialize <<<
 
+# Additional conda initialization
 [ -f /opt/miniconda3/etc/profile.d/conda.sh ] && source /opt/miniconda3/etc/profile.d/conda.sh
+# <<< conda initialize <<<

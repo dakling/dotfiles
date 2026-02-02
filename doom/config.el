@@ -1152,11 +1152,13 @@
   :config
   ;; (claude-code-ide-emacs-tools-setup)   ; Optionally enable Emacs MCP tools
   (setq! my/claude-text-snippets-list
-         '("Be very concise. Sacrifice grammar for the sake of concision."
+         '("Please use the AskUserQuestion tool to ask for clarification on anything that is unclear."
+           "Be very concise. Sacrifice grammar for the sake of concision."
+           "Please check if a linear issue for the current task exists, and, if not, create on/e before starting to work on this. Ask questions if you need information about some of the task details."
+           "Please create a TODO list to track progress."
            "Always use the explore subagents if you need more context."
            "Please start five parallel explore subagents to explore solutions."
-           "Please give me five different solution prototypes."
-           "Please use the AskUserQuestion tool to ask for clarification on anything that is unclear."))
+           "Please give me five different solution prototypes."))
   (defun my/claude-snippet-menu ()
     (interactive)
     (let ((snippet (completing-read "Snippet to insert:"
@@ -1166,6 +1168,16 @@
   (map! :map vterm-mode-map
         "C-c C-r"  #'my/claude-snippet-menu))
 
+
+(use-package! goose
+  :commands (goose goose-transient)
+  :config
+  (setq goose-program-name "goose")  ; Ensure goose CLI is in PATH
+  :hook
+  (goose-mode . (lambda () (display-line-numbers-mode -1))))
+
+(map! :leader
+      "l g" #'goose-transient)  ; Open goose with SPC l g
 
 (use-package! minimax-agent
   :config

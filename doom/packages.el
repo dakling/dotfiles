@@ -83,6 +83,9 @@
 (package! claude-code-ide
   :recipe (:host github :repo "manzaltu/claude-code-ide.el"))
 
+(package! goose
+  :recipe (:host github :repo "aq2bq/goose.el"))
+
 (package! async-await)
 
 ;; (package! obidian)

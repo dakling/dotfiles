@@ -674,6 +674,10 @@
 
 (my/create-super-bindings)
 
+(map! :map doom-leader-open-map
+        "c" #'claude-code-ide-menu)
+
+
 (after! mu4e
   (setq! mu4e-context-policy 'always-ask
          mu4e-compose-context-policy 'always-ask)
@@ -1144,37 +1148,23 @@
   )
 
 ;; Keybindings
-(map! :map doom-leader-open-map
-      "lL" #'(lambda () (interactive) (let ((current-prefix-arg t)) (call-interactively #'gptel)))
-      "lf" #'gptel-add-file
-      "ld" (cmd! (gptel-add-file default-directory))
-      "lp" (cmd! (gptel-add-file (projectile-project-root))))
-(map! :map gptel-mode-map
-        "RET" #'gptel-send              ;; TODO check if this is good
-        "C-c C-c" #'gptel-send
-        "C-RET" #'evil-ret)
-(map! :map gptel-mode-map
-        :localleader
-        "d" (cmd! (gptel-add-file default-directory))
-        "P" (cmd! (gptel-add-file (projectile-project-root)))
-        "RET" #'gptel-send
-        "C-RET" #'gptel-send-newline
-        "i" #'gptel-add-buffer
-        "f" #'gptel-add-file
-        "r" #'gptel-context-remove-all
-        "t" #'gptel-select-prefix
-        "s" #'gptel-switch-model
-        "o" #'gptel-open-log
-        "n" #'gptel-next-message
-        "p" #'gptel-previous-message
-        "k" #'gptel-delete-current
-        "c" #'gptel-new-chat
-        "q" #'kill-buffer)
-
 (use-package! claude-code-ide
-  :bind ("C-c C-'" . claude-code-ide-menu) ; Set your favorite keybinding
   :config
-  (claude-code-ide-emacs-tools-setup)) ; Optionally enable Emacs MCP tools
+  ;; (claude-code-ide-emacs-tools-setup)   ; Optionally enable Emacs MCP tools
+  (setq! my/claude-text-snippets-list
+         '("Be very concise. Sacrifice grammar for the sake of concision."
+           "Always use the explore subagents if you need more context."
+           "Please start five parallel explore subagents to explore solutions."
+           "Please give me five different solution prototypes."
+           "Please use the AskUserQuestion tool to ask for clarification on anything that is unclear."))
+  (defun my/claude-snippet-menu ()
+    (interactive)
+    (let ((snippet (completing-read "Snippet to insert:"
+                                    my/claude-text-snippets-list)))
+      (send-string (current-buffer) (concat " " snippet " "))))
+  
+  (map! :map vterm-mode-map
+        "C-c C-r"  #'my/claude-snippet-menu))
 
 
 (use-package! minimax-agent

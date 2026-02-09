@@ -1191,7 +1191,138 @@
                                     my/claude-text-snippets-list)))
       (send-string (current-buffer) (concat " " snippet " "))))
   (map! :map vterm-mode-map
-        "C-c C-r"  #'my/claude-snippet-menu))
+        "C-c C-r"  #'my/claude-snippet-menu)
+
+  ;; ── Compose prompt buffer ──────────────────────────────────────────
+  ;; Write a prompt with full Evil/Emacs editing, then send to Claude
+  (defvar my/claude-compose-buffer-name "*claude-compose*")
+
+  (defun my/claude--find-claude-buffer ()
+    "Find the Claude Code vterm buffer, checking current buffer first."
+    (cond
+     ;; Already in a Claude session buffer
+     ((and (buffer-live-p (current-buffer))
+           (string-prefix-p "*claude-code[" (buffer-name)))
+      (current-buffer))
+     ;; Find by project name
+     (t (ignore-errors
+          (get-buffer (claude-code-ide--get-buffer-name))))))
+
+  (defun my/claude--border-line-p (line)
+    "Return non-nil if LINE looks like a Claude Code border/separator.
+These are lines made of repeated box-drawing characters like ─ ━ ═ etc."
+    (let ((cleaned (replace-regexp-in-string "[\0 \t\r ]" "" line)))
+      (and (> (length cleaned) 2)
+           ;; Every character is in the Box Drawing (U+2500–U+257F)
+           ;; or Block Elements (U+2580–U+259F) Unicode ranges
+           (cl-every (lambda (ch) (<= #x2500 ch #x259F)) cleaned))))
+
+  (defun my/claude--status-line-p (line)
+    "Return non-nil if LINE looks like a Claude Code status bar."
+    (let ((trimmed (string-trim line)))
+      (or (string-match-p "⏵" trimmed)
+          (string-match-p "Context left" trimmed)
+          (string-match-p "auto-compact" trimmed)
+          (string-match-p "accept edits" trimmed)
+          (string-match-p "shift+tab" trimmed))))
+
+  (defun my/claude--prompt-line-p (line)
+    "Return non-nil if LINE looks like a Claude Code prompt line (starts with ❯)."
+    (string-match-p "❯" line))
+
+  (defun my/claude--grab-terminal-input ()
+    "Grab the current input text from the Claude vterm buffer.
+Works with multi-line prompts. Sends Ctrl-C to clear the terminal input.
+
+Claude Code terminal layout:
+  ─────────────── (border)
+  ❯ input text    (prompt + user input, may be multi-line)
+  ─────────────── (border)
+  ⏵⏵ status bar   (status indicators)"
+    (let ((claude-buf (my/claude--find-claude-buffer)))
+      (when (and claude-buf (buffer-live-p claude-buf))
+        (with-current-buffer claude-buf
+          (let* ((raw (buffer-substring-no-properties (point-min) (point-max)))
+                 (cleaned (replace-regexp-in-string "\0" "" raw))
+                 (all-lines (split-string cleaned "\n"))
+                 (prompt-idx nil))
+            ;; Find the LAST prompt line (line containing ❯)
+            (dotimes (i (length all-lines))
+              (when (my/claude--prompt-line-p (nth i all-lines))
+                (setq prompt-idx i)))
+            (when prompt-idx
+              (let ((input-lines '()))
+                ;; Collect from prompt line forward, stopping at border or status
+                (cl-loop for i from prompt-idx below (length all-lines)
+                         for line = (nth i all-lines)
+                         if (or (my/claude--border-line-p line)
+                                (my/claude--status-line-p line))
+                         return nil
+                         else do (push line input-lines))
+                (setq input-lines (nreverse input-lines))
+                (when input-lines
+                  ;; Strip everything up to and including ❯ from the first line
+                  (setcar input-lines
+                          (replace-regexp-in-string ".*❯ ?" "" (car input-lines)))
+                  ;; Trim trailing whitespace from each line
+                  (setq input-lines (mapcar #'string-trim-right input-lines))
+                  ;; Drop empty trailing lines
+                  (while (and input-lines
+                              (string-empty-p (string-trim (car (last input-lines)))))
+                    (setq input-lines (butlast input-lines)))
+                  (let ((result (string-trim (string-join input-lines "\n"))))
+                    (unless (string-empty-p result)
+                      ;; Ctrl-C cancels the entire multi-line input
+                      (vterm-send-key "c" nil nil t)
+                      (sit-for 0.2)
+                      result))))))))))
+
+  (defun my/claude-compose-send ()
+    "Send contents of compose buffer to the Claude terminal and close."
+    (interactive)
+    (let ((text (string-trim (buffer-substring-no-properties (point-min) (point-max)))))
+      (when (string-empty-p text)
+        (user-error "Empty prompt, nothing to send"))
+      (let ((compose-buf (current-buffer)))
+        (claude-code-ide-send-prompt text)
+        (quit-window t (get-buffer-window compose-buf)))))
+
+  (defun my/claude-compose-cancel ()
+    "Cancel and close the compose buffer."
+    (interactive)
+    (quit-window t))
+
+  (defun my/claude-compose-prompt ()
+    "Open a buffer to compose a Claude prompt with full editing.
+Grabs any existing input from the Claude terminal.
+Write your prompt, then press `C-c C-c` or `, RET` to send.
+Press `C-c C-k` or `q` (normal mode) to cancel."
+    (interactive)
+    (let ((existing-input (my/claude--grab-terminal-input))
+          (buf (get-buffer-create my/claude-compose-buffer-name)))
+      (with-current-buffer buf
+        (erase-buffer)
+        (markdown-mode)
+        (setq-local header-line-format
+                    "Claude prompt compose | C-c C-c / , RET: send | C-c C-k / q: cancel")
+        ;; Insert existing prompt text if any
+        (when (and existing-input (not (string-empty-p existing-input)))
+          (insert existing-input)
+          (goto-char (point-max)))
+        ;; Keybindings
+        (local-set-key (kbd "C-c C-c") #'my/claude-compose-send)
+        (local-set-key (kbd "C-c C-k") #'my/claude-compose-cancel)
+        (evil-local-set-key 'normal (kbd "q") #'my/claude-compose-cancel)
+        (evil-local-set-key 'normal (kbd "RET") #'my/claude-compose-send))
+      (pop-to-buffer buf
+                     '((display-buffer-at-bottom)
+                       (window-height . 10)))))
+
+  (map! :map doom-leader-open-map
+        "p" #'my/claude-compose-prompt)
+  (map! :localleader
+        :map vterm-mode-map
+        "p" #'my/claude-compose-prompt))
   
 
 

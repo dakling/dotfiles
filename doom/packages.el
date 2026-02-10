@@ -86,6 +86,8 @@
 (package! goose
   :recipe (:host github :repo "aq2bq/goose.el"))
 
+(package! prompt-compose :recipe `(:local-repo ,(expand-file-name "lisp/prompt-compose" doom-user-dir)))
+
 (package! async-await)
 
 ;; (package! obidian)

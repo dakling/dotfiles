@@ -51,12 +51,6 @@
 ;
 ;; Beginning of my packages
 
-;; exwm
-;; (package! xelb)
-;; (package! exwm)
-;; (package! dmenu)
-;; (package! pulseaudio-control)
-
 (unpin! evil-collection)
 ;; (package! evil-collection
 ;;   :recipe (:repo "meliache/evil-collection" :branch "mu4e-development"))
@@ -86,7 +80,8 @@
 (package! goose
   :recipe (:host github :repo "aq2bq/goose.el"))
 
-(package! prompt-compose :recipe `(:local-repo ,(expand-file-name "lisp/prompt-compose" doom-user-dir)))
+(package! prompt-compose
+  :recipe (:host github :repo "darioklingenberg/prompt-compose"))
 
 (package! async-await)
 

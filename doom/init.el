@@ -95,7 +95,7 @@
        ;;ansible
        biblio
        (debugger)          ; FIXME stepping through code, to help you add bugs
-       ;;direnv
+       direnv
        ;;docker
        editorconfig      ; let someone else argue about tabs vs spaces
        ;; ein               ; tame Jupyter notebooks with emacs
@@ -104,7 +104,7 @@
        llm
        (lookup +dictionary +offline +docsets)                         ; navigate your code and its documentation
        (lsp +eglot)
-       (magit -forge)           ; a git porcelain for Emacs
+       magit                    ; a git porcelain for Emacs
        ;; make              ; run make tasks from Emacs
        pass                             ; password manager for nerds
        pdf                              ; pdf enhancements
@@ -152,7 +152,7 @@
        ;;nim               ; python + lisp at the speed of c
        ;; nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
-       (org +pretty +notion +dragndrop +gnuplot +noter +pandoc +roam2 +present +capture +journal +jupyter +pomodoro) ; organize your plain life in plain text
+       (org +pretty +notion +dragndrop +gnuplot +noter +pandoc +roam2 +present +capture +journal) ; organize your plain life in plain text
        ;;perl              ; write code no one else can comprehend
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more

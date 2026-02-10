@@ -80,8 +80,13 @@
 
 (setq! langtool-default-language "en-GB")
 (setq langtool-java-classpath "/usr/share/languagetool:/usr/share/java/languagetool/*")
-(setq! ispell-dictionary "en_GB")
-(setq! ispell-alternate-dictionary nil)
+;; jinx: faster spell-checking (replaces flyspell once installed via doom sync)
+;; After `doom sync`, you can disable the spell module in init.el and uncomment
+;; the global keybindings below to fully switch over.
+(use-package! jinx
+  :hook (text-mode . jinx-mode)
+  :config
+  (setq jinx-languages "en_GB"))
 
 (setq! flycheck-checker-error-threshold 10000)
 
@@ -102,10 +107,9 @@
         ("Google maps" "https://maps.google.com/maps?q=%s")
         ("DevDocs.io" "https://devdocs.io/#q=%s")
         ("StackOverflow" "https://stackoverflow.com/search?q=%s")
-        ("Csharp (.Net)" "https://docs.microsoft.com/en-us/search/?terms=%s&scope=.NET")
         ("Github" "https://github.com/search?ref=simplesearch&q=%s")
         ("Youtube" "https://youtube.com/results?aq=f&oq=&search_query=%s")
-        ("Doom Emacs issues" "https://github.com/hlissner/doom-emacs/issues?q=is%%3Aissue+%s")))
+        ("Doom Emacs issues" "https://github.com/doomemacs/doomemacs/issues?q=is%%3Aissue+%s")))
 
 (setq! browse-url-browser-function
        (if (eq system-type 'gnu/linux) 'browse-url-firefox 'browse-url-default-browser))
@@ -116,18 +120,11 @@
 
 (cond
  ((system-name= "klingenberg-laptop" "klingenberg-pc" "helensInfinitybook")
-  (add-load-path! "/usr/share/emacs/site-lisp/")
-))
- ((system-name= "klingenberg-pi")
-  (add-load-path! "/run/current-system/sw/share/emacs/site-lisp/mu4e"))
- ((system-name= "klingenberg-tablet")
-  (add-load-path! "/run/current-system/profile/share/emacs/site-lisp/")
-  (add-load-path! "~/.guix-profile/share/emacs/site-lisp/")))
+  (add-load-path! "/usr/share/emacs/site-lisp/")))
 
 
 (use-package! helm
   :defer t
-  :diminish helm-mode
   :config
   (setq helm-mini-default-sources '(helm-source-buffers-list
                                     helm-source-recentf
@@ -163,6 +160,13 @@
   (setq! helm-truncate-lines nil)
   (setq! helm-buffer-max-length nil)
   (setq! helm-buffers-truncate-lines nil))
+
+(use-package! ultra-scroll
+  :init
+  (setq scroll-conservatively 101
+        scroll-margin 0)
+  :config
+  (ultra-scroll-mode 1))
 
 (after! dirvish
   (map! :map dirvish-mode-map
@@ -274,6 +278,19 @@
  %a" :heading "Notes" :prepend t) ("oc" "Project changelog" entry #'+org-capture-central-project-changelog-file "* %U %?
  %i
  %a" :heading "Changelog" :prepend t))))
+
+(use-package! org-modern
+  :after org
+  :hook (org-mode . org-modern-mode)
+  :config
+  (setq org-modern-star '("◉" "○" "◈" "◇" "▸")
+        org-modern-table-vertical 1
+        org-modern-table-horizontal 0.2
+        org-modern-block-name t
+        org-modern-keyword t
+        org-modern-todo t
+        org-modern-priority t
+        org-modern-tag t))
 
 (add-hook! 'org-mode-hook (variable-pitch-mode 1))
 
@@ -954,18 +971,6 @@
  (visual-line-mode -1))
 
 
-(map! :map (company-mode-map company-active-map)
-      "RET" nil
-      "<return>" nil
-      "<left>" nil
-      ;; :i "TAB" #'+company/complete
-      ;; :i "<right>" #'company-complete-selection
-      :i "M-RET" #'company-complete-selection
-      :i "M-l" #'company-complete-selection
-      :i "M-j" #'company-select-next-or-abort
-      :i "M-k" #'company-select-previous-or-abort
-      :i "C-l" #'company-complete-selection
-      :i "C-k" #'company-select-previous-or-abort)
 
 
 (use-package! vterm
@@ -1130,17 +1135,6 @@
   ;; (setq! epg-pinentry-mode 'ask)
   (setq! epg-pinentry-mode 'loopback))
 
-(use-package! diminish
-  :defer t
-  :config
-  (mapcar #'diminish '(reftex-mode
-                       auto-revert-mode
-                       undo-tree-mode
-                       eldoc-mode
-                       pdf-view-midnight-minor-mode
-                       subword-mode
-                       flyspell-mode
-                       defining-kbd-macro)))
 
 (use-package! system-packages
   :defer t

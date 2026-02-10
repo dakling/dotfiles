@@ -57,7 +57,8 @@
 
 (package! mu4e-alert)
 
-(package! smooth-scrolling)
+(package! ultra-scroll
+  :recipe (:host github :repo "jdtsmith/ultra-scroll"))
 
 
 (package! alert)
@@ -68,7 +69,6 @@
 (disable-packages! elfeed-goodies)
 (disable-packages! ts-fold)
 
-(package! diminish)
 
 (package! claude-code-ide
   :recipe (:host github :repo "manzaltu/claude-code-ide.el"))
@@ -81,14 +81,14 @@
 
 (package! async-await)
 
-;; (package! obidian)
-
 (package! evil-tex :recipe (:host github :repo "itai33/evil-tex"))
 
 (package! wgrep)
 
 
 (package! ace-link)
+
+(package! org-modern)
 
 (package! org-super-links :recipe (:host github :repo "toshism/org-super-links"))
 
@@ -98,8 +98,6 @@
 
 (unpin! sly)
 
-;; (unpin! org-mode)
-
 (package! el-igo :recipe (:host github :repo "misohena/el-igo"))
 
 (package! minimax.el :recipe (:host github :repo "dakling/minimax.el"))
@@ -107,8 +105,6 @@
 (disable-packages! org-msg)
 
 (disable-packages! writegood-mode)
-
-;; (package! solaire-mode :disable t)
 
 (package! nov)
 
@@ -120,7 +116,7 @@
            :repo "Overdr0ne/shelldon"
            :branch "master"))
 
-(package! disable-mouse)
+(package! jinx)
 
 (package! beacon)
 
@@ -129,14 +125,5 @@
 (package! string-inflection)
 
 (package! systemd)
-
-;; (package! gptel :recipe (:host github :repo "karthink/gptel"))
-
-;; (package! eaf :recipe
-;;   (:host github
-;;    :repo "emacs-eaf/emacs-application-framework"
-;;    :files ("*.el" "*.py" "core" "app")
-;;    ;; :no-byte-compile t
-;;    ))
 
 (unpin! haskell-mode)

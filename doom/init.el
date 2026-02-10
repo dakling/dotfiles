@@ -98,7 +98,7 @@
        ;;direnv
        ;;docker
        editorconfig      ; let someone else argue about tabs vs spaces
-       ein               ; tame Jupyter notebooks with emacs
+       ;; ein               ; tame Jupyter notebooks with emacs
        (eval +overlay)       ; run code, run (also, repls)
        ;;gist              ; interacting with github gists
        llm
@@ -118,7 +118,7 @@
 
        :lang
        ;;agda              ; types of types of types of types...
-       (cc +lsp)                ; C/C++/Obj-C madness
+       ;; (cc +lsp)                ; C/C++/Obj-C madness
        ;; clojure                  ; java with a lisp
        common-lisp              ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
@@ -183,7 +183,7 @@
        calendar
        ;; emms
        everywhere
-       irc      ; how neckbeards socialize
+       ;; irc      ; how neckbeards socialize
        rss      ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought
 

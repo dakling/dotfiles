@@ -216,34 +216,6 @@
   (setq projectile-per-project-compilation-buffer t))
 
 
-(defun my/org-pomodoro-text-time ()
-  "")
-(after! org-pomodoro
-  (defun my/disable-notifications ()
-    (mu4e-alert-disable-mode-line-display)
-    (mu4e-alert-disable-notifications)
-    (shell-command "dunstctl set-paused true"))
-  (defun my/enable-notifications ()
-    (mu4e-alert-enable-mode-line-display)
-    (mu4e-alert-enable-notifications)
-    (shell-command "dunstctl set-paused false"))
-  (defun my/org-pomodoro-text-time ()
-    "Display remaining pomodoro time in i3 status bar. Credit to dakra on reddit."
-    (if (org-pomodoro-active-p)
-        (cond ((eq org-pomodoro-state :pomodoro) (format "pomodoro: %s" (org-pomodoro-format-seconds)))
-              ((eq org-pomodoro-state :short-break) (format "break: %s" (org-pomodoro-format-seconds)))
-              ((eq org-pomodoro-state :long-break) (format "break: %s" (org-pomodoro-format-seconds)))
-              (t (format "overtime: %s" (org-pomodoro-format-seconds))))
-      ""))
-  :config
-  (setq org-pomodoro-manual-break t)
-  (add-hook! 'org-pomodoro-started-hook #'my/disable-notifications)
-  (add-hook! 'org-pomodoro-started-hook #'org-todo)
-  (add-hook! 'org-pomodoro-finished-hook #'org-todo)
-  (add-hook! 'org-pomodoro-overtime-hook #'my/enable-notifications)
-  (add-hook! 'org-pomodoro-finished-hook #'my/enable-notifications))
-
-
 (after! sly
   (setq! inferior-lisp-program (cond
                                 ((system-name= "klingenberg-tablet")  "~/.local/bin/.run-sbcl.sh")
@@ -289,13 +261,7 @@
 %i
 %a" :prepend t) ("j" "Journal" entry (file+olp+datetree +org-capture-journal-file) "* %U %?
 %i
-%a" :prepend t) ("b" "BoSSS calculation" entry (file+headline "~/Documents-work/bosss/calculation-log.org" ,(with-temp-buffer
-                                                                                                              (org-insert-time-stamp (current-time)))) "** RUNNING %T %(my/bosss-worksheet-get-project-name \"%f\")
-- %(org-link-make-string (concat (bosss-get-most-recent-deploy-directory) \"/stdout.txt\")  \"stdout.txt\")
-- PID: %(bosss-get-most-recent-pid)
-- previous calculation:
-- %?
-%i" :prepend nil ) ("p" "Templates for projects") ("pt" "Project-local todo" entry (file+headline +org-capture-project-todo-file "Inbox") "* TODO %?
+%a" :prepend t) ("p" "Templates for projects") ("pt" "Project-local todo" entry (file+headline +org-capture-project-todo-file "Inbox") "* TODO %?
 %i
 %a" :prepend t) ("pn" "Project-local notes" entry (file+headline +org-capture-project-notes-file "Inbox") "* %U %?
 %i
@@ -352,8 +318,7 @@
 (setq! smerge-command-prefix "#")
 
 (set-popup-rules!
-  '(("^\\*bosss\\*" :slot -1 :size 20 :select nil ) ; popup bosss process buffer
-    ("^\\*Async Shell Command\\*" :slot -1 :size 20)))
+  '(("^\\*Async Shell Command\\*" :slot -1 :size 20)))
 ;;; Defining some useful functions
 
 (when (eq system-type 'gnu/linux)
@@ -391,33 +356,6 @@
       (ignore-errors
         (shell-command "xinput --map-to-output $(xinput list --id-only \"HDX HDX DIGITIZER Pen (0)\") eDP-1")))))
 
-(defun my/tuxi ()
-  (interactive)
-  (cl-labels
-      ((read-lines (filePath)
-                   "Return a list of lines of a file at filePath."
-                   (with-temp-buffer
-                     (insert-file-contents filePath)
-                     (split-string (buffer-string) "\n" t)))
-       (write-lines (filename data)
-                    (with-temp-file filename
-                      (mapcar
-                       (lambda (item)
-                         (princ (concat item "\n") (current-buffer)))
-                       data)))
-       (update-cache (query old-cache-list)
-                     (if (member query old-cache-list)
-                         old-cache-list
-                       (cons query old-cache-list))))
-    (let*
-        ((cache-file "~/.config/emacs/.local/cache/tuxi")
-         (cache (read-lines cache-file))
-         (query (completing-read "Enter query: " cache))
-         (updated-cache (update-cache query cache))
-         (result (shell-command-to-string (concat "tuxi -r " query))))
-      (write-lines cache-file updated-cache)
-      (message result))))
-
 (defun my/eww-open-league-table ()
   "Do an internet search for soccer league table."
   (interactive)
@@ -442,58 +380,6 @@
 
 (after! bash-completion
   (setq! bash-completion-nospace t))
-
-;; adapted from snippet by oremacs
-
-(defun my/youtube-dl ()
-  (interactive)
-  (let* ((url (or (plist-get eww-data :url)
-                  (current-kill 0)))
-         (str (replace-regexp-in-string
-               "-"
-               "-"
-               (replace-regexp-in-string
-                "\\&list.*"
-                ""
-                (replace-regexp-in-string
-                 "https://w*invidio.us/watch\\?v="
-                 ""
-                 (replace-regexp-in-string
-                  "https://w*youtube.com/watch\\?v="
-                  ""
-                  url)))))
-         (download-dir "~/Videos/"))
-    (message "Downloading video, will open as soon as download is complete...")
-    (set-process-sentinel
-     (start-process-shell-command
-      "youtube-download"
-      "*youtube-download*"
-      "youtube-dl"
-      (concat "-o " download-dir "%\\(title\\)s%\\(id\\)s")
-      (concat "\"" str "\""))
-     (lambda (_ _)
-       (counsel-find-file-extern
-        (car (directory-files
-              "~/Videos/"
-              ;; download-dir
-              t str)))))))
-
-(defun my/youtube-watch ()
-  (interactive)
-  (let* ((url (or (plist-get eww-data :url)
-                  (current-kill 0)))
-         (str (replace-regexp-in-string
-               "-"
-               "-"
-               (replace-regexp-in-string
-                "\\&list.*"
-                ""
-                (replace-regexp-in-string
-                 "https://w*invidio.us/watch\\?v="
-                 "https://youtube.com/watch\\?v="
-                 url)))))
-    (elfeed-v-mpv str)))
-
 
 (defun my/close-buffer ()
   (interactive)
@@ -550,7 +436,6 @@
    "s-c" 'my/close-buffer
    "s-q" 'my/get-rid-of-mouse
    "s-m" 'delete-other-windows
-   "s-t" 'my/tuxi
    "s-<f1>" '+eshell/here
    "C-s-<f1>" '+eshell/toggle
    "s-<f2>" '(lambda () (interactive)
@@ -741,26 +626,6 @@
    "1" #'lispy-describe-inline
    "2" #'lispy-arglist-inline
    "x" #'lispy-x))
-
-(use-package! guix
-  :when (system-name= "klingenberg-tablet")
-  :defer t
-  ;; :commands (guix scheme-mode)
-  :config
-  (defun my/activate-guix-devel-mode ()
-    (when (file-in-directory-p (buffer-file-name) "~/guix")
-      (guix-devel-mode 1)))
-  (add-hook 'scheme-mode-hook #'my/activate-guix-devel-mode)
-  (map!
-   :localleader
-   :map guix-devel-mode-map
-   :n "b" 'guix-devel-build-package-definition
-   :n "s" 'guix-devel-build-package-source
-   :n "d" 'guix-devel-download-package-source
-   :n "l" 'guix-devel-lint-package
-   :n "k" 'guix-devel-copy-module-as-kill
-   :n "u" 'guix-devel-use-module
-   :n "." 'guix-devel-code-block-edit))
 
 (map!
  :localleader
@@ -1074,163 +939,20 @@
   (setq minimax-agent-api-key (password-store-get "minimax-api-key")))
 
 
-;; octave
-(setq! auto-mode-alist
-       (cons '("\\.m$" . octave-mode) auto-mode-alist))
-
-(add-hook 'octave-mode-hook
-    (lambda () (progn (setq octave-comment-char ?%)
-                      (setq comment-start "% ")
-                      (setq comment-add 0))))
-
-(map! :localleader
-      :map octave-mode-map
-      "el" #'octave-send-line
-      "ef" #'octave-send-defun
-      "ee" #'octave-send-block
-      "er" #'octave-send-region
-      "eb" #'octave-send-buffer)
-
-;; f#
-(map! :localleader
-      :after fsharp-mode
-      :map fsharp-mode-map
-      :n "'" #'run-fsharp
-      :n "e" nil
-      :n "ef" #'fsharp-eval-phrase
-      :n "er" #'fsharp-eval-region
-      :n "ce" #'compile
-      :n "cr" #'recompile
-      :n "cc" #'recompile)
-
-(use-package! gnu-apl-mode
-  :defer t)
-
-(use-package! ein
-  :defer t
-  :config
-  (add-hook! 'ein:notebook-mode-hook #'buffer-enable-undo)
-  (map! :after ein
-        :map ein:notebook-mode-map
-        :n "M-j" #'ein:worksheet-goto-next-input-km
-        :n "M-k" #'ein:worksheet-goto-prev-input-km)
-  (map! :localleader
-        :after ein
-        :map ein:notebook-mode-map
-        :n "j" #'ein:worksheet-insert-cell-below-km
-        :n "k" #'ein:worksheet-insert-cell-above-km
-        :n "ef" #'ein:worksheet-execute-cell
-        :n "ee" #'ein:worksheet-execute-cell-and-goto-next-km
-        :n "eb" #'ein:worksheet-execute-all-cells))
-
-;;c++
-(map! :localleader
-      :map c++-mode-map
-      :n "b" #'recompile)
-
-(use-package! gud
-  :defer t
-  :config
-  (defhydra gud-hydra (:color pink :hint nil :foreign-keys run)
-    "
-^Stepping^          ^Switch^                 ^Breakpoints^         ^Debug^
-^^^^^^^^---------------------------------------------------------------------------------
-_n_: Next           _su_: Up stack frame     _bb_: Toggle          _dd_: Debug
-_i_: Step in        _sd_: Down stack frame   _bd_: Delete          _ds_: Debug restart
-_c_: Continue
-_r_: Restart frame
-_Q_: Disconnect     "
-
-    ("n" gud-next)
-    ("i" gud-step)
-    ("c" gud-cont)
-    ("r" gud-refresh)
-    ("su" gud-up)
-    ("sd" gud-down)
-    ("bb" gud-break)
-    ("bd" gud-remove)
-    ("dd" gud-run)
-    ("ds" gud-refresh)
-    ("q" nil "quit" :color blue)
-    ("Q" gud-finish :color red))
-(defun gud-hydra ()
-  "Run `gud-hydra/body'."
-  (interactive)
-  (gud-hydra/body)))
-
 (use-package! dap-mode
   :defer t
   :config
   (add-hook 'dap-stopped-hook
             (lambda (arg) (call-interactively #'dap-hydra)))
-  (require 'dap-python)
-  (require 'dap-netcore))
+  (require 'dap-python))
 
 (after! dap-mode
   (setq dap-python-debugger 'debugpy))
-
-(defun my/csharp-list-to-array ()
-  (replace-regexp "List<\\(.*\\)>" "\\1[]"
-                  nil
-                  (line-beginning-position)
-                  (line-end-position)))
-
-(defun my/csharp-array-to-list ()
-  (replace-regexp "\\([A-z]*\\)\\[\\]" "List<\\1>"
-                  nil
-                  (line-beginning-position)
-                  (line-end-position)))
-
-
-(defun my/csharp-toggle-list-and-array ()
-  (interactive)
-  (let ((min (line-beginning-position))
-        (max (line-end-position)))
-    (save-excursion
-      (beginning-of-line)
-      (cond ((re-search-forward "List<\\(.*\\)>" max t)
-             (my/csharp-list-to-array))
-            ((re-search-forward "\\(.*\\)\\[\\]" max t)
-             (my/csharp-array-to-list))
-            (t (message "neither array nor string found on current line"))))))
-
-(defun my/csharp-find-current-project ()
-  "Find the closest csproj file relative to the current directory."
-  (cl-labels
-      ((find-csproj-file (dir)
-                         (directory-files dir nil  ".*csproj"))
-       (iter (dir)
-             (cond
-              ((find-csproj-file dir) (expand-file-name
-                                       (car (find-csproj-file dir))
-                                       dir)) ; if a .csproj file is found in the current directory, return its absolute path
-              ((string-equal "/" (expand-file-name dir)) nil ) ; prevent infinite loops
-              (t (iter (concat dir "/../")))))) ; if there is no .csproj file, look one directory higher
-    (iter (file-name-directory (buffer-file-name)))))
-
-(map!
- :localleader
- :map csharp-mode-map
- "b" #'recompile
- ;; "cd" (lambda () (interactive) (compile (concat "msbuild -verbosity:quiet -maxCpuCount /p:WarningLevel=0 /p:Configuration=Debug " (my/csharp-find-current-project))))
- ;; "cr" (lambda () (interactive) (compile (concat "msbuild -verbosity:quiet -maxCpuCount /p:WarningLevel=0 /p:Configuration=Release " bosss-master-solution)))
- ;; "ce" (lambda () (interactive) (compile (concat "msbuild -verbosity:quiet -maxCpuCount /p:WarningLevel=0 /p:Configuration=Debug " bosss-master-solution)))
- ;; "cc" #'recompile
- "=" #'my/indent-buffer-without-bosss-header
- ;; "et" (lambda () (interactive) (my/run-tests (my/csharp-find-current-project)))
- "eo" #'run-csharp-repl-other-frame
- "R" #'run-csharp-repl-other-window
- "er" #'csharp-repl-send-region
- "eb" #'csharp-repl-send-buffer)
 
 (add-hook! '(yaml-mode-hook)
  :append
  (visual-line-mode -1))
 
-;; org-kanban
-(use-package! kanban
-  :defer t
-  :load-path  "~/Documents/programming/elisp/kanban.el/")
 
 (map! :map (company-mode-map company-active-map)
       "RET" nil
@@ -1292,23 +1014,9 @@ _Q_: Disconnect     "
                                              ("decibels" . 2.5)
                                              ("raw" . 72000))))
 
-(use-package! telega
-  :after (rainbow-identifiers)
-  :when (system-name= "klingenberg-laptop" "klingenberg-tablet")
-  :commands telega
-  :init
-  (setq telega-server-libs-prefix "/usr/")
-  :config
-  (telega-notifications-mode 1))
 
 
 
-(after! circe
-  (set-irc-server! "chat.freenode.net"
-                   `(:tls t
-                     :port 6697
-                     :nick "dakling"
-                     :channels ("#emacs" "#guix"))))
 
 (use-package! alert
   :commands (alert)
@@ -1319,7 +1027,6 @@ _Q_: Disconnect     "
   :commands (eww elfeed elfeed-update)
   :init (setq! elfeed-search-title-max-width 150)
   :config
-  ;; (add-hook! 'elfeed-search-mode-hook 'elfeed-update)
   (setq!
    elfeed-search-filter "@12-months-ago AI"
    elfeed-feeds
@@ -1343,9 +1050,6 @@ _Q_: Disconnect     "
      ("https://blogs.nvidia.com/blog/category/ai/feed/" AI)
      ("https://aws.amazon.com/blogs/machine-learning/feed/" AI)
      ("http://feeds.feedburner.com/FeaturedBlogPosts-DataScienceCentral?format=xml" AI)
-     ;; ("https://www.reddit.com/r/MachineLearning/.rss" AI)
-     ;; ("https://www.reddit.com/r/artificial/.rss" AI)
-     ;; ("https://www.reddit.com/r/neuralnetworks/.rss?format=xml" AI)
      ("https://www.sciencedaily.com/rss/computers_math/artificial_intelligence.xml" AI)
      ("https://www.therundown.ai/feed" AI)
      ("https://www.inference.vc/rss" AI)
@@ -1354,76 +1058,8 @@ _Q_: Disconnect     "
      ("https://danieltakeshi.github.io/feed.xml" AI)
      ("https://mlinproduction.com/feed" AI)
      ("https://aiweirdness.com/rss" AI)
-     ("https://becominghuman.ai/feed" AI)
-     ;; ("https://www.cambridge.org/core/rss/product/id/1F51BCFAA50101CAF5CB9A20F8DEA3E4" work fluid mechanics jfm)
-     ;; ("http://feeds.aps.org/rss/recent/prfluids.xml" work fluid mechanics prf)
-     ;; ("https://rss.arxiv.org/rss/physics.flu-dyn" work fluid mechanics archivx)
-     ;; ("https://www.zeitsprung.fm/feed/ogg/" podcast zeitsprung)
-     ;; ("https://tribuenengespraech.podigee.io/feed/vorbis" podcast rasenfunk tribünengespräch fussball)
-     ;; ("https://guix.gnu.org/feeds/blog/arm.atom" lisp programming guix blog)
-     ;; ("https://www.kernel.org/feeds/kdist.xml" linux kernel updates)
-     ;; ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
-     ;; ("http://www.reddit.com/r/DoomEmacs/.rss" emacs reddit)
-     ;; ("http://www.reddit.com/r/lisp/.rss" programming reddit)
-     ;; ("http://www.reddit.com/r/common_lisp/.rss" programming reddit)
-     ;; ("http://www.reddit.com/r/scheme/.rss" programming reddit)
-     ;; ("http://www.reddit.com/r/linux/.rss" programming reddit)
-     ;; ("http://www.reddit.com/r/archlinux/.rss" programming reddit)
-     ;; ("http://www.reddit.com/r/nixos/.rss" programming reddit)
-     ;; ("http://www.reddit.com/r/Plover/.rss" programming reddit)
-     ;; ("http://www.reddit.com/r/baduk/.rss" go baduk reddit)
-     ;; ("http://www.go4go.net/go/games/rss" go baduk go4go)
-     ;; ("http://tv.dfb.de/rss.php" dfb futsal fussball)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCyHDQ5C6z1NDmJ4g6SerW8g" youtube mailab)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UChkVOG0PqkXIHHmkBGG15Ig" youtube walulis)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCo4693Ony4slDY5hR0ny-bw" youtube walulis)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVTyTA7-g9nopHeHbeuvpRA" youtube meyers)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3XTzVzaHQEd30rQbuvCtTQ" youtube lastweektonight)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCYO_jab_esuFRV4b17AJtAw" youtube math 3blue1brown 3b1b)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCoxcjq-8xIDTYp3uz647V5A" youtube math numberphile)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCHnyfMqiRRG1u-2MsSQLbXA" youtube math veritasium)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCSju5G2aFaWMqn-_0YBtq5A" youtube math stand up matt parker)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCzV9N7eGedBchEQjQhPapyQ" youtube math stand up matt parker)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCfb7LAYCeJJiT3gyquv7V5Q" youtube politics die da oben)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UC78Ib99EBhMN3NemVjYm3Ig" youtube maths 3b1b)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCNIuvl7V8zACPpTmmNIqP2A" youtube history oversimplified)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCsXVk37bltHxD1rDPwtNM8Q" youtube science kurzgsagt)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCMb0O2CdPBNi-QqPk5T3gsQ" youtube james hoffmann coffee)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCpa-Zb0ZcQjTCPP1Dx_1M8Q" youtube legal eagle)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=" youtube )
-     ))
+     ("https://becominghuman.ai/feed" AI)))
 
-  ;; Taken from https://joshrollinswrites.com/help-desk-head-desk/20200611/
-  (defun elfeed-v-mpv (url)
-    "Watch a video from URL in MPV"
-    (async-shell-command (format "mpv \"%s\"" url)))
-
-  (defun elfeed-view-mpv (&optional use-generic-p)
-    "Youtube-feed link"
-    (interactive "P")
-    (let ((entries (elfeed-search-selected)))
-      (cl-loop for entry in entries
-               do (elfeed-untag entry 'unread)
-               when (elfeed-entry-link entry)
-               do (elfeed-v-mpv it))
-      (mapc #'elfeed-search-update-entry entries)
-      (unless (use-region-p) (forward-line))))
-  ;; Taken from https://noonker.github.io/posts/2020-04-22-elfeed/
-  (defun yt-dl-it (url)
-    "Downloads the URL in an async shell"
-    (let ((default-directory "~/Videos"))
-      (async-shell-command (format "youtube-dl %s" url))))
-
-  (defun elfeed-youtube-dl (&optional use-generic-p)
-    "Youtube-DL link"
-    (interactive "P")
-    (let ((entries (elfeed-search-selected)))
-      (cl-loop for entry in entries
-               do (elfeed-untag entry 'unread)
-               when (elfeed-entry-link entry)
-               do (yt-dl-it it))
-      (mapc #'elfeed-search-update-entry entries)
-      (unless (use-region-p) (forward-line))))
 
   (defun elfeed-eww-open (&optional use-generic-p)
     "open with eww"
@@ -1448,22 +1084,9 @@ _Q_: Disconnect     "
       (mapc #'elfeed-search-update-entry entries)
       (unless (use-region-p) (forward-line))))
 
-  ; (defun elfeed-reddit-open (&optional use-generic-p)
-  ;   "open with md4rd"
-  ;   (interactive "P")
-  ;   (let ((entries (elfeed-search-selected)))
-  ;     (cl-loop for entry in entries
-  ;              do (elfeed-untag entry 'unread)
-  ;              when (elfeed-entry-link entry)
-  ;              do (md4rd--fetch-comments (format "%s.json" it)))
-  ;     (mapc #'elfeed-search-update-entry entries)
-  ;     ;; (unless (use-region-p) (forward-line))
-  ;     ))
-
+ 
   (defun elfeed-open-item-generic (entry)
     (cond
-     ((elfeed-tagged-p 'youtube entry) (elfeed-view-mpv))
-     ((elfeed-tagged-p 'reddit entry) (elfeed-reddit-open))
      ((elfeed-tagged-p 'podcast entry) (let ((elfeed-show-entry entry))
                                          (elfeed-show-play-enclosure
                                           (elfeed--enclosure-maybe-prompt-index entry))))
@@ -1483,37 +1106,8 @@ _Q_: Disconnect     "
         :n "u" #'elfeed-update
         :n "o" #'elfeed-open-generic
         :n "e" #'elfeed-eww-open
-        :n "b" #'elfeed-firefox-open
-        :n "v" #'elfeed-view-mpv
-        :n "d" #'elfeed-youtube-dl))
+        :n "b" #'elfeed-firefox-open))
 
-(defun my//play-playlist (filename &optional shuffle)
-  (cl-flet ((random-sort-lines ()
-              (save-excursion
-                (save-restriction
-                  (goto-char (point-min))
-                  (let ((inhibit-field-text-motion t))
-                    (sort-subr nil 'forward-line 'end-of-line nil nil
-                               (lambda (_s1 _s2) (eq (random 2) 0)))))))
-            (play-yt-audio (url)
-              (let ((formatted-url (concat "https://youtube.com/watch?v=" url)))
-                (message formatted-url)
-                (shell-command (format "mpv --no-video \"%s\"" formatted-url)))))
-    (find-file filename)
-    (when shuffle
-      (random-sort-lines)
-      (save-buffer))
-    (goto-char (point-min))
-    (let ((more-lines t))
-      (while more-lines
-        (let ((line (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
-          (play-yt-audio line))
-        (setq more-lines (= 0 (forward-line 1)))))))
-
-(defun my/play-youtube-playlist ()
-  (interactive)
-  (let ((playlist-file "~/Musik/playlist.txt"))
-    (my//play-playlist playlist-file t)))
 
 (after! eww
   (map!
@@ -1522,36 +1116,9 @@ _Q_: Disconnect     "
    :n "M-l" #'eww-forward-url
    :n "M-y" #'eww-copy-page-url
    :n "f" #'ace-link-eww)
-  (map!
-   :localleader
-   :map eww-mode-map
-   :n "v" #'my/youtube-watch
-   :n "d" #'my/youtube-dl))
+)
 
-(use-package! ytdious
-  :defer t
-  :config
-  (setq! ytdious-invidious-api-url
-        "https://invidious.tube"
-        ;; "https://invidious.zee.li"
-        ;; "https://invidious.tinfoil-hat.net"
-        )
-  (map!
-   :map ytdious-mode-map
-   :n "s" #'ytdious-search
-   :n "S" #'ytdious-search-recent
-   :n "c" #'ytdious-view-channel-at-point
-   :n "RET" #'ytdious-play
-   :n "o" #'ytdious-play
-   :n "O" #'ytdious-play-continious
-   :n "Q" #'ytdious-stop-continious))
 
-(use-package! emms
-  :commands (emms)
-  :config
-  (emms-standard)
-  (emms-default-players)
-  (setq! emms-source-file-default-directory "~/Music"))
 
 (use-package! pinentry
   :defer t

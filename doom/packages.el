@@ -59,10 +59,6 @@
 
 (package! smooth-scrolling)
 
-(package! telega
-  :pin "b981a3a0d00c41768e054a294095b732a16fde84")
-
-(package! slack)
 
 (package! alert)
 
@@ -91,9 +87,6 @@
 
 (package! wgrep)
 
-(package! ytdious)
-
-;; (package! emms)
 
 (package! ace-link)
 
@@ -107,13 +100,7 @@
 
 ;; (unpin! org-mode)
 
-(package! gnu-apl-mode :recipe (:host github :repo "lokedhs/gnu-apl-mode"))
-
 (package! el-igo :recipe (:host github :repo "misohena/el-igo"))
-
-(package! csharp-repl :recipe (:host github :repo "dakling/emacs-csharp-repl"))
-
-(package! bosss :recipe (:host github :repo "dakling/emacs-bosss"))
 
 (package! minimax.el :recipe (:host github :repo "dakling/minimax.el"))
 

@@ -246,7 +246,6 @@
 
 (map!
  :after evil
- :map general-override-mode-map
  :v "s" #'evil-surround-region)
 
 

@@ -1173,6 +1173,21 @@
   :commands (goose goose-transient)
   :config
   (setq goose-program-name "goose")  ; Ensure goose CLI is in PATH
+  (setq! my/goose-text-snippets-list
+         '("Please use the AskUserQuestion tool to ask for clarification on anything that is unclear."
+           "Be very concise. Sacrifice grammar for the sake of concision."
+           "Please check if a linear issue for the current task exists, and, if not, create on/e before starting to work on this. Ask questions if you need information about some of the task details."
+           "Please create a TODO list to track progress."
+           "Always use the explore subagents if you need more context."
+           "Please start five parallel explore subagents to explore solutions."
+           "Please give me five different solution prototypes."))
+  (defun my/goose-snippet-menu ()
+    (interactive)
+    (let ((snippet (completing-read "Snippet to insert:"
+                                    my/goose-text-snippets-list)))
+      (send-string (current-buffer) (concat " " snippet " "))))
+  (map! :map vterm-mode-map
+        "C-c C-r"  #'my/claude-snippet-menu)
   :hook
   (goose-mode . (lambda () (display-line-numbers-mode -1))))
 

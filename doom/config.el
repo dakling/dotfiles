@@ -742,7 +742,6 @@
 (setq my/latex-bibliography-file (concat my/latex-macro-directory "bibliography.bib"))
 (setq my/latex-macro-file (concat my/latex-macro-directory "dakling.sty"))
 
-(require 'doi-utils)
 (use-package! doi-utils
   :after (latex bibtex LaTeX TeX))
 
@@ -893,10 +892,16 @@
         "c" #'gptel-new-chat
         "q" #'kill-buffer)
 
+(use-package! mcp
+  :defer t
+  :config
+  (require 'gptel-mcp)
+  (gptel-mcp-connect))
+
 (use-package! claude-code-ide
   :bind
   :config
-  ;; (claude-code-ide-emacs-tools-setup)   ; Optionally enable Emacs MCP tools
+  (claude-code-ide-emacs-tools-setup)
   (setq! my/claude-text-snippets-list
          '("Please use the AskUserQuestion tool to ask for clarification on anything that is unclear."
            "Be very concise. Sacrifice grammar for the sake of concision."
@@ -911,10 +916,221 @@
                                     my/claude-text-snippets-list)))
       (send-string (current-buffer) (concat " " snippet " "))))
   (map! :map vterm-mode-map
-        "C-c C-r"  #'my/claude-snippet-menu))
+        "C-c C-r"  #'my/claude-snippet-menu)
+
+  ;; Per-hunk chunk-select for ediff sessions
+  (require 'ediff-chunk-select)
+
+  ;; Rebuild tool list to include openDiff (handlers load after initial build)
+  (setq! claude-code-ide-use-ide-diff t)
+  (setq claude-code-ide-mcp-tools (claude-code-ide-mcp--build-tool-list))
+  (setq claude-code-ide-mcp-tool-schemas (claude-code-ide-mcp--build-tool-schemas))
+  (setq claude-code-ide-mcp-tool-descriptions (claude-code-ide-mcp--build-tool-descriptions))
+
+  ;; Pending callback for the next openDiff → chunk-select session
+  (defvar my/chunk-select--pending-callback nil)
+
+  (defun my/chunk-select--find-control-buffer (buffer-a)
+    "Find the ediff control buffer whose `ediff-buffer-A' is BUFFER-A."
+    (cl-find-if (lambda (buf)
+                  (and (buffer-live-p buf)
+                       (eq (buffer-local-value 'ediff-buffer-A buf) buffer-a)))
+                (buffer-list)))
+
+  (defun my/chunk-select--activate (control-buf callback)
+    "Activate chunk-select in CONTROL-BUF with CALLBACK."
+    (with-current-buffer control-buf
+      (message "[chunk-select] activate: n-diffs=%s buf-A=%s buf-B=%s"
+               ediff-number-of-differences
+               (if ediff-buffer-A (buffer-name ediff-buffer-A) "nil")
+               (if ediff-buffer-B (buffer-name ediff-buffer-B) "nil"))
+      (setq ediff-chunk-select--active t)
+      (setq ediff-chunk-select--completion-callback callback)
+      (setq ediff-chunk-select--hunk-states
+            (make-vector (or ediff-number-of-differences 0) 'pending))
+      (setq ediff-chunk-select--undo-stack nil)
+      (when (buffer-live-p ediff-buffer-A)
+        (with-current-buffer ediff-buffer-A
+          (setq buffer-read-only t)))
+      (when (buffer-live-p ediff-buffer-B)
+        (with-current-buffer ediff-buffer-B
+          (setq buffer-read-only t)))
+      (ediff-chunk-select--create-overlays)
+      (ediff-chunk-select--setup-keymap)
+      (ediff-chunk-select--update-header)
+      ;; Replace claude-code-ide's quit hook with chunk-select's
+      (setq-local ediff-quit-hook
+                  (list (lambda ()
+                          (when ediff-chunk-select--active
+                            (ediff-chunk-select-finish t)))))))
+
+  (defun my/chunk-select--open-diff-advice (orig-fn arguments)
+    "Set up chunk-select callback before claude-code-ide opens ediff."
+    (message "[chunk-select] === open-diff-advice ENTERED ===")
+    (let ((tab-name (alist-get 'tab_name arguments))
+          (old-file-path (alist-get 'old_file_path arguments)))
+      (setq my/chunk-select--pending-callback
+            (lambda (accepted-p content &optional hunk-summary)
+              (let* ((session (or (claude-code-ide-mcp--find-session-for-file old-file-path)
+                                  (claude-code-ide-mcp--get-current-session)))
+                     (active-diffs (when session
+                                     (claude-code-ide-mcp--get-active-diffs session)))
+                     (diff-info (when active-diffs
+                                  (gethash tab-name active-diffs)))
+                     (saved-winconf (when diff-info
+                                      (alist-get 'saved-winconf diff-info))))
+                ;; Restore window configuration
+                (when saved-winconf
+                  (condition-case nil
+                      (set-window-configuration saved-winconf)
+                    (error nil)))
+                ;; Send deferred MCP response (idle timer matches upstream pattern)
+                (when session
+                  (run-with-idle-timer
+                   0 nil
+                   (lambda ()
+                     (if accepted-p
+                         (let* ((total (alist-get 'total hunk-summary 0))
+                                (accepted-count (alist-get 'accepted hunk-summary 0))
+                                (rejected-count (alist-get 'rejected hunk-summary 0))
+                                (all-accepted (alist-get 'all-accepted hunk-summary t))
+                                (response
+                                 (if all-accepted
+                                     (list `((type . "text") (text . "FILE_SAVED"))
+                                           `((type . "text") (text . ,content)))
+                                   (list `((type . "text") (text . "FILE_SAVED"))
+                                         `((type . "text") (text . ,content))
+                                         `((type . "text")
+                                           (text . ,(format "PARTIAL_EDIT: The user accepted %d of %d proposed changes. %d change(s) were rejected and the original code was kept for those hunks. The saved file content above reflects only the accepted changes. Do NOT re-propose the rejected changes."
+                                                            accepted-count total rejected-count)))))))
+                           (claude-code-ide-mcp-complete-deferred
+                            session "openDiff" response tab-name)
+                           (when active-diffs
+                             (puthash tab-name
+                                      (cons '(responded . t) diff-info)
+                                      active-diffs)))
+                       (claude-code-ide-mcp-complete-deferred
+                        session "openDiff"
+                        (list `((type . "text") (text . "DIFF_REJECTED"))
+                              `((type . "text") (text . ,tab-name)))
+                        tab-name)
+                       (when active-diffs
+                         (puthash tab-name
+                                  (cons '(responded . t) diff-info)
+                                  active-diffs))))))))))
+      ;; Call original — this sets up and runs ediff-buffers
+      (message "[chunk-select] calling orig-fn...")
+      (let ((result (funcall orig-fn arguments)))
+        ;; After ediff-buffers completes, activate chunk-select.
+        ;; Use ediff-session-registry to find the control buffer (most recent = car).
+        ;; Wrapped in condition-case so errors never break ediff.
+        (condition-case err
+            (when my/chunk-select--pending-callback
+              (let* ((callback my/chunk-select--pending-callback)
+                     (control-buf (car ediff-session-registry)))
+                (setq my/chunk-select--pending-callback nil)
+                (message "[chunk-select] control-buf=%s"
+                         (if control-buf (buffer-name control-buf) "nil"))
+                (when (and control-buf (buffer-live-p control-buf))
+                  (my/chunk-select--activate control-buf callback))))
+          (error
+           (message "[chunk-select] Error during activation: %s" err)))
+        result)))
+
+  (advice-add 'claude-code-ide-mcp-handle-open-diff
+              :around #'my/chunk-select--open-diff-advice)
+
+  ;; Deactivate chunk-select when Claude programmatically closes a diff tab
+  (defun my/chunk-select--close-tab-advice (orig-fn arguments)
+    "Deactivate chunk-select before Claude closes a diff tab."
+    (when-let ((tab-name (alist-get 'tab_name arguments)))
+      (catch 'done
+        (maphash
+         (lambda (_proj-dir session)
+           (let* ((session-diffs (claude-code-ide-mcp-session-active-diffs session))
+                  (diff-info (gethash tab-name session-diffs)))
+             (when diff-info
+               (when-let ((control-buf (alist-get 'control-buffer diff-info)))
+                 (when (buffer-live-p control-buf)
+                   (with-current-buffer control-buf
+                     (when (bound-and-true-p ediff-chunk-select--active)
+                       (ediff-chunk-select--delete-all-overlays)
+                       (setq ediff-chunk-select--active nil)
+                       (setq ediff-quit-hook nil)))))
+               (throw 'done t))))
+         claude-code-ide-mcp--sessions)))
+    (funcall orig-fn arguments))
+
+  (advice-add 'claude-code-ide-mcp-handle-close-tab
+              :around #'my/chunk-select--close-tab-advice))
+
+(use-package! claude-code-ide-mcp-tools
+  :after claude-code-ide
+  :config
+  (claude-code-ide-mcp-tools-setup))
+
+(use-package! claude-code-ide-extras
+  :after claude-code-ide
+  :config
+  (claude-code-ide-extras-setup))
+
+(defun my/claude-fix-error-at-point ()
+  "Send the flycheck/flymake error at point to Claude Code for a fix."
+  (interactive)
+  (let* ((errors (or (flycheck-overlay-errors-at (point))
+                     (flymake-diagnostics (point))))
+         (err (car errors))
+         (msg (cond
+               ((and (fboundp 'flycheck-error-message) err
+                     (flycheck-error-p err))
+                (flycheck-error-message err))
+               ((and (fboundp 'flymake-diagnostic-text) err)
+                (flymake-diagnostic-text err))
+               (t (user-error "No error at point")))))
+    (if (fboundp 'ai-workflows-send-to-claude)
+        (ai-workflows-send-to-claude
+         (format "Fix the following error in %s at line %d: %s"
+                 (buffer-file-name)
+                 (line-number-at-pos)
+                 msg))
+      (claude-code-ide-send-prompt
+       (format "Fix the following error in %s at line %d: %s"
+               (buffer-file-name)
+               (line-number-at-pos)
+               msg)))))
+
+(use-package! emacs-claude-bridge)
+
+(use-package! ai-workflows
+  :commands (ai-workflows-start-background-command
+             ai-workflows-list-background-jobs
+             ai-workflows-review-pr-with-claude
+             ai-workflows-refresh-context
+             ai-workflows-open-context
+             ai-workflows-send-context-to-claude)
+  :config
+  (ai-workflows-setup)
+  (set-popup-rules!
+    '(("^\\*AI Background Jobs\\*" :slot -1 :size 20 :select t)
+      ("^\\*ai-bg:" :slot -1 :size 20 :select nil)))
+  (map! :leader
+        :desc "Start AI background job" "l b" #'ai-workflows-start-background-command
+        :desc "List AI background jobs" "l B" #'ai-workflows-list-background-jobs
+        :desc "Review PR with Claude" "l r" #'ai-workflows-review-pr-with-claude
+        :desc "Refresh AI context snapshot" "l i" #'ai-workflows-refresh-context
+        :desc "Open AI context snapshot" "l o" #'ai-workflows-open-context
+        :desc "Send AI context to Claude" "l I" #'ai-workflows-send-context-to-claude))
+
+(map! :leader
+      "l e" #'my/claude-fix-error-at-point)
 
 (use-package! prompt-compose
-  :after claude-code-ide
+  :commands (prompt-compose
+             prompt-compose-send
+             prompt-compose-cancel
+             prompt-compose-claude-code
+             prompt-compose-goose
+             prompt-compose-codex)
   :init
   (map! :map doom-leader-open-map
         "P" #'prompt-compose)
@@ -949,11 +1165,38 @@
 (map! :leader
       "l g" #'goose-transient)  ; Open goose with SPC l g
 
-(use-package! minimax-agent
-  :config
-  ;; Configuration options
-  (setq minimax-agent-api-key (password-store-get "minimax-api-key")))
+(use-package! ediff-chunk-select
+  :defer t
+  :commands (ediff-chunk-select-buffers
+             ediff-chunk-select-files
+             ediff-chunk-select-enable-for-session))
 
+(use-package! codex-ediff-mcp
+  :load-path "lisp"
+  :demand t
+  :commands (codex-ediff-mcp-setup)
+  :config
+  (codex-ediff-mcp-setup))
+
+(defun my/codex-cli-start ()
+  "Start Codex CLI with Ediff MCP integration enforced."
+  (interactive)
+  (when (require 'codex-ediff-mcp nil t)
+    (codex-ediff-mcp-setup))
+  (call-interactively #'codex-cli-start))
+
+(defun my/codex-cli-restart ()
+  "Restart Codex CLI with Ediff MCP integration enforced."
+  (interactive)
+  (when (require 'codex-ediff-mcp nil t)
+    (codex-ediff-mcp-setup))
+  (call-interactively #'codex-cli-restart))
+
+(use-package! codex-cli
+  :init
+  (map! :map doom-leader-open-map
+        "x" #'codex-cli-toggle
+        "X" #'my/codex-cli-start))
 
 (use-package! dap-mode
   :defer t
@@ -968,6 +1211,15 @@
 (add-hook! '(yaml-mode-hook)
  :append
  (visual-line-mode -1))
+
+;; TypeScript / React / Next.js
+(after! web-mode
+  (setq web-mode-markup-indent-offset 2
+        web-mode-css-indent-offset 2
+        web-mode-code-indent-offset 2))
+
+;; Enable emmet in TSX for quick JSX expansion (<div.container> etc.)
+(add-hook! '(tsx-ts-mode-hook) #'emmet-mode)
 
 
 
@@ -1240,7 +1492,6 @@
   (add-to-list 'auto-mode-alist '("\\.sgf$" . igo-sgf-mode)))
 
 (use-package! beacon
-  :defer t
   :config
   (beacon-mode 1))
 

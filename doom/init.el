@@ -84,7 +84,7 @@
 
        :checkers
        syntax                        ; tasing you for every semicolon you forget
-       (spell +flyspell +aspell +everywhere)                         ; tasing you for misspelling mispelling
+       ;;(spell +flyspell +aspell +everywhere)                         ; tasing you for misspelling mispelling (using jinx instead)
        grammar                       ; tasing grammar mistake every you make
 
        :os
@@ -135,12 +135,12 @@
        ;; (fsharp +lsp)                    ; ML stands for Microsoft's Language
        ;;fstar             ; (dependent) types and (monadic) effects and Z3
        ;;(go +lsp)         ; the hipster dialect
-       (haskell +lsp + tree-sitter)  ; a language that's lazier than I am
+       (haskell +lsp +tree-sitter)  ; a language that's lazier than I am
        ;;hy                ; readability of scheme w/ speed of python
        ;;idris             ;
        (json +lsp +tree-sitter)              ; At least it ain't XML
        ;;(java +meghanada) ; the poster child for carpal tunnel syndrome
-       ;;javascript        ; all(hope(abandon(ye(who(enter(here))))))
+       (javascript +lsp +tree-sitter) ; TypeScript, React (JSX/TSX), Next.js
        (julia +lsp +tree-sitter +snail)             ; a better, faster MATLAB
        ;;kotlin            ; a better, slicker Java(Script)
        (latex +lsp +fold +cdlatex) ; writing papers in Emacs has never been so fun
@@ -171,7 +171,7 @@
        ;;solidity          ; do you need a blockchain? No.
        ;;swift             ; who asked for emoji variables?
        ;;terra             ; Earth and Moon in alignment for performance.
-       ;;web               ; the tubes
+       (web +lsp +tree-sitter) ; HTML/CSS, emmet for JSX
        (yaml +lsp +tree-sitter)                             ; JSON, but readable
 
        :email

@@ -70,14 +70,35 @@
 (disable-packages! ts-fold)
 
 
+(package! ediff-chunk-select
+  :recipe (:host github :repo "dakling/ediff-chunk-select"))
+
 (package! claude-code-ide
   :recipe (:host github :repo "manzaltu/claude-code-ide.el"))
+
+(package! claude-code-ide-mcp-tools
+  :recipe (:host github :repo "Kaylebor/claude-code-ide-mcp-tools"))
+
+(package! claude-code-ide-extras
+  :recipe (:host github :repo "acmorrow/claude-code-ide-extras"))
+
+(package! mcp
+  :recipe (:host github :repo "lizqwerscott/mcp.el"))
 
 (package! goose
   :recipe (:host github :repo "aq2bq/goose.el"))
 
+(package! codex-cli)
+
 (package! prompt-compose
-  :recipe (:host github :repo "darioklingenberg/prompt-compose"))
+  :recipe (:host github :repo "dakling/prompt-compose"))
+
+(package! emacs-claude-bridge
+  :recipe (:host github :repo "dakling/emacs-claude-bridge"))
+
+(package! ai-workflows
+  :recipe (:local-repo "/Users/darioklingenberg/code/emacs-packages/ai-workflows"
+           :files ("ai-workflows.el")))
 
 (package! async-await)
 
@@ -99,8 +120,6 @@
 (unpin! sly)
 
 (package! el-igo :recipe (:host github :repo "misohena/el-igo"))
-
-(package! minimax.el :recipe (:host github :repo "dakling/minimax.el"))
 
 (disable-packages! org-msg)
 

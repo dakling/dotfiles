@@ -51,24 +51,15 @@
 ;
 ;; Beginning of my packages
 
-;; exwm
-;; (package! xelb)
-;; (package! exwm)
-;; (package! dmenu)
-;; (package! pulseaudio-control)
-
 (unpin! evil-collection)
 ;; (package! evil-collection
 ;;   :recipe (:repo "meliache/evil-collection" :branch "mu4e-development"))
 
 (package! mu4e-alert)
 
-(package! smooth-scrolling)
+(package! ultra-scroll
+  :recipe (:host github :repo "jdtsmith/ultra-scroll"))
 
-(package! telega
-  :pin "b981a3a0d00c41768e054a294095b732a16fde84")
-
-;; (package! slack)
 
 (package! alert)
 
@@ -78,27 +69,23 @@
 (disable-packages! elfeed-goodies)
 (disable-packages! ts-fold)
 
-(package! diminish)
 
 (package! claude-code-ide
   :recipe (:host github :repo "manzaltu/claude-code-ide.el"))
 
-(package! goose
-  :recipe (:host github :repo "aq2bq/goose.el"))
+(package! prompt-compose
+  :recipe (:host github :repo "darioklingenberg/prompt-compose"))
 
 (package! async-await)
-
-(package! obsidian)
 
 (package! evil-tex :recipe (:host github :repo "itai33/evil-tex"))
 
 (package! wgrep)
 
-(package! ytdious)
-
-;; (package! emms)
 
 (package! ace-link)
+
+(package! org-modern)
 
 (package! org-super-links :recipe (:host github :repo "toshism/org-super-links"))
 
@@ -108,23 +95,13 @@
 
 (unpin! sly)
 
-;; (unpin! org-mode)
-
-(package! gnu-apl-mode :recipe (:host github :repo "lokedhs/gnu-apl-mode"))
-
 (package! el-igo :recipe (:host github :repo "misohena/el-igo"))
-
-(package! csharp-repl :recipe (:host github :repo "dakling/emacs-csharp-repl"))
-
-(package! bosss :recipe (:host github :repo "dakling/emacs-bosss"))
 
 (package! minimax.el :recipe (:host github :repo "dakling/minimax.el"))
 
 (disable-packages! org-msg)
 
 (disable-packages! writegood-mode)
-
-;; (package! solaire-mode :disable t)
 
 (package! nov)
 
@@ -136,7 +113,7 @@
            :repo "Overdr0ne/shelldon"
            :branch "master"))
 
-(package! disable-mouse)
+(package! jinx)
 
 (package! beacon)
 
@@ -146,13 +123,9 @@
 
 (package! systemd)
 
-;; (package! gptel :recipe (:host github :repo "karthink/gptel"))
-
-;; (package! eaf :recipe
-;;   (:host github
-;;    :repo "emacs-eaf/emacs-application-framework"
-;;    :files ("*.el" "*.py" "core" "app")
-;;    ;; :no-byte-compile t
-;;    ))
-
 (unpin! haskell-mode)
+
+;; agent-shell dependencies and main package
+(package! shell-maker)
+(package! acp)
+(package! agent-shell)

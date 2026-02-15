@@ -89,22 +89,22 @@
 
        :os
        tty
+       macos             ; MacOS-specific commands
 
        :tools
        ;;ansible
        biblio
        (debugger)          ; FIXME stepping through code, to help you add bugs
-       ;;direnv
+       direnv
        ;;docker
        editorconfig      ; let someone else argue about tabs vs spaces
-       ein               ; tame Jupyter notebooks with emacs
+       ;; ein               ; tame Jupyter notebooks with emacs
        (eval +overlay)       ; run code, run (also, repls)
        ;;gist              ; interacting with github gists
        llm
        (lookup +dictionary +offline +docsets)                         ; navigate your code and its documentation
        (lsp +eglot)
-       ;;macos             ; MacOS-specific commands
-       (magit -forge)           ; a git porcelain for Emacs
+       magit                    ; a git porcelain for Emacs
        ;; make              ; run make tasks from Emacs
        pass                             ; password manager for nerds
        pdf                              ; pdf enhancements
@@ -118,7 +118,7 @@
 
        :lang
        ;;agda              ; types of types of types of types...
-       (cc +lsp)                ; C/C++/Obj-C madness
+       ;; (cc +lsp)                ; C/C++/Obj-C madness
        ;; clojure                  ; java with a lisp
        common-lisp              ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
@@ -152,7 +152,7 @@
        ;;nim               ; python + lisp at the speed of c
        ;; nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
-       (org +pretty +dragndrop +gnuplot +noter +pandoc +roam2 +present +capture +journal +jupyter +pomodoro) ; organize your plain life in plain text
+       (org +pretty +notion +dragndrop +gnuplot +noter +pandoc +roam2 +present +capture +journal) ; organize your plain life in plain text
        ;;perl              ; write code no one else can comprehend
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
@@ -183,7 +183,7 @@
        calendar
        ;; emms
        everywhere
-       irc      ; how neckbeards socialize
+       ;; irc      ; how neckbeards socialize
        rss      ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought
 

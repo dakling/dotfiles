@@ -7,7 +7,7 @@
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
 (setq! user-full-name "Dario Klingenberg"
-       user-mail-address "dario.klingenberg@web.de")
+       user-mail-address "dario@ellamind.com")
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
@@ -19,21 +19,10 @@
 ;;
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
-;; (setq! doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
-;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
-;; (setq! doom-font (font-spec :family "Serious Sans Nerd Font Mono")
-;;       doom-variable-pitch-font (font-spec :family "Serious Sans Nerd Font Mono"))
 (setq! doom-font (font-spec :family "Comic Mono")
       doom-variable-pitch-font (font-spec :family "Shantell Sans")
       ;; doom-variable-pitch-font (font-spec :family "Comic Mono")
       )
-;; (setq! doom-font (font-spec :family "Fira Code")
-;;       doom-variable-pitch-font (font-spec :family "Fira Code"))
-;; (setq! doom-font (font-spec :family "DejaVu Sans Mono"))
-;; There are two ways to load a theme. Both assume the theme is installed and
-;; available. You can either set `doom-theme' or manually load a theme with the
-;; `load-theme' function. This is the default:
-;; (setq! doom-theme 'doom-solarized-dark)
 
 (setq! doom-theme 'doom-palenight)
 
@@ -82,20 +71,28 @@
  isearch-regexp-lax-whitespace t
  search-whitespace-regexp (purecopy "[ \t\r\n]+")) ; TODO: only do this is some modes?
 
+(setq ns-alternate-modifier 'meta)       ; Left Option = Meta
+(setq ns-right-alternate-modifier 'none) ; Right Option = Option key
+
+
 (setq! evil-collection-setup-minibuffer t)
 (setq! evil-ex-substitute-global t)
 
-(setq! +evil-want-o/O-to-continue-comments nil )
+(setq! +evil-want-o/O-to-continue-comments nil)
 (setq! display-time-24hr-format t
        display-time-default-load-average nil )
 
 (setq! langtool-default-language "en-GB")
 (setq langtool-java-classpath "/usr/share/languagetool:/usr/share/java/languagetool/*")
-(setq! ispell-dictionary "en_GB")
-(setq! ispell-alternate-dictionary nil)
+;; jinx: faster spell-checking (replaces flyspell once installed via doom sync)
+;; After `doom sync`, you can disable the spell module in init.el and uncomment
+;; the global keybindings below to fully switch over.
+(use-package! jinx
+  :hook (text-mode . jinx-mode)
+  :config
+  (setq jinx-languages "en_GB"))
 
 (setq! flycheck-checker-error-threshold 10000)
-;; (setq! ispell-alternate-dictionary "de_DE")
 
 
 (display-time-mode 1)
@@ -114,12 +111,12 @@
         ("Google maps" "https://maps.google.com/maps?q=%s")
         ("DevDocs.io" "https://devdocs.io/#q=%s")
         ("StackOverflow" "https://stackoverflow.com/search?q=%s")
-        ("Csharp (.Net)" "https://docs.microsoft.com/en-us/search/?terms=%s&scope=.NET")
         ("Github" "https://github.com/search?ref=simplesearch&q=%s")
         ("Youtube" "https://youtube.com/results?aq=f&oq=&search_query=%s")
-        ("Doom Emacs issues" "https://github.com/hlissner/doom-emacs/issues?q=is%%3Aissue+%s")))
+        ("Doom Emacs issues" "https://github.com/doomemacs/doomemacs/issues?q=is%%3Aissue+%s")))
 
-(setq! browse-url-browser-function 'browse-url-firefox)
+(setq! browse-url-browser-function
+       (if (eq system-type 'gnu/linux) 'browse-url-firefox 'browse-url-default-browser))
 (setq-default abbrev-mode t)
 
 
@@ -127,18 +124,11 @@
 
 (cond
  ((system-name= "klingenberg-laptop" "klingenberg-pc" "helensInfinitybook")
-  (add-load-path! "/usr/share/emacs/site-lisp/")
-  (add-load-path! "/usr/share/stumpwm/contrib/util/swm-emacs/"))
- ((system-name= "klingenberg-pi")
-  (add-load-path! "/run/current-system/sw/share/emacs/site-lisp/mu4e"))
- ((system-name= "klingenberg-tablet")
-  (add-load-path! "/run/current-system/profile/share/emacs/site-lisp/")
-  (add-load-path! "~/.guix-profile/share/emacs/site-lisp/")))
+  (add-load-path! "/usr/share/emacs/site-lisp/")))
 
 
 (use-package! helm
   :defer t
-  :diminish helm-mode
   :config
   (setq helm-mini-default-sources '(helm-source-buffers-list
                                     helm-source-recentf
@@ -174,6 +164,13 @@
   (setq! helm-truncate-lines nil)
   (setq! helm-buffer-max-length nil)
   (setq! helm-buffers-truncate-lines nil))
+
+(use-package! ultra-scroll
+  :init
+  (setq scroll-conservatively 101
+        scroll-margin 0)
+  :config
+  (ultra-scroll-mode 1))
 
 (after! dirvish
   (map! :map dirvish-mode-map
@@ -227,34 +224,6 @@
   (setq projectile-per-project-compilation-buffer t))
 
 
-(defun my/org-pomodoro-text-time ()
-  "")
-(after! org-pomodoro
-  (defun my/disable-notifications ()
-    (mu4e-alert-disable-mode-line-display)
-    (mu4e-alert-disable-notifications)
-    (shell-command "dunstctl set-paused true"))
-  (defun my/enable-notifications ()
-    (mu4e-alert-enable-mode-line-display)
-    (mu4e-alert-enable-notifications)
-    (shell-command "dunstctl set-paused false"))
-  (defun my/org-pomodoro-text-time ()
-    "Display remaining pomodoro time in i3 status bar. Credit to dakra on reddit."
-    (if (org-pomodoro-active-p)
-        (cond ((eq org-pomodoro-state :pomodoro) (format "pomodoro: %s" (org-pomodoro-format-seconds)))
-              ((eq org-pomodoro-state :short-break) (format "break: %s" (org-pomodoro-format-seconds)))
-              ((eq org-pomodoro-state :long-break) (format "break: %s" (org-pomodoro-format-seconds)))
-              (t (format "overtime: %s" (org-pomodoro-format-seconds))))
-      ""))
-  :config
-  (setq org-pomodoro-manual-break t)
-  (add-hook! 'org-pomodoro-started-hook #'my/disable-notifications)
-  (add-hook! 'org-pomodoro-started-hook #'org-todo)
-  (add-hook! 'org-pomodoro-finished-hook #'org-todo)
-  (add-hook! 'org-pomodoro-overtime-hook #'my/enable-notifications))
-  (add-hook! 'org-pomodoro-finished-hook #'my/enable-notifications)
-
-
 (after! sly
   (setq! inferior-lisp-program (cond
                                 ((system-name= "klingenberg-tablet")  "~/.local/bin/.run-sbcl.sh")
@@ -266,13 +235,7 @@
         :map sly-mrepl-mode-map
         :n "g" #'helm-comint-prompts-all))
 
-(customize-set-variable 'compilation-scroll-output t)
-
 (after! evil-snipe (evil-snipe-mode -1))
-
-(customize-set-variable 'avy-all-windows t)
-
-(customize-set-variable 'avy-single-candidate-jump t)
 
 (setq! magit-repository-directories '(("~/" . 1)))
 
@@ -287,7 +250,6 @@
 
 (map!
  :after evil
- :map general-override-mode-map
  :v "s" #'evil-surround-region)
 
 
@@ -306,13 +268,7 @@
 %i
 %a" :prepend t) ("j" "Journal" entry (file+olp+datetree +org-capture-journal-file) "* %U %?
 %i
-%a" :prepend t) ("b" "BoSSS calculation" entry (file+headline "~/Documents-work/bosss/calculation-log.org" ,(with-temp-buffer
-                                                                                                              (org-insert-time-stamp (current-time)))) "** RUNNING %T %(my/bosss-worksheet-get-project-name \"%f\")
-- %(org-link-make-string (concat (bosss-get-most-recent-deploy-directory) \"/stdout.txt\")  \"stdout.txt\")
-- PID: %(bosss-get-most-recent-pid)
-- previous calculation:
-- %?
-%i" :prepend nil ) ("p" "Templates for projects") ("pt" "Project-local todo" entry (file+headline +org-capture-project-todo-file "Inbox") "* TODO %?
+%a" :prepend t) ("p" "Templates for projects") ("pt" "Project-local todo" entry (file+headline +org-capture-project-todo-file "Inbox") "* TODO %?
 %i
 %a" :prepend t) ("pn" "Project-local notes" entry (file+headline +org-capture-project-notes-file "Inbox") "* %U %?
 %i
@@ -325,6 +281,19 @@
  %a" :heading "Notes" :prepend t) ("oc" "Project changelog" entry #'+org-capture-central-project-changelog-file "* %U %?
  %i
  %a" :heading "Changelog" :prepend t))))
+
+(use-package! org-modern
+  :after org
+  :hook (org-mode . org-modern-mode)
+  :config
+  (setq org-modern-star '("◉" "○" "◈" "◇" "▸")
+        org-modern-table-vertical 1
+        org-modern-table-horizontal 0.2
+        org-modern-block-name t
+        org-modern-keyword t
+        org-modern-todo t
+        org-modern-priority t
+        org-modern-tag t))
 
 (add-hook! 'org-mode-hook (variable-pitch-mode 1))
 
@@ -357,12 +326,6 @@
  :nvi "C-M-j" #'org-metadown
  :nvi "C-M-l" #'org-metaright)
 
-;; (setq! org-roam-capture-templates
-;;       '(("d" "default" plain #'org-roam-capture--get-point "%? \n %i \n %a"
-;;          :file-name "%<%Y%m%d%H%M%S>-${slug}"
-;;          :head "#+TITLE: ${title}\n"
-;;          :unnarrowed t)))
-
 (use-package! org-super-links
   :after org
   :config
@@ -375,21 +338,21 @@
 (setq! smerge-command-prefix "#")
 
 (set-popup-rules!
-  '(("^\\*bosss\\*" :slot -1 :size 20 :select nil ) ; popup bosss process buffer
-    ("^\\*Async Shell Command\\*" :slot -1 :size 20)))
+  '(("^\\*Async Shell Command\\*" :slot -1 :size 20)))
 ;;; Defining some useful functions
 
-(defun shutdown ()
-  (interactive)
-  (run-hook-with-args-until-failure 'kill-emacs-query-functions)
-  (cond
-   ((system-name= "klingenberg-laptop" "klingenberg-tablet") (async-shell-command "sudo shutdown"))
-   (t (shell-command "shutdown now"))))
+(when (eq system-type 'gnu/linux)
+  (defun shutdown ()
+    (interactive)
+    (run-hook-with-args-until-failure 'kill-emacs-query-functions)
+    (cond
+     ((system-name= "klingenberg-laptop" "klingenberg-tablet") (async-shell-command "sudo shutdown"))
+     (t (shell-command "shutdown now"))))
 
-(defun reboot ()
-  (run-hook-with-args-until-failure 'kill-emacs-query-functions)
-  (interactive)
-  (async-shell-command "sudo reboot"))
+  (defun reboot ()
+    (interactive)
+    (run-hook-with-args-until-failure 'kill-emacs-query-functions)
+    (async-shell-command "sudo reboot")))
 
 (defun my/open-in-external-app ()
   (interactive)
@@ -398,46 +361,20 @@
     ;; (counsel-find-file-extern (buffer-file-name))
     ))
 
-(defun my/brightness+ ()
-  (interactive)
-  (shell-command "xbacklight -inc 10"))
+(when (eq system-type 'gnu/linux)
+  (defun my/brightness+ ()
+    (interactive)
+    (shell-command "xbacklight -inc 10"))
 
-(defun my/brightness- ()
-  (interactive)
-  (shell-command "xbacklight -dec 10"))
+  (defun my/brightness- ()
+    (interactive)
+    (shell-command "xbacklight -dec 10"))
 
-(defun my/fix-touchscreen ()
-  (when (system-name= "klingenberg-tablet")
-    (shell-command "xinput --map-to-output $(xinput list --id-only \"ELAN Touchscreen\") eDP-1")
-    (ignore-errors
-      (shell-command "xinput --map-to-output $(xinput list --id-only \"HDX HDX DIGITIZER Pen (0)\") eDP-1"))))
-
-(defun my/tuxi ()
-  (interactive)
-  (cl-labels
-      ((read-lines (filePath)
-                   "Return a list of lines of a file at filePath."
-                   (with-temp-buffer
-                     (insert-file-contents filePath)
-                     (split-string (buffer-string) "\n" t)))
-       (write-lines (filename data)
-                    (with-temp-file filename
-                      (mapcar
-                       (lambda (item)
-                         (princ (concat item "\n") (current-buffer)))
-                       data)))
-       (update-cache (query old-cache-list)
-                     (if (member query old-cache-list)
-                         old-cache-list
-                       (cons query old-cache-list))))
-    (let*
-        ((cache-file "~/.config/emacs/.local/cache/tuxi")
-         (cache (read-lines cache-file))
-         (query (completing-read "Enter query: " cache))
-         (updated-cache (update-cache query cache))
-         (result (shell-command-to-string (concat "tuxi -r " query))))
-      (write-lines cache-file updated-cache)
-      (message result))))
+  (defun my/fix-touchscreen ()
+    (when (system-name= "klingenberg-tablet")
+      (shell-command "xinput --map-to-output $(xinput list --id-only \"ELAN Touchscreen\") eDP-1")
+      (ignore-errors
+        (shell-command "xinput --map-to-output $(xinput list --id-only \"HDX HDX DIGITIZER Pen (0)\") eDP-1")))))
 
 (defun my/eww-open-league-table ()
   "Do an internet search for soccer league table."
@@ -464,105 +401,15 @@
 (after! bash-completion
   (setq! bash-completion-nospace t))
 
-; TODO does not have any effect
-;; (use-package! async-await)
-;; adapted from snippet by oremacs
-
-(defun my/youtube-dl ()
-  (interactive)
-  (let* ((url (or (plist-get eww-data :url)
-                  (current-kill 0)))
-         (str (replace-regexp-in-string
-               "-"
-               "-"
-               (replace-regexp-in-string
-                "\\&list.*"
-                ""
-                (replace-regexp-in-string
-                 "https://w*invidio.us/watch\\?v="
-                 ""
-                 (replace-regexp-in-string
-                  "https://w*youtube.com/watch\\?v="
-                  ""
-                  url)))))
-         (download-dir "~/Videos/"))
-    (message "Downloading video, will open as soon as download is complete...")
-    (set-process-sentinel
-     (start-process-shell-command
-      "youtube-download"
-      "*youtube-download*"
-      "youtube-dl"
-      (concat "-o " download-dir "%\\(title\\)s%\\(id\\)s")
-      (concat "\"" str "\""))
-     (lambda (_ _)
-       (counsel-find-file-extern
-        (car (directory-files
-              "~/Videos/"
-              ;; download-dir
-              t str)))))))
-
-(defun my/youtube-watch ()
-  (interactive)
-  (let* ((url (or (plist-get eww-data :url)
-                  (current-kill 0)))
-         (str (replace-regexp-in-string
-               "-"
-               "-"
-               (replace-regexp-in-string
-                "\\&list.*"
-                ""
-                (replace-regexp-in-string
-                 "https://w*invidio.us/watch\\?v="
-                 "https://youtube.com/watch\\?v="
-                 url)))))
-    (elfeed-v-mpv str)))
-
-
 (defun my/close-buffer ()
   (interactive)
-  ;; (unless (equalp (buffer-name) "*scratch*")
-  ;;   (kill-this-buffer))
   (if (< 1 (length (window-list)))
       (evil-window-delete)
-    ;; (stump/window-close)
-    (qtile/window-close)
-    ))
+    (qtile/window-close)))
 
 (defun my/run-command-ssh (server &rest cmds)
   "Run COMMAND on SERVER, assumes that you set it up properly"
   (async-shell-command (concat "ssh " server " '" (mapconcat 'identity cmds "; ")"'")))
-
-(defun stump/move-focus (direction)
-  (with-current-buffer "*scratch*"
-      (shell-command-to-string (format "stumpish eval \\\(move-focus :%s\\\)" direction))))
-
-(defun stump/emacs-window-right ()
-  (interactive)
-  (condition-case nil
-      (evil-window-right 1)
-    (error (stump/move-focus "right"))))
-
-(defun stump/emacs-window-left ()
-  (interactive)
-  (condition-case nil
-      (evil-window-left 1)
-    (error (stump/move-focus "left"))))
-
-(defun stump/emacs-window-up ()
-  (interactive)
-  (condition-case nil
-      (evil-window-up 1)
-    (error (stump/move-focus "up"))))
-
-(defun stump/emacs-window-down ()
-  (interactive)
-  (condition-case nil
-      (evil-window-down 1)
-    (error (stump/move-focus "down"))))
-
-(defun stump/window-close ()
-  (with-current-buffer "*scratch*"
-      (shell-command-to-string "qtile run-cmd lazy.window.kill()"))) ;TODO
 
 (defun qtile/move-focus (direction)
   (with-current-buffer "*scratch*"
@@ -595,82 +442,39 @@
 
 (defun qtile/window-close ()
   (with-current-buffer "*scratch*"
-      (shell-command-to-string "stumpish delete")))
-
-(map!
-   :g "M-<f11>" #'qtile/emacs-window-right
-   :g "M-<f12>" #'qtile/emacs-window-left
-   :g "M-<f10>" #'qtile/emacs-window-down
-   :g "M-<f9>" #'qtile/emacs-window-up
-   :g "M-s-<f11>" #'qtile/emacs-window-right
-   :g "M-s-<f12>" #'qtile/emacs-window-left
-   :g "M-s-<f10>" #'qtile/emacs-window-down
-   :g "M-s-<f9>" #'qtile/emacs-window-up)
+      (shell-command-to-string "qtile cmd-obj -o window -f kill")))
 
 (defun my/create-super-bindings ()
-  "Create bindings starting with super for use outside exwm."
+  "Create super-key bindings for window management and quick access."
   (map!
    :n
-   ;; :states '(insert emacs hybrid normal visual motion operator replace)
    "s-w" '(other-window :which-key "other window")
-   ;; "s-l" 'stump/emacs-window-right
-   ;; "s-h" 'stump/emacs-window-left
-   ;; "s-j" 'stump/emacs-window-down
-   ;; "s-k" 'stump/emacs-window-up
-   ;; "s-L" 'enlarge-window-horizontally
-   ;; "s-H" 'shrink-window-horizontally
-   ;; "s-J" 'enlarge-window
-   ;; "s-K" 'shrink-window
    "s-M-l" 'enlarge-window-horizontally
    "s-M-h" 'shrink-window-horizontally
    "s-M-j" 'enlarge-window
    "s-M-k" 'shrink-window
-   ;; "s-v" 'split-window-right
-   ;; "s-s" 'split-window-below
    "s-c" 'my/close-buffer
    "s-q" 'my/get-rid-of-mouse
    "s-m" 'delete-other-windows
-   "s-t" 'my/tuxi
-   ;; "s-y" 'ytdious
-   ;; "s-<f1>" '+vterm/here
-   ;; "C-s-<f1>" '+vterm/toggle
    "s-<f1>" '+eshell/here
    "C-s-<f1>" '+eshell/toggle
    "s-<f2>" '(lambda () (interactive)
              (funcall browse-url-browser-function "" "-new-tab"))
    "s-<f3>" 'deer
    "s-<f4>" '(lambda () (interactive)
-             (mu4e)))
-  (when nil
-    (map!
-     :n
-     "s-x" 'execute-extended-command
-     "s-f" 'find-file
-     "s-p" 'projectile-find-file
-     "s-b" 'consult-buffer
-     "s-g" 'helm-system-packages
-     "s-P" '+pass/copy-secret))
-  (when nil
-    (map!
-     :n
-     "s-x" 'counsel-M-x
-     "s-f" 'counsel-find-file
-     "s-p" 'counsel-projectile
-     "s-b" 'ivy-switch-buffer
-     "s-g" 'helm-system-packages
-     "s-P" '+pass/ivy))
-  (when t
-    (map!
-     :n
-     "s-x" 'helm-M-x
-     "s-f" 'helm-find-files
-     "s-p" 'helm-projectile
-     "s-g" 'helm-system-packages
-     "s-b" 'helm-mini
-     "s-P" '+pass/copy-secret
-     ;; "s-P" 'helm-pass
-     ;; "s-M-p" 'helm-pass
-     )))
+             (mu4e))
+   "s-x" 'helm-M-x
+   "s-f" 'helm-find-files
+   "s-p" 'helm-projectile
+   "s-g" 'helm-system-packages
+   "s-b" 'helm-mini
+   "s-P" '+pass/copy-secret))
+
+(map!
+   :g "C-s-l" #'evil-window-right
+   :g "C-s-h" #'evil-window-left
+   :g "C-s-j" #'evil-window-down
+   :g "C-s-k" #'evil-window-up)
 
 (my/create-super-bindings)
 
@@ -721,7 +525,7 @@
   (setq! mu4e-alert-interesting-mail-query "flag:unread AND NOT flag:trashed AND NOT maildir:/Web/INBOX/")
   (mu4e-alert-enable-mode-line-display)
   (mu4e-alert-enable-notifications)
-  (mu4e-alert-set-default-style 'libnotify)
+  (mu4e-alert-set-default-style (if (eq system-type 'gnu/linux) 'libnotify 'osx-notifier))
   (alert-add-rule
    :category "mu4e-alert"
    :predicate (lambda (_) (string-match-p "^mu4e-" (symbol-name major-mode)))
@@ -800,12 +604,6 @@
 (evil-define-minor-mode-key 'normal 'outline-minor-mode (kbd "M-k") nil )
 (evil-define-minor-mode-key 'normal 'outline-minor-mode (kbd "M-h") nil )
 (evil-define-minor-mode-key 'normal 'outline-minor-mode (kbd "M-l") nil )
-;; (map! :map outline-minor-mode-map ;TODO check if this messes up other situtations
-;;       :n "M-j" nil
-;;       :n "M-k" nil
-;;       :n "M-h" nil
-;;       :n "M-l" nil )
-
 (after!
   lispy
   (lispy-set-key-theme '(lispy c-digits))
@@ -852,26 +650,6 @@
    "1" #'lispy-describe-inline
    "2" #'lispy-arglist-inline
    "x" #'lispy-x))
-
-(use-package! guix
-  :when (system-name= "klingenberg-tablet")
-  :defer t
-  ;; :commands (guix scheme-mode)
-  :config
-  (defun my/activate-guix-devel-mode ()
-    (when (file-in-directory-p (buffer-file-name) "~/guix")
-      (guix-devel-mode 1)))
-  (add-hook 'scheme-mode-hook #'my/activate-guix-devel-mode)
-  (map!
-   :localleader
-   :map guix-devel-mode-map
-   :n "b" 'guix-devel-build-package-definition
-   :n "s" 'guix-devel-build-package-source
-   :n "d" 'guix-devel-download-package-source
-   :n "l" 'guix-devel-lint-package
-   :n "k" 'guix-devel-copy-module-as-kill
-   :n "u" 'guix-devel-use-module
-   :n "." 'guix-devel-code-block-edit))
 
 (map!
  :localleader
@@ -920,14 +698,6 @@
  "eB" #'haskell-process-load-file
  "eb" #'my/haskell-load-and-run)
 
-;; (use-package! cider
-;;   :config
-;;   (map!
-;;    :localleader
-;;    :map clojure-mode-map
-;;    :n "'" '+eval/open-repl-other-window
-;;    :n "ef" 'cider-eval-defun-at-point))
-
 ;; doc-view mode
 (after! doc-view
  (map!
@@ -972,7 +742,6 @@
 
 ;; latex
 (setq! +latex-viewers '(pdf-tools))
-;; (setq! +latex-viewers '(zathura))
 (setq my/latex-macro-directory
       (cond
        ((system-name= "klingenberg-laptop" "klingenberg-tablet") "~/Documents/conferences/latex_macros/")
@@ -1126,7 +895,7 @@
   :config
   (opencode-setup)
   ;; Configure command permissions
-  (setq opencode-bash-permissions 
+  (setq opencode-bash-permissions
         '(("ls*" . "allow")        ; Allow ls commands
           ("git*" . "allow")       ; Allow git commands
           ("npm*" . "allow")       ; Allow npm commands
@@ -1148,8 +917,39 @@
   )
 
 ;; Keybindings
+(map! :map doom-leader-open-map
+      "c" #'claude-code-ide-menu
+      "lL" #'(lambda () (interactive) (let ((current-prefix-arg t)) (call-interactively #'gptel)))
+      "lf" #'gptel-add-file
+      "ld" (cmd! (gptel-add-file default-directory))
+      "lp" (cmd! (gptel-add-file (projectile-project-root))))
+(map! :map gptel-mode-map
+        "RET" #'gptel-send              ;; TODO check if this is good
+        "C-c C-c" #'gptel-send
+        "C-RET" #'evil-ret)
+(map! :map gptel-mode-map
+        :localleader
+        "d" (cmd! (gptel-add-file default-directory))
+        "P" (cmd! (gptel-add-file (projectile-project-root)))
+        "RET" #'gptel-send
+        "C-RET" #'gptel-send-newline
+        "i" #'gptel-add-buffer
+        "f" #'gptel-add-file
+        "r" #'gptel-context-remove-all
+        "t" #'gptel-select-prefix
+        "s" #'gptel-switch-model
+        "o" #'gptel-open-log
+        "n" #'gptel-next-message
+        "p" #'gptel-previous-message
+        "k" #'gptel-delete-current
+        "c" #'gptel-new-chat
+        "q" #'kill-buffer)
+
 (use-package! claude-code-ide
+  :bind
   :config
+  ;; Set default model for Claude Code
+  (setq claude-code-ide-program-args '("--model" "glm-5:cloud"))
   ;; (claude-code-ide-emacs-tools-setup)   ; Optionally enable Emacs MCP tools
   (setq! my/claude-text-snippets-list
          '("Please use the AskUserQuestion tool to ask for clarification on anything that is unclear."
@@ -1164,35 +964,35 @@
     (let ((snippet (completing-read "Snippet to insert:"
                                     my/claude-text-snippets-list)))
       (send-string (current-buffer) (concat " " snippet " "))))
-  
   (map! :map vterm-mode-map
         "C-c C-r"  #'my/claude-snippet-menu))
 
-
-(use-package! goose
-  :commands (goose goose-transient)
-  :config
-  (setq goose-program-name "goose")  ; Ensure goose CLI is in PATH
-  (setq! my/goose-text-snippets-list
-         '("Please use the AskUserQuestion tool to ask for clarification on anything that is unclear."
-           "Be very concise. Sacrifice grammar for the sake of concision."
-           "Please check if a linear issue for the current task exists, and, if not, create on/e before starting to work on this. Ask questions if you need information about some of the task details."
-           "Please create a TODO list to track progress."
-           "Always use the explore subagents if you need more context."
-           "Please start five parallel explore subagents to explore solutions."
-           "Please give me five different solution prototypes."))
-  (defun my/goose-snippet-menu ()
-    (interactive)
-    (let ((snippet (completing-read "Snippet to insert:"
-                                    my/goose-text-snippets-list)))
-      (send-string (current-buffer) (concat " " snippet " "))))
+(use-package! prompt-compose
+  :after claude-code-ide
+  :init
+  (map! :map doom-leader-open-map
+        "P" #'prompt-compose)
   (map! :map vterm-mode-map
-        "C-c C-r"  #'my/claude-snippet-menu)
-  :hook
-  (goose-mode . (lambda () (display-line-numbers-mode -1))))
+        "s-P" #'prompt-compose)
+  :config
+  (prompt-compose-setup-default-backends))
 
-(map! :leader
-      "l g" #'goose-transient)  ; Open goose with SPC l g
+
+(use-package! agent-shell
+  :config
+  ;; Set OpenCode as the default agent
+  (setq agent-shell-preferred-agent-config (agent-shell-opencode-make-opencode-config))
+
+  ;; Evil mode keybindings using Doom's map! macro
+  (map! :map agent-shell-mode-map
+        :i "RET" #'newline
+        :n "RET" #'comint-send-input)
+
+  ;; Configure diff buffers to start in Emacs state
+  (add-hook 'diff-mode-hook
+            (lambda ()
+              (when (string-match-p "\\*agent-shell-diff\\*" (buffer-name))
+                (evil-emacs-state)))))
 
 (use-package! minimax-agent
   :config
@@ -1200,204 +1000,22 @@
   (setq minimax-agent-api-key (password-store-get "minimax-api-key")))
 
 
-;; octave
-(setq! auto-mode-alist
-       (cons '("\\.m$" . octave-mode) auto-mode-alist))
-
-(add-hook 'octave-mode-hook
-    (lambda () (progn (setq octave-comment-char ?%)
-                      (setq comment-start "% ")
-                      (setq comment-add 0))))
-
-(map! :localleader
-      :map octave-mode-map
-      "el" #'octave-send-line
-      "ef" #'octave-send-defun
-      "ee" #'octave-send-block
-      "er" #'octave-send-region
-      "eb" #'octave-send-buffer)
-
-;; f#
-(map! :localleader
-      :after fsharp-mode
-      :map fsharp-mode-map
-      :n "'" #'run-fsharp
-      :n "e" nil
-      :n "ef" #'fsharp-eval-phrase
-      :n "er" #'fsharp-eval-region
-      :n "ce" #'compile
-      :n "cr" #'recompile
-      :n "cc" #'recompile)
-
-(use-package! gnu-apl-mode
-  :defer t)
-
-;; (require 'ein)
-(use-package! ein
-  :defer t
-  :config
-  (add-hook! 'ein:notebook-mode-hook #'buffer-enable-undo)
-  (map! :after ein
-        :map ein:notebook-mode-map
-        :n "M-j" #'ein:worksheet-goto-next-input-km
-        :n "M-k" #'ein:worksheet-goto-prev-input-km)
-  (map! :localleader
-        :after ein
-        :map ein:notebook-mode-map
-        :n "j" #'ein:worksheet-insert-cell-below-km
-        :n "k" #'ein:worksheet-insert-cell-above-km
-        :n "ef" #'ein:worksheet-execute-cell
-        :n "ee" #'ein:worksheet-execute-cell-and-goto-next-km
-        :n "eb" #'ein:worksheet-execute-all-cells))
-
-;;c++
-(map! :localleader
-      :map c++-mode-map
-      :n "b" #'recompile)
-
-(use-package! gud
-  :defer t
-  :config
-  (defhydra gud-hydra (:color pink :hint nil :foreign-keys run)
-    "
-^Stepping^          ^Switch^                 ^Breakpoints^         ^Debug^
-^^^^^^^^---------------------------------------------------------------------------------
-_n_: Next           _su_: Up stack frame     _bb_: Toggle          _dd_: Debug
-_i_: Step in        _sd_: Down stack frame   _bd_: Delete          _ds_: Debug restart
-_c_: Continue
-_r_: Restart frame
-_Q_: Disconnect     "
-
-    ("n" gud-next)
-    ("i" gud-step)
-    ("c" gud-cont)
-    ("r" gud-refresh)
-    ("su" gud-up)
-    ("sd" gud-down)
-    ("bb" gud-break)
-    ("bd" gud-remove)
-    ("dd" gud-run)
-    ("ds" gud-refresh)
-    ("q" nil "quit" :color blue)
-    ("Q" gud-finish :color red))
-(defun gud-hydra ()
-  "Run `gud-hydra/body'."
-  (interactive)
-  (gud-hydra/body)))
-
 (use-package! dap-mode
   :defer t
   :config
   (add-hook 'dap-stopped-hook
             (lambda (arg) (call-interactively #'dap-hydra)))
-  (require 'dap-python)
-  (require 'dap-netcore))
+  (require 'dap-python))
 
 (after! dap-mode
   (setq dap-python-debugger 'debugpy))
-
-;; (after! lsp
-;;   ;; (setq! lsp-file-watch-threshold 30000)
-;;   (setq! lsp-file-watch-threshold nil))
-
-(defun my/csharp-list-to-array ()
-  (replace-regexp "List<\\(.*\\)>" "\\1[]"
-                  nil
-                  (line-beginning-position)
-                  (line-end-position)))
-
-(defun my/csharp-array-to-list ()
-  (replace-regexp "\\([A-z]*\\)\\[\\]" "List<\\1>"
-                  nil
-                  (line-beginning-position)
-                  (line-end-position)))
-
-
-(defun my/csharp-toggle-list-and-array ()
-  (interactive)
-  (let ((min (line-beginning-position))
-        (max (line-end-position)))
-    (save-excursion
-      (beginning-of-line)
-      (cond ((re-search-forward "List<\\(.*\\)>" max t)
-             (my/csharp-list-to-array))
-            ((re-search-forward "\\(.*\\)\\[\\]" max t)
-             (my/csharp-array-to-list))
-            (t (message "neither array nor string found on current line"))))))
-
-(defun my/csharp-find-current-project ()
-  "Find the closest csproj file relative to the current directory."
-  (cl-labels
-      ((find-csproj-file (dir)
-                         (directory-files dir nil  ".*csproj"))
-       (iter (dir)
-             (cond
-              ((find-csproj-file dir) (expand-file-name
-                                       (car (find-csproj-file dir))
-                                       dir)) ; if a .csproj file is found in the current directory, return its absolute path
-              ((string-equal "/" (expand-file-name dir)) nil ) ; prevent infinite loops
-              (t (iter (concat dir "/../")))))) ; if there is no .csproj file, look one directory higher
-    (iter (file-name-directory (buffer-file-name)))))
-
-(map!
- :localleader
- :map csharp-mode-map
- "b" #'recompile
- ;; "cd" (lambda () (interactive) (compile (concat "msbuild -verbosity:quiet -maxCpuCount /p:WarningLevel=0 /p:Configuration=Debug " (my/csharp-find-current-project))))
- ;; "cr" (lambda () (interactive) (compile (concat "msbuild -verbosity:quiet -maxCpuCount /p:WarningLevel=0 /p:Configuration=Release " bosss-master-solution)))
- ;; "ce" (lambda () (interactive) (compile (concat "msbuild -verbosity:quiet -maxCpuCount /p:WarningLevel=0 /p:Configuration=Debug " bosss-master-solution)))
- ;; "cc" #'recompile
- "=" #'my/indent-buffer-without-bosss-header
- ;; "et" (lambda () (interactive) (my/run-tests (my/csharp-find-current-project)))
- "eo" #'run-csharp-repl-other-frame
- "R" #'run-csharp-repl-other-window
- "er" #'csharp-repl-send-region
- "eb" #'csharp-repl-send-buffer)
 
 (add-hook! '(yaml-mode-hook)
  :append
  (visual-line-mode -1))
 
-;; org-kanban
-(use-package! kanban
-  :defer t
-  :load-path  "~/Documents/programming/elisp/kanban.el/")
-
-(map! :map (company-mode-map company-active-map)
-      "RET" nil
-      "<return>" nil
-      "<left>" nil
-      ;; :i "TAB" #'+company/complete
-      ;; :i "<right>" #'company-complete-selection
-      :i "M-RET" #'company-complete-selection
-      :i "M-l" #'company-complete-selection
-      :i "M-j" #'company-select-next-or-abort
-      :i "M-k" #'company-select-previous-or-abort
-      :i "C-l" #'company-complete-selection
-      :i "C-k" #'company-select-previous-or-abort)
 
 
-(use-package! obsidian
-  :config
-  (setq obsidian-directory "~/Documents/Obsidian Vault/"))
-
-;; TODO check if this is needed with doom
-;; (use-package! org-roam-server
-;;   :after-call org-roam-mode-hook
-;;   :config
-;;   (map! :map doom-leader-notes-map
-;;         "rg" (lambda () (interactive) (org-roam-server-mode 1) (browse-url-firefox "127.0.0.1:8080")))
-;;   (setq! org-roam-server-host "127.0.0.1"
-;;         org-roam-server-port 8080
-;;         org-roam-server-export-inline-images t
-;;         org-roam-server-authenticate nil
-;;         org-roam-server-label-truncate t
-;;         org-roam-server-label-truncate-length 60
-;;         org-roam-server-label-wrap-length 20))
-;; END TODO check if this is needed with doom
-
-;; (use-package! edit-server
-;;   :config (edit-server-start))
 
 (use-package! vterm
   :defer t
@@ -1445,34 +1063,19 @@ _Q_: Disconnect     "
                                              ("decibels" . 2.5)
                                              ("raw" . 72000))))
 
-(use-package! telega
-  :after (rainbow-identifiers)
-  :when (system-name= "klingenberg-laptop" "klingenberg-tablet")
-  :commands telega
-  :init
-  (setq telega-server-libs-prefix "/usr/")
-  :config
-  (telega-notifications-mode 1))
 
 
 
-(after! circe
-  (set-irc-server! "chat.freenode.net"
-                   `(:tls t
-                     :port 6697
-                     :nick "dakling"
-                     :channels ("#emacs" "#guix"))))
 
 (use-package! alert
   :commands (alert)
   :init
-  (setq! alert-default-style 'libnotify))
+  (setq! alert-default-style (if (eq system-type 'gnu/linux) 'libnotify 'osx-notifier)))
 
 (use-package! elfeed
   :commands (eww elfeed elfeed-update)
   :init (setq! elfeed-search-title-max-width 150)
   :config
-  ;; (add-hook! 'elfeed-search-mode-hook 'elfeed-update)
   (setq!
    elfeed-search-filter "@12-months-ago AI"
    elfeed-feeds
@@ -1496,9 +1099,6 @@ _Q_: Disconnect     "
      ("https://blogs.nvidia.com/blog/category/ai/feed/" AI)
      ("https://aws.amazon.com/blogs/machine-learning/feed/" AI)
      ("http://feeds.feedburner.com/FeaturedBlogPosts-DataScienceCentral?format=xml" AI)
-     ;; ("https://www.reddit.com/r/MachineLearning/.rss" AI)
-     ;; ("https://www.reddit.com/r/artificial/.rss" AI)
-     ;; ("https://www.reddit.com/r/neuralnetworks/.rss?format=xml" AI)
      ("https://www.sciencedaily.com/rss/computers_math/artificial_intelligence.xml" AI)
      ("https://www.therundown.ai/feed" AI)
      ("https://www.inference.vc/rss" AI)
@@ -1507,76 +1107,8 @@ _Q_: Disconnect     "
      ("https://danieltakeshi.github.io/feed.xml" AI)
      ("https://mlinproduction.com/feed" AI)
      ("https://aiweirdness.com/rss" AI)
-     ("https://becominghuman.ai/feed" AI)
-     ;; ("https://www.cambridge.org/core/rss/product/id/1F51BCFAA50101CAF5CB9A20F8DEA3E4" work fluid mechanics jfm)
-     ;; ("http://feeds.aps.org/rss/recent/prfluids.xml" work fluid mechanics prf)
-     ;; ("https://rss.arxiv.org/rss/physics.flu-dyn" work fluid mechanics archivx)
-     ;; ("https://www.zeitsprung.fm/feed/ogg/" podcast zeitsprung)
-     ;; ("https://tribuenengespraech.podigee.io/feed/vorbis" podcast rasenfunk tribünengespräch fussball)
-     ;; ("https://guix.gnu.org/feeds/blog/arm.atom" lisp programming guix blog)
-     ;; ("https://www.kernel.org/feeds/kdist.xml" linux kernel updates)
-     ;; ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
-     ;; ("http://www.reddit.com/r/DoomEmacs/.rss" emacs reddit)
-     ;; ("http://www.reddit.com/r/lisp/.rss" programming reddit)
-     ;; ("http://www.reddit.com/r/common_lisp/.rss" programming reddit)
-     ;; ("http://www.reddit.com/r/scheme/.rss" programming reddit)
-     ;; ("http://www.reddit.com/r/linux/.rss" programming reddit)
-     ;; ("http://www.reddit.com/r/archlinux/.rss" programming reddit)
-     ;; ("http://www.reddit.com/r/nixos/.rss" programming reddit)
-     ;; ("http://www.reddit.com/r/Plover/.rss" programming reddit)
-     ;; ("http://www.reddit.com/r/baduk/.rss" go baduk reddit)
-     ;; ("http://www.go4go.net/go/games/rss" go baduk go4go)
-     ;; ("http://tv.dfb.de/rss.php" dfb futsal fussball)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCyHDQ5C6z1NDmJ4g6SerW8g" youtube mailab)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UChkVOG0PqkXIHHmkBGG15Ig" youtube walulis)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCo4693Ony4slDY5hR0ny-bw" youtube walulis)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVTyTA7-g9nopHeHbeuvpRA" youtube meyers)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3XTzVzaHQEd30rQbuvCtTQ" youtube lastweektonight)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCYO_jab_esuFRV4b17AJtAw" youtube math 3blue1brown 3b1b)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCoxcjq-8xIDTYp3uz647V5A" youtube math numberphile)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCHnyfMqiRRG1u-2MsSQLbXA" youtube math veritasium)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCSju5G2aFaWMqn-_0YBtq5A" youtube math stand up matt parker)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCzV9N7eGedBchEQjQhPapyQ" youtube math stand up matt parker)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCfb7LAYCeJJiT3gyquv7V5Q" youtube politics die da oben)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UC78Ib99EBhMN3NemVjYm3Ig" youtube maths 3b1b)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCNIuvl7V8zACPpTmmNIqP2A" youtube history oversimplified)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCsXVk37bltHxD1rDPwtNM8Q" youtube science kurzgsagt)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCMb0O2CdPBNi-QqPk5T3gsQ" youtube james hoffmann coffee)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCpa-Zb0ZcQjTCPP1Dx_1M8Q" youtube legal eagle)
-     ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=" youtube )
-     ))
+     ("https://becominghuman.ai/feed" AI)))
 
-  ;; Taken from https://joshrollinswrites.com/help-desk-head-desk/20200611/
-  (defun elfeed-v-mpv (url)
-    "Watch a video from URL in MPV"
-    (async-shell-command (format "mpv \"%s\"" url)))
-
-  (defun elfeed-view-mpv (&optional use-generic-p)
-    "Youtube-feed link"
-    (interactive "P")
-    (let ((entries (elfeed-search-selected)))
-      (cl-loop for entry in entries
-               do (elfeed-untag entry 'unread)
-               when (elfeed-entry-link entry)
-               do (elfeed-v-mpv it))
-      (mapc #'elfeed-search-update-entry entries)
-      (unless (use-region-p) (forward-line))))
-  ;; Taken from https://noonker.github.io/posts/2020-04-22-elfeed/
-  (defun yt-dl-it (url)
-    "Downloads the URL in an async shell"
-    (let ((default-directory "~/Videos"))
-      (async-shell-command (format "youtube-dl %s" url))))
-
-  (defun elfeed-youtube-dl (&optional use-generic-p)
-    "Youtube-DL link"
-    (interactive "P")
-    (let ((entries (elfeed-search-selected)))
-      (cl-loop for entry in entries
-               do (elfeed-untag entry 'unread)
-               when (elfeed-entry-link entry)
-               do (yt-dl-it it))
-      (mapc #'elfeed-search-update-entry entries)
-      (unless (use-region-p) (forward-line))))
 
   (defun elfeed-eww-open (&optional use-generic-p)
     "open with eww"
@@ -1601,22 +1133,9 @@ _Q_: Disconnect     "
       (mapc #'elfeed-search-update-entry entries)
       (unless (use-region-p) (forward-line))))
 
-  ; (defun elfeed-reddit-open (&optional use-generic-p)
-  ;   "open with md4rd"
-  ;   (interactive "P")
-  ;   (let ((entries (elfeed-search-selected)))
-  ;     (cl-loop for entry in entries
-  ;              do (elfeed-untag entry 'unread)
-  ;              when (elfeed-entry-link entry)
-  ;              do (md4rd--fetch-comments (format "%s.json" it)))
-  ;     (mapc #'elfeed-search-update-entry entries)
-  ;     ;; (unless (use-region-p) (forward-line))
-  ;     ))
-
+ 
   (defun elfeed-open-item-generic (entry)
     (cond
-     ((elfeed-tagged-p 'youtube entry) (elfeed-view-mpv))
-     ((elfeed-tagged-p 'reddit entry) (elfeed-reddit-open))
      ((elfeed-tagged-p 'podcast entry) (let ((elfeed-show-entry entry))
                                          (elfeed-show-play-enclosure
                                           (elfeed--enclosure-maybe-prompt-index entry))))
@@ -1636,47 +1155,8 @@ _Q_: Disconnect     "
         :n "u" #'elfeed-update
         :n "o" #'elfeed-open-generic
         :n "e" #'elfeed-eww-open
-        :n "b" #'elfeed-firefox-open
-        :n "v" #'elfeed-view-mpv
-        :n "d" #'elfeed-youtube-dl))
+        :n "b" #'elfeed-firefox-open))
 
-(defun my//play-playlist (filename &optional shuffle)
-  (defun my/random-sort-lines ()
-    "Sort lines in region randomly."
-    (interactive "r")
-    (save-excursion
-      (save-restriction
-        (goto-char (point-min))
-        (let ;; To make `end-of-line' and etc. to ignore fields.
-            ((inhibit-field-text-motion t))
-          (sort-subr nil 'forward-line 'end-of-line nil nil
-                     (lambda (s1 s2) (eq (random 2) 0)))))))
-  (defun play-yt-audio (url)
-    "Watch a video from URL in MPV"
-    (let
-        ((formatted-url (concat "https://youtube.com/watch\?v=" url)))
-      (message formatted-url)
-     (shell-command (format "mpv --no-video \"%s\"" formatted-url))))
-  (find-file filename)
-  (when shuffle
-    (my/random-sort-lines)
-    (save-buffer))
-  (goto-char (point-min))
-  (setq more-lines t)
-  (while more-lines
-    (beginning-of-line)
-    (setq splitPos (point))
-    (end-of-line)
-    (setq restLine (buffer-substring-no-properties splitPos (point) ))
-    (play-yt-audio restLine)
-
-    (setq moreLines (= 0 (forward-line 1)))
-    (next-line)))
-
-(defun my/play-youtube-playlist ()
-  (interactive)
-  (let ((playlist-file "~/Musik/playlist.txt"))
-    (my//play-playlist playlist-file t)))
 
 (after! eww
   (map!
@@ -1685,46 +1165,9 @@ _Q_: Disconnect     "
    :n "M-l" #'eww-forward-url
    :n "M-y" #'eww-copy-page-url
    :n "f" #'ace-link-eww)
-  (map!
-   :localleader
-   :map eww-mode-map
-   :n "v" #'my/youtube-watch
-   :n "d" #'my/youtube-dl))
-
-(use-package! ytdious
-  :defer t
-  :config
-  (setq! ytdious-invidious-api-url
-        "https://invidious.tube"
-        ;; "https://invidious.zee.li"
-        ;; "https://invidious.tinfoil-hat.net"
-        )
-  (map!
-   :map ytdious-mode-map
-   :n "s" #'ytdious-search
-   :n "S" #'ytdious-search-recent
-   :n "c" #'ytdious-view-channel-at-point
-   :n "RET" #'ytdious-play
-   :n "o" #'ytdious-play
-   :n "O" #'ytdious-play-continious
-   :n "Q" #'ytdious-stop-continious))
-
-;; (use-package! ytel-show
-;;   :after ytel
-;;   :bind (:map ytel-mode-map ("RET" . ytel-show)))
+)
 
 
-; (use-package! md4rd
-;   :commands (md4rd md4rd--fetch-comments)
-;   :config
-;   (add-hook 'md4rd-mode-hook 'md4rd-indent-all-the-lines))
-
-(use-package! emms
-  :commands (emms)
-  :config
-  (emms-standard)
-  (emms-default-players)
-  (setq! emms-source-file-default-directory "~/Music"))
 
 (use-package! pinentry
   :defer t
@@ -1736,59 +1179,6 @@ _Q_: Disconnect     "
   ;; (setq! epg-pinentry-mode 'ask)
   (setq! epg-pinentry-mode 'loopback))
 
-;; (use-package! stumpwm-mode
-;;   :when (system-name= "klingenberg-laptop" "klingenberg-tablet" "klingenberg-pc" "helensInfinitybook")
-;;   :config
-;;   (defun my/stumpwm-connect ()
-;;     (interactive)
-;;     (sly-connect "localhost" 4005))
-;;   (defun my/activate-stump-mode ()
-;;     (when (equalp
-;;            (buffer-file-name)
-;;            "/home/klingenberg/.dotfiles/stumpwm.lisp")
-;;       (stumpwm-mode 1)))
-;;   (add-hook 'lisp-mode-hook #'my/activate-stump-mode)
-;;   (map! :localleader :map stumpwm-mode-map
-;;         ;; "ef" #'stumpwm-eval-defun
-;;         ;; "ee" #'stumpwm-eval-last-sexp
-;;         "'" #'my/stumpwm-connect))
-
-;; (use-package! eaf
-;;   ;; :config
-;;   ;; (setq! eaf-enable-debug t) ; should only be used when eaf is wigging out
-;;   ;; (eaf-setq! eaf-browser-dark-mode "true") ; dark mode is overrated
-;;   ;; (setq! eaf-browser-default-search-engine "duckduckgo")
-;;   ;; (eaf-setq! eaf-browse-blank-page-url "https://duckduckgo.com")
-;;   )
-
-;; (use-package! eaf-evil ;; evil bindings in my browser
-;;   :after eaf
-;;   ;; :config
-;;   ;; (setq! eaf-evil-leader-keymap doom-leader-map)
-;;   ;; (setq! eaf-evil-leader-key "SPC")
-;;   )
-
-;; (use-package! eaf-browser
-;;   ;; :after eaf
-;;   )
-;; (use-package! eaf-pdf-viewer
-;;   ;; :after eaf
-;;   )
-;; (use-package! eaf-file-browser
-;;   ;; :after eaf
-;;   )
-
-(use-package! diminish
-  :defer t
-  :config
-  (mapcar #'diminish '(reftex-mode
-                       auto-revert-mode
-                       undo-tree-mode
-                       eldoc-mode
-                       pdf-view-midnight-minor-mode
-                       subword-mode
-                       flyspell-mode
-                       defining-kbd-macro)))
 
 (use-package! system-packages
   :defer t
@@ -1828,18 +1218,6 @@ _Q_: Disconnect     "
 (use-package! helm-system-packages
   :defer t
   :config
-  (map!
-   :map helm-map
-   "M-j" #'helm-next-line
-   "M-k" #'helm-previous-line
-   "M-h" #'helm-find-files-up-one-level
-   "M-l" #'helm-execute-persistent-action
-   "<left>" #'helm-find-files-up-one-level
-   "<right>" #'helm-execute-persistent-action
-   "M-w" #'helm-select-action
-   "M-H" #'left-char
-   "M-L" #'right-char
-   "M-TAB" #'helm-toggle-visible-mark-forward)
   (defun my//add-package-to-pacfile (&optional install?)
     (let ((package (helm-get-selection)))
       (find-file my/pacmanfile-file)
@@ -1873,8 +1251,9 @@ _Q_: Disconnect     "
 
 (after! shelldon
 ; below is the configuration I use, take what you want...
-      ; tell bash this shell is interactive
-      (setq shell-command-switch "-ic")
+      ; tell bash this shell is interactive (Linux only; -ic can cause issues on macOS)
+      (when (eq system-type 'gnu/linux)
+        (setq shell-command-switch "-ic"))
       ; recursive minibuffers for nested autocompletion from minibuffer commands,
       ; to e.g. interactively select from the kill-ring
       (setq enable-recursive-minibuffers t)
@@ -1905,17 +1284,6 @@ _Q_: Disconnect     "
   (autoload 'igo-sgf-mode "igo-sgf-mode")
   (add-to-list 'auto-mode-alist '("\\.sgf$" . igo-sgf-mode)))
 
-;; os stuff
-;; (use-package disable-mouse
-;;   :after evil
-;;   :config
-;;   (global-disable-mouse-mode)
-;;   (mapc #'disable-mouse-in-keymap
-;;         (list evil-motion-state-map
-;;               evil-normal-state-map
-;;               evil-visual-state-map
-;;               evil-insert-state-map)))
-
 (use-package! beacon
   :defer t
   :config
@@ -1924,208 +1292,25 @@ _Q_: Disconnect     "
 (use-package! systemd
   :defer t)
 
-(defun aur-checker ()
-  (run-at-time
-   "15 minutes"
-   (* 3600 2)
-   (lambda ()
-     (let ((aur-failures
-            (with-temp-buffer
-              (insert-file-contents "~/.cache/aur-failures.log")
-              (string-to-number (buffer-string)))))
-       (when (< 0 aur-failures)
-         (my/make-alert nil  (format "%s of my AUR PKGBUILDS failed" aur-failures)))))))
+(when (eq system-type 'gnu/linux)
+  (defun aur-checker ()
+    (run-at-time
+     "15 minutes"
+     (* 3600 2)
+     (lambda ()
+       (let ((aur-failures
+              (with-temp-buffer
+                (insert-file-contents "~/.cache/aur-failures.log")
+                (string-to-number (buffer-string)))))
+         (when (< 0 aur-failures)
+           (my/make-alert nil  (format "%s of my AUR PKGBUILDS failed" aur-failures)))))))
 
-(aur-checker)
-
-;; (use-package! Fry-code-mode
-;;   :custom (fira-code-mode-disabled-ligatures (list "[]" "#{" "#(" "#_" "#_(" "x"))
-;;   :config (global-fira-code-mode -1))
-
-;; (plist-put! +ligatures-extra-symbols
-;;   ;; org
-;;   :name          "»"
-;;   :src_block     "»"
-;;   :src_block_end "«"
-;;   :quote         "“"
-;;   :quote_end     "”"
-;;   ;; Functional
-;;   :lambda        "λ"
-;;   :def           "ƒ"
-;;   :composition   "∘"
-;;   :map           "↦"
-;;   ;; Types
-;;   :null          "∅"
-;;   :true          "✓"
-;;   :false         "✗"
-;;   :int           "ℤ"
-;;   :float         "ℝ"
-;;   :str           "σ"
-;;   :bool          "±"
-;;   :list          "ƛ"
-;;   ;; Flow
-;;   :not           "￢"
-;;   :in            "∈"
-;;   :not-in        "∉"
-;;   :and           "∧"
-;;   :or            "∨"
-;;   :for           "∀"
-;;   :some          "∃"
-;;   :return        "⟼"
-;;   :yield         "⟻"
-;;   ;; Other
-;;   :union         "⋃"
-;;   :intersect     "∩"
-;;   :diff          "∖"
-;;   :tuple         "⨂"
-;;   :pipe          "" ;; FIXME: find a non-private char
-;;   :dot           "•")
-
-;; (use-package! rigpa
-
-;;   :after (evil parsec symex)
-
-;;   :config
-;;   (setq! rigpa-mode t)
-
-;;   ;; custom config
-;;   (setq! rigpa-show-menus t)
-
-;;   ;; navigating meta modes
-;;   (map!
-;;    :no "s-m s-m" 'rigpa-flashback-to-last-tower
-;;     :n "C-<escape>" 'my-enter-tower-mode
-;;     :n "M-<escape>" 'my-enter-mode-mode
-;;     :n "s-<escape>" 'my-enter-mode-mode
-;;     :n "M-<return>"
-;;                    (lambda ()
-;;                      (interactive)
-;;                      (rigpa-enter-selected-level)
-;;                      (let ((ground (rigpa--get-ground-buffer)))
-;;                        (my-exit-mode-mode)
-;;                        (switch-to-buffer ground)))
-;;     :n "s-<return>"
-;;                    (lambda ()
-;;                      (interactive)
-;;                      (rigpa-enter-selected-level)
-;;                      (let ((ground (rigpa--get-ground-buffer)))
-;;                        (my-exit-mode-mode)
-;;                        (switch-to-buffer ground)))
-;;     :n "C-<return>"
-;;                    (lambda ()
-;;                      (interactive)
-;;                      (my-exit-tower-mode)
-;;                      (my-enter-mode-mode))
-
-;;    ;; indexed entry to various modes
-;;     :n "s-n" 'evil-normal-state
-;;     :n "s-y"        ; symex mode
-;;                    (lambda ()
-;;                      (interactive)
-;;                      (rigpa-enter-mode "symex"))
-;;     "s-w"        ; window mode
-;;                    (lambda ()
-;;                      (interactive)
-;;                      (rigpa-enter-mode "window"))
-;;     "s-v"        ; view mode
-;;                    (lambda ()
-;;                      (interactive)
-;;                      (rigpa-enter-mode "view"))
-;;     "s-x"        ; char mode
-;;                    (lambda ()
-;;                      (interactive)
-;;                      (rigpa-enter-mode "char"))
-;;     "s-a"        ; activity mode
-;;                    (lambda ()
-;;                      (interactive)
-;;                      (rigpa-enter-mode "activity"))
-;;     "s-z"        ; text mode
-;;                    (lambda ()
-;;                      (interactive)
-;;                      (rigpa-enter-mode "text"))
-;;     "s-g"        ; history mode
-;;                    (lambda ()
-;;                      (interactive)
-;;                      (rigpa-enter-mode "history"))
-;;     "s-i"        ; system mode
-;;                    (lambda ()
-;;                      (interactive)
-;;                      (rigpa-enter-mode "system"))
-;;     "s-b"        ; buffer mode
-;;                    (lambda ()
-;;                      (interactive)
-;;                      (rigpa-enter-mode "buffer"))
-;;     "s-f"        ; file mode
-;;                    (lambda ()
-;;                      (interactive)
-;;                      (rigpa-enter-mode "file"))
-;;     "s-t"        ; tab mode
-;;                    (lambda ()
-;;                      (interactive)
-;;                      (rigpa-enter-mode "tab"))
-;;     "s-l"        ; line mode
-;;                    (lambda ()
-;;                      (interactive)
-;;                      (rigpa-enter-mode "line"))
-;;    "s-e"        ; application mode
-;;                    (lambda ()
-;;                      (interactive)
-;;                      (rigpa-enter-mode "application"))
-;;    "s-r"        ; word mode
-;;                    (lambda ()
-;;                      (interactive)
-;;                      (rigpa-enter-mode "word"))))
+  (aur-checker))
 
 ;; load my custom scripts
 (load "~/Dropbox/Helen+Dario/washing-machine-timer.el" t t)
 (load "~/Dropbox/Helen+Dario/einkaufsliste/interactiveEnterLisp.el" t t)
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ansi-color-faces-vector
-   [default bold shadow italic underline success warning error])
- '(avy-all-windows t)
- '(avy-single-candidate-jump t)
- '(compilation-scroll-output t)
- '(custom-safe-themes
-   '("d71aabbbd692b54b6263bfe016607f93553ea214bc1435d17de98894a5c3a086" "fe94e2e42ccaa9714dd0f83a5aa1efeef819e22c5774115a9984293af609fce7" default))
- '(flymake-error-bitmap '(flymake-double-exclamation-mark modus-theme-fringe-red))
- '(flymake-note-bitmap '(exclamation-mark modus-theme-fringe-cyan))
- '(flymake-warning-bitmap '(exclamation-mark modus-theme-fringe-yellow))
- '(hl-todo-keyword-faces
-   '(("HOLD" . "#cfdf30")
-     ("TODO" . "#feacd0")
-     ("NEXT" . "#b6a0ff")
-     ("THEM" . "#f78fe7")
-     ("PROG" . "#00d3d0")
-     ("OKAY" . "#4ae8fc")
-     ("DONT" . "#80d200")
-     ("FAIL" . "#ff8059")
-     ("DONE" . "#44bc44")
-     ("NOTE" . "#f0ce43")
-     ("KLUDGE" . "#eecc00")
-     ("HACK" . "#eecc00")
-     ("TEMP" . "#ffcccc")
-     ("FIXME" . "#ff9977")
-     ("XXX+" . "#f4923b")
-     ("REVIEW" . "#6ae4b9")
-     ("DEPRECATED" . "#aaeeee")))
- '(ibuffer-deletion-face 'modus-theme-mark-del)
- '(ibuffer-filter-group-name-face 'modus-theme-mark-symbol)
- '(ibuffer-marked-face 'modus-theme-mark-sel)
- '(ibuffer-title-face 'modus-theme-header)
- '(pulseaudio-control-volume-step "5%")
- '(vc-annotate-background-mode nil )
- '(xterm-color-names
-   ["#000000" "#ff8059" "#44bc44" "#eecc00" "#29aeff" "#feacd0" "#00d3d0" "#a8a8a8"])
- '(xterm-color-names-bright
-   ["#181a20" "#f4923b" "#80d200" "#cfdf30" "#72a4ff" "#f78fe7" "#4ae8fc" "#ffffff"]))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+;; Redirect Customize to a separate file
+(setq custom-file (expand-file-name "custom.el" doom-user-dir))
+(load custom-file 'noerror)

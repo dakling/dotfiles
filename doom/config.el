@@ -957,30 +957,64 @@
        claude-code-ide-mcp--sessions)
       nil))
 
+  (defun my/ediff-setup-windows-with-claude (buf-a buf-b buf-c control-buf)
+    "Ediff window setup that preserves the Claude Code side window.
+Wraps `ediff-setup-windows-plain': removes side windows before
+the layout build (which uses `other-window' and would land on a
+surviving side window), then re-displays Claude afterward.
+Preserves buffer-local `ediff-quit-hook' across the call."
+    ;; Save quit hook — ediff-setup-control-buffer (called inside
+    ;; ediff-setup-windows-plain) may reset buffer state.
+    (let ((saved-quit-hook (buffer-local-value 'ediff-quit-hook control-buf))
+          (saved-chunk-active (buffer-local-value 'ediff-chunk-select--active control-buf)))
+      ;; Remove side windows so other-window doesn't cycle into them
+      (dolist (window (window-list))
+        (when (window-parameter window 'window-side)
+          (ignore-errors (delete-window window))))
+      (ediff-setup-windows-plain buf-a buf-b buf-c control-buf)
+      ;; Restore quit hook and chunk-select state
+      (with-current-buffer control-buf
+        (setq-local ediff-quit-hook saved-quit-hook)
+        (setq ediff-chunk-select--active saved-chunk-active))
+      ;; ediff-setup-windows-plain ends with control window selected.
+      ;; Re-display Claude side window.
+      (let ((ctl-win (selected-window)))
+        (when (bound-and-true-p claude-code-ide-show-claude-window-in-ediff)
+          (catch 'displayed
+            (maphash
+             (lambda (_proj-dir session)
+               (when-let* ((proj (claude-code-ide-mcp-session-project-dir session))
+                           (bn (claude-code-ide--get-buffer-name proj))
+                           (cb (get-buffer bn)))
+                 (when (buffer-live-p cb)
+                   (claude-code-ide--display-buffer-in-side-window cb)
+                   (throw 'displayed t))))
+             claude-code-ide-mcp--sessions)))
+        ;; Keep control window selected
+        (select-window ctl-win))))
+
   (defun my/diff-queue--show-ediff (control-buf)
     "Display the ediff session for CONTROL-BUF in the current frame."
     (when (buffer-live-p control-buf)
       (with-current-buffer control-buf
-        (let ((buf-a ediff-buffer-A)
-              (buf-b ediff-buffer-B))
-          (when (and (buffer-live-p buf-a) (buffer-live-p buf-b))
-            ;; Delete side windows first (e.g. Claude vterm)
-            (dolist (window (window-list))
-              (when (window-parameter window 'window-side)
-                (ignore-errors (delete-window window))))
-            (delete-other-windows)
-            (switch-to-buffer buf-a)
-            (let ((win-b (split-window-horizontally)))
-              (set-window-buffer win-b buf-b))
-            ;; Show ediff control panel at bottom
-            (let ((ctl-win (split-window (frame-root-window) -5 'below)))
-              (set-window-buffer ctl-win control-buf)
-              (set-window-dedicated-p ctl-win t))
-            ;; Update ediff's internal window references
-            (setq ediff-window-A (get-buffer-window buf-a))
-            (setq ediff-window-B (get-buffer-window buf-b))
-            ;; Jump to first diff
-            (ignore-errors (ediff-next-difference)))))))
+        (when (and (buffer-live-p ediff-buffer-A) (buffer-live-p ediff-buffer-B))
+          ;; Use our wrapper as the window-setup-function for this session.
+          ;; It clears side windows before ediff-setup-windows-plain (preventing
+          ;; the other-window bug), re-adds Claude after, and preserves quit hooks.
+          (setq-local ediff-window-setup-function
+                      #'my/ediff-setup-windows-with-claude)
+          ;; Build layout via ediff's dispatcher (calls our wrapper since
+          ;; ediff-keep-window-config is nil on first call).
+          ;; ediff-setup-control-buffer stamps ediff-window-config-saved,
+          ;; so subsequent j/k match and skip rebuilding.
+          (ediff-setup-windows ediff-buffer-A ediff-buffer-B
+                               ediff-buffer-C control-buf)
+          ;; Jump to first diff
+          (ignore-errors (ediff-next-difference))
+          ;; Ensure control panel is selected
+          (when (window-live-p ediff-control-window)
+            (select-window ediff-control-window))))))
+
 
   (defun my/review-pending-diff ()
     "Pop the oldest pending diff from the queue and display it for review."
@@ -1062,7 +1096,8 @@ Queues the diff instead of displaying it immediately."
     (setq my/diff-queue--current-file-path (alist-get 'old_file_path arguments))
     (let ((the-tab-name my/diff-queue--current-tab-name)
           (the-file-path my/diff-queue--current-file-path)
-          (pre-ediff-winconf (current-window-configuration)))
+          (pre-ediff-winconf (current-window-configuration))
+          (in-claude-window (claude-code-ide--session-buffer-p (current-buffer))))
       (setq my/chunk-select--pending-callback
             (lambda (accepted-p content &optional hunk-summary)
               (let* ((session (or (claude-code-ide-mcp--find-session-for-file the-file-path)
@@ -1161,11 +1196,23 @@ Queues the diff instead of displaying it immediately."
                                                       (when (buffer-live-p cb)
                                                         (claude-code-ide--display-buffer-in-side-window cb)))))
                                               (error nil))))))))))))
-                ;; Queue for later review
-                (push (cons the-tab-name control-buf) my/pending-diff-queue)
-                (force-mode-line-update t)
-                (message "[diff-queue] Queued diff for %s (%d pending)"
-                         the-tab-name (length my/pending-diff-queue))))
+                ;; Show immediately or queue based on whether user is in Claude window
+                (if in-claude-window
+                    (progn
+                      ;; Update saved-winconf so restoration returns to current layout
+                      (when-let ((found (my/diff-queue--find-diff-info the-tab-name)))
+                        (let* ((session (car found))
+                               (active-diffs (claude-code-ide-mcp-session-active-diffs session))
+                               (diff-info (gethash the-tab-name active-diffs)))
+                          (when diff-info
+                            (setf (alist-get 'saved-winconf diff-info)
+                                  (current-window-configuration))
+                            (puthash the-tab-name diff-info active-diffs))))
+                      (my/diff-queue--show-ediff control-buf))
+                  (push (cons the-tab-name control-buf) my/pending-diff-queue)
+                  (force-mode-line-update t)
+                  (message "[diff-queue] Queued diff for %s (%d pending)"
+                           the-tab-name (length my/pending-diff-queue)))))
           (error
            (message "[chunk-select] Error during setup: %s" err)))
         result))))

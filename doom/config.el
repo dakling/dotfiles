@@ -1016,6 +1016,7 @@ Preserves buffer-local `ediff-quit-hook' across the call."
             (select-window ediff-control-window))))))
 
 
+
   (defun my/review-pending-diff ()
     "Pop the oldest pending diff from the queue and display it for review."
     (interactive)
@@ -1076,11 +1077,15 @@ Preserves buffer-local `ediff-quit-hook' across the call."
       (ediff-chunk-select--create-overlays)
       (ediff-chunk-select--setup-keymap)
       (ediff-chunk-select--update-header)
-      ;; Replace claude-code-ide's quit hook with chunk-select's
+      ;; Replace claude-code-ide's quit hook with chunk-select's.
+      ;; The trailing t tells run-hooks to also run the global value
+      ;; (ediff-cleanup-mess), which kills the control buffer and
+      ;; auxiliary buffers.
       (setq-local ediff-quit-hook
                   (list (lambda ()
                           (when ediff-chunk-select--active
-                            (ediff-chunk-select-finish t)))))))
+                            (ediff-chunk-select-finish t)))
+                        t))))
 
   (defvar my/diff-queue--current-tab-name nil
     "Tab-name of the diff currently being set up. Used to pass state across scopes.")
@@ -1195,7 +1200,8 @@ Queues the diff instead of displaying it immediately."
                                                                 (cb (get-buffer bn)))
                                                       (when (buffer-live-p cb)
                                                         (claude-code-ide--display-buffer-in-side-window cb)))))
-                                              (error nil))))))))))))
+                                              (error nil)))))))
+                                 t)))))
                 ;; Show immediately or queue based on whether user is in Claude window
                 (if in-claude-window
                     (progn

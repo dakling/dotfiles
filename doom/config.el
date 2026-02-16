@@ -185,7 +185,7 @@
   (setq! undo-fu-allow-undo-in-region t))
 
 (use-package! string-inflection
-  :commands (string-inflection-all-cycle
+  :after-call (string-inflection-all-cycle
              string-inflection-toggle
              string-inflection-camelcase
              string-inflection-lower-camelcase
@@ -930,6 +930,90 @@
   ;; Pending callback for the next openDiff → chunk-select session
   (defvar my/chunk-select--pending-callback nil)
 
+  ;; ── Diff queue infrastructure ──────────────────────────────────────
+  (defvar my/pending-diff-queue nil
+    "FIFO queue of (tab-name . control-buffer) for deferred diffs.")
+
+  (defvar my/pending-diff-lighter
+    '(:eval (if my/pending-diff-queue
+                (format " [%d diff%s]"
+                        (length my/pending-diff-queue)
+                        (if (= 1 (length my/pending-diff-queue)) "" "s"))
+              ""))
+    "Mode-line lighter showing pending diff count.")
+  (put 'my/pending-diff-lighter 'risky-local-variable t)
+  (unless (memq 'my/pending-diff-lighter global-mode-string)
+    (push 'my/pending-diff-lighter global-mode-string))
+
+  (defun my/diff-queue--find-diff-info (tab-name)
+    "Find (session . diff-info) for TAB-NAME across all MCP sessions."
+    (catch 'found
+      (maphash
+       (lambda (_proj-dir session)
+         (let* ((active-diffs (claude-code-ide-mcp-session-active-diffs session))
+                (diff-info (gethash tab-name active-diffs)))
+           (when diff-info
+             (throw 'found (cons session diff-info)))))
+       claude-code-ide-mcp--sessions)
+      nil))
+
+  (defun my/diff-queue--show-ediff (control-buf)
+    "Display the ediff session for CONTROL-BUF in the current frame."
+    (when (buffer-live-p control-buf)
+      (with-current-buffer control-buf
+        (let ((buf-a ediff-buffer-A)
+              (buf-b ediff-buffer-B))
+          (when (and (buffer-live-p buf-a) (buffer-live-p buf-b))
+            ;; Delete side windows first (e.g. Claude vterm)
+            (dolist (window (window-list))
+              (when (window-parameter window 'window-side)
+                (ignore-errors (delete-window window))))
+            (delete-other-windows)
+            (switch-to-buffer buf-a)
+            (let ((win-b (split-window-horizontally)))
+              (set-window-buffer win-b buf-b))
+            ;; Show ediff control panel at bottom
+            (let ((ctl-win (split-window (frame-root-window) -5 'below)))
+              (set-window-buffer ctl-win control-buf)
+              (set-window-dedicated-p ctl-win t))
+            ;; Update ediff's internal window references
+            (setq ediff-window-A (get-buffer-window buf-a))
+            (setq ediff-window-B (get-buffer-window buf-b))
+            ;; Jump to first diff
+            (ignore-errors (ediff-next-difference)))))))
+
+  (defun my/review-pending-diff ()
+    "Pop the oldest pending diff from the queue and display it for review."
+    (interactive)
+    (unless my/pending-diff-queue
+      (user-error "No pending diffs to review"))
+    (let* ((entry (car (last my/pending-diff-queue)))
+           (tab-name (car entry))
+           (control-buf (cdr entry)))
+      ;; Remove from queue (FIFO: take from end)
+      (setq my/pending-diff-queue (butlast my/pending-diff-queue))
+      (force-mode-line-update t)
+      (if (not (buffer-live-p control-buf))
+          (progn
+            (message "Diff session for %s is no longer alive, skipping." tab-name)
+            (when my/pending-diff-queue
+              (my/review-pending-diff)))
+        ;; Update saved-winconf to current layout so restoration goes back to HERE
+        (when-let ((found (my/diff-queue--find-diff-info tab-name)))
+          (let* ((session (car found))
+                 (active-diffs (claude-code-ide-mcp-session-active-diffs session))
+                 (diff-info (gethash tab-name active-diffs)))
+            (when diff-info
+              (setf (alist-get 'saved-winconf diff-info)
+                    (current-window-configuration))
+              (puthash tab-name diff-info active-diffs))))
+        (my/diff-queue--show-ediff control-buf))))
+
+  (map! :leader
+        :desc "Review pending diff" "l d" #'my/review-pending-diff)
+
+  ;; ── End diff queue infrastructure ──────────────────────────────────
+
   (defun my/chunk-select--find-control-buffer (buffer-a)
     "Find the ediff control buffer whose `ediff-buffer-A' is BUFFER-A."
     (cl-find-if (lambda (buf)
@@ -964,27 +1048,46 @@
                           (when ediff-chunk-select--active
                             (ediff-chunk-select-finish t)))))))
 
+  (defvar my/diff-queue--current-tab-name nil
+    "Tab-name of the diff currently being set up. Used to pass state across scopes.")
+  (defvar my/diff-queue--current-file-path nil
+    "File path of the diff currently being set up.")
+
   (defun my/chunk-select--open-diff-advice (orig-fn arguments)
-    "Set up chunk-select callback before claude-code-ide opens ediff."
+    "Set up chunk-select callback before claude-code-ide opens ediff.
+Queues the diff instead of displaying it immediately."
     (message "[chunk-select] === open-diff-advice ENTERED ===")
-    (let ((tab-name (alist-get 'tab_name arguments))
-          (old-file-path (alist-get 'old_file_path arguments)))
+    ;; Store in defvars to avoid lexical scoping issues across macro boundaries
+    (setq my/diff-queue--current-tab-name (alist-get 'tab_name arguments))
+    (setq my/diff-queue--current-file-path (alist-get 'old_file_path arguments))
+    (let ((the-tab-name my/diff-queue--current-tab-name)
+          (the-file-path my/diff-queue--current-file-path)
+          (pre-ediff-winconf (current-window-configuration)))
       (setq my/chunk-select--pending-callback
             (lambda (accepted-p content &optional hunk-summary)
-              (let* ((session (or (claude-code-ide-mcp--find-session-for-file old-file-path)
+              (let* ((session (or (claude-code-ide-mcp--find-session-for-file the-file-path)
                                   (claude-code-ide-mcp--get-current-session)))
                      (active-diffs (when session
                                      (claude-code-ide-mcp--get-active-diffs session)))
                      (diff-info (when active-diffs
-                                  (gethash tab-name active-diffs)))
+                                  (gethash the-tab-name active-diffs)))
                      (saved-winconf (when diff-info
                                       (alist-get 'saved-winconf diff-info))))
-                ;; Restore window configuration
+                ;; Defer window restoration so it runs AFTER ediff-really-quit
                 (when saved-winconf
-                  (condition-case nil
-                      (set-window-configuration saved-winconf)
-                    (error nil)))
-                ;; Send deferred MCP response (idle timer matches upstream pattern)
+                  (run-with-idle-timer
+                   0 nil
+                   (lambda ()
+                     (set-window-configuration saved-winconf)
+                     ;; Re-display Claude buffer in side window (set-window-configuration
+                     ;; doesn't properly restore side windows)
+                     (when (and session (bound-and-true-p claude-code-ide-show-claude-window-in-ediff))
+                       (when-let* ((project-dir (claude-code-ide-mcp-session-project-dir session))
+                                   (buf-name (claude-code-ide--get-buffer-name project-dir))
+                                   (claude-buf (get-buffer buf-name)))
+                         (when (buffer-live-p claude-buf)
+                           (claude-code-ide--display-buffer-in-side-window claude-buf)))))))
+                ;; Send deferred MCP response
                 (when session
                   (run-with-idle-timer
                    0 nil
@@ -1004,46 +1107,82 @@
                                            (text . ,(format "PARTIAL_EDIT: The user accepted %d of %d proposed changes. %d change(s) were rejected and the original code was kept for those hunks. The saved file content above reflects only the accepted changes. Do NOT re-propose the rejected changes."
                                                             accepted-count total rejected-count)))))))
                            (claude-code-ide-mcp-complete-deferred
-                            session "openDiff" response tab-name)
+                            session "openDiff" response the-tab-name)
                            (when active-diffs
-                             (puthash tab-name
+                             (puthash the-tab-name
                                       (cons '(responded . t) diff-info)
                                       active-diffs)))
                        (claude-code-ide-mcp-complete-deferred
                         session "openDiff"
                         (list `((type . "text") (text . "DIFF_REJECTED"))
-                              `((type . "text") (text . ,tab-name)))
-                        tab-name)
+                              `((type . "text") (text . ,the-tab-name)))
+                        the-tab-name)
                        (when active-diffs
-                         (puthash tab-name
+                         (puthash the-tab-name
                                   (cons '(responded . t) diff-info)
-                                  active-diffs))))))))))
-      ;; Call original — this sets up and runs ediff-buffers
+                                  active-diffs)))))))))
+      ;; Call original inside save-window-excursion to prevent display takeover
       (message "[chunk-select] calling orig-fn...")
-      (let ((result (funcall orig-fn arguments)))
-        ;; After ediff-buffers completes, activate chunk-select.
-        ;; Use ediff-session-registry to find the control buffer (most recent = car).
-        ;; Wrapped in condition-case so errors never break ediff.
+      (let ((result (save-window-excursion (funcall orig-fn arguments))))
+        ;; Windows are now restored. Set up chunk-select and queue the diff.
         (condition-case err
-            (when my/chunk-select--pending-callback
-              (let* ((callback my/chunk-select--pending-callback)
-                     (control-buf (car ediff-session-registry)))
-                (setq my/chunk-select--pending-callback nil)
-                (message "[chunk-select] control-buf=%s"
-                         (if control-buf (buffer-name control-buf) "nil"))
-                (when (and control-buf (buffer-live-p control-buf))
-                  (my/chunk-select--activate control-buf callback))))
+            (let ((control-buf (car ediff-session-registry)))
+              (when (and control-buf (buffer-live-p control-buf))
+                (if my/chunk-select--pending-callback
+                    ;; Chunk-select path
+                    (let ((callback my/chunk-select--pending-callback))
+                      (setq my/chunk-select--pending-callback nil)
+                      (my/chunk-select--activate control-buf callback))
+                  ;; Default path: replace upstream quit hook
+                  (with-current-buffer control-buf
+                    (setq-local ediff-quit-hook
+                                (list
+                                 (lambda ()
+                                   (let* ((found (my/diff-queue--find-diff-info the-tab-name))
+                                          (session (car found))
+                                          (diff-info (cdr found))
+                                          (quit-from-claude (alist-get 'quit-from-claude diff-info))
+                                          (saved-winconf (alist-get 'saved-winconf diff-info)))
+                                     (unless quit-from-claude
+                                       (claude-code-ide-mcp--handle-ediff-quit the-tab-name session))
+                                     (when saved-winconf
+                                       (run-with-idle-timer
+                                        0 nil
+                                        (let ((the-session session))
+                                          (lambda ()
+                                            (condition-case nil
+                                                (progn
+                                                  (set-window-configuration saved-winconf)
+                                                  (when (and the-session
+                                                             (bound-and-true-p claude-code-ide-show-claude-window-in-ediff))
+                                                    (when-let* ((proj (claude-code-ide-mcp-session-project-dir the-session))
+                                                                (bn (claude-code-ide--get-buffer-name proj))
+                                                                (cb (get-buffer bn)))
+                                                      (when (buffer-live-p cb)
+                                                        (claude-code-ide--display-buffer-in-side-window cb)))))
+                                              (error nil))))))))))))
+                ;; Queue for later review
+                (push (cons the-tab-name control-buf) my/pending-diff-queue)
+                (force-mode-line-update t)
+                (message "[diff-queue] Queued diff for %s (%d pending)"
+                         the-tab-name (length my/pending-diff-queue))))
           (error
-           (message "[chunk-select] Error during activation: %s" err)))
-        result)))
+           (message "[chunk-select] Error during setup: %s" err)))
+        result))))
 
   (advice-add 'claude-code-ide-mcp-handle-open-diff
               :around #'my/chunk-select--open-diff-advice)
 
   ;; Deactivate chunk-select when Claude programmatically closes a diff tab
   (defun my/chunk-select--close-tab-advice (orig-fn arguments)
-    "Deactivate chunk-select before Claude closes a diff tab."
+    "Deactivate chunk-select before Claude closes a diff tab.
+Also removes from pending diff queue if queued."
     (when-let ((tab-name (alist-get 'tab_name arguments)))
+      ;; Remove from pending queue if present
+      (setq my/pending-diff-queue
+            (cl-remove-if (lambda (entry) (equal (car entry) tab-name))
+                          my/pending-diff-queue))
+      (force-mode-line-update t)
       (catch 'done
         (maphash
          (lambda (_proj-dir session)
@@ -1062,7 +1201,20 @@
     (funcall orig-fn arguments))
 
   (advice-add 'claude-code-ide-mcp-handle-close-tab
-              :around #'my/chunk-select--close-tab-advice))
+              :around #'my/chunk-select--close-tab-advice)
+
+;; (use-package! claude-code-emacs-panes
+;;   :after-call (claude-code-ide claude-code-ide-menu)
+;;   :config
+;;   (claude-code-emacs-panes-setup)
+;;   (map! :leader :prefix ("o C" . "claude panes")
+;;         :desc "Show all panes" "a" #'claude-code-emacs-panes-show-all
+;;         :desc "Toggle pane layout" "t" #'claude-code-emacs-panes-toggle-all
+;;         :desc "Next pane" "n" #'claude-code-emacs-panes-next
+;;         :desc "Previous pane" "p" #'claude-code-emacs-panes-prev
+;;         :desc "Select pane" "s" #'claude-code-emacs-panes-select
+;;         :desc "Dashboard" "d" #'claude-code-emacs-panes-dashboard
+;;         :desc "Start Claude with panes" "c" #'claude-code-emacs-panes-start-claude))
 
 (use-package! claude-code-ide-mcp-tools
   :after claude-code-ide
@@ -1102,7 +1254,7 @@
 (use-package! emacs-claude-bridge)
 
 (use-package! ai-workflows
-  :commands (ai-workflows-start-background-command
+  :after-call (ai-workflows-start-background-command
              ai-workflows-list-background-jobs
              ai-workflows-review-pr-with-claude
              ai-workflows-refresh-context
@@ -1125,7 +1277,7 @@
       "l e" #'my/claude-fix-error-at-point)
 
 (use-package! prompt-compose
-  :commands (prompt-compose
+  :after-call (prompt-compose
              prompt-compose-send
              prompt-compose-cancel
              prompt-compose-claude-code
@@ -1141,7 +1293,7 @@
 
 
 (use-package! goose
-  :commands (goose goose-transient)
+  :after-call (goose goose-transient)
   :config
   (setq goose-program-name "goose")  ; Ensure goose CLI is in PATH
   ;; Skip the session name prompt — auto-generate timestamp labels
@@ -1167,14 +1319,14 @@
 
 (use-package! ediff-chunk-select
   :defer t
-  :commands (ediff-chunk-select-buffers
+  :after-call (ediff-chunk-select-buffers
              ediff-chunk-select-files
              ediff-chunk-select-enable-for-session))
 
 (use-package! codex-ediff-mcp
   :load-path "lisp"
   :demand t
-  :commands (codex-ediff-mcp-setup)
+  :after-call (codex-ediff-mcp-setup)
   :config
   (codex-ediff-mcp-setup))
 
@@ -1275,12 +1427,12 @@
 
 
 (use-package! alert
-  :commands (alert)
+  :after-call (alert)
   :init
   (setq! alert-default-style (if (eq system-type 'gnu/linux) 'libnotify 'osx-notifier)))
 
 (use-package! elfeed
-  :commands (eww elfeed elfeed-update)
+  :after-call (eww elfeed elfeed-update)
   :init (setq! elfeed-search-title-max-width 150)
   :config
   (setq!

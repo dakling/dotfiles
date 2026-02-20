@@ -27,7 +27,8 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. The bin/tmux shim is found at the correct path regardless of whether the package was loaded from source or straight.el build dir
   3. Environment variables (TMUX, TMUX_PANE, CLAUDE_CODE_EMACS_PANES, EMACS_PANES_SERVER) are present in the subagent process environment
   4. Claude Code v2.1.47+ agent spawning works (no errors from deprecated --teammate-mode flag or unrecognized tmux subcommands)
-**Plans**: TBD
+**Plans**: 1 plan
+- [ ] 01-01-PLAN.md — Core reliability fixes (shim auto-fix, env propagation, compatibility verification)
 
 ### Phase 2: Agent Lifecycle
 **Goal**: Users can observe and navigate between agent panes with clear status indicators and surfaced errors
@@ -58,6 +59,6 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Core Reliability | 0/TBD | Not started | - |
+| 1. Core Reliability | 0/1 | Planned | - |
 | 2. Agent Lifecycle | 0/TBD | Not started | - |
 | 3. Ship | 0/TBD | Not started | - |

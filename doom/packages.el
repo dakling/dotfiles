@@ -69,7 +69,6 @@
 (disable-packages! elfeed-goodies)
 (disable-packages! ts-fold)
 
-
 (package! ediff-chunk-select
   :recipe (:host github :repo "dakling/ediff-chunk-select"))
 
@@ -95,9 +94,9 @@
 (package! prompt-compose
   :recipe (:host github :repo "dakling/prompt-compose"))
 
-;; (package! claude-code-emacs-panes
-;;   :recipe (:host github :repo "dakling/claude-code-emacs-panes"
-;;            :files ("claude-code-emacs-panes.el" "bin")))
+(package! claude-code-emacs-panes
+  :recipe (:host github :repo "dakling/claude-code-emacs-panes"
+           :files ("claude-code-emacs-panes.el" "bin")))
 
 (package! emacs-claude-bridge
   :recipe (:host github :repo "dakling/emacs-claude-bridge"))

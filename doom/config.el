@@ -933,18 +933,18 @@
   (map! :leader
         :desc "Review pending diff" "l d" #'ediff-chunk-select-review-pending))
 
-;; (use-package! claude-code-emacs-panes
-;;   :after-call (claude-code-ide claude-code-ide-menu)
-;;   :config
-;;   (claude-code-emacs-panes-setup)
-;;   (map! :leader :prefix ("o C" . "claude panes")
-;;         :desc "Show all panes" "a" #'claude-code-emacs-panes-show-all
-;;         :desc "Toggle pane layout" "t" #'claude-code-emacs-panes-toggle-all
-;;         :desc "Next pane" "n" #'claude-code-emacs-panes-next
-;;         :desc "Previous pane" "p" #'claude-code-emacs-panes-prev
-;;         :desc "Select pane" "s" #'claude-code-emacs-panes-select
-;;         :desc "Dashboard" "d" #'claude-code-emacs-panes-dashboard
-;;         :desc "Start Claude with panes" "c" #'claude-code-emacs-panes-start-claude))
+(use-package! claude-code-emacs-panes
+  :after-call (claude-code-ide claude-code-ide-menu)
+  :config
+  (claude-code-emacs-panes-setup)
+  (map! :leader :prefix ("o C" . "claude panes")
+        :desc "Show all panes" "a" #'claude-code-emacs-panes-show-all
+        :desc "Toggle pane layout" "t" #'claude-code-emacs-panes-toggle-all
+        :desc "Next pane" "n" #'claude-code-emacs-panes-next
+        :desc "Previous pane" "p" #'claude-code-emacs-panes-prev
+        :desc "Select pane" "s" #'claude-code-emacs-panes-select
+        :desc "Dashboard" "d" #'claude-code-emacs-panes-dashboard
+        :desc "Start Claude with panes" "c" #'claude-code-emacs-panes-start-claude))
 
 (use-package! claude-code-ide-mcp-tools
   :after claude-code-ide

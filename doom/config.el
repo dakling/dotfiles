@@ -901,7 +901,7 @@
 (use-package! claude-code-ide
   :bind
   :config
-  (claude-code-ide-emacs-tools-setup)
+  ;; (claude-code-ide-emacs-tools-setup) ;; some suspicion that this increases tokens by a lot (?)
   (setq! my/claude-text-snippets-list
          '("Please use the AskUserQuestion tool to ask for clarification on anything that is unclear."
            "Be very concise. Sacrifice grammar for the sake of concision."
@@ -944,7 +944,10 @@
         :desc "Previous pane" "p" #'claude-code-emacs-panes-prev
         :desc "Select pane" "s" #'claude-code-emacs-panes-select
         :desc "Dashboard" "d" #'claude-code-emacs-panes-dashboard
-        :desc "Start Claude with panes" "c" #'claude-code-emacs-panes-start-claude))
+        :desc "Start Claude with panes" "c" #'claude-code-emacs-panes-start-claude)
+  (map! :map claude-code-emacs-panes-dashboard-mode-map
+        :n "RET" #'claude-code-emacs-panes-dashboard-open
+        :n "q" #'quit-window))
 
 (use-package! claude-code-ide-mcp-tools
   :after claude-code-ide

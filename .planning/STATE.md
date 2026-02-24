@@ -5,16 +5,17 @@
 See: .planning/PROJECT.md (updated 2026-02-19)
 
 **Core value:** When Claude Code spawns subagents, each one appears as a live vterm buffer in Emacs that I can observe and navigate between
-**Current focus:** Phase 2 - Agent Lifecycle
+**Current focus:** Phase 2 complete — ready for Phase 3 (Ship)
 
 ## Current Position
 
-Phase: 2 of 3 (Agent Lifecycle) -- COMPLETE
+Phase: 2 of 3 (Agent Lifecycle) -- VERIFIED
 Plan: 3 of 3 completed in current phase
-Status: Phase 2 complete -- all plans executed, ready for Phase 3
-Last activity: 2026-02-24 -- Executed 02-03-PLAN.md
+Status: Phase 2 verified (5/5 success criteria passed) — ready for Phase 3
+Last activity: 2026-02-24 -- Phase 2 verification passed
+Verification: .planning/phases/02-agent-lifecycle/02-VERIFICATION.md
 
-Progress: [███████░░░] 71%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
@@ -66,5 +67,5 @@ None — CORE-01 through CORE-05 addressed in 01-01-PLAN.md execution.
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 02-03-PLAN.md -- Phase 2 complete, all 3 plans executed
-Resume file: .planning/phases/02-agent-lifecycle/02-03-SUMMARY.md
+Stopped at: Phase 2 verified — ready for Phase 3 (Ship)
+Resume file: .planning/phases/02-agent-lifecycle/02-VERIFICATION.md

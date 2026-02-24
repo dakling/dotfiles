@@ -5,24 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-19)
 
 **Core value:** When Claude Code spawns subagents, each one appears as a live vterm buffer in Emacs that I can observe and navigate between
-**Current focus:** Phase 2 complete — ready for Phase 3 (Ship)
+**Current focus:** Phase 3 (Ship) — publishing and verifying
 
 ## Current Position
 
-Phase: 2 of 3 (Agent Lifecycle) -- VERIFIED
-Plan: 3 of 3 completed in current phase
-Status: Phase 2 verified (5/5 success criteria passed) — ready for Phase 3
-Last activity: 2026-02-24 -- Phase 2 verification passed
-Verification: .planning/phases/02-agent-lifecycle/02-VERIFICATION.md
+Phase: 3 of 3 (Ship)
+Plan: 1 of 2 completed in current phase
+Status: Plan 03-01 complete — package published to GitHub with smoke test and README
+Last activity: 2026-02-24 -- Plan 03-01 executed
 
-Progress: [████████░░] 80%
+Progress: [█████████░] 90%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
+- Total plans completed: 6
 - Average duration: ~2 min
-- Total execution time: 0.15 hours
+- Total execution time: 0.18 hours
 
 **By Phase:**
 
@@ -30,9 +29,10 @@ Progress: [████████░░] 80%
 |-------|-------|-------|----------|
 | 01-core-reliability | 2 | 5 min | 2.5 min |
 | 02-agent-lifecycle | 3 | ~5 min | ~1.7 min |
+| 03-ship | 1 | 2 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 4 min, 1 min, ~1 min, ~1 min, ~2 min
+- Last 5 plans: 1 min, ~1 min, ~1 min, ~2 min, 2 min
 - Trend: fast and stable
 
 *Updated after each plan completion*
@@ -55,6 +55,8 @@ Recent decisions affecting current work:
 - [Phase 02]: Shadow face-remap for theme-agnostic finished-pane dimming via buffer-local dim-cookie
 - [Phase 02]: Collect-then-remove pattern for safe hash-table mutation during maphash iteration
 - [Phase 02]: Dashboard auto-refresh via run-with-timer with visibility check; timer auto-stops when buffer killed or hidden
+- [Phase 03]: Smoke test in package file (not config.el) so it ships with doom sync on any machine
+- [Phase 03]: SPC o C T keybinding for smoke test (capital T, no Doom conflicts)
 
 ### Pending Todos
 
@@ -67,5 +69,5 @@ None — CORE-01 through CORE-05 addressed in 01-01-PLAN.md execution.
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Phase 2 verified — ready for Phase 3 (Ship)
-Resume file: .planning/phases/02-agent-lifecycle/02-VERIFICATION.md
+Stopped at: Completed 03-01-PLAN.md — package published to GitHub
+Resume file: .planning/phases/03-ship/03-01-SUMMARY.md

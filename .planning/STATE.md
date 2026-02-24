@@ -5,22 +5,22 @@
 See: .planning/PROJECT.md (updated 2026-02-19)
 
 **Core value:** When Claude Code spawns subagents, each one appears as a live vterm buffer in Emacs that I can observe and navigate between
-**Current focus:** Phase 1 - Core Reliability
+**Current focus:** Phase 2 - Agent Lifecycle
 
 ## Current Position
 
-Phase: 1 of 3 (Core Reliability)
-Plan: 2 of 2 completed in current phase
-Status: Phase 1 complete (all 2 plans done) — ready for Phase 2 planning
-Last activity: 2026-02-20 — Executed 01-02-PLAN.md
+Phase: 2 of 3 (Agent Lifecycle)
+Plan: 2 of 3 completed in current phase
+Status: Phase 2 in progress — 02-02 done, 02-03 remaining
+Last activity: 2026-02-24 — Executed 02-02-PLAN.md
 
-Progress: [████░░░░░░] 40%
+Progress: [██████░░░░] 57%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: 2.5 min
+- Total plans completed: 4
+- Average duration: ~2 min
 - Total execution time: 0.1 hours
 
 **By Phase:**
@@ -28,9 +28,10 @@ Progress: [████░░░░░░] 40%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-core-reliability | 2 | 5 min | 2.5 min |
+| 02-agent-lifecycle | 2 | ~3 min | ~1.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 4 min, 1 min
+- Last 5 plans: 4 min, 1 min, ~1 min, ~1 min
 - Trend: faster
 
 *Updated after each plan completion*
@@ -48,6 +49,9 @@ Recent decisions affecting current work:
 - Auto-fix behavior: copy shim from fallback location to primary bin/ dir, chmod +x, message user
 - Fallback: native tmux pass-through when shim not found, with *Messages* warning
 - --teammate-mode tmux is a valid hidden flag in Claude Code v2.1.47+ (CORE-04 resolved)
+- [Phase 02]: list-form header-line-format with propertize for rich visual treatment in pane buffers
+- [Phase 02]: inhibit-switch-frame in display-buffer alist to prevent focus stealing on agent pane creation
+- [Phase 02]: Shadow face-remap for theme-agnostic finished-pane dimming via buffer-local dim-cookie
 
 ### Pending Todos
 
@@ -59,6 +63,6 @@ None — CORE-01 through CORE-05 addressed in 01-01-PLAN.md execution.
 
 ## Session Continuity
 
-Last session: 2026-02-20
-Stopped at: Completed 01-02-PLAN.md — Phase 1 Plan 2 execution done (phase complete)
-Resume file: .planning/phases/01-core-reliability/01-02-SUMMARY.md
+Last session: 2026-02-24
+Stopped at: Completed 02-02-PLAN.md — Phase 2 Plan 2 execution done (1 plan remaining in phase)
+Resume file: .planning/phases/02-agent-lifecycle/02-02-SUMMARY.md

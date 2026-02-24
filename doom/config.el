@@ -945,7 +945,8 @@
         :desc "Select pane" "s" #'claude-code-emacs-panes-select
         :desc "Dashboard" "d" #'claude-code-emacs-panes-dashboard
         :desc "Close finished panes" "K" #'claude-code-emacs-panes-close-finished
-        :desc "Start Claude with panes" "c" #'claude-code-emacs-panes-start-claude)
+        :desc "Start Claude with panes" "c" #'claude-code-emacs-panes-start-claude
+        :desc "Run smoke test" "T" #'claude-code-emacs-panes-smoke-test)
   (map! :map claude-code-emacs-panes-dashboard-mode-map
         :n "RET" #'claude-code-emacs-panes-dashboard-open
         :n "D" #'claude-code-emacs-panes-close-finished

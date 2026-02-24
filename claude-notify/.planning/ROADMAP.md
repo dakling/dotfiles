@@ -28,11 +28,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. When Claude Code hits a permission prompt, a macOS notification appears within seconds showing which project/session needs attention
   3. User can toggle notifications on/off via `M-x claude-notify-mode` and the setting persists across Emacs restarts
   4. Notifications work on a fresh macOS system with zero external tool installs (osascript fallback if ns-do-applescript unavailable)
-**Plans**: TBD
+**Plans**: 2 plans in 2 waves
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
+- [ ] 01-01: Package scaffold with global minor mode and notification backends (NTF-01, NTF-02, NTF-05) [wave 1]
+- [ ] 01-02: Hook pipeline, dispatch, and settings.json installer (DET-01, DET-02, DET-03, NTF-03) [wave 2]
 
 ### Phase 2: Space Number Resolution
 **Goal**: Notifications include the macOS Space number where the Claude session lives, so the user knows exactly which workspace to switch to

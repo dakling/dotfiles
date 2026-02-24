@@ -944,9 +944,12 @@
         :desc "Previous pane" "p" #'claude-code-emacs-panes-prev
         :desc "Select pane" "s" #'claude-code-emacs-panes-select
         :desc "Dashboard" "d" #'claude-code-emacs-panes-dashboard
+        :desc "Close finished panes" "K" #'claude-code-emacs-panes-close-finished
         :desc "Start Claude with panes" "c" #'claude-code-emacs-panes-start-claude)
   (map! :map claude-code-emacs-panes-dashboard-mode-map
         :n "RET" #'claude-code-emacs-panes-dashboard-open
+        :n "D" #'claude-code-emacs-panes-close-finished
+        :n "gr" #'claude-code-emacs-panes-dashboard
         :n "q" #'quit-window))
 
 (use-package! claude-code-ide-mcp-tools

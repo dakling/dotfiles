@@ -80,36 +80,36 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DET-01 | — | Pending |
-| DET-02 | — | Pending |
-| DET-03 | — | Pending |
-| DET-04 | — | Pending |
-| SPC-01 | — | Pending |
-| SPC-02 | — | Pending |
-| SPC-03 | — | Pending |
-| SPC-04 | — | Pending |
-| NTF-01 | — | Pending |
-| NTF-02 | — | Pending |
-| NTF-03 | — | Pending |
-| NTF-04 | — | Pending |
-| NTF-05 | — | Pending |
-| NTF-06 | — | Pending |
-| INT-01 | — | Pending |
-| INT-02 | — | Pending |
-| INT-03 | — | Pending |
-| INT-04 | — | Pending |
-| ENH-01 | — | Pending |
-| ENH-02 | — | Pending |
-| ENH-03 | — | Pending |
-| ENH-04 | — | Pending |
-| ENH-05 | — | Pending |
-| ENH-06 | — | Pending |
+| DET-01 | Phase 1 | Pending |
+| DET-02 | Phase 1 | Pending |
+| DET-03 | Phase 1 | Pending |
+| DET-04 | Phase 3 | Pending |
+| SPC-01 | Phase 2 | Pending |
+| SPC-02 | Phase 2 | Pending |
+| SPC-03 | Phase 2 | Pending |
+| SPC-04 | Phase 2 | Pending |
+| NTF-01 | Phase 1 | Pending |
+| NTF-02 | Phase 1 | Pending |
+| NTF-03 | Phase 1 | Pending |
+| NTF-04 | Phase 2 | Pending |
+| NTF-05 | Phase 1 | Pending |
+| NTF-06 | Phase 3 | Pending |
+| INT-01 | Phase 3 | Pending |
+| INT-02 | Phase 3 | Pending |
+| INT-03 | Phase 3 | Pending |
+| INT-04 | Phase 3 | Pending |
+| ENH-01 | Phase 4 | Pending |
+| ENH-02 | Phase 4 | Pending |
+| ENH-03 | Phase 4 | Pending |
+| ENH-04 | Phase 4 | Pending |
+| ENH-05 | Phase 4 | Pending |
+| ENH-06 | Phase 4 | Pending |
 
 **Coverage:**
 - v1 requirements: 24 total
-- Mapped to phases: 0
-- Unmapped: 24 ⚠️
+- Mapped to phases: 24
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-24*
-*Last updated: 2026-02-24 after initial definition*
+*Last updated: 2026-02-24 after roadmap creation*

@@ -1079,7 +1079,73 @@
 ;; Enable emmet in TSX for quick JSX expansion (<div.container> etc.)
 (add-hook! '(tsx-ts-mode-hook) #'emmet-mode)
 
+;;; Obsidian vault integration
+(use-package! obsidian
+  :config
+  ;; CRITICAL: Use setq! (not setq) — obsidian-directory has a custom setter
+  ;; that initializes the in-memory vault cache. setq bypasses it.
+  (setq! obsidian-directory "~/obsidian-vault")
+  (setq! obsidian-inbox-directory "inbox")
+  (setq! obsidian-daily-notes-directory "_daily")
+  (setq! obsidian-templates-directory "_templates")
+  ;; Do NOT enable markdown-enable-wiki-links — we use standard markdown links
+  (setq! obsidian-wiki-link-alias-first nil)
+  ;; Exclude non-content directories from vault operations
+  (setq! obsidian-excluded-directories '(".obsidian" ".git" "_attachments"))
+  (global-obsidian-mode t))
 
+(defun my/obsidian-meeting-capture ()
+  "Create a new meeting note with YAML frontmatter in meetings/ directory.
+Prompts for title, generates YYYY-MM-DD-kebab-case-title.md filename."
+  (interactive)
+  (let* ((title (read-from-minibuffer "Meeting title: "))
+         (date (format-time-string "%Y-%m-%d"))
+         (time (format-time-string "%H:%M"))
+         (slug (downcase (replace-regexp-in-string
+                          "[^a-zA-Z0-9]+" "-"
+                          (string-trim title))))
+         ;; Remove trailing dash if present
+         (slug (replace-regexp-in-string "-$" "" slug))
+         (filename (expand-file-name
+                    (format "meetings/%s-%s.md" date slug)
+                    obsidian-directory)))
+    (find-file filename)
+    (when (= (buffer-size) 0)
+      (insert (format "---
+date: %s
+type: meeting
+tags: []
+attendees: []
+---
+
+# %s
+
+## Attendees
+-
+
+## Agenda
+-
+
+## Notes
+
+
+## Action Items
+- [ ]
+" date title))
+      (save-buffer)
+      ;; Position cursor at first attendee slot
+      (goto-char (point-min))
+      (search-forward "## Attendees\n- " nil t))))
+
+;; Obsidian keybindings under SPC n (notes prefix)
+;; NOTE: SPC n m overrides Doom's default org-tags-view — intentional,
+;; we are using Obsidian for notes instead of org.
+(map! :leader
+      (:prefix ("n" . "notes")
+       :desc "Meeting note"   "m" #'my/obsidian-meeting-capture
+       :desc "Inbox capture"  "i" #'obsidian-capture
+       :desc "Jump to note"   "j" #'obsidian-jump
+       :desc "Search vault"   "v" #'obsidian-search))
 
 
 (use-package! vterm

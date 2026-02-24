@@ -151,3 +151,5 @@
 (package! systemd)
 
 (unpin! haskell-mode)
+
+(package! obsidian)

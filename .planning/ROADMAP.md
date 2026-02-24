@@ -12,8 +12,8 @@ A working prototype exists but fails in fresh Emacs sessions. The roadmap moves 
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Core Reliability** - Fix fresh-session bugs (path resolution, env propagation, flag compatibility)
-- [ ] **Phase 2: Agent Lifecycle** - Complete pane creation, navigation, auto-close, status display, error logging
+- [x] **Phase 1: Core Reliability** - Fix fresh-session bugs (path resolution, env propagation, flag compatibility)
+- [x] **Phase 2: Agent Lifecycle** - Complete pane creation, navigation, auto-close, status display, error logging
 - [ ] **Phase 3: Ship** - Enable in config, push to GitHub, verify end-to-end in production dotfiles
 
 ## Phase Details
@@ -54,7 +54,10 @@ Decimal phases appear between their surrounding integers in numeric order.
   1. The package is uncommented and active in doom/packages.el and doom/config.el
   2. After cloning the dotfiles repo to a new machine and running doom sync, the feature is available without additional steps
   3. The package is pushed to GitHub under dakling/claude-code-emacs-panes with a README describing setup
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 03-01-PLAN.md — Publish package with smoke test and README
+- [ ] 03-02-PLAN.md — Integrate, verify, and ship
 
 ## Progress
 
@@ -63,6 +66,6 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Core Reliability | 0/1 | Planned | - |
-| 2. Agent Lifecycle | 0/3 | Planned | - |
-| 3. Ship | 0/TBD | Not started | - |
+| 1. Core Reliability | 2/2 | Verified | 2026-02-23 |
+| 2. Agent Lifecycle | 3/3 | Verified | 2026-02-24 |
+| 3. Ship | 0/2 | Not started | - |

@@ -64,5 +64,5 @@ None — CORE-01 through CORE-05 addressed in 01-01-PLAN.md execution.
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 02-02-PLAN.md — Phase 2 Plan 2 execution done (1 plan remaining in phase)
-Resume file: .planning/phases/02-agent-lifecycle/02-02-SUMMARY.md
+Stopped at: Completed 02-01-PLAN.md — Phase 2 Plan 1 SUMMARY created (02-01 had missing SUMMARY); current position 2/3 plans done
+Resume file: .planning/phases/02-agent-lifecycle/02-01-SUMMARY.md

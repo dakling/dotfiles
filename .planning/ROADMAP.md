@@ -38,10 +38,13 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Success Criteria** (what must be TRUE):
   1. Each subagent spawned by Claude Code opens a new vterm buffer named after the agent
   2. User can cycle through agent panes with next/prev commands and jump to a specific agent by name
-  3. When an agent process exits, its pane closes automatically without user action
+  3. When an agent process exits, its pane stays open with dimmed visual treatment (header-line + face-remap)
   4. Each agent pane's header line shows the agent name and a color-coded running/finished indicator
   5. When emacsclient fails (wrong socket, server not running), the error is captured in a log file rather than silently discarded
-**Plans**: TBD
+**Plans**: 3 plans
+- [ ] 02-01-PLAN.md — Shim color extraction and unconditional error logging
+- [ ] 02-02-PLAN.md — Pane lifecycle visual treatment (header-line, dimming, team completion)
+- [ ] 02-03-PLAN.md — Navigation fix, close-finished command, dashboard auto-refresh, keybindings
 
 ### Phase 3: Ship
 **Goal**: The package is active in the production dotfiles config and published to GitHub for use across machines
@@ -61,5 +64,5 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Core Reliability | 0/1 | Planned | - |
-| 2. Agent Lifecycle | 0/TBD | Not started | - |
+| 2. Agent Lifecycle | 0/3 | Planned | - |
 | 3. Ship | 0/TBD | Not started | - |

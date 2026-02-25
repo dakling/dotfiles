@@ -1029,33 +1029,6 @@
   (prompt-compose-setup-default-backends))
 
 
-(use-package! codex-ediff-mcp
-  :load-path "lisp"
-  :demand t
-  :after-call (codex-ediff-mcp-setup)
-  :config
-  (codex-ediff-mcp-setup))
-
-(defun my/codex-cli-start ()
-  "Start Codex CLI with Ediff MCP integration enforced."
-  (interactive)
-  (when (require 'codex-ediff-mcp nil t)
-    (codex-ediff-mcp-setup))
-  (call-interactively #'codex-cli-start))
-
-(defun my/codex-cli-restart ()
-  "Restart Codex CLI with Ediff MCP integration enforced."
-  (interactive)
-  (when (require 'codex-ediff-mcp nil t)
-    (codex-ediff-mcp-setup))
-  (call-interactively #'codex-cli-restart))
-
-(use-package! codex-cli
-  :init
-  (map! :map doom-leader-open-map
-        "x" #'codex-cli-toggle
-        "X" #'my/codex-cli-start))
-
 (use-package! dap-mode
   :defer t
   :config
@@ -1081,6 +1054,7 @@
 
 ;;; Obsidian vault integration
 (use-package! obsidian
+  :demand t
   :config
   ;; CRITICAL: Use setq! (not setq) — obsidian-directory has a custom setter
   ;; that initializes the in-memory vault cache. setq bypasses it.
@@ -1092,7 +1066,16 @@
   (setq! obsidian-wiki-link-alias-first nil)
   ;; Exclude non-content directories from vault operations
   (setq! obsidian-excluded-directories '(".obsidian" ".git" "_attachments"))
-  (global-obsidian-mode t))
+  (global-obsidian-mode 1)
+  ;; Bridge obsidian.el's company tag backend to corfu via cape
+  ;; Requires company.el loaded (for company-grab-symbol) but NOT company-mode enabled
+  (require 'company)
+  (add-hook! 'obsidian-mode-hook
+    (defun +obsidian-add-tag-completion-h ()
+      "Add obsidian tag completion to corfu via cape bridge."
+      (add-hook 'completion-at-point-functions
+                (cape-company-to-capf #'obsidian--tags-backend)
+                10 t))))
 
 (defun my/obsidian-meeting-capture ()
   "Create a new meeting note with YAML frontmatter in meetings/ directory.
@@ -1137,15 +1120,48 @@ attendees: []
       (goto-char (point-min))
       (search-forward "## Attendees\n- " nil t))))
 
-;; Obsidian keybindings under SPC n (notes prefix)
-;; NOTE: SPC n m overrides Doom's default org-tags-view — intentional,
-;; we are using Obsidian for notes instead of org.
+(defun my/obsidian-daily-append ()
+  "Append a timestamped line to today's daily note without switching buffers.
+Creates the daily note file if it doesn't exist."
+  (interactive)
+  (let* ((thought (read-from-minibuffer "Daily note: "))
+         (date (format-time-string "%Y-%m-%d"))
+         (time (format-time-string "%H:%M"))
+         (daily-dir (expand-file-name
+                     (or obsidian-daily-notes-directory "_daily")
+                     obsidian-directory))
+         (filepath (expand-file-name (concat date ".md") daily-dir))
+         (entry (format "- %s %s\n" time thought))
+         (new-file (not (file-exists-p filepath))))
+    (unless (file-directory-p daily-dir)
+      (make-directory daily-dir t))
+    (with-temp-buffer
+      (when new-file
+        (insert (format "# %s\n\n" date)))
+      (insert entry)
+      (append-to-file (point-min) (point-max) filepath))
+    ;; If the daily note buffer is already open, revert it
+    (when-let ((buf (find-buffer-visiting filepath)))
+      (with-current-buffer buf
+        (revert-buffer t t t)))
+    (message "Added to %s: %s %s" date time thought)))
+
+;; Auto-revert buffers when files change on disk (dual-editor safety)
+(global-auto-revert-mode 1)
+(setq auto-revert-verbose nil)
+
+;; Obsidian keybindings under SPC m
+;; Overrides some Doom defaults — intentional, using Obsidian for notes.
 (map! :leader
-      (:prefix ("n" . "notes")
-       :desc "Meeting note"   "m" #'my/obsidian-meeting-capture
-       :desc "Inbox capture"  "i" #'obsidian-capture
-       :desc "Jump to note"   "j" #'obsidian-jump
-       :desc "Search vault"   "v" #'obsidian-search))
+      :desc "Meeting note"   "m m" #'my/obsidian-meeting-capture
+      :desc "Inbox capture"  "m i" #'obsidian-capture
+      :desc "Jump to note"   "m j" #'obsidian-jump
+      :desc "Search vault"   "m v" #'obsidian-search
+      :desc "Find by tag"    "m t" #'obsidian-find-tag
+      :desc "Daily append"   "m d" #'my/obsidian-daily-append
+      :desc "Daily note"     "m D" #'obsidian-daily-note
+      :desc "Insert tag"     "m #" #'obsidian-insert-tag
+      :desc "Backlinks"      "m b" #'obsidian-backlink-jump)
 
 
 (use-package! vterm

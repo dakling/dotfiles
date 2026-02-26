@@ -1068,14 +1068,16 @@
   (setq! obsidian-excluded-directories '(".obsidian" ".git" "_attachments"))
   (global-obsidian-mode 1)
   ;; Bridge obsidian.el's company tag backend to corfu via cape
-  ;; Requires company.el loaded (for company-grab-symbol) but NOT company-mode enabled
-  (require 'company)
-  (add-hook! 'obsidian-mode-hook
-    (defun +obsidian-add-tag-completion-h ()
-      "Add obsidian tag completion to corfu via cape bridge."
-      (add-hook 'completion-at-point-functions
-                (cape-company-to-capf #'obsidian--tags-backend)
-                10 t))))
+  ;; Loads company.el for company-grab-symbol (used by obsidian--tags-backend)
+  ;; but does NOT enable company-mode — corfu handles the UI
+  (require 'company nil t)
+  (when (fboundp 'company-grab-symbol)
+    (add-hook! 'obsidian-mode-hook
+      (defun +obsidian-add-tag-completion-h ()
+        "Add obsidian tag completion to corfu via cape bridge."
+        (add-hook 'completion-at-point-functions
+                  (cape-company-to-capf #'obsidian--tags-backend)
+                  10 t)))))
 
 (defun my/obsidian-meeting-capture ()
   "Create a new meeting note with YAML frontmatter in meetings/ directory.

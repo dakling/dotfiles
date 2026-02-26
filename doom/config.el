@@ -1070,14 +1070,15 @@
   ;; Bridge obsidian.el's company tag backend to corfu via cape
   ;; Loads company.el for company-grab-symbol (used by obsidian--tags-backend)
   ;; but does NOT enable company-mode — corfu handles the UI
+  ;; Prepend to buffer-local capf list so vault tags appear before ispell/dabbrev
   (require 'company nil t)
   (when (fboundp 'company-grab-symbol)
     (add-hook! 'obsidian-mode-hook
       (defun +obsidian-add-tag-completion-h ()
         "Add obsidian tag completion to corfu via cape bridge."
-        (add-hook 'completion-at-point-functions
-                  (cape-company-to-capf #'obsidian--tags-backend)
-                  10 t)))))
+        (setq-local completion-at-point-functions
+                    (cons (cape-company-to-capf #'obsidian--tags-backend)
+                          completion-at-point-functions))))))
 
 (defun my/obsidian-meeting-capture ()
   "Create a new meeting note with YAML frontmatter in meetings/ directory.

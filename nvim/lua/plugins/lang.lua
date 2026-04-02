@@ -48,11 +48,13 @@ return {
   -- Must NOT be lazy-loaded: it registers global BufEnter autocmds in ftdetect/
   {
     "JuliaEditorSupport/julia-vim",
-    lazy = false,
+    enabled = false,
     init = function()
       vim.g.latex_to_unicode_auto = 0
       vim.g.latex_to_unicode_tab = 0
       vim.g.latex_to_unicode_eager = 0
+      vim.g.latex_to_unicode_file_types = { "julia" }
+      vim.g.latex_to_unicode_file_types_blacklist = { "" }
     end,
   },
 

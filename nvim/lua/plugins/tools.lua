@@ -48,6 +48,11 @@ return {
         status = {
           ["q"] = "Close",
         },
+        popup = {
+          ["p"] = "PushPopup",
+          ["f"] = "PullPopup",
+          ["F"] = "FetchPopup",
+        },
       },
     },
     keys = {

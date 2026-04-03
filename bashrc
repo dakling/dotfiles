@@ -33,9 +33,6 @@ export EDITOR='nvim'
 alias top='btm'
 alias htop='btm'
 
-# System update
-alias update='sudo apt update && sudo apt upgrade'
-
 alias xx='Xephyr -br -ac -noreset -screen 1920x1080 :1 & DISPLAY=:1'
 alias fix_screen='~/.screenlayout/single.sh; ~/.screenlayout/default.sh ; ~/.screenlayout/default.sh'
 
@@ -61,17 +58,17 @@ alias fe41='source /home/klingenberg/foam/foam-extend-4.1/etc/bashrc'
 
 source ~/.bash_aliases.sh
 
-function latexdiff-vc-most-recent(){
-    latexdiff-vc -r HEAD^ -r HEAD "$1" --pdf
+function latexdiff-vc-most-recent() {
+  latexdiff-vc -r HEAD^ -r HEAD "$1" --pdf
 }
 
 function scrcb() {
-    scrot $1 -e 'xclip -selection clipboard -t image/png -i $f'
+  scrot $1 -e 'xclip -selection clipboard -t image/png -i $f'
 }
 
 # Enhanced PS1 with git branch and colors
 parse_git_branch() {
-    git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+  git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
 }
 export PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\[\033[33m\]$(parse_git_branch)\[\033[00m\]\$ '
 
@@ -84,25 +81,23 @@ bind '"\e[B": history-substring-search-forward'
 
 alias hostname="echo $HOSTNAME"
 
-if [[ "$INSIDE_EMACS" = 'vterm' ]] \
-    && [[ -n ${EMACS_VTERM_PATH} ]] \
-    && [[ -f ${EMACS_VTERM_PATH}/etc/emacs-vterm-bash.sh ]]; then
-	source ${EMACS_VTERM_PATH}/etc/emacs-vterm-bash.sh
+if [[ "$INSIDE_EMACS" = 'vterm' ]] &&
+  [[ -n ${EMACS_VTERM_PATH} ]] &&
+  [[ -f ${EMACS_VTERM_PATH}/etc/emacs-vterm-bash.sh ]]; then
+  source ${EMACS_VTERM_PATH}/etc/emacs-vterm-bash.sh
 fi
-
-
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/usr/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+__conda_setup="$('/usr/bin/conda' 'shell.bash' 'hook' 2>/dev/null)"
 if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
+  eval "$__conda_setup"
 else
-    if [ -f "/usr/etc/profile.d/conda.sh" ]; then
-        . "/usr/etc/profile.d/conda.sh"
-    else
-        export PATH="/usr/bin:$PATH"
-    fi
+  if [ -f "/usr/etc/profile.d/conda.sh" ]; then
+    . "/usr/etc/profile.d/conda.sh"
+  else
+    export PATH="/usr/bin:$PATH"
+  fi
 fi
 unset __conda_setup
 

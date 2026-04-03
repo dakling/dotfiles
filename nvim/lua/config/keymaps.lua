@@ -43,6 +43,8 @@ map("n", "<leader>oT", "<cmd>ToggleTerm direction=float<cr>", { desc = "Terminal
 map("n", "<leader>og", "<cmd>Neogit<cr>", { desc = "Neogit (Magit)" })
 map("n", "<leader>ol", "<cmd>Lazy<cr>", { desc = "Lazy plugin manager" })
 
+map("n", "<leader>fs", "<cmd>w<cr>", { desc = "Save file" })
+
 -- ── Search (SPC s) ───────────────────────────────────────────────────
 map("n", "<leader>sp", "<cmd>Telescope live_grep<cr>", { desc = "Grep project" })
 map("n", "<leader>ss", "<cmd>Telescope current_buffer_fuzzy_find<cr>", { desc = "Search buffer" })

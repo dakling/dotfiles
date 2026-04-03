@@ -36,7 +36,7 @@ map("n", "<leader>er", ":lua =", { desc = "Eval Lua expression" })
 -- SPC o d = file explorer (like your dired-jump)
 map("n", "<leader>od", "<cmd>Oil<cr>", { desc = "Open directory (Oil)" })
 map("n", "<leader>oD", function()
-  require("dap").continue()
+	require("dap").continue()
 end, { desc = "Debugger" })
 map("n", "<leader>ot", "<cmd>ToggleTerm<cr>", { desc = "Terminal" })
 map("n", "<leader>oT", "<cmd>ToggleTerm direction=float<cr>", { desc = "Terminal (float)" })
@@ -61,7 +61,7 @@ map("n", "<leader>++", "<cmd>ToggleTerm<cr>", { desc = "Toggle terminal" })
 
 -- ── Format ───────────────────────────────────────────────────────────
 map("n", "<leader>cf", function()
-  LazyVim.format({ force = true })
+	LazyVim.format({ force = true })
 end, { desc = "Format" })
 
 -- ── String inflection (matching your SPC c ~ prefix) ─────────────────

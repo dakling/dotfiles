@@ -77,6 +77,7 @@ return {
     },
   },
 
+
   -- Visual-multi: multiple cursors (matching your multiple-cursors module)
   {
     "mg979/vim-visual-multi",

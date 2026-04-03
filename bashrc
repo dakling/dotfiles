@@ -9,6 +9,8 @@
 shopt -s histappend
 export HISTCONTROL=ignoredups:erasedups
 
+export PATH="/home/klingenberg/.local/bin:$PATH"
+
 # Basic aliases
 alias ls='ls --color=auto'
 alias ll='ls -lrth --color=auto'
@@ -107,3 +109,6 @@ unset __conda_setup
 # Additional conda initialization
 [ -f /opt/miniconda3/etc/profile.d/conda.sh ] && source /opt/miniconda3/etc/profile.d/conda.sh
 # <<< conda initialize <<<
+
+# PicoLLM
+export PATH="$PATH:/home/klingenberg/.picolm/bin"

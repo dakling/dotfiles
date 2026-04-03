@@ -1,3 +1,25 @@
+local function neogit_cwd()
+  local cwd = vim.fn.expand("%:p:h")
+  if cwd == "" or cwd == "." then
+    return vim.uv.cwd()
+  end
+
+  return cwd
+end
+
+local function neogit_open(popup)
+  local opts = {
+    cwd = neogit_cwd(),
+    kind = "auto",
+  }
+
+  if popup then
+    opts[1] = popup
+  end
+
+  require("neogit").open(opts)
+end
+
 return {
   -- Neogit: magit replacement
   {
@@ -9,6 +31,14 @@ return {
     },
     cmd = "Neogit",
     opts = {
+      kind = "auto",
+      commit_editor = {
+        kind = "auto",
+        staged_diff_split_kind = "auto",
+      },
+      log_view = {
+        kind = "auto",
+      },
       integrations = {
         telescope = true,
         diffview = true,
@@ -18,13 +48,15 @@ return {
         status = {
           ["q"] = "Close",
         },
+        popup = {
+          ["p"] = "PushPopup",
+          ["f"] = "PullPopup",
+          ["F"] = "FetchPopup",
+        },
       },
     },
     keys = {
-      { "<leader>gg", "<cmd>Neogit<cr>", desc = "Neogit (Magit)" },
-      { "<leader>gc", "<cmd>Neogit commit<cr>", desc = "Neogit commit" },
-      { "<leader>gp", "<cmd>Neogit push<cr>", desc = "Neogit push" },
-      { "<leader>gl", "<cmd>Neogit log<cr>", desc = "Neogit log" },
+      { "<leader>gg", function() neogit_open() end, desc = "Neogit status" },
     },
   },
 

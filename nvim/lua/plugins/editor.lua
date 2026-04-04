@@ -30,6 +30,43 @@ return {
 		},
 	},
 
+	-- Yanky.nvim: Improved yank and put functionality (kill-ring like)
+	{
+		"gbprod/yanky.nvim",
+		opts = {
+			highlight = { timer = 200 },
+			picker = {
+				select = {
+					action = nil, -- nil to use default put action
+				},
+				-- Use Telescope for yank selection if available
+				telescope = {
+					use_default_mappings = true,
+				},
+			},
+			system_clipboard = {
+				sync_with_ring = true,
+			},
+		},
+		keys = {
+			{ "<leader>y", "<cmd>YankyRingHistory<cr>", mode = { "n", "x" }, desc = "Open yank history" },
+			{ "y", "<Plug>(YankyYank)", mode = { "n", "x" }, desc = "Yank text" },
+			{ "p", "<Plug>(YankyPutAfter)", mode = { "n", "x" }, desc = "Put yanked text after cursor" },
+			{ "P", "<Plug>(YankyPutBefore)", mode = { "n", "x" }, desc = "Put yanked text before cursor" },
+			{ "gp", "<Plug>(YankyGPutAfter)", mode = { "n", "x" }, desc = "Put yanked text after selection" },
+			{ "gP", "<Plug>(YankyGPutBefore)", mode = { "n", "x" }, desc = "Put yanked text before selection" },
+			{ "<c-p>", "<Plug>(YankyPreviousEntry)", mode = { "n", "x" }, desc = "Select previous entry through yank history" },
+			{ "<c-n>", "<Plug>(YankyNextEntry)", mode = { "n", "x" }, desc = "Select next entry through yank history" },
+		},
+		config = function(_, opts)
+			require("yanky").setup(opts)
+			-- Optional: create a Telescope picker for yank history
+			vim.keymap.set("n", "<leader>Y", function()
+				require("telescope").extensions.yank_history.yank_history({})
+			end, { desc = "Yank history (Telescope)" })
+		end,
+	},
+
 	{
 		"nvim-mini/mini.surround",
 		opts = {
@@ -159,4 +196,3 @@ return {
 		},
 	},
 }
-

@@ -81,4 +81,10 @@ map("i", "kj", "<Esc>", { desc = "Escape" })
 map("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
 -- ── Visual mode: s for surround (matching your "v s" → evil-surround-region) ──
--- mini.surround handles this with sa (add), sd (delete), sr (replace)
+-- Disable Flash's visual mode 's' mapping to allow mini.surround to work
+vim.api.nvim_create_autocmd("User", {
+	pattern = "VeryLazy",
+	callback = function()
+		vim.keymap.del("x", "s")
+	end,
+})

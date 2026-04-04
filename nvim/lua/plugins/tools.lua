@@ -84,11 +84,8 @@ return {
 			float_opts = { border = "curved" },
 		},
 		keys = {
-			{ "<C-\\>", desc = "Toggle terminal" },
-			{ "<leader>ot", "<cmd>ToggleTerm<cr>", desc = "Terminal (horizontal)" },
-			{ "<leader>oT", "<cmd>ToggleTerm direction=float<cr>", desc = "Terminal (float)" },
 			{
-				"<leader>oG",
+				"<leader>ot",
 				function()
 					local Terminal = require("toggleterm.terminal").Terminal
 					local lazygit = Terminal:new({
@@ -100,6 +97,19 @@ return {
 					lazygit:toggle()
 				end,
 				desc = "Lazygit",
+			},
+			{
+				"<leader>oT",
+				function()
+					local Terminal = require("toggleterm.terminal").Terminal
+					local lazygit = Terminal:new({
+						cmd = "lazygit",
+						direction = "curved",
+						close_on_exit = true,
+					})
+					lazygit:toggle()
+				end,
+				desc = "Terminal (float)",
 			},
 		},
 	},

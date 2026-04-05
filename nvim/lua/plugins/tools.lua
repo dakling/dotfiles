@@ -10,7 +10,7 @@ end
 local function neogit_open(popup)
 	local opts = {
 		cwd = neogit_cwd(),
-		kind = "auto",
+		kind = "tab",
 	}
 
 	if popup then
@@ -31,13 +31,13 @@ return {
 		},
 		cmd = "Neogit",
 		opts = {
-			kind = "auto",
+			kind = "tab",
 			commit_editor = {
-				kind = "auto",
-				staged_diff_split_kind = "auto",
+				kind = "tab",
+				staged_diff_split_kind = "tab",
 			},
 			log_view = {
-				kind = "auto",
+				kind = "tab",
 			},
 			integrations = {
 				telescope = true,

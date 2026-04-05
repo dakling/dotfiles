@@ -55,3 +55,14 @@ autocmd({ "BufRead", "BufNewFile" }, {
     vim.bo.filetype = "octave"
   end,
 })
+
+-- Auto-revert buffers when files change on disk (dual-editor safety with Obsidian)
+-- Matches your Doom Emacs (global-auto-revert-mode 1)
+autocmd("FocusGained", {
+  pattern = "*",
+  callback = function()
+    if vim.bo.buftype == "" and vim.bo.modifiable and not vim.bo.modified then
+      vim.cmd("checktime")
+    end
+  end,
+})

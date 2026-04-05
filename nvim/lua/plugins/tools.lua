@@ -32,10 +32,10 @@ return {
 		cmd = "Neogit",
 		opts = {
 			kind = "tab",
-			commit_editor = {
-				kind = "tab",
-				staged_diff_split_kind = "tab",
-			},
+		commit_editor = {
+			kind = "split",
+			staged_diff_split_kind = "split",
+		},
 			log_view = {
 				kind = "tab",
 			},
@@ -172,16 +172,4 @@ return {
 		},
 	},
 
-	-- Oil.nvim: file explorer (replaces netrw)
-	{
-		"stevearc/oil.nvim",
-		---@module 'oil'
-		---@type oil.SetupOpts
-		opts = {},
-		-- Optional dependencies
-		dependencies = { { "nvim-mini/mini.icons", opts = {} } },
-		-- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
-		-- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
-		lazy = false,
-	},
 }

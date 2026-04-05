@@ -3,6 +3,10 @@
 
 local map = vim.keymap.set
 
+-- ── Yanky cycling (override extra defaults [y / ]y) ─────────────────
+map({ "n", "x" }, "<c-n>", "<Plug>(YankyNextEntry)", { desc = "Next yank history entry" })
+map({ "n", "x" }, "<c-p>", "<Plug>(YankyPreviousEntry)", { desc = "Previous yank history entry" })
+
 -- ── General ──────────────────────────────────────────────────────────
 -- SPC SPC = command palette (like your "SPC SPC" → execute-extended-command)
 map("n", "<leader><space>", "<cmd>Telescope commands<cr>", { desc = "Commands" })
@@ -33,8 +37,6 @@ map("n", "<leader>lm", "<cmd>Telescope marks<cr>", { desc = "Marks/Bookmarks" })
 map("n", "<leader>er", ":lua =", { desc = "Eval Lua expression" })
 
 -- ── Open ─────────────────────────────────────────────────────────────
--- SPC o d = file explorer (like your dired-jump)
-map("n", "<leader>od", "<cmd>Oil<cr>", { desc = "Open directory (Oil)" })
 map("n", "<leader>oD", function()
 	require("dap").continue()
 end, { desc = "Debugger" })
@@ -93,7 +95,9 @@ vim.api.nvim_create_autocmd("User", {
 -- SPC m m = meeting note
 map("n", "<leader>mm", function()
 	local title = vim.fn.input("Meeting title: ")
-	if title == "" then return end
+	if title == "" then
+		return
+	end
 	local date = os.date("%Y-%m-%d")
 	-- Create kebab-case slug
 	local slug = title:lower():gsub("[^a-z0-9]+", "-"):gsub("%-$", "")
@@ -109,7 +113,8 @@ map("n", "<leader>mm", function()
 	if vim.api.nvim_buf_line_count(0) == 1 and vim.api.nvim_buf_get_lines(0, 0, -1, false)[1] == "" then
 		local content = string.format(
 			"---\ndate: %s\ntype: meeting\ntags: []\nattendees: []\n---\n\n# %s\n\n## Attendees\n-\n\n## Agenda\n-\n\n## Notes\n\n\n## Action Items\n- [ ]\n",
-			date, title
+			date,
+			title
 		)
 		vim.api.nvim_buf_set_lines(0, 0, -1, false, vim.split(content, "\n"))
 		vim.cmd("write")
@@ -146,7 +151,9 @@ map("n", "<leader>mt", "<cmd>ObsidianTags<cr>", { desc = "Find by tag" })
 -- SPC m d = daily append (like your my/obsidian-daily-append)
 map("n", "<leader>md", function()
 	local thought = vim.fn.input("Daily note: ")
-	if thought == "" then return end
+	if thought == "" then
+		return
+	end
 	local date = os.date("%Y-%m-%d")
 	local time = os.date("%H:%M")
 	local vault = vim.fn.expand("~/obsidian-vault")

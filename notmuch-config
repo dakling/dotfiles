@@ -1,0 +1,17 @@
+[database]
+path=~/.mail
+
+[user]
+name=Dario Klingenberg
+primary_email=dario.klingenberg@gmail.com
+
+[new]
+tags=unread;inbox;new
+ignore=
+
+[search]
+exclude_tags=deleted;spam;trash;draft
+
+[maildir]
+synchronize_flags=true
+clean_up_mh=true

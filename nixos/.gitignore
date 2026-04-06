@@ -1,0 +1,42 @@
+# Result symlinks
+result
+result-*
+
+# Hardware configuration (should be generated)
+# hardware-configuration.nix
+
+# Secrets (never commit unencrypted secrets)
+secrets/secrets.yaml
+!secrets/secrets.yaml.example
+
+# Emacs
+*.elc
+*.el~
+\#*\#
+.\#*
+
+# Doom Emacs
+.doom.d/
+
+# Nix
+.direnv/
+.envrc
+
+# Editor files
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.sublime-*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+
+# Lock files (optional - some prefer to commit this)
+# flake.lock

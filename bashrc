@@ -5,6 +5,15 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+# Fish-like autosuggestions and syntax highlighting via ble.sh
+if [[ -f /run/current-system/sw/share/blesh/ble.sh ]]; then
+  source /run/current-system/sw/share/blesh/ble.sh
+elif [[ -f /usr/share/blesh/ble.sh ]]; then
+  source /usr/share/blesh/ble.sh
+elif command -v ble.sh &>/dev/null; then
+  source "$(ble.sh --print-bleexec)"
+fi
+
 # History settings
 shopt -s histappend
 export HISTCONTROL=ignoredups:erasedups

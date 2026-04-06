@@ -130,60 +130,49 @@ export LESS=-r
 
 
 ## Plugins section: Enable fish style features
-# Use syntax highlighting
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-# Use history substring search
-source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
-# bind UP and DOWN arrow keys to history substring search
+# Syntax highlighting
+if [[ -f /run/current-system/sw/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+  source /run/current-system/sw/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+elif [[ -f /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+  source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+# History substring search
+if [[ -f /run/current-system/sw/share/zsh-history-substring-search/zsh-history-substring-search.zsh ]]; then
+  source /run/current-system/sw/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+elif [[ -f /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh ]]; then
+  source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
+fi
+
+# Autosuggestions (works on all terminals)
+if [[ -f /run/current-system/sw/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+  source /run/current-system/sw/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+  ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+  ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
+elif [[ -f /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+  source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+  ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+  ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
+fi
+
+# Bind UP and DOWN arrow keys to history substring search
 zmodload zsh/terminfo
 bindkey "$terminfo[kcuu1]" history-substring-search-up
 bindkey "$terminfo[kcud1]" history-substring-search-down
-bindkey '^[[A' history-substring-search-up			
+bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 
+# Terminal-specific settings
 case ${TERM} in
   linux)
-    RPROMPT="%{$fg[red]%} %(?..[%?])" 
-    alias x='startx ~/.xinitrc'      # Type name of desired desktop after x, xinitrc is configured for it
+    RPROMPT="%{$fg[red]%} %(?..[%?])"
+    alias x='startx ~/.xinitrc'
     ;;
   xterm)
     RPROMPT=''
     ;;
-  rxvt*)
-    RPROMPT=''
-	### Base16 Shell color themes.
-	##possible themes: 3024, apathy, ashes, atelierdune, atelierforest, atelierhearth,
-	##atelierseaside, bespin, brewer, chalk, codeschool, colors, default, eighties, 
-	##embers, flat, google, grayscale, greenscreen, harmonic16, isotope, londontube,
-	##marrakesh, mocha, monokai, ocean, paraiso, pop (dark only), railscasts, shapesifter,
-	##solarized, summerfruit, tomorrow, twilight
-	#theme="tomorrow"
-	##Possible variants: dark and light
-	#shade="dark"
-	#BASE16_SHELL="/usr/share/zsh/scripts/base16-shell/base16-$theme.$shade.sh"
-	#[[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
-    # Use autosuggestion
-    source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-    ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
-    ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
-    ;;  
   *)
     RPROMPT=''
-	### Base16 Shell color themes.
-	##possible themes: 3024, apathy, ashes, atelierdune, atelierforest, atelierhearth,
-	##atelierseaside, bespin, brewer, chalk, codeschool, colors, default, eighties, 
-	##embers, flat, google, grayscale, greenscreen, harmonic16, isotope, londontube,
-	##marrakesh, mocha, monokai, ocean, paraiso, pop (dark only), railscasts, shapesifter,
-	##solarized, summerfruit, tomorrow, twilight
-	#theme="monokai"
-	##Possible variants: dark and light
-	#shade="dark"
-	#BASE16_SHELL="/usr/share/zsh/scripts/base16-shell/base16-$theme.$shade.sh"
-	#[[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
-    # Use autosuggestion
-    source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-    ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
-      ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=7'
     ;;
 esac
 
@@ -218,7 +207,14 @@ function applyOften {
     done
 }
 
-source /usr/share/fzf/completion.zsh && source /usr/share/fzf/key-bindings.zsh
+# fzf integration
+if [[ -f /run/current-system/sw/share/fzf/completion.zsh ]]; then
+  source /run/current-system/sw/share/fzf/completion.zsh
+  source /run/current-system/sw/share/fzf/key-bindings.zsh
+elif [[ -f /usr/share/fzf/completion.zsh ]]; then
+  source /usr/share/fzf/completion.zsh
+  source /usr/share/fzf/key-bindings.zsh
+fi
 _fzf_compgen_path() {
   fd --hidden --follow . "$1"
 }

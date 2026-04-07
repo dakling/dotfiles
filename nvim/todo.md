@@ -1,0 +1,11 @@
+- DONE use - / | to split also in tmux
+- DONE obsidian
+- DONE git open in fullscreen
+- notmuch
+- learn s -> map f/t to flash movements? also r/R as a command after y/d
+- learn [] bindings
+- learn C-o/i
+- learn o in visual mode (go to other end)
+- check out mini.files vs Oil
+- look into diffing, as well as integrating coding agents with diff
+- DONE git commit doesn't open commit message buffer

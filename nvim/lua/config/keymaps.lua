@@ -12,16 +12,16 @@ map({ "n", "x" }, "<c-p>", "<Plug>(YankyPreviousEntry)", { desc = "Previous yank
 map("n", "<leader><space>", "<cmd>Telescope commands<cr>", { desc = "Commands" })
 
 -- Window navigation: match your C-s-{h,j,k,l} bindings
-map("n", "<C-h>", "<C-w>h", { desc = "Go to left window" })
-map("n", "<C-j>", "<C-w>j", { desc = "Go to lower window" })
-map("n", "<C-k>", "<C-w>k", { desc = "Go to upper window" })
-map("n", "<C-l>", "<C-w>l", { desc = "Go to right window" })
-
--- Window resize: match your s-M-{h,j,k,l} resize bindings
-map("n", "<M-H>", "<cmd>vertical resize -2<cr>", { desc = "Decrease width" })
-map("n", "<M-L>", "<cmd>vertical resize +2<cr>", { desc = "Increase width" })
-map("n", "<M-J>", "<cmd>resize +2<cr>", { desc = "Increase height" })
-map("n", "<M-K>", "<cmd>resize -2<cr>", { desc = "Decrease height" })
+-- map("n", "<C-A-h>", "<C-w>h", { desc = "Go to left window" })
+-- map("n", "<C-A-j>", "<C-w>j", { desc = "Go to lower window" })
+-- map("n", "<C-A-k>", "<C-w>k", { desc = "Go to upper window" })
+-- map("n", "<C-A-l>", "<C-w>l", { desc = "Go to right window" })
+--
+-- -- Window resize: match your s-M-{h,j,k,l} resize bindings
+-- map("n", "<M-H>", "<cmd>vertical resize -2<cr>", { desc = "Decrease width" })
+-- map("n", "<M-L>", "<cmd>vertical resize +2<cr>", { desc = "Increase width" })
+-- map("n", "<M-J>", "<cmd>resize +2<cr>", { desc = "Increase height" })
+-- map("n", "<M-K>", "<cmd>resize -2<cr>", { desc = "Decrease height" })
 
 -- SPC w w = switch to last buffer (your evil-switch-to-windows-last-buffer)
 map("n", "<leader>ww", "<cmd>e #<cr>", { desc = "Switch to last buffer" })

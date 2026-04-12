@@ -9,3 +9,4 @@
 - check out mini.files vs Oil
 - look into diffing, as well as integrating coding agents with diff
 - DONE git commit doesn't open commit message buffer
+

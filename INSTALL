@@ -16,9 +16,10 @@ ln -sf $(pwd)/nvim/init.vim ~/.config/nvim/init.vim
 mkdir -p ~/.config/doom/
 ln -sf ~/.dotfiles/doom/* ~/.config/doom/
 
+ln -sf ~/.dotfiles/tmux.conf ~/.tmux.conf
+
 mkdir -p ~/.config/stumpwm
 ln -sf ~/.dotfiles/stumpwm.lisp ~/.config/stumpwm/config
 
 #mkdir -p ~/.config/pacmanfile/
 #ln -sf ~/.dotfiles/pacmanfile.txt ~/.config/pacmanfile/
-

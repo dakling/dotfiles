@@ -1,4 +1,15 @@
 return {
+  -- Disable markdown linting
+  {
+    "mfussenegger/nvim-lint",
+    optional = true,
+    opts = {
+      linters_by_ft = {
+        markdown = {},
+      },
+    },
+  },
+
   -- vimtex: LaTeX support (replaces your AUCTeX + reftex + cdlatex + evil-tex setup)
   {
     "lervag/vimtex",
@@ -106,6 +117,7 @@ return {
         jsonls = {},
         -- LaTeX grammar (matching your lsp-ltex)
         ltex = {
+          filetypes = { "tex", "latex", "bibtex" },
           settings = {
             ltex = {
               language = "en-GB",
@@ -123,7 +135,7 @@ return {
       ensure_installed = {
         "python", "haskell", "julia", "c", "cpp",
         "json", "yaml", "bash", "lua", "vim", "vimdoc",
-        "markdown", "markdown_inline", "latex", "org",
+        "markdown", "markdown_inline", "latex",
         "html", "css", "commonlisp", "scheme",
       },
     },

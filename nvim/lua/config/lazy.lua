@@ -17,7 +17,6 @@ require("lazy").setup({
 		{ import = "lazyvim.plugins.extras.editor.illuminate" },
 
 		-- LazyVim extras: coding
-		{ import = "lazyvim.plugins.extras.coding.luasnip" },
 
 		-- LazyVim extras: DAP (debugger)
 		{ import = "lazyvim.plugins.extras.dap.core" },

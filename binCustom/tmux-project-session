@@ -1,0 +1,192 @@
+#!/bin/sh
+
+set -eu
+
+usage() {
+  cat <<'EOF'
+Usage: tmux-project-session [--list] [--query QUERY] [--select N]
+
+Launch or switch to a tmux session for a project directory.
+Projects are discovered from common roots by looking for VCS markers.
+EOF
+}
+
+if [ -z "${TMUX:-}" ]; then
+  echo "tmux-project-session must be run from inside tmux." >&2
+  exit 1
+fi
+
+ROOTS_DEFAULT="$HOME/code:$HOME/.dotfiles:$HOME/org:$HOME/obsidian-vault"
+ROOTS="${TMUX_PROJECT_ROOTS:-$ROOTS_DEFAULT}"
+MAX_DEPTH="${TMUX_PROJECT_MAX_DEPTH:-4}"
+MAX_RESULTS="${TMUX_PROJECT_MAX_RESULTS:-40}"
+LIST_ONLY=0
+QUERY=""
+SELECT_INDEX=""
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --list)
+      LIST_ONLY=1
+      ;;
+    --query)
+      shift
+      QUERY="${1:-}"
+      ;;
+    --select)
+      shift
+      SELECT_INDEX="${1:-}"
+      ;;
+    --help|-h)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "Unknown argument: $1" >&2
+      usage >&2
+      exit 1
+      ;;
+  esac
+  shift
+done
+
+project_markers() {
+  old_ifs=$IFS
+  IFS=:
+  for root in $ROOTS; do
+    [ -d "$root" ] || continue
+
+    if [ -d "$root/.git" ] || [ -d "$root/.hg" ] || [ -d "$root/.jj" ] || [ -d "$root/.svn" ]; then
+      printf '%s\n' "$root"
+    fi
+
+    if command -v fd >/dev/null 2>&1; then
+      fd --hidden --follow --type d --max-depth "$MAX_DEPTH" \
+        '^(\.git|\.hg|\.jj|\.svn)$' "$root" 2>/dev/null |
+        while IFS= read -r marker; do
+          dirname "$marker"
+        done
+    else
+      find "$root" -mindepth 2 -maxdepth "$MAX_DEPTH" -type d \
+        \( -name .git -o -name .hg -o -name .jj -o -name .svn \) -print 2>/dev/null |
+        while IFS= read -r marker; do
+          dirname "$marker"
+        done
+    fi
+  done
+  IFS=$old_ifs
+}
+
+filter_projects() {
+  if [ -n "$QUERY" ]; then
+    grep -i -- "$QUERY" || true
+  else
+    cat
+  fi
+}
+
+session_name_from_dir() {
+  dir="$1"
+  rel="${dir#$HOME/}"
+  if [ "$rel" = "$dir" ]; then
+    rel=$(basename "$dir")
+  fi
+
+  session=$(printf '%s' "$rel" |
+    tr '[:upper:]' '[:lower:]' |
+    sed 's/[^[:alnum:]_-]/-/g; s/--*/-/g; s/^-//; s/-$//')
+
+  if [ -z "$session" ]; then
+    session="tmux"
+  fi
+
+  printf '%s\n' "$session"
+}
+
+unique_session_name() {
+  dir="$1"
+  base=$(session_name_from_dir "$dir")
+  session="$base"
+  suffix=2
+
+  while tmux has-session -t "$session" 2>/dev/null; do
+    existing_path=$(tmux display-message -p -t "$session:1.1" "#{pane_current_path}" 2>/dev/null || true)
+    if [ "$existing_path" = "$dir" ]; then
+      printf '%s\n' "$session"
+      return
+    fi
+    session="${base}-${suffix}"
+    suffix=$((suffix + 1))
+  done
+
+  printf '%s\n' "$session"
+}
+
+pick_with_fzf() {
+  if command -v fzf >/dev/null 2>&1; then
+    if [ -n "$QUERY" ]; then
+      fzf --ansi --layout=reverse --height=100% --prompt="project> " --query "$QUERY"
+    else
+      fzf --ansi --layout=reverse --height=100% --prompt="project> "
+    fi
+  else
+    cat
+  fi
+}
+
+PROJECTS=$(project_markers | awk 'NF && !seen[$0]++' | LC_ALL=C sort)
+
+if [ -z "$PROJECTS" ]; then
+  echo "No projects found. Set TMUX_PROJECT_ROOTS to adjust the search roots." >&2
+  exit 1
+fi
+
+if [ "$LIST_ONLY" -eq 1 ]; then
+  printf '%s\n' "$PROJECTS" | filter_projects
+  exit 0
+fi
+
+if command -v fzf >/dev/null 2>&1 && [ -z "$SELECT_INDEX" ]; then
+  selection=$(printf '%s\n' "$PROJECTS" | pick_with_fzf || true)
+else
+  if [ -z "$SELECT_INDEX" ]; then
+    printf 'Project query (blank for all): '
+    IFS= read -r QUERY
+  fi
+
+  FILTERED=$(printf '%s\n' "$PROJECTS" | filter_projects)
+  if [ -z "$FILTERED" ]; then
+    echo "No matching project found." >&2
+    exit 1
+  fi
+
+  if [ -z "$SELECT_INDEX" ]; then
+    echo
+    echo "Projects:"
+    printf '%s\n' "$FILTERED" | sed -n "1,${MAX_RESULTS}p" | nl -w2 -s'. '
+    printf '\nSelect number: '
+    IFS= read -r SELECT_INDEX
+  fi
+
+  case "$SELECT_INDEX" in
+    ''|*[!0-9]*)
+      echo "Selection must be a number." >&2
+      exit 1
+      ;;
+  esac
+
+  selection=$(printf '%s\n' "$FILTERED" | sed -n "${SELECT_INDEX}p")
+fi
+
+if [ -z "${selection:-}" ]; then
+  exit 0
+fi
+
+session=$(unique_session_name "$selection")
+
+if ! tmux has-session -t "$session" 2>/dev/null; then
+  tmux new-session -d -s "$session" -c "$selection"
+fi
+
+tmux switch-client -t "$session"
+printf 'Switched to %s -> %s\n' "$session" "$selection"

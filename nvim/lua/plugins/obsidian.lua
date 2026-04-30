@@ -4,7 +4,7 @@ return {
 		"epwalsh/obsidian.nvim",
 		version = "*", -- recommended, use latest release
 		lazy = true,
-		ft = "markdown",
+		cmd = { "ObsidianToday", "ObsidianYesterday", "ObsidianTomorrow", "ObsidianNew", "ObsidianQuickSwitch", "ObsidianSearch", "ObsidianTags", "ObsidianBacklinks", "ObsidianFollowLink", "ObsidianRename", "ObsidianLinks", "ObsidianToggleCheckbox", "ObsidianOpen" },
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 		},

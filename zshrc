@@ -49,6 +49,12 @@ WORDCHARS=${WORDCHARS//\/[&.;]}                                 # Don't consider
 # export RoslynTargetsPath=/usr/lib/mono/msbuild/15.0/bin/  
 # export BOSSS_INSTALL=/home/klingenberg/BoSSS-experimental
 # BoSSS
+#
+# Claude Code Emacs panes support (picked up by `doom env`)
+export CLAUDE_CODE_EMACS_PANES=1
+export CLAUDE_CODE_EMACS_PANES_DEBUG=1
+export EMACS_PANES_SERVER=server
+export PATH="/Users/darioklingenberg/.config/emacs/.local/straight/build-30.2/claude-code-emacs-panes/bin:$PATH"
 
 
  ##Keybindings section

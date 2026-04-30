@@ -69,8 +69,16 @@
 (disable-packages! elfeed-goodies)
 (disable-packages! ts-fold)
 
+(package! codex-cli
+  :recipe (:host github :repo "bennfocus/codex-cli.el"))
+
 (package! ediff-chunk-select
-  :recipe (:host github :repo "dakling/ediff-chunk-select"))
+  :recipe (:local-repo "/Users/darioklingenberg/code/emacs-packages/ediff-chunk-select"
+           :files ("ediff-chunk-select.el")))
+
+(package! codex-ediff-mcp
+  :recipe (:local-repo "/Users/darioklingenberg/code/emacs-packages/codex-ediff-mcp"
+           :files ("codex-ediff-mcp.el" "bin")))
 
 (package! claude-code-ide
   :recipe (:host github :repo "manzaltu/claude-code-ide.el"))
@@ -87,7 +95,8 @@
 (package! goose
   :recipe (:host github :repo "aq2bq/goose.el"))
 
-(package! codex-cli)
+(package! ai-code
+  :recipe (:host github :repo "tninja/ai-code-interface.el"))
 
 (package! web-server)
 
@@ -97,6 +106,10 @@
 (package! claude-code-emacs-panes
   :recipe (:host github :repo "dakling/claude-code-emacs-panes"
            :files ("claude-code-emacs-panes.el" "bin")))
+
+(package! claude-notify
+  :recipe (:host github :repo "dakling/claude-notify"
+           :files ("claude-notify.el" "bin")))
 
 (package! emacs-claude-bridge
   :recipe (:host github :repo "dakling/emacs-claude-bridge"))

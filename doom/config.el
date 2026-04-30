@@ -918,20 +918,125 @@
   (map! :map vterm-mode-map
         "C-c C-r"  #'my/claude-snippet-menu)
 
-  ;; Per-hunk chunk-select for ediff sessions with Claude integration
-  (require 'ediff-chunk-select)
+  ;; ;; Per-hunk chunk-select for ediff sessions with Claude integration
+  ;; (require 'ediff-chunk-select)
 
-  ;; Rebuild tool list to include openDiff (handlers load after initial build)
-  (setq! claude-code-ide-use-ide-diff t)
-  (setq claude-code-ide-mcp-tools (claude-code-ide-mcp--build-tool-list))
-  (setq claude-code-ide-mcp-tool-schemas (claude-code-ide-mcp--build-tool-schemas))
-  (setq claude-code-ide-mcp-tool-descriptions (claude-code-ide-mcp--build-tool-descriptions))
+  ;; ;; Rebuild tool list to include openDiff (handlers load after initial build)
+  ;; (setq! claude-code-ide-use-ide-diff t)
+  ;; (setq claude-code-ide-mcp-tools (claude-code-ide-mcp--build-tool-list))
+  ;; (setq claude-code-ide-mcp-tool-schemas (claude-code-ide-mcp--build-tool-schemas))
+  ;; (setq claude-code-ide-mcp-tool-descriptions (claude-code-ide-mcp--build-tool-descriptions))
 
-  ;; Install advice after handlers are loaded (build-tool-list triggers loading)
-  (ediff-chunk-select-claude-code-setup)
+  ;; ;; Install advice after handlers are loaded (build-tool-list triggers loading)
+  ;; (ediff-chunk-select-claude-code-setup)
 
-  (map! :leader
-        :desc "Review pending diff" "l d" #'ediff-chunk-select-review-pending))
+  ;; (map! :leader
+  ;;       :desc "Review pending diff" "l d" #'ediff-chunk-select-review-pending))
+
+)
+
+(defvar my/codex-bridge-configured nil)
+(defvar vterm-kill-buffer-on-exit)
+
+(declare-function vterm-send-return "vterm" ())
+(declare-function vterm-send-string "vterm" (string))
+
+(defun my/codex-ensure-bridge (&rest _)
+  (unless my/codex-bridge-configured
+    (require 'codex-ediff-mcp)
+    (setq! codex-ediff-mcp-bridge-script "/Users/darioklingenberg/code/emacs-packages/codex-ediff-mcp/bin/codex-ediff-mcp-server.py"
+           codex-ediff-mcp-codex-extra-args '("--no-alt-screen")
+           codex-ediff-mcp-terminal-backend 'vterm
+           codex-ediff-mcp-window-side 'right
+           codex-ediff-mcp-window-width 95)
+    (codex-ediff-mcp-setup)
+    (setq my/codex-bridge-configured t)))
+
+(defun my/codex-toggle ()
+  (interactive)
+  (my/codex-ensure-bridge)
+  (call-interactively #'codex-cli-toggle))
+
+(defun my/codex-start ()
+  (interactive)
+  (my/codex-ensure-bridge)
+  (call-interactively #'codex-cli-start))
+
+(defun my/codex-restart ()
+  (interactive)
+  (my/codex-ensure-bridge)
+  (call-interactively #'codex-cli-restart))
+
+(defun my/codex-directory-workspace-root ()
+  (file-name-as-directory
+   (expand-file-name
+    (or (and buffer-file-name
+             (file-name-directory buffer-file-name))
+        default-directory))))
+
+(use-package! codex-cli
+  :commands (codex-cli-toggle
+             codex-cli-start
+             codex-cli-restart
+             codex-cli-toggle-all
+             codex-cli-rename-session
+             codex-cli-stop
+             codex-cli-stop-all
+             codex-cli-send-prompt
+             codex-cli-send-region
+             codex-cli-send-file)
+  :init
+  (map! :leader :prefix ("o X" . "codex")
+        :desc "Toggle Codex" "c" #'my/codex-toggle
+        :desc "New Codex session" "n" #'my/codex-start
+        :desc "Restart Codex session" "R" #'my/codex-restart
+        :desc "Show all Codex sessions" "a" #'codex-cli-toggle-all
+        :desc "Rename Codex session" "r" #'codex-cli-rename-session
+        :desc "Stop Codex session" "k" #'codex-cli-stop
+        :desc "Stop all Codex sessions" "K" #'codex-cli-stop-all
+        :desc "Send prompt" "p" #'codex-cli-send-prompt
+        :desc "Send region" "e" #'codex-cli-send-region
+        :desc "Send file" "f" #'codex-cli-send-file
+        :desc "Close Codex diffs" "D" #'codex-ediff-mcp-close-all))
+
+(after! codex-cli-project
+  (defadvice! my/codex-cli-project-root-a (orig-fn)
+    :around #'codex-cli-project-root
+    (condition-case nil
+        (funcall orig-fn)
+      (error (my/codex-directory-workspace-root)))))
+
+(after! codex-cli
+  (setq! codex-cli-terminal-backend 'vterm
+         codex-cli-side 'right
+         codex-cli-width 95
+         codex-cli-focus-on-open t)
+  (advice-add #'codex-cli-start :before #'my/codex-ensure-bridge)
+  (advice-add #'codex-cli-toggle :before #'my/codex-ensure-bridge)
+  (advice-add #'codex-cli-restart :before #'my/codex-ensure-bridge))
+
+(after! codex-cli-term
+  (defadvice! my/codex-cli--start-vterm-process-a (buffer project-root command args)
+    :override #'codex-cli--start-vterm-process
+    "Start Codex in vterm via `exec` so the shell does not remain after exit."
+    (require 'vterm)
+    (with-current-buffer buffer
+      (let ((default-directory project-root)
+            (vterm-kill-buffer-on-exit t))
+        (vterm-mode)
+        (vterm-send-string
+         (mapconcat #'identity
+                    (cons "exec"
+                          (cons (shell-quote-argument command)
+                                (mapcar #'shell-quote-argument args)))
+                    " "))
+        (vterm-send-return)))))
+
+(after! codex-ediff-mcp
+  (defun my/codex-preserve-vterm-buffer-h ()
+    (when (string-prefix-p "*codex-cli:" (buffer-name))
+      (setq-local vterm-kill-buffer-on-exit nil)))
+  (add-hook 'vterm-mode-hook #'my/codex-preserve-vterm-buffer-h))
 
 (use-package! claude-code-emacs-panes
   :after-call (claude-code-ide claude-code-ide-menu)
@@ -952,6 +1057,11 @@
         :n "D" #'claude-code-emacs-panes-close-finished
         :n "gr" #'claude-code-emacs-panes-dashboard
         :n "q" #'quit-window))
+
+(use-package! claude-notify
+  :after claude-code-ide
+  :config
+  (claude-notify-mode 1))
 
 (use-package! claude-code-ide-mcp-tools
   :after claude-code-ide
@@ -1012,6 +1122,17 @@
 
 (map! :leader
       "l e" #'my/claude-fix-error-at-point)
+
+(use-package! ai-code
+  :defer t
+  :commands (ai-code-menu ai-code-set-backend)
+  :init
+  (map! :g "C-c a" #'ai-code-menu)
+  :config
+  (ai-code-set-backend 'codex))
+
+(map! :leader :prefix ("o a" . "ai-code")
+      :desc "AI code menu" "a" #'ai-code-menu)
 
 (use-package! prompt-compose
   :after-call (prompt-compose

@@ -128,6 +128,17 @@ return {
 		},
 	},
 
+	-- Blink.cmp: Tab/S-Tab to cycle completions
+	{
+		"saghen/blink.cmp",
+		opts = {
+			keymap = {
+				["<Tab>"] = { "select_and_accept", "select_next", "fallback" },
+				["<CR>"] = {},
+			},
+		},
+	},
+
 	-- Diffview (enhanced diff, partial magit replacement for ediff)
 	{
 		"sindrets/diffview.nvim",

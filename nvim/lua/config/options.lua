@@ -58,7 +58,7 @@ opt.timeoutlen = 300
 
 -- Spell (matching your aspell + en_GB)
 opt.spell = false -- toggle with <leader>us
-opt.spelllang = { "en_gb" }
+opt.spelllang = { "en_gb", "en_us", "de" }
 
 -- Fold
 opt.foldmethod = "expr"

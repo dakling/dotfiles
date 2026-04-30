@@ -3,6 +3,9 @@
 
 local map = vim.keymap.set
 
+-- Disable default `-` motion so it works as localleader
+map("n", "-", "<Nop>")
+
 -- ── Yanky cycling (override extra defaults [y / ]y) ─────────────────
 map({ "n", "x" }, "<c-n>", "<Plug>(YankyNextEntry)", { desc = "Next yank history entry" })
 map({ "n", "x" }, "<c-p>", "<Plug>(YankyPreviousEntry)", { desc = "Previous yank history entry" })
@@ -11,17 +14,19 @@ map({ "n", "x" }, "<c-p>", "<Plug>(YankyPreviousEntry)", { desc = "Previous yank
 -- SPC SPC = command palette (like your "SPC SPC" → execute-extended-command)
 map("n", "<leader><space>", "<cmd>Telescope commands<cr>", { desc = "Commands" })
 
--- Window navigation: match your C-s-{h,j,k,l} bindings
-map("n", "<C-h>", "<C-w>h", { desc = "Go to left window" })
-map("n", "<C-j>", "<C-w>j", { desc = "Go to lower window" })
-map("n", "<C-k>", "<C-w>k", { desc = "Go to upper window" })
-map("n", "<C-l>", "<C-w>l", { desc = "Go to right window" })
-
--- Window resize: match your s-M-{h,j,k,l} resize bindings
-map("n", "<M-H>", "<cmd>vertical resize -2<cr>", { desc = "Decrease width" })
-map("n", "<M-L>", "<cmd>vertical resize +2<cr>", { desc = "Increase width" })
-map("n", "<M-J>", "<cmd>resize +2<cr>", { desc = "Increase height" })
-map("n", "<M-K>", "<cmd>resize -2<cr>", { desc = "Decrease height" })
+-- -- smart-splits.nvim: seamless navigation/resizing across nvim windows + tmux panes
+-- map("n", "<C-h>", function() require("smart-splits").move_cursor_left() end, { desc = "Move to left split" })
+-- map("n", "<C-j>", function() require("smart-splits").move_cursor_down() end, { desc = "Move to below split" })
+-- map("n", "<C-k>", function() require("smart-splits").move_cursor_up() end, { desc = "Move to above split" })
+-- map("n", "<C-l>", function() require("smart-splits").move_cursor_right() end, { desc = "Move to right split" })
+-- map("n", "<M-h>", function() require("smart-splits").resize_left() end, { desc = "Resize left" })
+-- map("n", "<M-j>", function() require("smart-splits").resize_down() end, { desc = "Resize down" })
+-- map("n", "<M-k>", function() require("smart-splits").resize_up() end, { desc = "Resize up" })
+-- map("n", "<M-l>", function() require("smart-splits").resize_right() end, { desc = "Resize right" })
+-- map("n", "<leader>wh", function() require("smart-splits").swap_buf_left() end, { desc = "Swap buffer left" })
+-- map("n", "<leader>wj", function() require("smart-splits").swap_buf_down() end, { desc = "Swap buffer down" })
+-- map("n", "<leader>wk", function() require("smart-splits").swap_buf_up() end, { desc = "Swap buffer up" })
+-- map("n", "<leader>wl", function() require("smart-splits").swap_buf_right() end, { desc = "Swap buffer right" })
 
 -- SPC w w = switch to last buffer (your evil-switch-to-windows-last-buffer)
 map("n", "<leader>ww", "<cmd>e #<cr>", { desc = "Switch to last buffer" })
@@ -49,8 +54,7 @@ map("n", "<leader>fs", "<cmd>w<cr>", { desc = "Save file" })
 
 -- ── Search (SPC s) ───────────────────────────────────────────────────
 map("n", "<leader>sp", "<cmd>Telescope live_grep<cr>", { desc = "Grep project" })
-map("n", "<leader>ss", "<cmd>Telescope current_buffer_fuzzy_find<cr>", { desc = "Search buffer" })
-map("n", "<leader>sr", "<cmd>Telescope resume<cr>", { desc = "Resume last search" })
+-- map("n", "<leader>ss", "<cmd>Telescope current_buffer_fuzzy_find<cr>", { desc = "Search buffer" })
 map("n", "<leader>sy", "<cmd>Telescope registers<cr>", { desc = "Yank history / registers" })
 
 -- ── Kill ring (matching your M-p → helm-show-kill-ring) ──────────────

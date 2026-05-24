@@ -9,7 +9,7 @@
         enable = true;
         efiSupport = true;
         device = "nodev";
-        useOSProber = true; # Detect other OS installations
+        # useOSProber = true; # Not needed for single-boot; causes GRUB default to reset
       };
       efi.canTouchEfiVariables = true;
       efi.efiSysMountPoint = "/boot";

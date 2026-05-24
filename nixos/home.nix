@@ -148,6 +148,7 @@
       font_size = "11.0";
       background_opacity = "0.95";
       window_padding_width = "5";
+      shell = "/run/current-system/sw/bin/bash";
     };
   };
 
@@ -336,6 +337,15 @@
 
     # Go games
     katago
+    (pkgs.appimageTools.wrapType2 {
+      pname = "weiqihub";
+      version = "0.1.13";
+      src = pkgs.fetchurl {
+        url = "https://github.com/ale64bit/WeiqiHub/releases/download/v0.1.13/WeiqiHub-v0.1.13-x86_64.AppImage";
+        hash = "sha256-+mOWf3XTPuvskJV+TBD368LHRzxesBDBldSI1QvTggE=";
+      };
+      extraPkgs = pkgs: [ pkgs.libepoxy ];
+    })
 
     # Office
     calibre

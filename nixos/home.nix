@@ -298,7 +298,7 @@
     blueberry
     simple-scan
     obs-studio
-    kdenlive
+    kdePackages.kdenlive
     gimp
     inkscape
     darktable
@@ -307,7 +307,7 @@
 
     # Documents
     libreoffice
-    okular
+    kdePackages.okular
     evince
     zathura
     mupdf
@@ -350,7 +350,7 @@
 
     # Password management
     keepassxc
-    bitwarden
+    bitwarden-desktop
 
     # Flatpak support
     flatpak

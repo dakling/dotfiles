@@ -306,16 +306,16 @@
     peek
 
     # Documents
-    libreoffice
+    # libreoffice  # heavy, uncomment after first build
     kdePackages.okular
     evince
     zathura
     mupdf
-    texlive.combined.scheme-full
+    # texlive.combined.scheme-full  # heavy, uncomment after first build
     pandoc
 
     # Communication
-    signal-desktop
+    # signal-desktop  # heavy, uncomment after first build
     telegram-desktop
     discord
     zoom-us
@@ -329,7 +329,7 @@
     thunderbird
 
     # Gaming
-    steam
+    # steam  # heavy, uncomment after first build
     lutris
     wine
     winetricks

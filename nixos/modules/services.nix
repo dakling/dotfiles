@@ -95,10 +95,10 @@
   # };
 
   # Logind configuration
-  services.logind = {
-    lidSwitch = "suspend";
-    lidSwitchDocked = "ignore";
-    lidSwitchExternalPower = "suspend";
+  services.logind.settings = {
+    Login.HandleLidSwitch = "suspend";
+    Login.HandleLidSwitchDocked = "ignore";
+    Login.HandleLidSwitchExternalPower = "suspend";
   };
 
 

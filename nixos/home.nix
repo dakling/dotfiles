@@ -245,8 +245,7 @@
     haskellPackages.stack
     dotnet-sdk
     nodejs
-    nodePackages.npm
-    nodePackages.yarn
+    yarn
     go
     rustup
     gcc
@@ -435,6 +434,7 @@
     # SSH
     ssh = {
       enable = true;
+      enableDefaultConfig = false;
       extraConfig = ''
         Host github.com
           HostName github.com

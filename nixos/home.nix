@@ -434,18 +434,18 @@
     # SSH
     ssh = {
       enable = true;
-      enableDefaultConfig = false;
-      extraConfig = ''
-        Host github.com
-          HostName github.com
-          User git
-          IdentityFile ~/.ssh/id_ed25519
-
-        Host gitlab.com
-          HostName gitlab.com
-          User git
-          IdentityFile ~/.ssh/id_ed25519
-      '';
+      matchBlocks = {
+        "github.com" = {
+          hostname = "github.com";
+          user = "git";
+          identityFile = "~/.ssh/id_ed25519";
+        };
+        "gitlab.com" = {
+          hostname = "gitlab.com";
+          user = "git";
+          identityFile = "~/.ssh/id_ed25519";
+        };
+      };
     };
   };
 }

@@ -1,7 +1,7 @@
 # Main NixOS configuration
 # Imports all modules and defines system-wide settings
 
-{pkgs, inputs, ...}: {
+{pkgs, pkgs-unstable, inputs, ...}: {
   imports = [
     ./hardware-configuration.nix
     ./modules/core.nix
@@ -35,7 +35,6 @@
     zip
     unzip
     p7zip
-    unrar
 
     # System tools
     parted
@@ -44,17 +43,23 @@
     exfat
     udiskie
     udisks2
+    pasystray
 
     # Man pages
     man-pages
     man-db
+
+    firefox
+    flatpak
+
+    pkgs-unstable.opencode
   ];
 
   # Nix settings
   nix.settings = {
     experimental-features = ["nix-command" "flakes"];
     auto-optimise-store = true;
-    trusted-users = ["klingenberg"];
+    trusted-users = ["helario"];
   };
 
   # Garbage collection

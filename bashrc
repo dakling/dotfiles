@@ -28,6 +28,8 @@ alias ...='cd ../..'
 alias grep='grep --color=auto'
 alias mkdir='mkdir -pv'
 
+alias nixup='sudo nixos-rebuild --flake /home/helario/.dotfiles/nixos/'
+
 # Safety aliases
 alias rm='rm -i'
 alias mv='mv -i'

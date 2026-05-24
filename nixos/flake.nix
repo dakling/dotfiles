@@ -2,11 +2,11 @@
   description = "NixOS Configuration";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-24.11";
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -22,10 +22,10 @@
     };
 
     # Qtile extra widgets and utilities
-    qtile-extras = {
-      url = "github:elParaguayo/qtile-extras";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # qtile-extras = {
+    #   url = "github:elParaguayo/qtile-extras/main";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
   };
 
   outputs = {
@@ -41,6 +41,9 @@
     pkgs = import nixpkgs {
       inherit system;
       config.allowUnfree = true;
+      config.permittedInsecurePackages = [
+        "qtwebkit-5.212.0-alpha4"
+      ];
       overlays = [
         emacs-overlay.overlays.default
       ];
@@ -48,10 +51,13 @@
     pkgs-unstable = import nixpkgs-unstable {
       inherit system;
       config.allowUnfree = true;
+      config.permittedInsecurePackages = [
+        "qtwebkit-5.212.0-alpha4"
+      ];
     };
   in {
     nixosConfigurations = {
-      laptop = nixpkgs.lib.nixosSystem {
+      nixos-laptop = nixpkgs.lib.nixosSystem {
         inherit system pkgs;
         specialArgs = {
           inherit inputs pkgs-unstable;
@@ -63,7 +69,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.klingenberg = import ./home.nix;
+            home-manager.users.helario = import ./home.nix;
             home-manager.extraSpecialArgs = {inherit inputs pkgs-unstable;};
           }
         ];

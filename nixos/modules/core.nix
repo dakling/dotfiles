@@ -49,16 +49,16 @@
   console.keyMap = "de-latin1-nodeadkeys";
 
   # User account
-  users.users.klingenberg = {
+  users.users.helario = {
     isNormalUser = true;
-    description = "klingenberg";
+    description = "helario";
     extraGroups = ["networkmanager" "wheel" "docker" "audio" "video" "lp" "scanner"];
     shell = pkgs.bash;
     # Initial password - should be changed after first login
-    initialPassword = "changeme";
+    initialPassword = "ok";
   };
 
-
+  # Bash shell is enabled by default
 
   # Networking
   networking = {
@@ -81,13 +81,6 @@
 
     # NetworkManager is configured in services.nix
     networkmanager.enable = true;
-  };
-
-  # Sops-nix configuration for secrets
-  sops = {
-    defaultSopsFile = ./secrets/secrets.yaml;
-    defaultSopsFormat = "yaml";
-    age.keyFile = "/home/klingenberg/.config/sops/age/keys.txt";
   };
 
   # Security

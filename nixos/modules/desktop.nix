@@ -14,18 +14,11 @@
     };
 
     # Touchpad (managed by libinput in hardware.nix)
-    libinput.enable = true;
 
     # Qtile window manager
     windowManager.qtile = {
       enable = true;
       # Qtile with Python-based config
-    };
-
-    # XFCE desktop environment
-    desktopManager.xfce = {
-      enable = true;
-      noDesktop = false;
     };
 
     # Display manager - using startx (configured in xinit.nix)
@@ -49,6 +42,16 @@
       common = {
         default = ["gtk"];
       };
+    };
+  };
+
+  # Libinput for touchpad and input devices
+  services.libinput = {
+    enable = true;
+    touchpad = {
+      disableWhileTyping = true;
+      tapping = true;
+      naturalScrolling = true;
     };
   };
 
@@ -80,14 +83,6 @@
       # Serif
       liberation_ttf
       source-serif
-
-      # Special fonts
-      shantell-sans
-      nerdfonts
-      noto-fonts
-      noto-fonts-cjk
-      noto-fonts-emoji
-      noto-fonts-extra
     ];
 
     fontconfig = {
@@ -119,7 +114,6 @@
   environment.systemPackages = with pkgs; [
     # Themes
     gnome-themes-extra
-    adwaita-gtk-theme
     gtk-engine-murrine
     gtk_engines
 
@@ -131,9 +125,7 @@
 
     # Theme tools
     lxappearance
-    qt5ct
-    qt6ct
-
+    
     # Desktop utilities
     xdg-utils
     shared-mime-info
@@ -150,7 +142,6 @@
     # Screen utilities
     arandr
     autorandr
-    xrandr
 
     # Clipboard
     clipmenu
@@ -164,13 +155,6 @@
 
     # Misc X tools
     xdotool
-    xev
-    xprop
-    xwininfo
-    xkill
-
-    # i3lock for screen locking
-    i3lock
   ];
 
   # Environment variables for theming
@@ -202,30 +186,17 @@
     # No display manager - using startx
     autoLogin = {
       enable = false;
-      user = "klingenberg";
+      user = "helario";
     };
   };
 
   # Screensaver and screen locking
   services.xserver.xautolock = {
     enable = true;
-    enableNotifier = true;
     locker = "${pkgs.i3lock}/bin/i3lock -c 000000";
     nowlocker = "${pkgs.i3lock}/bin/i3lock -c 000000";
     time = 10; # minutes
-    notifier = "${pkgs.libnotify}/bin/notify-send 'Screen locking in 30 seconds'";
     notify = 30; # seconds before lock
-  };
-
-  # Redshift for night light
-  services.redshift = {
-    enable = true;
-    temperature = {
-      day = 6500;
-      night = 3500;
-    };
-    latitude = "52.52";
-    longitude = "13.405";
   };
 
   # Picom compositor (for transparency and shadows)

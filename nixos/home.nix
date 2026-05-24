@@ -1,10 +1,10 @@
 # Home Manager configuration
 # User environment, shell, editors, applications
 
-{config, pkgs, pkgs-unstable, inputs, ...}: {
+{config, pkgs, pkgs-unstable, inputs, lib, ...}: {
   # Home Manager settings
-  home.username = "klingenberg";
-  home.homeDirectory = "/home/klingenberg";
+  home.username = "helario";
+  home.homeDirectory = lib.mkDefault "/home/helario";
   home.stateVersion = "24.11";
 
   # Let Home Manager manage itself
@@ -61,14 +61,14 @@
       gp = "git push";
       gl = "git log --oneline --graph";
       gd = "git diff";
-      nrs = "sudo nixos-rebuild switch --flake /home/klingenberg/Documents/programming/nix/config";
-      nrb = "sudo nixos-rebuild build --flake /home/klingenberg/Documents/programming/nix/config";
-      hms = "home-manager switch --flake /home/klingenberg/Documents/programming/nix/config";
+      nrs = "sudo nixos-rebuild switch --flake /home/helario/.dotfiles/nixos";
+      nrb = "sudo nixos-rebuild build --flake /home/helario/.dotfiles/nixos";
+      hms = "home-manager switch --flake /home/helario/.dotfiles/nixos";
     };
     bashrcExtra = ''
       # Custom bashrc additions
-      export EDITOR=emacsclient
-      export VISUAL=emacsclient
+      export EDITOR=nvim
+      export VISUAL=nvim
 
       # History settings
       shopt -s histappend
@@ -81,8 +81,8 @@
       PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
     '';
     sessionVariables = {
-      EDITOR = "emacsclient";
-      VISUAL = "emacsclient";
+      EDITOR = "nvim";
+      VISUAL = "nvim";
     };
   };
 
@@ -111,13 +111,13 @@
   # Git configuration
   programs.git = {
     enable = true;
-    userName = "klingenberg";
-    userEmail = "klingenberg@example.com"; # Should be set from secrets
+    userName = "helario";
+    userEmail = "helario@example.com"; # Should be set from secrets
     extraConfig = {
       init.defaultBranch = "main";
       pull.rebase = false;
       push.autoSetupRemote = true;
-      core.editor = "emacsclient";
+      core.editor = "nvim";
       credential.helper = "store";
     };
     ignores = [
@@ -226,15 +226,6 @@
     };
   };
 
-  # Syncthing (user service)
-  services.syncthing = {
-    enable = true;
-    tray = {
-      enable = true;
-      command = "syncthingtray";
-    };
-  };
-
   # User packages - Development
   home.packages = with pkgs; [
     # Development tools
@@ -258,9 +249,7 @@
     nodePackages.yarn
     go
     rustup
-    cargo
     gcc
-    clang
     cmake
     gnumake
     pkg-config
@@ -271,19 +260,14 @@
 
     # Emacs dependencies
     ripgrep
-    fd
-    cmake # for vterm
+    fd # for vterm
 
     # Terminal utilities
-    alacritty
     kitty
     tmux
-    screen
 
     # File managers
     ranger
-    nnn
-    pcmanfm
     xfce.thunar
 
     # Archive tools
@@ -304,7 +288,6 @@
     wget
     curl
     aria2
-    transmission-gtk
 
     # Media
     mpv
@@ -341,7 +324,6 @@
     # Browsers
     firefox
     google-chrome
-    qutebrowser
 
     # Email
     thunderbird
@@ -355,11 +337,8 @@
 
     # Go games
     katago
-    sabaki
-    q5go
 
     # Office
-    goldendict
     calibre
 
     # Nix tools
@@ -380,208 +359,21 @@
     appimage-run
   ] ++ (with pkgs-unstable; [
     # Packages from unstable
-    # Add unstable packages here
+    freetube
   ]);
 
-  # Emacs configuration
-  programs.emacs = {
-    enable = true;
-    package = pkgs.emacs29-pgtk;
-    extraPackages = epkgs: with epkgs; [
-      # Essential packages for Doom Emacs
-      evil
-      evil-collection
-      evil-org
-      magit
-      which-key
-      ivy
-      counsel
-      swiper
-      projectile
-      direnv
-      vterm
-      all-the-icons
-      doom-modeline
-      doom-themes
-      treemacs
-      company
-      flycheck
-      lsp-mode
-      lsp-ui
-      lsp-ivy
-      nix-mode
-      haskell-mode
-      python-mode
-      julia-mode
-      rust-mode
-      go-mode
-      json-mode
-      yaml-mode
-      markdown-mode
-      org
-      org-roam
-      org-bullets
-      pdf-tools
-      telega
-      elfeed
-      mu4e
-    ];
-  };
-
-  # Doom Emacs setup
-  home.file.".doom.d" = {
-    source = ./doom.d;
-    recursive = true;
-  };
-
-  # Qtile configuration
-  home.file.".config/qtile/config.py".text = ''
-    # Qtile configuration
-    # This is a basic configuration - customize as needed
-
-    from libqtile.config import Key, Screen, Group, Drag, Click
-    from libqtile.command import lazy
-    from libqtile import layout, bar, widget, hook
-    from libqtile.utils import guess_terminal
-
-    mod = "mod4"
-    terminal = guess_terminal()
-
-    keys = [
-        # Switch between windows
-        Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),
-        Key([mod], "l", lazy.layout.right(), desc="Move focus to right"),
-        Key([mod], "j", lazy.layout.down(), desc="Move focus down"),
-        Key([mod], "k", lazy.layout.up(), desc="Move focus up"),
-        Key([mod], "space", lazy.layout.next(), desc="Move window focus to other window"),
-
-        # Move windows between left/right columns or move up/down in current stack.
-        Key([mod, "shift"], "h", lazy.layout.shuffle_left(), desc="Move window to the left"),
-        Key([mod, "shift"], "l", lazy.layout.shuffle_right(), desc="Move window to the right"),
-        Key([mod, "shift"], "j", lazy.layout.shuffle_down(), desc="Move window down"),
-        Key([mod, "shift"], "k", lazy.layout.shuffle_up(), desc="Move window up"),
-
-        # Grow windows
-        Key([mod, "control"], "h", lazy.layout.grow_left(), desc="Grow window to the left"),
-        Key([mod, "control"], "l", lazy.layout.grow_right(), desc="Grow window to the right"),
-        Key([mod, "control"], "j", lazy.layout.grow_down(), desc="Grow window down"),
-        Key([mod, "control"], "k", lazy.layout.grow_up(), desc="Grow window up"),
-        Key([mod], "n", lazy.layout.normalize(), desc="Reset all window sizes"),
-
-        # Toggle between split and unsplit sides of stack
-        Key([mod, "shift"], "Return", lazy.layout.toggle_split(), desc="Toggle between split and unsplit sides of stack"),
-        Key([mod], "Return", lazy.spawn(terminal), desc="Launch terminal"),
-
-        # Toggle between different layouts
-        Key([mod], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
-        Key([mod], "w", lazy.window.kill(), desc="Kill focused window"),
-
-        Key([mod, "control"], "r", lazy.reload_config(), desc="Reload the config"),
-        Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
-        Key([mod], "r", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
-
-        # Rofi
-        Key([mod], "p", lazy.spawn("rofi -show drun"), desc="Launch rofi"),
-        Key([mod, "shift"], "p", lazy.spawn("rofi -show run"), desc="Launch rofi run"),
-
-        # Multimedia keys
-        Key([], "XF86AudioRaiseVolume", lazy.spawn("pamixer -i 5")),
-        Key([], "XF86AudioLowerVolume", lazy.spawn("pamixer -d 5")),
-        Key([], "XF86AudioMute", lazy.spawn("pamixer -t")),
-        Key([], "XF86MonBrightnessUp", lazy.spawn("brightnessctl set +5%")),
-        Key([], "XF86MonBrightnessDown", lazy.spawn("brightnessctl set 5%-")),
-
-        # Screenshot
-        Key([], "Print", lazy.spawn("flameshot gui")),
-    ]
-
-    groups = [Group(i) for i in "123456789"]
-
-    for i in groups:
-        keys.extend([
-            Key([mod], i.name, lazy.group[i.name].toscreen(), desc="Switch to group {}".format(i.name)),
-            Key([mod, "shift"], i.name, lazy.window.togroup(i.name), desc="Move focused window to group {}".format(i.name)),
-        ])
-
-    layouts = [
-        layout.Max(),
-        layout.Stack(num_stacks=2),
-        layout.MonadTall(),
-        layout.MonadWide(),
-        layout.RatioTile(),
-        layout.Tile(),
-        layout.TreeTab(),
-        layout.VerticalTile(),
-        layout.Zoomy(),
-    ]
-
-    widget_defaults = dict(
-        font="Fira Code",
-        fontsize=12,
-        padding=3,
-    )
-    extension_defaults = widget_defaults.copy()
-
-    screens = [
-        Screen(
-            bottom=bar.Bar(
-                [
-                    widget.CurrentLayout(),
-                    widget.GroupBox(),
-                    widget.Prompt(),
-                    widget.WindowName(),
-                    widget.Chord(
-                        chords_colors={
-                            "launch": ("#ff0000", "#ffffff"),
-                        },
-                        name_transform=lambda name: name.lower(),
-                    ),
-                    widget.TextBox("default config", name="default"),
-                    widget.TextBox("Press &lt;M-r&gt; to spawn", foreground="#d75f5f"),
-                    widget.NmCli(),
-                    widget.PulseVolume(),
-                    widget.Clock(format="%Y-%m-%d %a %I:%M %p"),
-                    widget.QuickExit(),
-                ],
-                24,
-            ),
-        ),
-    ]
-
-    # Drag floating layouts.
-    mouse = [
-        Drag([mod], "Button1", lazy.window.set_position_floating(), start=lazy.window.get_position()),
-        Drag([mod], "Button3", lazy.window.set_size_floating(), start=lazy.window.get_size()),
-        Click([mod], "Button2", lazy.window.bring_to_front()),
-    ]
-
-    dgroups_key_binder = None
-    dgroups_app_rules = []
-    follow_mouse_focus = True
-    bring_front_click = False
-    cursor_warp = False
-    floating_layout = layout.Floating(
-        float_rules=[
-            *layout.Floating.default_float_rules,
-            # Custom float rules
-        ]
-    )
-    auto_fullscreen = True
-    focus_on_window_activation = "smart"
-    reconfigure_screens = True
-    auto_minimize = True
-    wl_input_rules = None
-  '';
+  # Qtile configuration (inside flake to avoid purity boundary issues)
+  home.file.".config/qtile/config.py".source = ./qtile_config.py;
 
   # Environment variables
   home.sessionVariables = {
-    EDITOR = "emacsclient";
-    VISUAL = "emacsclient";
+    EDITOR = "nvim";
+    VISUAL = "nvim";
     BROWSER = "firefox";
     TERMINAL = "alacritty";
     QT_QPA_PLATFORMTHEME = "gtk2";
     GTK_THEME = "Adwaita:dark";
-    NIXOS_CONFIG = "/home/klingenberg/Documents/programming/nix/config";
+    NIXOS_CONFIG = "/home/helario/.dotfiles/nixos";
   };
 
   # Session path additions
@@ -622,7 +414,7 @@
       enable = true;
       enableBashIntegration = true;
       git = true;
-      icons = true;
+      icons = "auto";
     };
 
     # Zoxide (cd replacement)

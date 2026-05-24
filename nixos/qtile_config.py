@@ -212,9 +212,9 @@ keys = [
 
     Key([], "XF86MonBrightnessUp", lazy.spawn("/usr/bin/brightness_up.sh"), desc="turn brightness up"),
     Key([], "XF86MonBrightnessDown", lazy.spawn("/usr/bin/brightness_down.sh"), desc="turn brightness down"),
-    Key([], "XF86AudioRaiseVolume", lazy.spawn("/usr/bin/volume-up.sh"), desc="turn volume up"),
-    Key([], "XF86AudioLowerVolume", lazy.spawn("/usr/bin/volume-down.sh"), desc="turn volume down"),
-    Key([], "XF86AudioMute", lazy.spawn("/usr/bin/volume-mute.sh"), desc="toggle volume mute"),
+    Key([], "XF86AudioRaiseVolume", lazy.spawn("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"), desc="turn volume up"),
+    Key([], "XF86AudioLowerVolume", lazy.spawn("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"), desc="turn volume down"),
+    Key([], "XF86AudioMute", lazy.spawn("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), desc="toggle volume mute"),
     Key([], "XF86TouchpadToggle", lazy.spawn("/usr/bin/toggle_touchpad.sh"), desc="toggle touchpad"),
     Key(["control"], "F9", lazy.spawn("/usr/bin/toggle_touchpad.sh"), desc="toggle touchpad"),
     Key(["shift"], "F9", lazy.spawn("/usr/bin/toggle_touchpad_tap_to_click.sh"), desc="toggle touchpad tap tp click (left button)"),

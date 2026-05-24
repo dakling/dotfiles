@@ -32,45 +32,6 @@
     alsa.support32Bit = true;
     pulse.enable = true;
     jack.enable = true;
-
-    # Low-latency configuration for audio production
-    config = {
-      client = {
-        "context.properties" = {
-          "core.name" = "pipewire-0";
-        };
-      };
-      client-rt = {
-        "context.properties" = {
-          "core.name" = "pipewire-0";
-          "core.daemon" = false;
-        };
-      };
-      jack = {
-        "context.properties" = {
-          "jack.default.server" = "pipewire-0";
-        };
-      };
-      pipewire = {
-        "context.properties" = {
-          "link.max-buffers" = 64;
-          "log.level" = 2;
-          "default.clock.rate" = 48000;
-          "default.clock.quantum" = 1024;
-          "default.clock.min-quantum" = 32;
-          "default.clock.max-quantum" = 8192;
-          "default.video.width" = 640;
-          "default.video.height" = 480;
-          "default.video.rate.num" = 25;
-          "default.video.rate.denom" = 1;
-        };
-      };
-      pipewire-pulse = {
-        "context.properties" = {
-          "log.level" = 2;
-        };
-      };
-    };
   };
 
   # Bluetooth
@@ -91,7 +52,7 @@
     enable = true;
     touchpad = {
       tapping = true;
-      tappingButtonMap = "lrm";
+      tappingButtonMap = "lrm"; # 1, 2, 3 finger tap
       naturalScrolling = true;
       disableWhileTyping = true;
       clickMethod = "clickfinger";
@@ -108,9 +69,6 @@
   services.printing = {
     enable = true;
     drivers = with pkgs; [
-      # Brother printer drivers (generic)
-      brgenml1lpr
-      brgenml1cups
       # hplip for HP printers if needed
       hplip
     ];
@@ -126,11 +84,6 @@
   # Scanning
   hardware.sane = {
     enable = true;
-    extraBackends = with pkgs; [
-      # Brother scanner
-      brscan4
-      hplipWithPlugin
-    ];
     netConf = ''
       # Network scanner configuration
     '';
@@ -146,8 +99,6 @@
   # Firmware updates
   services.fwupd.enable = true;
 
-  # Hardware monitoring
-
 
 
   # PCMCIA (for older hardware)
@@ -159,11 +110,7 @@
     acpi
     powertop
     cpupower-gui
-    glxinfo
-    vulkan-tools
-    clinfo # OpenCL info
-    libva-utils # VA-API info
-
+    
     # Audio tools
     pavucontrol
     pamixer

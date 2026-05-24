@@ -36,7 +36,7 @@
     flameshot &
 
     # Start redshift
-    redshift-gtk &
+    redshift-gtk -l 52.52:13.405 &
 
     # Start polkit agent
     ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1 &

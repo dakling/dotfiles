@@ -1,7 +1,7 @@
 # System services
 # NetworkManager, Docker, CUPS, Syncthing, custom services
 
-{pkgs, pkgs-unstable, ...}: {
+{pkgs, ...}: {
   # NetworkManager
   networking.networkmanager = {
     enable = true;
@@ -14,10 +14,6 @@
     enable = true;
     dnssec = "allow-downgrade";
     llmnr = "true";
-    extraConfig = ''
-      DNS=1.1.1.1 1.0.0.1 2606:4700:4700::1111 2606:4700:4700::1001
-      FallbackDNS=9.9.9.9 2620:fe::fe
-    '';
   };
 
   # SSH
@@ -29,23 +25,6 @@
     };
   };
 
-  # Docker
-  virtualisation.docker = {
-    enable = true;
-    enableOnBoot = true;
-    autoPrune = {
-      enable = true;
-      dates = "weekly";
-    };
-    # Use overlay2 driver
-    storageDriver = "overlay2";
-    daemon.settings = {
-      log-opts = {
-        max-size = "10m";
-        max-file = "3";
-      };
-    };
-  };
 
 
 
@@ -58,17 +37,6 @@
       enable = true;
       userServices = true;
     };
-  };
-
-  # Syncthing - per-user service configuration in home.nix
-  services.syncthing = {
-    enable = true;
-    openDefaultPorts = true;
-    configDir = "/home/klingenberg/.config/syncthing";
-    dataDir = "/home/klingenberg/Sync";
-    user = "klingenberg";
-    group = "users";
-    guiAddress = "127.0.0.1:8384";
   };
 
   # Cronie - system cron
@@ -92,24 +60,7 @@
     # };
   };
 
-  # LiteLLM Gateway custom service
-  systemd.services.litellm-gateway = {
-    description = "LiteLLM Gateway";
-    wantedBy = ["multi-user.target"];
-    after = ["network-online.target"];
-    wants = ["network-online.target"];
-    serviceConfig = {
-      Type = "simple";
-      User = "klingenberg";
-      Group = "users";
-      WorkingDirectory = "/home/klingenberg/.local/share/litellm";
-      ExecStart = "${pkgs.litellm}/bin/litellm --config /home/klingenberg/.config/litellm/config.yaml";
-      Restart = "on-failure";
-      RestartSec = "5s";
-      Environment = "PATH=${pkgs.litellm}/bin";
-    };
-    path = [pkgs.litellm];
-  };
+
 
   # Timesyncd (NTP)
   services.timesyncd = {
@@ -148,13 +99,6 @@
     lidSwitch = "suspend";
     lidSwitchDocked = "ignore";
     lidSwitchExternalPower = "suspend";
-    extraConfig = ''
-      HandlePowerKey=suspend
-      HandleSuspendKey=suspend
-      HandleHibernateKey=hibernate
-      IdleAction=suspend
-      IdleActionSec=30min
-    '';
   };
 
 
@@ -166,18 +110,6 @@
     networkmanagerapplet
     wirelesstools
     iw
-
-    # Docker tools
-    docker
-    docker-compose
-    lazydocker
-
-    # Syncthing
-    syncthing
-    syncthingtray
-
-    # LiteLLM
-    litellm
 
     # System monitoring
     htop

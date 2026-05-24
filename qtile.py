@@ -30,6 +30,7 @@ from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
 from libqtile import extension
 from libqtile.log_utils import logger
+# import pyautogui
 import subprocess
 
 try:
@@ -42,7 +43,8 @@ except ImportError:
 
 mod = "mod4"
 alt = "mod1"
-terminal = guess_terminal()
+# terminal = guess_terminal()
+terminal = "kitty"
 browser = "firefox"
 
 bg_color = "#222222"
@@ -59,6 +61,56 @@ wallpaper_path = wallpaper_path_external
 def toggle_touchpad(qtile):
     subprocess.run("toggle_touchpad.sh")
 
+# @lazy.function
+# def left_click(qtile):
+#     pyautogui.keyUp('alt')
+#     pyautogui.keyUp('win')
+#     pyautogui.click()
+
+def change_focus_emacs(qtile, direction):
+    w = qtile.current_screen.group.current_window
+    win_class = w.get_wm_class()
+    direction["cmd"]()
+
+@lazy.function
+def left_emacs(qtile):
+    try:
+        change_focus_emacs(qtile, {"key": 'f12',
+                                   "cmd": qtile.current_group.layout.cmd_left,
+                                })
+    except AttributeError:
+        change_focus_emacs(qtile, {"key": 'f12',
+                                   "cmd": qtile.current_group.layout.cmd_previous,
+                                   })
+
+@lazy.function
+def right_emacs(qtile):
+    try:
+        change_focus_emacs(qtile, {"key": 'f11',
+                                   "cmd": qtile.current_group.layout.cmd_right,
+                                })
+    except AttributeError:
+        change_focus_emacs(qtile, {"key": 'f11',
+                                   "cmd": qtile.current_group.layout.cmd_next}
+                                   )
+
+@lazy.function
+def up_emacs(qtile):
+    try:
+        change_focus_emacs(qtile, {"key": 'f9',
+                                   "cmd": qtile.current_group.layout.cmd_up,
+                                })
+    except AttributeError:
+        change_focus_emacs(qtile, {"key": 'f9'})
+
+@lazy.function
+def down_emacs(qtile):
+    try:
+        change_focus_emacs(qtile, {"key": 'f10',
+                                   "cmd": qtile.current_group.layout.cmd_down,
+                                })
+    except AttributeError:
+        change_focus_emacs(qtile, {"key": 'f10'})
 
 @lazy.function
 def to_other_screen(qtile):
@@ -201,19 +253,19 @@ keys = [
     Key(
         [],
         "XF86AudioRaiseVolume",
-        lazy.spawn("/usr/bin/volume-up.sh"),
+        lazy.spawn("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"),
         desc="turn volume up",
     ),
     Key(
         [],
         "XF86AudioLowerVolume",
-        lazy.spawn("/usr/bin/volume-down.sh"),
+        lazy.spawn("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),
         desc="turn volume down",
     ),
     Key(
         [],
         "XF86AudioMute",
-        lazy.spawn("/usr/bin/volume-mute.sh"),
+        lazy.spawn("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),
         desc="toggle volume mute",
     ),
     Key(
@@ -252,6 +304,24 @@ keys = [
         ],
         mode="Top",
     ),
+
+    KeyChord([mod, alt], "g", [
+        Key([], "w", lazy.spawn("xdotool mousemove " + str(go_frame[0][0]) + " " + str(go_frame[1][0]))),
+        Key([], "e", lazy.spawn("xdotool mousemove " + str(go_frame[0][1]) + " " + str(go_frame[1][0]))),
+        Key([], "r", lazy.spawn("xdotool mousemove " + str(go_frame[0][2]) + " " + str(go_frame[1][0]))),
+        Key([], "s", lazy.spawn("xdotool mousemove " + str(go_frame[0][0]) + " " + str(go_frame[1][1]))),
+        Key([], "d", lazy.spawn("xdotool mousemove " + str(go_frame[0][1]) + " " + str(go_frame[1][1]))),
+        Key([], "f", lazy.spawn("xdotool mousemove " + str(go_frame[0][2]) + " " + str(go_frame[1][1]))),
+        Key([], "x", lazy.spawn("xdotool mousemove " + str(go_frame[0][0]) + " " + str(go_frame[1][2]))),
+        Key([], "c", lazy.spawn("xdotool mousemove " + str(go_frame[0][1]) + " " + str(go_frame[1][2]))),
+        Key([], "v", lazy.spawn("xdotool mousemove " + str(go_frame[0][2]) + " " + str(go_frame[1][2]))),
+
+        Key([], "h", lazy.spawn("xdotool mousemove_relative -- " + str(-go_delta_x) + " " + str(0))),
+        Key([], "j", lazy.spawn("xdotool mousemove_relative -- " + str(0) + " " + str(go_delta_y))),
+        Key([], "k", lazy.spawn("xdotool mousemove_relative -- " + str(0) + " " + str(-go_delta_y))),
+        Key([], "l", lazy.spawn("xdotool mousemove_relative -- " + str(go_delta_x) + " " + str(0))),
+    ],
+             mode="Go")
 ]
 
 groups = [Group(i) for i in "123456789"]
@@ -345,8 +415,8 @@ screens = [
             # border_width=[2, 0, 2, 0],  # Draw top and bottom borders
             # border_color=["ff00ff", "000000", "ff00ff", "000000"]  # Borders are magenta
         ),
-        wallpaper=wallpaper_path,
-        wallpaper_mode="fill",
+        # wallpaper=wallpaper_path,
+        # wallpaper_mode="fill",
     ),
     Screen(
         top=bar.Bar(

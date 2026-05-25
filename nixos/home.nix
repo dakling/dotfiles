@@ -77,6 +77,11 @@
       HISTCONTROL=ignoreboth
       HISTIGNORE='ls:bg:fg:history'
 
+      # Auto-start tmux in kitty
+      if [ -n "$KITTY_WINDOW_ID" ] && [ -z "$TMUX" ] && command -v tmux > /dev/null 2>&1; then
+        exec tmux new-session -A -s main
+      fi
+
       # Prompt
       PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
     '';
@@ -146,8 +151,52 @@
     settings = {
       font_family = "Fira Code";
       font_size = "11.0";
+      bold_font = "auto";
+      italic_font = "auto";
       background_opacity = "0.95";
-      window_padding_width = "5";
+      cursor_shape = "beam";
+      cursor_blink = true;
+      cursor_blink_interval = 500;
+      window_padding_width = 5;
+      window_padding_height = 5;
+      startup_mode = "windowed";
+      window_size_width = 800;
+      window_size_height = 600;
+      tab_bar_style = "powerline";
+      tab_bar_edge = "bottom";
+      tab_flicker = 0;
+      tab_activity = "none";
+      scrollback_lines = 10000;
+      scrollback_pager = "less";
+      foreground = "#abb2bf";
+      background = "#282c34";
+      selection_foreground = "#282c34";
+      selection_background = "#abb2bf";
+      url_color = "#61afef";
+      color0 = "#282c34";
+      color1 = "#e06c75";
+      color2 = "#98c379";
+      color3 = "#e5c07b";
+      color4 = "#61afef";
+      color5 = "#c678dd";
+      color6 = "#56b6c2";
+      color7 = "#abb2bf";
+      color8 = "#5c6370";
+      color9 = "#e06c75";
+      color10 = "#98c379";
+      color11 = "#e5c07b";
+      color12 = "#61afef";
+      color13 = "#c678dd";
+      color14 = "#56b6c2";
+      color15 = "#abb2bf";
+      mouse_hide_wait = 300;
+      double_click_interval = 300;
+      triple_click_interval = 300;
+      enable_ligatures = true;
+      bell_on_urgent = false;
+      remember_window_size = true;
+      confirm_os_window_close = 0;
+      allow_remote_control = true;
       shell = "/run/current-system/sw/bin/bash";
     };
   };

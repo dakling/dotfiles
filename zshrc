@@ -108,6 +108,32 @@ alias ...="cd ../.."
 alias ....="cd ../../.."
 alias ee="emacs -nw --file "
 
+lf() {
+  local launch_dir last_dir_file stay_launch_file
+
+  launch_dir="$PWD"
+  last_dir_file="$(mktemp -t lf-last-dir.XXXXXX)" || return
+  stay_launch_file="$(mktemp -t lf-stay-launch.XXXXXX)" || {
+    rm -f "$last_dir_file"
+    return
+  }
+  rm -f "$stay_launch_file"
+
+  LF_STAY_LAUNCH_FILE="$stay_launch_file" command lf -last-dir-path "$last_dir_file" "$@"
+  local lf_status=$?
+
+  if [[ -e "$stay_launch_file" ]]; then
+    cd "$launch_dir"
+  elif [[ -s "$last_dir_file" ]]; then
+    local last_dir
+    last_dir="$(<"$last_dir_file")"
+    [[ -d "$last_dir" ]] && cd "$last_dir"
+  fi
+
+  rm -f "$last_dir_file" "$stay_launch_file"
+  return "$lf_status"
+}
+
 # Theming section  
 autoload -U compinit colors zcalc
 compinit -d

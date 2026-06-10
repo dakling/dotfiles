@@ -4,6 +4,10 @@
 mkdir -p ~/.config/nvim
 ln -sf $(pwd)/nvim/init.vim ~/.config/nvim/init.vim
 
+mkdir -p ~/.config/lf
+ln -sf ~/.dotfiles/lf/lfrc ~/.config/lf/lfrc
+ln -sf ~/.dotfiles/lf/preview ~/.config/lf/preview
+
 #mkdir -p ~/.config/rofi/
 #ln -sf $(pwd)/rofi.rasi ~/.config/rofi/config.rasi
 

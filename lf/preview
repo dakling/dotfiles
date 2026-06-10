@@ -1,0 +1,54 @@
+#!/bin/sh
+
+path="$1"
+width="$2"
+height="$3"
+
+if [ -d "$path" ]; then
+    if command -v eza >/dev/null 2>&1; then
+        eza --color=always --group-directories-first --icons=auto "$path"
+    elif command -v exa >/dev/null 2>&1; then
+        exa --color=always --group-directories-first "$path"
+    else
+        ls -la "$path"
+    fi
+    exit 0
+fi
+
+mime="$(file --mime-type -Lb "$path")"
+
+case "$mime" in
+    text/*|application/json|application/xml|application/x-shellscript)
+        if command -v bat >/dev/null 2>&1; then
+            bat --color=always --style=numbers --line-range ":$height" "$path"
+        else
+            sed -n "1,${height}p" "$path"
+        fi
+        ;;
+    application/pdf)
+        if command -v pdftotext >/dev/null 2>&1; then
+            pdftotext "$path" - | sed -n "1,${height}p"
+        else
+            file "$path"
+        fi
+        ;;
+    image/*)
+        if command -v chafa >/dev/null 2>&1; then
+            chafa --size "${width}x${height}" "$path"
+        elif command -v viu >/dev/null 2>&1; then
+            viu -w "$width" "$path"
+        else
+            file "$path"
+        fi
+        ;;
+    video/*|audio/*)
+        if command -v mediainfo >/dev/null 2>&1; then
+            mediainfo "$path"
+        else
+            file "$path"
+        fi
+        ;;
+    *)
+        file "$path"
+        ;;
+esac

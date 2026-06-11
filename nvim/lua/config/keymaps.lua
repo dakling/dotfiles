@@ -153,33 +153,7 @@ map("n", "<leader>mv", "<cmd>ObsidianSearch<cr>", { desc = "Search vault" })
 map("n", "<leader>mt", "<cmd>ObsidianTags<cr>", { desc = "Find by tag" })
 
 -- SPC m d = daily append (like your my/obsidian-daily-append)
-map("n", "<leader>md", function()
-	local thought = vim.fn.input("Daily note: ")
-	if thought == "" then
-		return
-	end
-	local date = os.date("%Y-%m-%d")
-	local time = os.date("%H:%M")
-	local vault = vim.fn.expand("~/obsidian-vault")
-	local daily_dir = vault .. "/_daily"
-	vim.fn.mkdir(daily_dir, "p")
-	local filepath = daily_dir .. "/" .. date .. ".md"
-	local entry = string.format("- %s %s", time, thought)
-
-	-- Check if file exists
-	local exists = vim.fn.filereadable(filepath) == 1
-	-- Open or create the file
-	vim.cmd("edit " .. vim.fn.fnameescape(filepath))
-	if not exists then
-		vim.api.nvim_buf_set_lines(0, 0, 0, false, { "# " .. date, "", entry, "" })
-	else
-		-- Append to end of file
-		vim.api.nvim_buf_set_lines(0, -1, -1, false, { entry, "" })
-	end
-	vim.cmd("write")
-	vim.cmd("bdelete")
-	vim.notify(string.format("Added to %s: %s %s", date, time, thought), vim.log.levels.INFO)
-end, { desc = "Daily append" })
+map("n", "<leader>md", "<cmd>ObsidianToday<cr>", { desc = "Daily append" })
 
 -- SPC m D = daily note (like obsidian-daily-note)
 map("n", "<leader>mD", "<cmd>ObsidianToday<cr>", { desc = "Daily note" })

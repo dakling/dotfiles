@@ -1,5 +1,5 @@
 # Core behavior
-set hidden
+set nohidden
 set icons
 set drawbox
 set dirpreviews
@@ -11,6 +11,7 @@ set sortby natural
 set info size:time
 set ifs "\n"
 set scrolloff 8
+set findlen 0
 
 # Preview pane
 set previewer ~/.config/lf/preview
@@ -47,15 +48,33 @@ map n search-next
 map N search-prev
 map f find
 map F find-back
-map <c-f> filter
+map <a-f> filter
+map zf filter
 
 # fzf jump, if fzf is installed
 cmd fzf_jump ${{
     command -v fzf >/dev/null 2>&1 || exit 0
+    cd "$(pwd)" || exit 1
     target="$(find . -mindepth 1 2>/dev/null | fzf --height 40% --reverse)"
-    [ -n "$target" ] && lf -remote "send $id select \"$target\""
+    if [ -n "$target" ]; then
+        lf -remote "send $id select \"$target\""
+        lf -remote "send $id open"
+    fi
 }}
+map <c-F> fzf_jump
 map <c-p> fzf_jump
+map zF fzf_jump
+# Fuzzy select only among files and folders in the current directory.
+cmd fzf_here ${{
+    command -v fzf >/dev/null 2>&1 || exit 0
+    cd "$(pwd)" || exit 1
+    target="$(find . -mindepth 1 -maxdepth 1 2>/dev/null | sed 's#^\./##' | fzf --height 40% --reverse)"
+    if [ -n "$target" ]; then
+        lf -remote "send $id select \"$target\""
+        lf -remote "send $id open"
+    fi
+}}
+map <c-f> fzf_here
 
 # Open with the platform handler unless it looks like a text file.
 cmd open ${{

@@ -1,0 +1,111 @@
+#!/bin/sh
+# Pick a range of lines from the originating tmux pane's scrollback and copy
+# them to the system clipboard + a tmux paste buffer.
+#
+# Prompt-agnostic: no PS1 / OSC 133 assumptions, so this works inside SSH too.
+# Pick the start line with Enter for "from here to the bottom", or Tab a second
+# line to bracket an explicit range.
+
+set -eu
+
+usage() {
+  cat <<'EOF'
+Usage: tmux-copy-output <pane-id>
+
+Intended to be invoked from a tmux binding inside `display-popup -E`, e.g.:
+  bind C-y display-popup -E -w 90% -h 80% \
+      "~/.dotfiles/binCustom/tmux-copy-output '#{pane_id}'"
+EOF
+}
+
+if [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ]; then
+  usage
+  exit 0
+fi
+
+if [ $# -lt 1 ]; then
+  usage >&2
+  exit 1
+fi
+
+SRC_PANE="$1"
+LOG="${TMPDIR:-/tmp}/tmux-copy-output.log"
+
+# Log stderr for post-mortem if the popup vanishes.
+exec 2>>"$LOG"
+echo "--- $(date) pane=$SRC_PANE ---" >&2
+
+if ! command -v fzf >/dev/null 2>&1; then
+  echo "fzf is required but not installed." >&2
+  tmux display-message "fzf not installed (see $LOG)"
+  exit 1
+fi
+
+clip_cmd() {
+  case "$(uname -s)" in
+    Darwin) echo "pbcopy" ;;
+    Linux)
+      if   command -v wl-copy >/dev/null 2>&1; then echo "wl-copy"
+      elif command -v xclip   >/dev/null 2>&1; then echo "xclip -selection clipboard"
+      elif command -v xsel    >/dev/null 2>&1; then echo "xsel --clipboard --input"
+      else echo ""
+      fi
+      ;;
+    *) echo "" ;;
+  esac
+}
+
+CLIP=$(clip_cmd)
+
+CAPTURE=$(tmux capture-pane -t "$SRC_PANE" -pJS -)
+TOTAL=$(printf '%s\n' "$CAPTURE" | wc -l | tr -d ' ')
+echo "captured lines=$TOTAL" >&2
+
+if [ "$TOTAL" -eq 0 ] || [ -z "$CAPTURE" ]; then
+  tmux display-message "tmux-copy-output: pane is empty"
+  exit 0
+fi
+
+# Show every non-empty pane line numbered, newest at the top. User picks the
+# start line (Enter copies from there to the bottom) or Tab-selects an
+# additional line to bracket a range.
+selection=$(printf '%s\n' "$CAPTURE" \
+  | awk 'NF { printf "%6d  %s\n", NR, $0 }' \
+  | fzf --multi \
+        --tac \
+        --no-sort \
+        --layout=reverse \
+        --prompt='line> ' \
+        --header='enter=from line to bottom   tab+enter=range   esc=cancel' \
+        --preview-window=hidden \
+  || true)
+
+if [ -z "$selection" ]; then
+  echo "no selection" >&2
+  exit 0
+fi
+
+# Parse picked line numbers (first whitespace-separated field).
+LINES=$(printf '%s\n' "$selection" | awk '{print $1}' | sort -n | uniq)
+COUNT=$(printf '%s\n' "$LINES" | wc -l | tr -d ' ')
+START=$(printf '%s\n' "$LINES" | head -1)
+
+if [ "$COUNT" -ge 2 ]; then
+  END=$(printf '%s\n' "$LINES" | tail -1)
+else
+  END="$TOTAL"
+fi
+
+echo "range=$START..$END" >&2
+
+OUTPUT=$(printf '%s\n' "$CAPTURE" | sed -n "${START},${END}p")
+
+printf '%s' "$OUTPUT" | tmux load-buffer -
+
+if [ -n "$CLIP" ]; then
+  printf '%s' "$OUTPUT" | sh -c "$CLIP"
+  LC=$(printf '%s\n' "$OUTPUT" | wc -l | tr -d ' ')
+  tmux display-message "copied $LC line(s) to clipboard"
+else
+  tmux display-message "copied to tmux buffer (no clipboard tool found)"
+fi

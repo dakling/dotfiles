@@ -1,0 +1,127 @@
+#!/bin/sh
+# Copy the previous prompt, command, and output using tmux OSC 133 markers.
+# Falls back to the interactive scrollback picker when the active pane does not
+# expose prompt markers, for example in Codex, editors, or old shell panes.
+
+set -eu
+
+usage() {
+  cat <<'EOF'
+Usage: tmux-copy-last-output-osc <pane-id>
+
+Intended to be invoked from tmux:
+  bind Y run-shell -b "~/.dotfiles/binCustom/tmux-copy-last-output-osc '#{pane_id}'"
+EOF
+}
+
+if [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ]; then
+  usage
+  exit 0
+fi
+
+if [ $# -lt 1 ]; then
+  usage >&2
+  exit 1
+fi
+
+SRC_PANE="$1"
+TMUX_BIN="${TMUX_BIN:-}"
+if [ -z "$TMUX_BIN" ]; then
+  if [ -x /opt/homebrew/bin/tmux ]; then
+    TMUX_BIN=/opt/homebrew/bin/tmux
+  else
+    TMUX_BIN=tmux
+  fi
+fi
+
+tmp_dir="${TMPDIR:-/tmp}"
+out_file=$(mktemp "$tmp_dir/tmux-copy-last-output.XXXXXX")
+old_file=$(mktemp "$tmp_dir/tmux-copy-last-output-old.XXXXXX")
+had_old=0
+
+cleanup() {
+  rm -f "$out_file" "$old_file"
+}
+trap cleanup EXIT HUP INT TERM
+
+if "$TMUX_BIN" save-buffer "$old_file" 2>/dev/null; then
+  had_old=1
+fi
+
+clip_cmd() {
+  if [ -n "${TMUX_COPY_OSC_CLIP:-}" ]; then
+    echo "$TMUX_COPY_OSC_CLIP"
+    return
+  fi
+
+  case "$(uname -s)" in
+    Darwin) echo "pbcopy" ;;
+    Linux)
+      if command -v wl-copy >/dev/null 2>&1; then echo "wl-copy"
+      elif command -v xclip >/dev/null 2>&1; then echo "xclip -selection clipboard"
+      elif command -v xsel >/dev/null 2>&1; then echo "xsel --clipboard --input"
+      else echo ""
+      fi
+      ;;
+    *) echo "" ;;
+  esac
+}
+
+restore_old_buffer() {
+  if [ "$had_old" -eq 1 ]; then
+    "$TMUX_BIN" load-buffer "$old_file" 2>/dev/null || true
+  else
+    "$TMUX_BIN" delete-buffer 2>/dev/null || true
+  fi
+}
+
+fallback_picker() {
+  restore_old_buffer
+  "$TMUX_BIN" display-message "No OSC 133 command block found; opening picker"
+
+  if [ "${TMUX_COPY_OSC_NO_POPUP:-}" = "1" ]; then
+    exit 2
+  fi
+
+  pane_path=$("$TMUX_BIN" display-message -p -t "$SRC_PANE" '#{pane_current_path}' 2>/dev/null || printf '%s' "$HOME")
+  exec "$TMUX_BIN" display-popup -E -w 90% -h 80% -d "$pane_path" "~/.dotfiles/binCustom/tmux-copy-output '$SRC_PANE'"
+}
+
+pane_cmd=$("$TMUX_BIN" display-message -p -t "$SRC_PANE" '#{pane_current_command}' 2>/dev/null || printf unknown)
+case "$pane_cmd" in
+  zsh|bash|sh|fish|nu|pwsh|ssh|mosh-client)
+    ;;
+  *)
+    fallback_picker
+    ;;
+esac
+
+"$TMUX_BIN" copy-mode -t "$SRC_PANE"
+"$TMUX_BIN" send-keys -t "$SRC_PANE" -X previous-prompt
+"$TMUX_BIN" send-keys -t "$SRC_PANE" -X begin-selection
+"$TMUX_BIN" send-keys -t "$SRC_PANE" -X next-prompt
+"$TMUX_BIN" send-keys -t "$SRC_PANE" -X cursor-left
+"$TMUX_BIN" send-keys -t "$SRC_PANE" -X copy-selection-and-cancel
+
+if ! "$TMUX_BIN" save-buffer "$out_file" 2>/dev/null; then
+  fallback_picker
+fi
+
+if [ ! -s "$out_file" ] || ! LC_ALL=C tr -d '[:space:]' < "$out_file" | grep -q .; then
+  fallback_picker
+fi
+
+clip=$(clip_cmd)
+"$TMUX_BIN" load-buffer "$out_file"
+line_count=$(awk 'END { print NR }' "$out_file")
+
+if [ -n "$clip" ]; then
+  if sh -c "$clip" < "$out_file"; then
+    "$TMUX_BIN" display-message "copied $line_count line(s) to clipboard"
+  else
+    "$TMUX_BIN" display-message "copied $line_count line(s) to tmux buffer; clipboard command failed"
+    exit 1
+  fi
+else
+  "$TMUX_BIN" display-message "copied to tmux buffer (no clipboard tool found)"
+fi

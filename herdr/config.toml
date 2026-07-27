@@ -1,0 +1,92 @@
+[theme]
+# Match the dark, cool-toned Material Palenight/Doom visual language used by
+# both the tmux chrome and Neovim.  Tokyo Night is the closest built-in base;
+# these overrides carry over the established panel and focus colours.
+name = "tokyo-night"
+
+[theme.custom]
+panel_bg = "#292d3e"
+accent = "#82aaff"
+
+[terminal]
+# New panes, tabs, and workspaces stay in the current project by default.
+new_cwd = "follow"
+
+[ui]
+agent_panel_sort = "spaces"
+# Replace the tmux pane-border command/path/status script with Herdr's native
+# detected agent labels.
+show_agent_labels_on_pane_borders = true
+
+[ui.toast]
+# Replace tmux bell forwarding with native OS attention when background agents
+# complete work or need input.
+delivery = "system"
+delay_seconds = 1
+
+[keys]
+# Preserve the established modal leader.  Herdr retains ownership of the
+# workspace/agent model; this only keeps the interaction vocabulary familiar.
+prefix = "ctrl+space"
+# Mirror tmux copy-mode muscle memory while keeping Herdr's stock `C-Space [`
+# available as a fallback.  In Kitty, Option is delivered as Alt/Meta.
+copy_mode = ["prefix+esc", "alt+esc", "prefix+["]
+# Keep tmux's direct split semantics despite Herdr naming the actions by the
+# divider orientation: `|` is side-by-side (vertical divider), `-` stacked.
+# Bind the physical keys directly in Herdr.  Do not proxy prefix sequences
+# through Kitty: Kitty then holds Ctrl-Space and breaks every other leader key.
+split_vertical = "prefix+shift+backslash"
+split_horizontal = "prefix+minus"
+# Keep the established direct navigation chord at the Herdr layer, while
+# retaining the prefix form for discoverability.
+focus_pane_left = "prefix+h"
+focus_pane_down = "prefix+j"
+focus_pane_up = "prefix+k"
+focus_pane_right = "prefix+l"
+
+# Route the established Neovim/terminal split chords through herdr-splits so
+# Neovim receives them first and delegates to Herdr only at a window edge.
+[[keys.command]]
+key = "ctrl+alt+h"
+type = "plugin_action"
+command = "herdr-splits.nav-left"
+
+[[keys.command]]
+key = "ctrl+alt+j"
+type = "plugin_action"
+command = "herdr-splits.nav-down"
+
+[[keys.command]]
+key = "ctrl+alt+k"
+type = "plugin_action"
+command = "herdr-splits.nav-up"
+
+[[keys.command]]
+key = "ctrl+alt+l"
+type = "plugin_action"
+command = "herdr-splits.nav-right"
+
+[[keys.command]]
+key = "alt+shift+h"
+type = "plugin_action"
+command = "herdr-splits.resize-left"
+
+[[keys.command]]
+key = "alt+shift+j"
+type = "plugin_action"
+command = "herdr-splits.resize-down"
+
+[[keys.command]]
+key = "alt+shift+k"
+type = "plugin_action"
+command = "herdr-splits.resize-up"
+
+[[keys.command]]
+key = "alt+shift+l"
+type = "plugin_action"
+command = "herdr-splits.resize-right"
+
+[experimental]
+# Preserve recent terminal context across a full Herdr server restart, closer
+# to the long-lived scrollback expectation from the tmux workflow.
+pane_history = true

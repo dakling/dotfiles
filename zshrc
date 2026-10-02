@@ -70,6 +70,10 @@ case ${TERM} in
     ;;
 esac
 bindkey -v
+
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey '^X^E' edit-command-line
 # Remove delay when entering normal mode (vi)
 KEYTIMEOUT=5
 #bindkey '^[[7~' beginning-of-line                               # Home key

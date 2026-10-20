@@ -1,0 +1,32 @@
+{
+  "mcpServers": {
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headers": {
+        "Authorization": "!sh -c 'echo Bearer $(gh auth token)'"
+      },
+      "description": "GitHub repository, issue, pull request, and code search operations"
+    },
+    "linear": {
+      "type": "http",
+      "url": "https://mcp.linear.app/mcp",
+      "description": "Linear issue tracking: read, create, and update issues and projects"
+    },
+    "notion": {
+      "type": "http",
+      "url": "https://mcp.notion.com/mcp",
+      "description": "Notion pages and databases"
+    },
+    "slack": {
+      "type": "http",
+      "url": "https://mcp.slack.com/mcp",
+      "description": "Slack channels, messages, and threads"
+    },
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp?client=pi-coding-agent",
+      "description": "Up-to-date library and framework documentation lookup"
+    }
+  }
+}

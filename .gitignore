@@ -1,0 +1,4 @@
+# Local scratch and editor leftovers
+*.backup.*
+*.swp
+.DS_Store

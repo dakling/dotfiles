@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "servers": [
+    {
+      "id": "pyright",
+      "enabled": true,
+      "include": ["**/*.py", "**/*.pyi"],
+      "rootMarkers": ["pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", "manage.py"],
+      "bin": "uvx",
+      "args": ["--from", "pyright", "pyright-langserver", "--stdio"],
+      "cwd": "{root}",
+      "languageIdByExtension": { ".py": "python", ".pyi": "python" },
+      "startupTimeoutMs": 60000,
+      "diagnosticsWaitMs": 2500,
+      "initializationOptions": {},
+      "settings": {}
+    },
+    {
+      "id": "tsserver",
+      "enabled": true,
+      "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.mts", "**/*.cts"],
+      "rootMarkers": ["tsconfig.json", "package.json", "jsconfig.json"],
+      "bin": "npx",
+      "args": ["--yes", "typescript-language-server", "--stdio"],
+      "cwd": "{root}",
+      "languageIdByExtension": {
+        ".ts": "typescript",
+        ".tsx": "typescriptreact",
+        ".js": "javascript",
+        ".jsx": "javascriptreact",
+        ".mts": "typescript",
+        ".cts": "typescript"
+      },
+      "startupTimeoutMs": 90000,
+      "diagnosticsWaitMs": 3000,
+      "initializationOptions": {},
+      "settings": {}
+    }
+  ]
+}

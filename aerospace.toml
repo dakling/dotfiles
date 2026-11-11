@@ -1,0 +1,146 @@
+# AeroSpace config, ported from amethyst.yml
+# Symlink to ~/.aerospace.toml
+# Docs: https://nikitabobko.github.io/AeroSpace/guide
+
+config-version = 2
+
+start-at-login = true
+auto-reload-config = true
+
+after-startup-command = []
+
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+
+accordion-padding = 30
+
+# Closest to Amethyst's "tall": windows side by side on the root container
+default-root-container-layout = 'tiles'
+default-root-container-orientation = 'auto'
+
+# Amethyst: mouse-follows-focus = false
+on-focused-monitor-changed = []
+
+automatically-unhide-macos-hidden-apps = false
+
+persistent-workspaces = []
+
+focus-follows-mouse.enabled = false
+
+key-mapping.preset = 'qwerty'
+
+# Amethyst: window-margins = false, screen-padding-* = 0
+gaps.inner.horizontal = 0
+gaps.inner.vertical =   0
+gaps.outer.left =       0
+gaps.outer.bottom =     0
+gaps.outer.top =        0
+gaps.outer.right =      0
+
+[mode.main.binding]
+    # Layouts (Amethyst: cycle-layout / cycle-layout-backward / select-fullscreen-layout)
+    cmd-space = 'layout tiles accordion'
+    cmd-shift-space = 'layout horizontal vertical'
+    cmd-shift-m = 'fullscreen'
+
+    # Window focus (Amethyst: focus-cw / focus-ccw / focus-main)
+    cmd-j = 'focus --wrap-around dfs-next'
+    cmd-k = 'focus --wrap-around dfs-prev'
+    cmd-enter = 'focus --dfs-index 0'
+
+    # Window swap (Amethyst: swap-cw / swap-ccw)
+    cmd-shift-j = 'swap --wrap-around dfs-next'
+    cmd-shift-k = 'swap --wrap-around dfs-prev'
+
+    # Resize (Amethyst: shrink-main / expand-main)
+    cmd-shift-h = 'resize smart -50'
+    cmd-shift-l = 'resize smart +50'
+
+    # Monitors (Amethyst: focus-screen-n / throw-screen-n / focus-screen-cw / -ccw)
+    cmd-w = 'focus-monitor 1'
+    cmd-e = 'focus-monitor 2'
+    cmd-r = 'focus-monitor 3'
+    cmd-shift-w = 'move-node-to-monitor 1'
+    cmd-shift-e = 'move-node-to-monitor 2'
+    cmd-shift-r = 'move-node-to-monitor 3'
+    cmd-alt-w = 'move-workspace-to-monitor 1'
+    cmd-alt-e = 'move-workspace-to-monitor 2'
+    cmd-alt-r = 'move-workspace-to-monitor 3'
+
+    # Workspaces (replace the macOS "Switch to Desktop N" shortcuts)
+    cmd-1 = 'workspace 1'
+    cmd-2 = 'workspace 2'
+    cmd-3 = 'workspace 3'
+    cmd-4 = 'workspace 4'
+    cmd-5 = 'workspace 5'
+    cmd-6 = 'workspace 6'
+    cmd-7 = 'workspace 7'
+    cmd-8 = 'workspace 8'
+    cmd-9 = 'workspace 9'
+    cmd-0 = 'workspace 10'
+
+    # Throw window to workspace (Amethyst: throw-space-n / throw-space-left / -right)
+    cmd-shift-1 = 'move-node-to-workspace --focus-follows-window 1'
+    cmd-shift-2 = 'move-node-to-workspace --focus-follows-window 2'
+    cmd-shift-3 = 'move-node-to-workspace --focus-follows-window 3'
+    cmd-shift-4 = 'move-node-to-workspace --focus-follows-window 4'
+    cmd-shift-5 = 'move-node-to-workspace --focus-follows-window 5'
+    cmd-shift-6 = 'move-node-to-workspace --focus-follows-window 6'
+    cmd-shift-7 = 'move-node-to-workspace --focus-follows-window 7'
+    cmd-shift-8 = 'move-node-to-workspace --focus-follows-window 8'
+    cmd-shift-9 = 'move-node-to-workspace --focus-follows-window 9'
+    cmd-shift-0 = 'move-node-to-workspace --focus-follows-window 10'
+    cmd-shift-left = 'move-node-to-workspace --focus-follows-window --wrap-around prev'
+    cmd-shift-right = 'move-node-to-workspace --focus-follows-window --wrap-around next'
+
+    # Amethyst: relaunch-amethyst
+    cmd-shift-y = 'reload-config'
+
+    cmd-alt-c = 'close'
+
+    # Launchers
+    cmd-f1 = 'exec-and-forget ~/.dotfiles/binCustom/aerospace-launch net.kovidgoyal.kitty /Applications/kitty.app/Contents/MacOS/kitty --single-instance -d ~'
+    cmd-f2 = 'exec-and-forget ~/.dotfiles/binCustom/aerospace-launch org.mozilla.firefox open -na Firefox --args --new-window'
+    cmd-f4 = 'exec-and-forget open -a "Microsoft Teams"; open -a Slack; open -a Linear; open -a Notion; open -a Docker'
+
+    # i3-style tree editing
+    cmd-shift-semicolon = 'mode service'
+
+[mode.service.binding]
+    esc = ['reload-config', 'mode main']
+    r = ['flatten-workspace-tree', 'mode main']
+    f = ['layout floating tiling', 'mode main']
+    backspace = ['close-all-windows-but-current', 'mode main']
+    h = ['join-with left', 'mode main']
+    j = ['join-with down', 'mode main']
+    k = ['join-with up', 'mode main']
+    l = ['join-with right', 'mode main']
+    shift-h = ['move left', 'mode main']
+    shift-j = ['move down', 'mode main']
+    shift-k = ['move up', 'mode main']
+    shift-l = ['move right', 'mode main']
+
+# App routing
+[[on-window-detected]]
+    if.app-id = 'com.microsoft.teams2'
+    run = 'move-node-to-workspace 1'
+
+[[on-window-detected]]
+    if.app-id = 'com.tinyspeck.slackmacgap'
+    run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+    if.app-id = 'com.linear'
+    run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+    if.app-id = 'notion.id'
+    run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+    if.app-id = 'com.apple.systempreferences'
+    run = 'move-node-to-workspace 9'
+
+[[on-window-detected]]
+    if.app-id = 'com.electron.dockerdesktop'
+    run = 'move-node-to-workspace 9'

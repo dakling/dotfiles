@@ -1,0 +1,31 @@
+#!/bin/bash
+# Launch an app window and keep it on the workspace that was focused at keypress.
+# macOS may activate an existing window of the app (and AeroSpace follows it to
+# another workspace) before the new window appears, so the new window is moved
+# back explicitly.
+# Usage: aerospace-launch <app-bundle-id> <command> [args...]
+
+aerospace=/opt/homebrew/bin/aerospace
+bundle_id=$1
+shift
+
+list_ids() {
+    "$aerospace" list-windows --monitor all --app-bundle-id "$bundle_id" --format '%{window-id}' | sort
+}
+
+workspace=$("$aerospace" list-workspaces --focused)
+before=$(list_ids)
+
+"$@" &
+
+new_id=
+for _ in $(seq 1 50); do
+    sleep 0.1
+    new_id=$(comm -13 <(echo "$before") <(list_ids) | head -n 1)
+    [ -n "$new_id" ] && break
+done
+[ -z "$new_id" ] && exit 0
+
+"$aerospace" move-node-to-workspace --window-id "$new_id" "$workspace"
+"$aerospace" workspace "$workspace"
+"$aerospace" focus --window-id "$new_id"

@@ -27,3 +27,5 @@ ln -sf ~/.dotfiles/stumpwm.lisp ~/.config/stumpwm/config
 
 #mkdir -p ~/.config/pacmanfile/
 #ln -sf ~/.dotfiles/pacmanfile.txt ~/.config/pacmanfile/
+
+ln -sf ~/.dotfiles/aerospace.toml ~/.aerospace.toml
